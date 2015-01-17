@@ -1,0 +1,25 @@
+{
+  "name": "mercury",
+  "version": "1.0.0",
+  "main": "public/index.html",
+  "description": "",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "window": {
+    "title": "Spotify",
+    "icon": "link.png",
+    "toolbar": true,
+    "frame": true,
+    "width": 800,
+    "height": 500,
+    "position": "mouse",
+    "min_width": 400,
+    "min_height": 200
+  },
+  "dependencies": {
+    "node-spotify": "*"
+  },
+  "author": "",
+  "license": "ISC"
+}

@@ -1,0 +1,124 @@
+hbox, box, vbox {
+	display: -webkit-box;
+	-webkit-box-direction: normal;
+	-webkit-box-sizing: border-box;
+
+}
+text {
+	display: block;
+	
+}
+
+
+hbox {
+	-webkit-box-orient: horizontal;
+}
+.list {
+	list-style: none;
+}
+
+div, body, aside, nav {
+    display: -webkit-box;   /* OLD: Safari,  iOS, Android browser, older WebKit browsers.  */
+    display: -moz-box;      /* OLD: Firefox (buggy) */
+    display: -ms-flexbox;   /* MID: IE 10 */
+    display: -webkit-flex;  /* NEW, Chrome 21–28, Safari 6.1+ */
+    display: flex;          /* NEW: IE11, Chrome 29+, Opera 12.1+, Firefox 22+ */
+}
+nav ul {
+    width: 100%;
+}
+aside {
+    flex-direction: column;
+    width:320px;
+}
+header {
+    box-sizing: border-box;
+    padding: 20px;
+    flex-direction: row;
+    height: 56px;
+}
+.body {
+    
+    flex-direction: column; 
+    min-height: 100vh;
+}
+body, html {
+    min-width: 100%;
+    min-height: 100%;
+}
+main {
+    display: flex;
+    -webkit-display: flex;
+    flex-direction: row;
+    height:100%;
+    flex-grow: 2;
+}
+
+main {
+    display: flex;
+    -webkit-display: flex;
+    flex-direction: row;
+    height:100%;
+    flex-grow: 2;
+}
+
+div, body, aside, nav, iframe {
+    display: -webkit-box;   /* OLD: Safari,  iOS, Android browser, older WebKit browsers.  */
+    display: -moz-box;      /* OLD: Firefox (buggy) */
+    display: -ms-flexbox;   /* MID: IE 10 */
+    display: -webkit-flex;  /* NEW, Chrome 21–28, Safari 6.1+ */
+    display: flex;          /* NEW: IE11, Chrome 29+, Opera 12.1+, Firefox 22+ */
+}
+aside {
+    flex-direction: column;
+    width:320px;
+}
+header {
+    box-sizing: border-box;
+    padding: 20px;
+    flex-direction: row;
+    height: 56px;
+}
+
+iframe {
+
+    -webkit-display: normal;
+
+    width: 100%;
+    flex-grow: 12;
+}
+nav {
+
+    flex-grow: 3;
+}
+.viewstack {
+    flex-grow: 2;
+}
+.sp-viewstack {
+    flex-grow: 2;
+}
+.sp-tab-view {
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+}
+.sp-view, .sp-app-view {
+    display: none;
+    width: 100%;
+    flex-grow: 1;
+
+    
+}
+.body {
+    
+    flex-direction: column; 
+    min-height: 100vh;
+}
+
+main {
+    display: flex;
+    -webkit-display: flex;
+    flex-direction: row;
+    height:100%;
+    flex-grow: 2;
+}

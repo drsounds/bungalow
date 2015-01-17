@@ -1,0 +1,41 @@
+<div class="container" style="min-height: 100%">
+<table width="100%" class="playlist-header" cellpadding="0" padding="0">
+	<tr>
+		<td ng-if="playlist.image || playlist.icon" width="64px">
+			<img ng-if="playlist.image" src="{{playlist.image}}" width="128px" style="margin:5pt">
+			<i ng-if="playlist.icon" style="font-size: 64px" class="fa fa-{{playlist.icon}}"></i>
+		</td>
+		<td valign="top">
+			<h1>{{playlist.title}}</h1>
+			<p ng-bind-html="playlist.description | rawHtml"></p>
+		</td>
+	</tr>
+	<tr ng-if="playlist.subdescription">
+		<td colspan="2" ng-bind-html="playlist.subdescription">
+		</td>
+	</tr>
+</table>
+
+<div class="playlist">
+<table class="sp-table" width="100%">
+	<thead>
+		<tr>
+		<th>Title</th>
+		<th>Artist</th>
+		<th width="20">Duration</th>
+		<th>Album</th>
+		<th>User</th>
+	</tr>
+	</thead>
+	<tbody>
+		<tr tabindex="{{$index}}" data-uri="{{track.uri}}" class="sp-track" ng-repeat="track in playlist.tracks">
+			<td>{{track.name}}</td>
+			<td><a href="#" data-uri="{{track.artists[0].uri}}" ng-click="select($event)">{{track.artists[0].name}}</a></td>
+			<td width="20">0:00</td>
+			<td><a href="#" data-uri="{{track.album.uri}}" ng-click="select($event)">{{track.album.name}}</a></td>
+			<td><a href="#" data-uri="mercury:user:{{track.user.username}}" ng-click="select($event)">{{track.user.name}}</a></td>
+		</tr>
+	</tbody>
+</table>
+</div>
+</div>

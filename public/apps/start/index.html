@@ -1,0 +1,103 @@
+<!doctype html>
+<html>
+	<head>
+		<title>Start</title>
+		<base href="app://mercy/public/apps/start/">
+		<link rel="stylesheet" href="app://mercy/public/themes/spotify/2009/css/style.css">
+		<link rel="stylesheet" href="bower_components/font-awesome/css/font-awesome.css">
+		<script src="app://mercy/public/bower_components/jquery/dist/jquery.js"></script>
+		<script src="app://mercy/public/apps/api/api.js"></script>
+	</head>
+	<body style="width: 100%">
+		<div class="sp-container" style="width: 100%">
+			<h1>What's new <a class="btn" style="float: right">More</a></h1>
+			<table width="100%">
+				<tr>
+					<td>
+						<div style="width: 482px; height:182px; background-image: url('app://mercy/public/images/tjejalex.png');background-size: cover"></div>
+					</td>
+					<td>
+					</td>
+				</tr>
+			</table>
+			<h2>Featured songs</h2>
+			<table class="sp-table" data-uri="spotify:start" width="100%">
+				<tr class="sp-track" data-uri="spotify:track:5qWntL3itznyfvsAnj2ZVR" data-duration="90">
+					<td>Levels</td>
+					<td><a href="#" data-uri="spotify:artist:242423">Dr. Sounds</a></td>
+				</tr>
+				<tr class="sp-track" data-duration="540" data-uri="spotify:track:4AYPBaW5es5XhpWX3upAz5">
+					<td>Endurium - Slow</td>
+					<td><a href="#" data-uri="spotify:artist:242423">Dr. Sounds</a></td>
+				</tr>
+			</table>
+			<h3>Artists you might like</h3>
+			<div class="highlight">
+				<table>
+					<tr>
+						<td>
+							<img width="64pt" src="https://www.recordunion.com/UserFiles/297/CoverArt/5f139333e86547d6bc942c560584d50e.png" data-uri="spotify:artist:2FOROU2Fdxew72QmueWSUy">
+						</td>
+						<td>
+							
+							<a data-uri="spotify:artist:2FOROU2Fdxew72QmueWSUy">Dr. Sounds</a>
+							<p>200s -</p>
+							<p>Electronic, Ambient</p>
+						</td>
+						<td>
+							<img width="64pt" src="https://www.recordunion.com/UserFiles/297/CoverArt/5f139333e86547d6bc942c560584d50e.png" data-uri="spotify:artist:2FOROU2Fdxew72QmueWSUy">
+						</td>
+						<td>
+							
+							<a data-uri="spotify:artist:2FOROU2Fdxew72QmueWSUy">Dr. Sounds</a>
+							<p>200s -</p>
+							<p>Electronic, Ambient</p>
+						</td>
+						<td>
+							<img width="64pt" src="https://www.recordunion.com/UserFiles/297/CoverArt/5f139333e86547d6bc942c560584d50e.png" data-uri="spotify:artist:2FOROU2Fdxew72QmueWSUy">
+						</td>
+						<td>
+							
+							<a data-uri="spotify:artist:2FOROU2Fdxew72QmueWSUy">Dr. Sounds</a>
+							<p>200s -</p>
+							<p>Electronic, Ambient</p>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<img width="64pt" src="https://www.recordunion.com/UserFiles/297/CoverArt/5f139333e86547d6bc942c560584d50e.png" data-uri="spotify:artist:2FOROU2Fdxew72QmueWSUy">
+						</td>
+						<td>
+							
+							<a data-uri="spotify:artist:2FOROU2Fdxew72QmueWSUy">Dr. Sounds</a>
+							<p>200s -</p>
+							<p>Electronic, Ambient</p>
+						</td>
+						<td>
+							<img width="64pt" src="https://www.recordunion.com/UserFiles/297/CoverArt/5f139333e86547d6bc942c560584d50e.png" data-uri="spotify:artist:2FOROU2Fdxew72QmueWSUy">
+						</td>
+						<td>
+							
+							<a data-uri="spotify:artist:2FOROU2Fdxew72QmueWSUy">Dr. Sounds</a>
+							<p>200s -</p>
+							<p>Electronic, Ambient</p>
+						</td>
+						<td>
+							<img width="64pt" src="https://www.recordunion.com/UserFiles/297/CoverArt/5f139333e86547d6bc942c560584d50e.png" data-uri="spotify:artist:2FOROU2Fdxew72QmueWSUy">
+						</td>
+						<td>
+							
+							<a data-uri="spotify:artist:2FOROU2Fdxew72QmueWSUy">Dr. Sounds</a>
+							<p>200s -</p>
+							<p>Electronic, Ambient</p>
+						</td>
+					</tr>
+				</table>
+			<script>
+			$('.sp-table').spotifize();
+			</script>
+			<div id="featuredSongs"></div>
+		<!--<script src="scripts/main.js"></script> -->
+		</div>
+	</body>
+</html>

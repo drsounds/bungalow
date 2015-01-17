@@ -1,0 +1,8 @@
+node_modules
+bin
+tmp
+public/bower_components
+spotify_appkey.key
+.DS_Store
+cache
+trace.txt

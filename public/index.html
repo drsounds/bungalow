@@ -1,0 +1,70 @@
+<!doctype html>
+<html ng-app="MercyApp">
+	<head>
+		<title>Mercy</title>
+		<base href="app://mercy/public/">
+		<link rel="stylesheet" href="themes/spotify/2009/css/style.css">
+		<link rel="stylesheet" href="bower_components/font-awesome/css/font-awesome.css">
+		<script src="bower_components/jquery/dist/jquery.js"></script>
+		<script src="scripts/spotify.js"></script>
+		<script src="scripts/main.js"></script>
+	</head>
+	<body class="body">
+		<div id="loginView" ng-controller="LoginCtrl" ng-if="!loggedIn">
+			<form nonvalidate onsubmit="shell.login(event)">
+
+				<input type="text" id="username" ng-model="user.username" value="drsounds">
+				<input type="password" id="password" ng-model="user.password" value="">
+				<button class="btn btn-primary" type="submit">Log in</button>
+			</form>
+		</div>
+		<div id="mainView">
+			<header>
+				<form nonvalidate onsubmit="shell.searchEnter(event);">
+					<input type="search" id="search">
+				</form>
+			</header>
+			<main>
+				<aside>
+					<div id="menu" style="overflow:scroll">
+						<table cellspacing="0" width="100%" class="menu">
+							<tr>
+								<td data-uri="spotify:start"><span class="fa fa-home"></span> Home</td>
+							</tr>
+							<tr>
+								<td data-uri="spotify:radio"><span class="fa fa-radio"></span> Radio</td>
+							</tr>
+							
+							<tr>
+								<td data-uri="spotify:user:drsounds:playlist:763eLyGqbJrXpuwdI5tlPV"><span class="fa fa-glass"></span> Featured</td>
+							</tr
+							<tr>
+								<td><hr></td>
+							</tr>
+							<tr>
+								<td><a class="btn-black">+ New Playlist</a></td>
+							</tr>
+							
+						</table>
+					</div>
+					<div id="nowplaying" style="height:220pt">
+						<div id="nowplaying_header"></div>
+					</div>
+				</aside>
+				<script>
+
+				$('.menu').menulize();
+				</script>
+				<div id="viewstack">
+
+				</div>
+			</main>
+			<footer>
+				<div style="width: 120pt"></div>
+				<div style="-webkit-flex: 1">
+					<input type="range" min="0" max="1" value="0" id="track_position">
+				</div>
+			</footer>
+		</div>
+	</body>
+</html>

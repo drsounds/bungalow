@@ -1,0 +1,4 @@
+<h2 class="divider">Albums</h2>
+<div class="container">
+	<a ng-repeat="album in artist.albums" href="#" data-uri="{{album.uri}}" ng-click="select($event)"><img src="{{album.images[0].url}}" width="128px"></a>
+</div>
