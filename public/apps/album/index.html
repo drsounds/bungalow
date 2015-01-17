@@ -2,26 +2,31 @@
 <html>
 	<head>
 		<title>Start</title>
-		<base href="app://mercy/public/apps/start">
-		<link rel="stylesheet" href="app://mercy/public/stylesheets/mercy.css">
+		<base href="app://mercy/public/apps/album/">
+		<link rel="stylesheet" href="app://mercy/public/themes/spotify/2009/css/style.css">
 		<link rel="stylesheet" href="bower_components/font-awesome/css/font-awesome.css">
 		<script src="app://mercy/public/bower_components/jquery/dist/jquery.js"></script>
 		<script src="app://mercy/public/apps/api/api.js"></script>
 	</head>
-	<body>
-		<div class="sp-container">
+	<body style="width: 100%">
+		<div id="throbber">
+			<img src="app://mercy/public/images/throbber.gif">
+		</div>
+		<div class="sp-container" style="width: 100%">
 			<table width="100%">
 				<tr>
-					<td width="128pt">
-						<img id="albumImg">
+					<td width="256pt" valign="top" style="padding: 10pt">
+						<img id="image" width="256pt">
 					</td>
-					<td>
+					<td valign="top" style="padding: 10pt">
+						<h3 id="name"></h3>
 						<div id="playlist">
 						</div>
+						<span id="copyrights"></span>
 					</td>
 				</tr>
 			</table>
-			
 		</div>
+		<script src="scripts/main.js"></script>
 	</body>
 </html>

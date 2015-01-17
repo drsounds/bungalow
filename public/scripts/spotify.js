@@ -43,10 +43,21 @@ SpotifyPlayer.prototype.logout = function () {
 SpotifyPlayer.prototype.playTrack = function (uri) {
 	console.log(uri);
 	var track = this.spotify.createFromLink(uri);
+	//alert(uri);
 	console.log(track);
 	console.log("Start playing song");
 	this.spotify.player.play(track);
 	return track;
+}
+
+SpotifyPlayer.prototype.getImageForTrack = function (track, callback) {
+	console.log("TRACK", track);
+	var album = this.spotify.createFromLink(track.album.link);
+	console.log("ALBUM", album);
+	this.spotify.waitForLoaded([album], function (album) {
+		console.log(album);
+		callback('data:image/jpeg;base64,' + album.getCoverBase64());
+	});
 }
 
 SpotifyPlayer.prototype.seek = function (position) {
@@ -124,14 +135,88 @@ SpotifyPlayer.prototype.getUserPlaylists = function (callback, callback2) {
 	});*/
 }
 
+SpotifyPlayer.prototype.getArtist = function (uri, callback) {
+	var artist = this.spotify.createFromLink(uri);
+	artist.browse( this.spotify.constants.ARTISTBROWSE_NO_TRACKS, function(err, browsedArtist) {
+	    var albums = [];
+	    for (var i = 0; i < browsedArtist.albums.length; i++) {
+	    	var album = browsedArtist.albums[i];
+	    	console.log("ALBUM", album);
+	    /*	var tracks = [];
+	    	for (var i = 0; i < album.tracks.length; i++) {
+	    		var track = album.tracks[i];
+	    		tracks.append({
+	    			'name': track.name,
+	    			'uri': track.link,
+	    			'duration': track.duration,
+	    			'artists': [{
+	    				'name': browsedArtist.name,
+	    				'uri': uri
+	    			}],
+	    			'album': {
+	    				'name': album.name,
+	    				'uri': album.uri
+	    			}
+	    		})
+	    	}*/
+	    	albums.push({
+	    		'name': album.name,
+	    		'artist': {
+	    			'name': browsedArtist.name,
+	    			'uri': uri
+	    		},
+	    		// 'tracks': tracks,
+	    		'uri': album.link,
+	    		'image': 'data:image/jpeg;base64,' + album.getCoverBase64()
+	    	});
+	    }
+	    var similarArtists = [];
+	   	for (var i = 0; i < browsedArtist.similarArtists.length; i++) {
+	    	var artist = browsedArtist.similarArtists[i];
+	    	similarArtists.push({
+	    		'name': artist.name,
+	    		'uri': artist.uri
+	    	});
+	    }
+	    var object = {
+	    	'name':browsedArtist.name,
+	    	'uri': uri,
+	    	'albums': albums,
+	    	'biography': browsedArtist.biography,
+	    	'similarArtists': similarArtists
+	    };
+	   	callback(object);
+	});
+}
+
 SpotifyPlayer.prototype.getAlbum = function (uri, callback) {
-	var album = spotify.createFromLink(uri);
+	var album = this.spotify.createFromLink(uri);
 	album.browse(function (err, browsedAlbum) {
+		var tracks = [];
+		for (var i = 0; i < browsedAlbum.tracks.length; i++) {
+			var track = browsedAlbum.tracks[i];
+			tracks.push({
+				'name': track.name + '',
+				'uri': track.link + '',
+				'artists': JSON.parse(JSON.stringify(track.artists)),
+				'album': JSON.parse(JSON.stringify(track.album)),
+				'user': {
+					'link': 'spotify:user:drsounds',
+					'canoncialName': 'drsounds',
+					'name': 'Dr. Sounds'
+				}
+			});
+		}
 		callback({
-			'tracks': browsedAlbum.tracks,
+			'uri': uri,
+			'name': browsedAlbum.name,
+			'tracks': tracks,
 			'review': browsedAlbum.review,
 			'copyrights': browsedAlbum.copyrights,
-			'artist': browsedAlbum.artist,
+			'artist': {
+				'name': browsedAlbum.artist.name,
+				'uri': browsedAlbum.artist.link
+			},
 			'image': 'data:image/jpeg;base64,' + album.getCoverBase64()
 		});
 	});

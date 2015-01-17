@@ -7,6 +7,12 @@ var Shell = function () {
 
 		})
 	});
+	$(document).on('click', '.menu td', function (event) {
+		var uri = event.target.getAttribute('data-uri');
+		console.log(event.target);
+		//alert(event.target.getAttribute('data-uri'));
+		self.navigate(uri);
+	});
 	var self = this;
 	spotify.addEventListener('trackended', function () {
 		console.log(self.currentApp);
@@ -28,20 +34,38 @@ var Shell = function () {
 			self.currentApp = event.data.app;
 		}
 		if (event.data.action === 'play') {
+			$('#nowplaying_image').css({'background-image': 'initial'});
 			console.log("Got play event");
 			var context = JSON.parse(event.data.data);
 			self.context = context;
 			console.log(context);
-			track = spotify.playTrack(context.tracks[context.currentIndex].uri);
 			console.log("Context", context);
 			event.source.postMessage({'action': 'trackstarted', 'index': context.currentIndex, 'uri': context.uri}, '*');
-			$('#track_position').attr('max', track.duration);
-			console.log("Duration", track.duration);
+			self.playTrack(context.tracks[context.currentIndex]);
 		}
-
+		if (event.data.action === 'navigate') {
+			self.navigate(event.data.uri);
+		}
 		if (event.data.action === 'getAlbum') {
 			spotify.getAlbum(event.data.uri, function (album) {
-				event.source.postMessage({'action': 'gotAlbum', 'data': album});
+				album = {
+					'name': album.name,
+					'uri': album.uri,
+					'artist': album.artist,
+					'tracks': album.tracks,
+					'image': album.image,
+					'copyrights': album.copyrights
+				}
+				console.log(album);
+				event.source.postMessage({'action': 'gotAlbum', 'data': album}, '*');
+			});
+		}
+
+		if (event.data.action === 'getArtist') {
+			spotify.getArtist(event.data.uri, function (artist) {
+				
+				console.log(artist);
+				event.source.postMessage({'action': 'gotArtist', 'data': artist}, '*');
 			});
 		}
 
@@ -87,14 +111,20 @@ var Shell = function () {
 	}, 100);
 	(function ($) {
 		$.fn.menulize = function (options) {
-			$(this).find('td').click(function (event) {
-				var uri = event.target.getAttribute('data-uri');
-				console.log(event.target);
-				//alert(event.target.getAttribute('data-uri'));
-				self.navigate(uri);
-			});
+			
 		}
 	}( jQuery ));
+
+}
+Shell.prototype.playTrack = function (track) {
+	var track = spotify.playTrack(track.uri);
+	$('#track_position').attr('max', track.duration);
+	console.log("Duration", track.duration);
+	$('#song_title').html(track.name);
+	$('#song_arist').html(track.artists[0].name);
+	/*spotify.getImageForTrack(track, function (image) {
+		$('#nowplaying_image').css({'background-image': 'url("' + image + '")'});
+	});*/
 
 }
 
@@ -105,7 +135,7 @@ Shell.prototype.login = function (event) {
 	spotify.addEventListener('ready', function () {
 		$('#loginView').fadeOut(function () {
 			$('#mainView').fadeIn();
-			self.navigate('spotify:start');
+			self.navigate('spotify:artist:2FOROU2Fdxew72QmueWSUy');
 
 			// Get user playlists
 			spotify.getUserPlaylists(function (playlists) {
@@ -173,8 +203,8 @@ Shell.prototype.navigate = function (url) {
 
 	}
 
-	$('.menu tr').removeClass('active');
-	$('.menu tr[data-uri^="' + url + '"]').addClass('active');
+	$('.menu td').removeClass('active');
+	$('.menu td[data-uri="' + url + '"]').addClass('active');
 
 }
 

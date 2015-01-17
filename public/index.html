@@ -29,7 +29,7 @@
 					<div id="menu" style="overflow:scroll">
 						<table cellspacing="0" width="100%" class="menu">
 							<tr>
-								<td data-uri="spotify:start"><span class="fa fa-bullhorn"></span> Home</td>
+								<td data-uri="spotify:start"><span class="fa fa-home"></span> Home</td>
 							</tr>
 							<tr>
 								<td data-uri="spotify:playqueue"><span class="fa fa-home"></span> Play queue</td>
@@ -40,10 +40,6 @@
 							<tr>
 								<td data-uri="spotify:finder"><span class="fa fa-cube"></span> App Finder</td>
 							</tr>
-							<tr>
-								<td data-uri="spotify:user:drsounds:playlist:24Oez7EJVmgG0U7uldaVJ2"><span class="fa fa-code"></span> Debug list</td>
-							</tr>
-							
 							<tr>
 								<td data-uri="spotify:user:drsounds:playlist:763eLyGqbJrXpuwdI5tlPV"><span class="fa fa-glass"></span> Featured</td>
 							</tr>
@@ -57,7 +53,12 @@
 						</table>
 					</div>
 					<div id="nowplaying" style="height:220pt">
-						<div id="nowplaying_header"></div>
+						<div id="nowplaying_header" style="height:30pt">
+							<h3 id="song_title"></h3>
+							<p id="song_artist"></p>
+							<small id="song_album"></small>
+						</div>
+						<div id="nowplaying_image" style="background-size: cover;flex: 1"></div>
 					</div>
 				</aside>
 				<script>
