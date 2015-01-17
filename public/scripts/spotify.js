@@ -101,6 +101,42 @@ SpotifyPlayer.prototype.loadPlaylist = function (uri, callback) {
 }
 
 
+SpotifyPlayer.prototype.getUserPlaylists = function (callback, callback2) {
+	console.log("Getting user playlists");
+	var _playlists = this.spotify.playlistContainer.getPlaylists();
+	var playlists = [];
+	console.log(_playlists);
+	for (var i = 0; i < _playlists.length; i++) {
+		console.log(_playlists[i].name);
+		var playlist = {
+			'name': _playlists[i].name,
+			'uri': _playlists[i].link
+		};
+		playlists.push(playlist);
+
+	}
+	callback(playlists);
+/*	this.spotify.waitForLoaded(_playlists, function (playlist) {
+		callback2({
+			'name': playlist.name,
+			'uri': playlist.link
+		});
+	});*/
+}
+
+SpotifyPlayer.prototype.getAlbum = function (uri, callback) {
+	var album = spotify.createFromLink(uri);
+	album.browse(function (err, browsedAlbum) {
+		callback({
+			'tracks': browsedAlbum.tracks,
+			'review': browsedAlbum.review,
+			'copyrights': browsedAlbum.copyrights,
+			'artist': browsedAlbum.artist,
+			'image': 'data:image/jpeg;base64,' + album.getCoverBase64()
+		});
+	});
+}
+
 SpotifyPlayer.prototype.getPlaylistTracks = function (playlist, callback) {
 	console.log("Waiting for loaded tracks");
 	var tracks = [];

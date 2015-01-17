@@ -17,6 +17,7 @@
     "min_width": 400,
     "min_height": 200
   },
+  "node-remote": "http://*",
   "dependencies": {
     "node-spotify": "*"
   },

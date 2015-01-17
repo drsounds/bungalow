@@ -38,6 +38,13 @@ var Shell = function () {
 			$('#track_position').attr('max', track.duration);
 			console.log("Duration", track.duration);
 		}
+
+		if (event.data.action === 'getAlbum') {
+			spotify.getAlbum(event.data.uri, function (album) {
+				event.source.postMessage({'action': 'gotAlbum', 'data': album});
+			});
+		}
+
 		if (event.data.action === 'getPlaylist') {
 			console.log("TA", event.data.uri, self.loadedResources);
 				//alert(event.data.uri);
@@ -99,6 +106,28 @@ Shell.prototype.login = function (event) {
 		$('#loginView').fadeOut(function () {
 			$('#mainView').fadeIn();
 			self.navigate('spotify:start');
+
+			// Get user playlists
+			spotify.getUserPlaylists(function (playlists) {
+				for (var i =0; i < playlists.length && i < 100; i++) {
+					var playlist = playlists[i];
+					var listItem = document.createElement('tr');
+					listItem.setAttribute('data-uri', playlist.uri);
+					listItem.innerHTML = '<td data-uri="' + playlist.uri + '"><i class="fa fa-music"></i> ' + playlist.name + ' <span class="fade">by someone</span></td>';
+					listItem.setAttribute('data-uri', playlist.uri);
+					$('.menu:first').append(listItem);
+					$(listItem).click(function (event) {
+						var uri = event.target.getAttribute('data-uri');
+						console.log(event.target);
+						//alert(event.target.getAttribute('data-uri'));
+						self.navigate(uri);
+					});
+				}
+			}, function (playlist2) {
+				var $item = $('.menu tr[data-uri="' + playlist.uri + '"]');
+				$item.html(playlist2.name);
+			});
+
 		});
 	});
 	return false;
@@ -169,15 +198,17 @@ Shell.prototype.createApp = function (appId) {
 	// check if app is already existing
 	// check if directory exists
 	var appName = 'notfound';
+	var appURL = '';
 	if (fs.existsSync(appDir) && fs.existsSync(manifestFilePath)) {
 			var manifest = JSON.parse(fs.readFileSync(manifestFilePath));
 			appName = appId;
+			appURL = '/public/apps/' + appName + '/index.html';
 	}  else {
-		appName = 'notfound';
+
 	}
 
 	var appFrame = document.createElement('iframe');
-	appFrame.setAttribute('src', '/public/apps/' + appName + '/index.html');
+	appFrame.setAttribute('src', appURL);
 	console.log('/apps/' + appName + '/index.html');
 	appFrame.setAttribute('id', 'app_' + appId + '');
 	appFrame.classList.add('sp-app');

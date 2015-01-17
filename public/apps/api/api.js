@@ -65,7 +65,10 @@ var context = new Context();
 	$.fn.spotifize = function (options) {
 		console.log("Spotifize");
 		var self = this;
-
+		$(this).find('.sp-track').mousedown(function (event) {
+			$('.sp-track').removeClass('sp-track-selected');
+			$(this).addClass('sp-track-selected');
+		});
 		$(this).find('.sp-track').dblclick(function (event) {
 			var uri = $(event.target).parent().parent().parent().attr('data-uri');
 			var parent = $(event.target).parent().parent().parent();
@@ -146,11 +149,20 @@ var Playlist = function () {
 
 }
 
+var Album = function () {
+
+}
+
 window.addEventListener('message', function (event) {
 	if (event.data.action == 'gotPlaylist') {
 		console.log("Received playlist from shell");
 		var playlist = (event.data.data);
 		Playlist.lists[playlist.uri] = playlist;
+	}
+	if (event.data.action == 'gotAlbum') {
+		console.log("Received album from shell");
+		var album = (event.data.data);
+		Album.lists[album.uri] = playlist;
 	}
 	if (event.data.action === 'trackstarted') {
 		var uri = event.data.uri;
@@ -171,6 +183,18 @@ Playlist.fromURI = function (uri, callback) {
 			console.log("Playlist ready for consumption");
 			clearInterval(checker);
 			callback(Playlist.lists[uri]);
+		}
+	}, 100);
+};
+
+Album.fromURI = function (uri, callback) {
+	console.log("Asking shell for getting playlist");
+	window.parent.postMessage({'action': 'getAlbum', 'uri': uri}, '*');
+	var checker = setInterval(function () {
+		if (uri in Album.lists) {
+			console.log("Album ready for consumption");
+			clearInterval(checker);
+			callback(Album.lists[uri]);
 		}
 	}, 100);
 };

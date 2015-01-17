@@ -216,6 +216,9 @@ footer {
 	background-color: #565656;
 	color: white;
 }
+.fade {
+	color: rgba(255, 255, 255, .25);
+}
 footer div {
 	padding: 10pt;
 }
@@ -224,7 +227,7 @@ footer div {
 }
 .menu tr {
 	list-style: none;
-	padding: 2pt;
+	padding: 8pt;
 	list-style-position: 0;
 }
 
@@ -232,6 +235,9 @@ img {
 	box-shadow: 0px 0px 5px rgba(0, 0, 0, .5);
 }
 
+.menu tr td {
+	padding: 5pt;
+}
 .menu tr a {
 	color: white;
 	text-decoration: none;
@@ -240,6 +246,7 @@ img {
 }
 .menu tr td .fa {
 	color: #fff;
+	font-size: 10pt;
 }
 
 .menu tr td .fa {
@@ -254,4 +261,12 @@ img {
 }
 .menu tr.active a {
 	color: #000033;
+}
+
+.sp-track-selected td {
+	background-color: #b6e1fd;
+}
+.sp-track-selected td, .sp-track-selected a {
+
+	color: #333377;
 }
