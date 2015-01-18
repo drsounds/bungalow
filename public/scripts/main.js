@@ -96,10 +96,10 @@ var Shell = function () {
 		}
 
 		if (event.data.action === 'search') {
-			spotify.search(event.data.query, event.data.limit, event.data.offset, function (search) {
+			spotify.search(event.data.query, event.data.limit, event.data.offset, event.data.type, function (search) {
 				
 				console.log(search);
-				event.source.postMessage({'action': 'gotSearch', 'data': search, 'query': event.data.query}, '*');
+				event.source.postMessage({'action': 'gotSearch', 'data': search, 'type': event.data.type, 'query': event.data.query}, '*');
 			});
 		}
 
@@ -329,12 +329,16 @@ Shell.prototype.createApp = function (appId) {
 	appFrame.setAttribute('nwdisable', 'nwdisable');
 	appFrame.setAttribute('frameborder', '0');
 	appFrame.setAttribute('width', "100%");
-	appFrame.setAttribute('height', "100%");
 	appFrame.style = 'width:100%; height: 100%';
 	$('#viewstack').append(appFrame);
+	$(appFrame).css({'height': $('#viewstack').height()});
 	this.apps[appId] = appFrame;
 
 	return appFrame;
+}
+
+window.onresize = function () {
+	$('iframe').css({'height': $('#viewstack').height()});
 }
 
 

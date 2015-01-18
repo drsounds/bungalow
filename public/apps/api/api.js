@@ -252,7 +252,7 @@ window.addEventListener('message', function (event) {
 	if (event.data.action == 'gotSearch') {
 		console.log("Received search result from shell");
 		var search = (event.data.data);
-		Search.lists[event.data.query] = search;
+		Search.lists[event.data.type + ':' + event.data.query] = search;
 		console.log(event.data.query);
 	}
 	if (event.data.action === 'trackstarted') {
@@ -317,15 +317,15 @@ Search = function () {
 Search.lists = {};
 
 
-Search.search = function (query, limit, offset, callback) {
+Search.search = function (query, limit, offset, type, callback) {
 	var self = this;
 	console.log("Asking shell for getting artist");
-	window.parent.postMessage({'action': 'search', 'query': query, 'limit': limit, 'offset': offset}, '*');
+	window.parent.postMessage({'action': 'search', 'query': query, 'type': type, 'limit': limit, 'offset': offset}, '*');
 	var checker = setInterval(function () {
-		if (query in Search.lists) {
+		if (type + ':' + query in Search.lists) {
 			console.log("Search ready for consumption");
 			clearInterval(checker);
-			callback(Search.lists[query]);
+			callback(Search.lists[type + ':' + query]);
 		}
 	}, 100);
 };

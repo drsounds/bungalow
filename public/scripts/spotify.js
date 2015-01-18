@@ -84,14 +84,18 @@ SpotifyPlayer.prototype.login = function (username, password) {
 
 
 
-SpotifyPlayer.prototype.search = function (query, limit, offset, callback) {
+SpotifyPlayer.prototype.search = function (query, limit, offset, type, callback) {
 	var self = this;
-	$.getJSON('https://api.spotify.com/v1/search?q=' + encodeURI(query) + '&type=track&limit=' + limit + '&offset=' + offset, function (data) {
-		var tracks = data.tracks.items.map(function (track) {
-			track.duration = track.duration_ms / 1000;
-			return track;
-		});
-		callback(data.tracks.items);
+	$.getJSON('https://api.spotify.com/v1/search?q=' + encodeURI(query) + '&type=' + type + '&limit=' + limit + '&offset=' + offset, function (data) {
+		if ('tracks' in data) {
+			var tracks = data.tracks.items.map(function (track) {
+				track.duration = track.duration_ms / 1000;
+				return track;
+			});
+			callback(data.tracks.items);
+		} else {
+			callback(data[type + 's'].items);
+		}
 	});
 };
 SpotifyPlayer.prototype.loadPlaylist = function (uri, callback) {
