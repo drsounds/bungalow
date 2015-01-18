@@ -156,11 +156,8 @@ img {
 	color: #fff;
 }
 
-.menu tr td .fa {
-	color: #fff;
-}
 .menu tr.active td {
-	background-color: #b6e1fd;
+	background-image: url('../images/selection_bg.png');
 	color: #333377;
 }
 .menu tr.active td .fa {
