@@ -16,8 +16,8 @@ window.addEventListener('message', function (event) {
 			contextView.node.setAttribute('id', 'album_' + uri.replace(/\:/g, '__'));
 			$('#playlist').append(contextView.node);
 			$('#copyrights').html(album.copyrights);
-			$('#name').html('<a>' + album.name + '</a> <a class="fade" data-uri="' + album.artist.uri + '"> by ' + album.artist.name + '</a>');
-			$('#image').attr('src', album.image);
+			$('#name').html('<a>' + album.name + '</a> <a class="fade" data-uri="' + album.artists[0].uri + '"> by ' + album.artists[0].name + '</a>');
+			$('#image').attr('src', album.images[0].url);
 			hideThrobber();
 		});
 		

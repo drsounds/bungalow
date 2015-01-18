@@ -9,13 +9,19 @@
 		<script src="app://mercy/public/apps/api/api.js"></script>
 	</head>
 	<body style="width: 100%">
+		<div class="sp-tabbar">
+			<div class="sp-tabbar-tab sp-tabbar-tab-active">Overview</div>
+		</div>
+		<div style="height:23px"></div>
 		<div id="throbber">
 			<img src="app://mercy/public/images/throbber.gif">
 		</div>
 		<div style="width: 100%" class="sp-container">
 			<h1 id="name"></h1>
 			<h2 class="divider">Albums</h2>
-			<ul id="albums" class="collection"></ul>
+			<div id="albums" class="collection"></div>
+			<h2 class="divider">Singles</h2>
+			<div id="singles" class="collection"></div>
 		</div>
 		<script src="scripts/main.js"></script>
 	</body>

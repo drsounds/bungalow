@@ -36,6 +36,11 @@ var Shell = function () {
 			console.log("Activate app event");
 			self.currentApp = event.data.app;
 		}
+		if (event.data.action === 'getTopList') {
+			spotify.getTopList(event.data.uri, function (toplist) {
+				event.source.postMessage({'action': 'gotTopList', 'data': toplist}, '*');
+			});
+		}
 		if (event.data.action === 'play') {
 			$('#nowplaying_image').css({'background-image': 'initial'});
 			console.log("Got play event");
@@ -51,16 +56,17 @@ var Shell = function () {
 		}
 		if (event.data.action === 'getAlbum') {
 			spotify.getAlbum(event.data.uri, function (album) {
-				album = {
-					'name': album.name,
-					'uri': album.uri,
-					'artist': album.artist,
-					'tracks': album.tracks,
-					'image': album.image,
-					'copyrights': album.copyrights
-				}
+				
 				console.log(album);
 				event.source.postMessage({'action': 'gotAlbum', 'data': album}, '*');
+			});
+		}
+
+		if (event.data.action === 'search') {
+			spotify.search(event.data.query, event.data.limit, event.data.offset, function (search) {
+				
+				console.log(search);
+				event.source.postMessage({'action': 'gotSearch', 'data': search, 'query': event.data.query}, '*');
 			});
 		}
 
@@ -125,9 +131,9 @@ Shell.prototype.playTrack = function (track) {
 	console.log("Duration", track.duration);
 	$('#song_title').html(track.name);
 	$('#song_arist').html(track.artists[0].name);
-	/*spotify.getImageForTrack(track, function (image) {
+	spotify.getImageForTrack(track, function (image) {
 		$('#nowplaying_image').css({'background-image': 'url("' + image + '")'});
-	});*/
+	});	
 
 }
 
@@ -140,7 +146,7 @@ Shell.prototype.login = function (event) {
 		spotify.addEventListener('ready', function () {
 			$('#throbber').fadeOut(function () {
 				$('#mainView').fadeIn();
-				self.navigate('spotify:search:test');
+				self.navigate('spotify:finder');
 
 				// Get user playlists
 				spotify.getUserPlaylists(function (playlists) {
@@ -210,8 +216,8 @@ Shell.prototype.navigate = function (url, nohistory) {
 
 	}
 
-	$('.menu td').removeClass('active');
-	$('.menu td[data-uri="' + url + '"]').addClass('active');
+	$('#menu td').removeClass('active');
+	$('#menu td[data-uri="' + url + '"]').addClass('active');
 	if (!nohistory) {
 		this.future = [];
 		this.history.push(url);

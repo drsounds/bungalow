@@ -8,7 +8,7 @@ window.addEventListener('message', function (event) {
 		Search.search(query, 50, 0, function (tracks) {
 			$('#search').html("");
 			var contextView = new ContextView({
-				'tracks': tracks}, {headers:true, fields: ['title', 'artist', 'duration', 'album', 'popularity']});
+				'tracks': tracks}, {headers:true, fields: ['title', 'artist', 'duration', 'popularity', 'album']});
 			$('#search').append(contextView.node);
 			hideThrobber();
 		});

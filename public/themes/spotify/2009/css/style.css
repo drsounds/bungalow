@@ -3,7 +3,7 @@ header, footer, aside, main {
 
 }
 .container {
-	/*margin: 1pt 15%;*/
+margin: 1pt 15%;
 }
 h1 {
 	font-size: 10pt;
@@ -18,7 +18,7 @@ html {
 	height: 100%;
 	width: 100%;
 }
-.menu td.active {
+.menu tr.active {
 
 }
 .btn {
@@ -79,6 +79,7 @@ body {
 	height: 18pt;
 }
 .sp-container {
+	margin-top: 23px;
 	width: 100%;
 }
 hr {
@@ -99,14 +100,12 @@ hr {
 	border-collapse: collapse;
 }
 .sp-table tr:nth-child(odd) {
-	background-color: #202020;
+	background-color: #313131;
 }
 .sp-table td, .sp-table th {
 	box-sizing: border-box;
 	padding: 1.5px 10pt;
 	height: 16px;
-	border-top: 1px solid black;
-	border-bottom: 1px solid black;
 }
 .sp-table th {
 	height: 19px;
@@ -149,10 +148,7 @@ hr {
 	height: 18px;
 }
 .sp-table td {
-	color: #888;
-}
-.sp-table tr td:first-child {
-	color: #f0f0f0;
+	color: #fff;
 }
 .sp-table thead {
 	background-color: #565656;
@@ -275,6 +271,7 @@ img.shadow {
 
 .menu tr td {
 	padding: 5pt;
+	text-shadow: 0px 1px 0px rgba(0, 0, 0, .5);
 }
 .menu tr a {
 	color: white;
@@ -286,7 +283,13 @@ html, body {
 	padding: 0;
 	margin: 0;
 }
-.collection li {
+.collection {
+
+	display: block;
+	clear: both;
+	width: 100%;
+}
+.collection div {
 	float: left;
 	list-style:none;
 	margin: 5pt;
@@ -294,6 +297,7 @@ html, body {
 }
 h2.divider {
 	padding: 2pt;
+	display: block;
 }
 h1, h2, h3, h4 {
 	padding: 0;
@@ -309,23 +313,24 @@ a[data-uri] {
 .menu tr td .fa {
 	color: #fff;
 }
-.menu tr.active td {
+.menu td.active {
 	background-color: #b6e1fd;
 	color: #333377;
 }
-.menu tr.active td .fa {
+.menu td.active td .fa {
 	color: #333377;
 }
-.menu tr.active a {
+.menu td.active a {
 	color: #000033;
 }
 
 .sp-track-selected td {
 	background-color: #b6e1fd;
+	color: #000033;
 }
 .sp-track-selected td, .sp-track-selected a {
 
-	color: #333377;
+	color: #000033;
 }
 
 
@@ -341,13 +346,37 @@ meter {
     -webkit-appearance: none;
     background: none;
     background-color: transparent;
-    background-image: url('../img/popularity_fill.png');
+    background-image: url('../images/popularity_nofill.png');
 }
  meter::-webkit-meter-optimum-value {
     -webkit-appearance: none;
     background: none;
-    background-image: url('../img/popularity_fill.png');
+    background-image: url('../images/popularity_fill.png');
 }
+
+.sp-track-selected meter {
+    -webkit-appearance: none;
+    background-image: url('../images/popularity_nofill.png');
+    background-color: transparent;
+    height: 7px;
+    -webkit-filter: invert;
+    width: 30px;
+
+}
+.sp-track-selected  meter::-webkit-meter-bar {
+    -webkit-appearance: none;
+    background: none;
+    background-color: transparent;
+    background-image: url('../images/popularity_nofill.png');
+    -webkit-filter: invert;
+}
+.sp-track-selected meter::-webkit-meter-optimum-value {
+    -webkit-appearance: none;
+    background: none;
+    -webkit-filter: invert;
+    background-image: url('../images/popularity_fill.png');
+}
+
 
 .btn-group .btn {
 	border-radius: none;
@@ -360,3 +389,36 @@ meter {
 .btn-group .btn:last-child {
 	border-radius: 0pt 5pt 5pt 0pt;
 }
+
+.sp-tabbar {
+	background-color: #636363;
+	border-bottom: 1px solid #292929;
+	border-top: 1px solid #414141;
+	height: 23px;
+	top: 0px;
+	position: fixed;
+	width: 100%;
+}
+.sp-tabbar-tab {
+	border-left: 1px solid #747474;
+	border-right: 1px solid #4a4a4a;
+	width: 100px;
+	height: 22px;
+	float: left;
+	list-style: none;
+	text-align: center;
+	padding: 3pt;
+	box-sizing: border-box;
+}
+
+.sp-tabbar-tab-active {
+	border-left: 1px solid #222;
+	border-right: 1px solid #222;
+	border-top: 1px solid #222;
+	height: 23px;
+	float: left;
+	list-style: none;
+	color: white;
+	background-color: #2a2a2a;
+}
+

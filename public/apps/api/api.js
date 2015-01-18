@@ -84,6 +84,17 @@ $(document).on('dblclick', '.sp-track', function (event) {
 	context.play(uri, index);
 
 });
+
+function deci (number) {
+	return Math.round(number) < 10 ? '0' + Math.round(number) : Math.round(number);
+}
+
+function toMS (seconds) {
+	var minutes = Math.floor(seconds / 60);
+	var seconds = (seconds % 60) / 60;
+	return deci(minutes) + ':' + deci(seconds);
+}
+
 var TrackView = function (track, options) {
 	this.node = document.createElement('tr');
 	this.node.classList.add('sp-track');
@@ -104,7 +115,7 @@ var TrackView = function (track, options) {
 		}
 		if (field === 'duration') {
 			var td3 = document.createElement('td');
-			td3.innerHTML = '-:--';
+			td3.innerHTML = toMS(track.duration);
 			this.node.appendChild(td3);
 		}
 		if (field === 'album') {
@@ -114,7 +125,7 @@ var TrackView = function (track, options) {
 		}
 		if (field === 'popularity') {
 			var td4 = document.createElement('td');
-			td4.innerHTML = '<meter style="width:100%" min="0" max="100" value="50">';
+			td4.innerHTML = '<meter style="width:100%" min="0" max="100" value="' + track.popularity + '">';
 			this.node.appendChild(td4);
 		}
 		if (field === 'user') {
@@ -174,12 +185,14 @@ var ContextView = function (playlist, options) {
 		this.node.appendChild(thead);
 		
 		window.addEventListener('scroll', function (event) {
+			var tabbar = $('.sp-tabbar');
+
 			var absolutePos = $(thead).offset();
 			if (tableY == 0) {
 				tableY = absolutePos.top;
 			}
-			if ($(window).scrollTop() >= tableY) {
-				var scrollOffset = $(window).scrollTop() - tableY;
+			if ($(window).scrollTop() >= tableY - tabbar.height() - 2) {
+				var scrollOffset = $(window).scrollTop() - tableY + tabbar.height() + 2;
 				$(thead).css({'transform': 'translate(0px, ' + (scrollOffset) + 'px)'});
 			} else {
 				$(thead).css({'transform': 'none'});
@@ -211,11 +224,23 @@ window.addEventListener('message', function (event) {
 		Album.lists[album.uri] = album;
 		console.log(album.uri);
 	}
+	if (event.data.action == 'gotTopList') {
+		console.log("Received top list from shell");
+		var toplist = (event.data.data);
+		TopList.lists[toplist.uri] = toplist;
+		console.log(toplist.uri);
+	}
 	if (event.data.action == 'gotArtist') {
 		console.log("Received artist from shell");
 		var artist = (event.data.data);
 		Artist.lists[artist.uri] = artist;
 		console.log(artisturi);
+	}
+	if (event.data.action == 'gotSearch') {
+		console.log("Received search result from shell");
+		var search = (event.data.data);
+		Search.lists[event.data.query] = search;
+		console.log(event.data.query);
 	}
 	if (event.data.action === 'trackstarted') {
 		var uri = event.data.uri;
@@ -255,6 +280,7 @@ Album.fromURI = function (uri, callback) {
 			callback(Album.lists[uri]);
 		}
 	}, 100);
+	
 };
 
 Artist.fromURI = function (uri, callback) {
@@ -267,17 +293,47 @@ Artist.fromURI = function (uri, callback) {
 			callback(Artist.lists[uri]);
 		}
 	}, 100);
+	
+
 };
 
 Search = function () {
 
 };
+
+Search.lists = {};
+
+
 Search.search = function (query, limit, offset, callback) {
 	var self = this;
-	$.getJSON('https://api.spotify.com/v1/search?q=' + encodeURI(query) + '&type=track&limit=' + limit + '&offset=' + offset, function (data) {
-		callback(data.tracks.items);
-	});
+	console.log("Asking shell for getting artist");
+	window.parent.postMessage({'action': 'search', 'query': query, 'limit': limit, 'offset': offset}, '*');
+	var checker = setInterval(function () {
+		if (query in Search.lists) {
+			console.log("Search ready for consumption");
+			clearInterval(checker);
+			callback(Search.lists[query]);
+		}
+	}, 100);
 };
+
+var TopList = function () {
+
+}
+
+TopList.lists = {};
+
+TopList.fromURI = function (uri, callback) {
+	console.log("Asking shell for getting artist");
+	window.parent.postMessage({'action': 'getTopList', 'uri': uri}, '*');
+	var checker = setInterval(function () {
+		if (uri in TopList.lists) {
+			console.log("Artist ready for consumption");
+			clearInterval(checker);
+			callback(TopList.lists[uri]);
+		}
+	}, 100);
+}
 
 function  showThrobber() {
 	$('#throbber').show();

@@ -8,12 +8,29 @@
 		<script src="app://mercy/public/bower_components/jquery/dist/jquery.js"></script>
 		<script src="app://mercy/public/apps/api/api.js"></script>
 	</head>
-	<body style="width: 100%; padding: 0px; margin: 0px">
+	<body style="width: 100%;padding-top: 16pt">
+		<div class="sp-tabbar">
+			<div class="sp-tabbar-tab sp-tabbar-tab-active">App Finder</div>
+		</div>
 		<div id="throbber">
 			<img src="app://mercy/public/images/throbber.gif">
 		</div>
-		<div class="sp-container">
-			<h1>App Finder Astral Plane</h1>
+		<div class="container">
+			<h1>App Finder</h1>
+			<table class="highlight" width="100%">
+				<tr>
+					<td><i class="fa fa-star" style="font-size: 128px"></td>
+					<td valign="top">
+						<h2>Top List</h2>
+						<a data-uri="spotify:toplist">View</a>
+					</td>
+					<td><i class="fa fa-glazz" style="font-size: 128px"></td>
+					<td valign="top">
+						<h2>Featured songs</h2>
+						<a data-uri="spotify:featured">View</a>
+					</td>
+				</tr>
+			</table>
 		</div>
 	</body>
 </html>
