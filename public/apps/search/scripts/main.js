@@ -12,7 +12,8 @@ window.addEventListener('message', function (event) {
 
 			var contextView = new ContextView({
 				'uri': 'spotify:search:' + query,
-				'tracks': tracks}, {headers:true, fields: ['title', 'artist', 'duration', 'popularity', 'album']});
+				'tracks': tracks
+			}, {headers:true, fields: ['title', 'artist', 'duration', 'popularity', 'album']});
 			$('#search').append(contextView.node);
 			Search.search(query, 50, 0, 'artist', function (artists) {
 				for (var i = 0; i < artists.length && i < 10; i++) {

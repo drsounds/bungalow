@@ -75,8 +75,8 @@ var context = new Context();
 }(jQuery));
 
 $(document).on('dblclick', '.sp-track', function (event) {
-	var uri = $(event.target).parent().attr('data-uri');
 	var parent = $(event.target).parent().parent().parent();
+	var uri = $(parent).attr('data-uri');
 	console.log("Uri", uri);
 	console.log("Parent", parent[0]);
 	var index = $('.sp-track').index(this);
@@ -257,8 +257,8 @@ window.addEventListener('message', function (event) {
 	}
 	if (event.data.action === 'trackstarted') {
 		var uri = event.data.uri;
-
-		$('.sp-table[data-uri="' + uri + '"] .sp-track').removeClass('sp-now-playing');
+	
+		$('.sp-track').removeClass('sp-now-playing');
 		$('.sp-table[data-uri="' + uri + '"] .sp-track').get(event.data.index).classList.add('sp-now-playing');
 		
 	}

@@ -56,7 +56,7 @@ var Shell = function () {
 		if (self.context.currentIndex < self.context.tracks.length) {
 			var track = self.context.tracks[self.context.currentIndex];
 			spotify.playTrack(track.uri);
-			track = self.apps[self.currentApp].contentWindow.postMessage({'action': 'trackstarted', 'index': self.context.currentIndex, 'uri': self.context.uri}, '*');
+			self.apps[self.currentApp].contentWindow.postMessage({'action': 'trackstarted', 'index': self.context.currentIndex, 'uri': self.context.uri}, '*');
 			console.log(track.duration);
 
 			$('#track_position').attr('max', track.duration);
@@ -81,6 +81,7 @@ var Shell = function () {
 			self.context = context;
 			console.log(context);
 			console.log("Context", context);
+			alert(context.uri);
 			event.source.postMessage({'action': 'trackstarted', 'index': context.currentIndex, 'uri': context.uri}, '*');
 			self.playTrack(context.tracks[context.currentIndex]);
 		}
