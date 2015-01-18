@@ -10,11 +10,44 @@ var Shell = function () {
 
 		})
 	});
+	$(document).on('dragover', '.menu td', function (event) {
+		$.event.props.push('dataTransfer');
+		//if (event.originalEvent.dataTransfer.getData('text/uri-list').match(/((spotify\:user\:(.*)\:playlist\:(.*))+)/)) {
+			event.preventDefault();
+   			event.originalEvent.dataTransfer.dropEffect = 'copy';
+   			var data = event.originalEvent.dataTransfer.getData('text/uri-list');
+   			console.log(data);
+   			$(this).addClass('sp-dragover');
+		//}
+	});
+	$(document).on('dragleave', '.menu td', function (event) {
+		
+		$(this).removeClass('sp-dragover');
+	
+	});
+	$(document).on('drop', '.menu td', function (event) {
+		$.event.props.push('dataTransfer');
+		var droppedURI = event.originalEvent.dataTransfer.getData('text/uri-list');
+		console.log(droppedURI);
+
+	});
 	$(document).on('click', '.menu td', function (event) {
+		$.event.props.push('dataTransfer');
 		var uri = event.target.getAttribute('data-uri');
 		console.log(event.target);
 		//alert(event.target.getAttribute('data-uri'));
 		self.navigate(uri);
+	});
+	$(document).on('dragstart', '.sp-track td', function (event) {
+		$.event.props.push('dataTransfer');
+		console.log("Begin drag");
+		var uris = "";
+		var $tracks = $('.sp-track-selected').each(function (i) {
+			uris += $(this).attr('data-uri') + "\n";
+		});
+
+
+		event.dataTransfer.setData('text/uri-list', uris);
 	});
 	var self = this;
 	spotify.addEventListener('trackended', function () {
@@ -125,6 +158,25 @@ var Shell = function () {
 	}( jQuery ));
 
 }
+
+/**
+ * Starts the process of new playlist
+ **/
+Shell.prototype.startCreatePlaylist = function () {
+	var playlistName = prompt("Enter the name of the new playlist");
+	if (playlistName) {
+		console.log("Creating playlist");
+		spotify.createPlaylist(playlistName, function (playlist, index) {
+			var tr = document.createElement('tr');
+			var td = document.createElement('td');
+			td.setAttribute('data-uri', playlist.uri);
+			tr.appendChild(td);
+			td.innerHTML = '<span class="fa fa-music"></span> ' + playlist.name;
+			$('#playlists tbody').prepend(tr);
+		});
+	}	
+}
+
 Shell.prototype.playTrack = function (track) {
 	var track = spotify.playTrack(track.uri);
 	$('#track_position').attr('max', track.duration);
@@ -141,12 +193,14 @@ Shell.prototype.login = function (event) {
 	var self = this;
 	event.preventDefault();
 	spotify.login($('#username').val(), $('#password').val());
-	$('#loginView').fadeOut(function () {
-		$('#throbber').fadeIn();
-		spotify.addEventListener('ready', function () {
-			$('#throbber').fadeOut(function () {
+	$('#throbber').show();
+	spotify.addEventListener('ready', function () {
+		$('#loginView').fadeOut(function () {
+			$('#throbber').fadeIn();
+				$('#throbber').fadeOut(function () {
 				$('#mainView').fadeIn();
-				self.navigate('spotify:finder');
+				$('#mainView').css({'display': '-webkit-flex'});
+				self.navigate('spotify:search:friday');
 
 				// Get user playlists
 				spotify.getUserPlaylists(function (playlists) {
@@ -156,7 +210,7 @@ Shell.prototype.login = function (event) {
 						listItem.setAttribute('data-uri', playlist.uri);
 						listItem.innerHTML = '<td data-uri="' + playlist.uri + '"><i class="fa fa-music"></i> ' + playlist.name + ' <span class="fade">by someone</span></td>';
 						listItem.setAttribute('data-uri', playlist.uri);
-						$('.menu:first').append(listItem);
+						$('#playlists tbody').append(listItem);
 						$(listItem).click(function (event) {
 							var uri = event.target.getAttribute('data-uri');
 							console.log(event.target);
@@ -168,7 +222,7 @@ Shell.prototype.login = function (event) {
 					var $item = $('.menu tr[data-uri="' + playlist.uri + '"]');
 					$item.html(playlist2.name);
 				});
-
+				$('#throbber').hide();
 			});
 		});
 	});

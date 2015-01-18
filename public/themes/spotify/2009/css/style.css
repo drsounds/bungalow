@@ -1,5 +1,6 @@
 header, footer, aside, main {
-	position: fixed;
+
+	box-sizing: border-box;
 
 }
 .container {
@@ -10,16 +11,41 @@ h1 {
 }
 #mainView {
 	display: none;
+	flex-direction: column;
 }
 html {
 	display: flex;
 }
 #viewstack {
-	height: 100%;
 	width: 100%;
 }
 .menu tr.active {
 
+}
+.fade {
+	background-color: rgba(0, 0, 0, .25);
+	position: fixed;
+	left: 0px;
+	top: 0px;
+	width: 100%;
+	height: 100%;
+	z-index: 100;
+
+}
+.lightbox {
+	width: 75%;
+	height: 25%;
+	box-shadow: 0px 2px 12pt rgba(0, 0, 0, .5);
+	position: fixed;
+	left: 50%;
+	border-radius: 12pt;
+	top: 50%;
+	-webkit-transform: translate(-50%, -50%);
+	text-align: center;
+	z-index: 101;
+	background-color: white;
+	box-sizing: border-box;
+	padding: 10pt;
 }
 .btn {
 	padding: 3pt;
@@ -191,39 +217,34 @@ a:hover {
 }
 header {
 	background-color: #666;
-	left: 0px;
+
 	display: flex;
 	flex-direction: row;
-	top: 0px;
-	width: 100%;
+	box-sizing: border-box;
 	height: 55px;
 	background-image: url('../images/header.png');
 	padding: 15pt;
 }
 aside {
 	border-right: 1px solid #111;
-	-webkit-flex: 5;
-	flex: 5;
-	top: 55px;
+	
 	display: flex;
 	flex-direction: column;
-	left: 0pt;
 	width: 200pt;
-	height: calc(100% - 55px - 41px);
 	background-color: #373737;
 }
 main {
+	flex-grow: 1;
 	display: flex;
 	flex-direction: row;
-	-webkit-flex: 3;
-	flex: 3;
+	
+	flex: 1;
 	background-color: #2a2a2a;
 	color: white;
-	left: 200pt;
+
 	color: white;
-	width: calc(100% - 200pt);
-	top: 55px;
-	height: calc(100% - 55px - 41px);
+	width: 100%;
+	height: 100%;
 }
 .divider {
 	background-color: #616161;
@@ -237,10 +258,7 @@ footer, header {
 	flex-direction: row;
 }
 footer {
-	left: 0pt;
 	background-color: #444;
-	bottom: 0pt;
-	height: 41px;
 	width: 100%;
 	background-image: url('../img/footer.png');
 }
@@ -261,7 +279,7 @@ footer div {
 }
 .menu tr {
 	list-style: none;
-	padding: 8pt;
+	padding: 2pt;
 	list-style-position: 0;
 }
 
@@ -390,6 +408,8 @@ meter {
 	border-radius: 0pt 5pt 5pt 0pt;
 }
 
+
+
 .sp-tabbar {
 	background-color: #636363;
 	border-bottom: 1px solid #292929;
@@ -422,3 +442,16 @@ meter {
 	background-color: #2a2a2a;
 }
 
+.sp-dragover {
+	background-color: white;
+	color: black;
+	border-radius: 12pt;
+}
+input:focus {
+	outline: none;
+}
+input {
+	border-radius: 12pt;
+	border: 1px solid #eee;
+	padding: 5pt;
+}

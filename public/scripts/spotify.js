@@ -1,8 +1,18 @@
+var spotifyEngine = require('node-spotify')({ appkeyFile: 'spotify_appkey.key',traceFile: 'trace.txt'  });
+	
 var SpotifyPlayer = function () {
-	this.spotify = require('node-spotify')({ appkeyFile: 'spotify_appkey.key',traceFile: 'trace.txt'  });
 	var self = this;
+	this.spotify = spotifyEngine;
 	this.spotify.on({
 		ready: function (args) {
+			console.log(spotifyEngine);
+			spotifyEngine.playlistContainer.on({
+				'playlistAdded': function (err, newPlaylist, position) {
+					console.log(self.callbacks);
+					alert(self.callbacks);
+					self.callbacks['playlistAdded'].call(self, newPlaylist, position);
+				}
+			});
 			self.notify(new CustomEvent('ready'));
 		}
 	});
@@ -12,7 +22,8 @@ var SpotifyPlayer = function () {
 	    }
 	});
 	this.resources = {};
-
+	
+	this.callbacks = {};
 };
 
 SpotifyPlayer.prototype.events = {};
@@ -62,8 +73,12 @@ SpotifyPlayer.prototype.seek = function (position) {
 }
 
 SpotifyPlayer.prototype.login = function (username, password) {
-	this.spotify.login(username, password);
-		
+	if (this.spotify.rememberedUser) {
+		alert("A");
+		this.spotify.login(username, password, false, true);
+	} else {
+		this.spotify.login(username, password, true, false);
+	}
 	
 }
 
@@ -104,6 +119,21 @@ SpotifyPlayer.prototype.loadPlaylist = function (uri, callback) {
 	});
 }
 
+SpotifyPlayer.prototype.createPlaylist = function (title, callback) {
+	console.log(title);
+	this.spotify.playlistContainer.addPlaylist(title);
+	var self = this;
+	console.log("Adding playlist");
+	this.callbacks['playlistAdded'] = function (_playlist, position) {
+		playlist = {
+			'name': _playlist.name,
+			'uri': _playlist.link
+		};
+		self.spotify.movePlaylist(position, 0);
+		callback(playlist, position);
+	};
+};
+
 SpotifyPlayer.prototype.getTopList = function (uri, callback) {
 	var parts = uri.split(/\:/g);
 	var country = parts[3];
@@ -128,9 +158,9 @@ SpotifyPlayer.prototype.getUserPlaylists = function (callback, callback2) {
 	console.log("Getting user playlists");
 	var _playlists = this.spotify.playlistContainer.getPlaylists();
 	var playlists = [];
-	console.log(_playlists);
+//	console.log(_playlists);
 	for (var i = 0; i < _playlists.length; i++) {
-		console.log(_playlists[i].name);
+		//console.log(_playlists[i].name);
 		var playlist = {
 			'name': _playlists[i].name,
 			'uri': _playlists[i].link
@@ -181,7 +211,7 @@ SpotifyPlayer.prototype.getPlaylistTracks = function (playlist, callback) {
 	var _tracks = playlist.getTracks();
 	console.log(_tracks.length);
 	this.spotify.waitForLoaded(_tracks, function (track) {
-		console.log("Got tracks");	
+		//console.log("Got tracks");	
 		tracks.push({
 			'name': track.name + '',
 			'uri': track.link + '',

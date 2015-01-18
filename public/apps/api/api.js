@@ -100,6 +100,19 @@ var TrackView = function (track, options) {
 	this.node.classList.add('sp-track');
 	this.node.setAttribute('data-uri', track.uri);
 	this.node.setAttribute('data-object', JSON.stringify(track));
+	this.node.setAttribute('draggable', true);
+	this.node.addEventListener('dragstart', function (event) {
+		console.log("Begin drag");
+		var uris = "";
+        event.dataTransfer.effectAllowed = 'copy';
+
+		var $tracks = $('.sp-track-selected').each(function (i) {
+			uris += $(this).attr('data-uri') + "\n";
+		});
+		console.log("Assigning data");
+		event.dataTransfer.setData('text/uri-list', uris);
+		event.dataTransfer.setData('text', uris);
+	}, false);
 	for (var i = 0; i < options.fields.length; i++) {
 		var field = options.fields[i];
 		if (field === 'title') {
