@@ -42,6 +42,21 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#dfdfdf', end
 	box-shadow:inset 0px 0px 3px #b8b8b8, inset 0px 1px 1px #e0e0e0;
 	text-shadow: 0px 1px 0px rgba(255, 255, 255, .25);
 }
+.btn:focus {
+	outline: none;
+}
+
+.btn:active {
+	background: #bababa; /* Old browsers */
+	background: -moz-linear-gradient(top,  #bababa 0%, #7c7c7c 100%); /* FF3.6+ */
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#bababa), color-stop(100%,#7c7c7c)); /* Chrome,Safari4+ */
+	background: -webkit-linear-gradient(top,  #bababa 0%,#7c7c7c 100%); /* Chrome10+,Safari5.1+ */
+	background: -o-linear-gradient(top,  #bababa 0%,#7c7c7c 100%); /* Opera 11.10+ */
+	background: -ms-linear-gradient(top,  #bababa 0%,#7c7c7c 100%); /* IE10+ */
+	background: linear-gradient(to bottom,  #bababa 0%,#7c7c7c 100%); /* W3C */
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#bababa', endColorstr='#7c7c7c',GradientType=0 ); /* IE6-9 */
+
+}
 .btn-black {
 	border: none;
 	background-color: #111;
@@ -90,9 +105,10 @@ hr {
 	box-sizing: border-box;
 	padding: 1.5px 10pt;
 	height: 16px;
+	border-top: 1px solid black;
+	border-bottom: 1px solid black;
 }
 .sp-table th {
-
 	height: 19px;
 	background-image: url('../images/columnheader_normal.png');
 	color: black;
@@ -197,7 +213,7 @@ aside {
 	flex-direction: column;
 	left: 0pt;
 	width: 200pt;
-	height: calc(100% - 55px - 55px);
+	height: calc(100% - 55px - 41px);
 	background-color: #373737;
 }
 main {
@@ -211,7 +227,7 @@ main {
 	color: white;
 	width: calc(100% - 200pt);
 	top: 55px;
-	height: calc(100% - 55px - 55px);
+	height: calc(100% - 55px - 41px);
 }
 .divider {
 	background-color: #616161;
@@ -228,8 +244,9 @@ footer {
 	left: 0pt;
 	background-color: #444;
 	bottom: 0pt;
-	height: 55px;
+	height: 41px;
 	width: 100%;
+	background-image: url('../img/footer.png');
 }
 .highlight {
 	border-radius: 5pt;
@@ -331,4 +348,15 @@ meter {
     background: none;
     background-image: url('../img/popularity_fill.png');
 }
+
+.btn-group .btn {
+	border-radius: none;
+}
+
+.btn-group .btn:first-child {
+	border-radius: 5pt 0pt 0pt 5pt;
+}
+
+.btn-group .btn:last-child {
+	border-radius: 0pt 5pt 5pt 0pt;
 }

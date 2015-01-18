@@ -10,16 +10,25 @@
 		<script src="scripts/main.js"></script>
 	</head>
 	<body class="body">
-		<div id="loginView" ng-controller="LoginCtrl" ng-if="!loggedIn">
-			<form nonvalidate onsubmit="shell.login(event)">
-
-				<input type="text" id="username" ng-model="user.username" value="drsounds">
-				<input type="password" id="password" ng-model="user.password" value="">
+		<div id="loginView" ng-controller="LoginCtrl" style="text-align:center" ng-if="!loggedIn">
+	
+			<form style="position: absolute; left:50%; top:50%; -webkit-transform: translate(-50%, -50%)" onsubmit="shell.login(event)">
+				<h1>The Bungalow Spotify Client</h1>
+				<input type="text" id="username" placeholder="username" ng-model="user.username" value="drsounds"><br>
+				<input type="password" id="password" placeholder="password" ng-model="user.password" value=""><br>
 				<button class="btn btn-primary" type="submit">Log in</button>
 			</form>
+			
+		</div>
+		<div id="throbber">
+			<img src="app://mercy/public/images/throbber.gif">
 		</div>
 		<div id="mainView">
 			<header>
+				<div class="btn-group">
+					<button class="btn" onclick="shell.goBack()">&lt;</button>
+					<button class="btn" onclick="shell.goForward()">&gt;</button>
+				</div>
 				<form nonvalidate onsubmit="shell.searchEnter(event);">
 					<input type="search" id="search">
 				</form>

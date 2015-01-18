@@ -180,9 +180,9 @@ var ContextView = function (playlist, options) {
 			}
 			if ($(window).scrollTop() >= tableY) {
 				var scrollOffset = $(window).scrollTop() - tableY;
-				$(thead).css({'transform': 'translate(0px, ' + scrollOffset + 'px)', 'border': '1px solid black'});
+				$(thead).css({'transform': 'translate(0px, ' + (scrollOffset) + 'px)'});
 			} else {
-				$(thead).css({'transform': 'none', 'border': 'none'});
+				$(thead).css({'transform': 'none'});
 
 			}
 		});
@@ -272,9 +272,12 @@ Artist.fromURI = function (uri, callback) {
 Search = function () {
 
 };
-Search.search = function (query, options) {
-	
-}
+Search.search = function (query, limit, offset, callback) {
+	var self = this;
+	$.getJSON('https://api.spotify.com/v1/search?q=' + encodeURI(query) + '&type=track&limit=' + limit + '&offset=' + offset, function (data) {
+		callback(data.tracks.items);
+	});
+};
 
 function  showThrobber() {
 	$('#throbber').show();

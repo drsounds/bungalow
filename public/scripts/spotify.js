@@ -72,20 +72,12 @@ SpotifyPlayer.prototype.login = function (username, password) {
 
 
 
-SpotifyPlayer.prototype.search = function (query, offset, length) {
+SpotifyPlayer.search = function (query, limit, offset, callback) {
 	var self = this;
-	var promise = new Promise(function (resolve, fail) {
-		var search = new self.spotify.Search(query, offset, length);
-		search.execute( function(err, searchResult) {
-			if (error)
-				fail();
-			else
-			   	resolve(searchResult);
-		});
+	$.getJSON('https://api.spotify.com/v1/search?q=' + encodeURI(query) + '&type=track&limit=' + limit + '&offset=' + offset, function (data) {
+		callback(data.tracks.items);
 	});
-	return promise;
-}
-
+};
 SpotifyPlayer.prototype.loadPlaylist = function (uri, callback) {
 	console.log("Loading playlist", uri);
 	var playlist = this.spotify.createFromLink(uri);
