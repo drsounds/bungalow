@@ -196,10 +196,7 @@ Shell.prototype.login = function (event) {
 	$('#throbber').show();
 	spotify.addEventListener('ready', function () {
 		$('#loginView').fadeOut(function () {
-			$('#throbber').fadeIn();
-				$('#throbber').fadeOut(function () {
-				$('#mainView').fadeIn();
-				$('#mainView').css({'display': '-webkit-flex'});
+			$('.darken').fadeOut(function () {
 				self.navigate('spotify:search:friday');
 
 				// Get user playlists
