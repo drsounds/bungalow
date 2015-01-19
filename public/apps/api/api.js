@@ -142,7 +142,7 @@ var TrackView = function (track, index, options) {
 		}
 		if (field === 'duration') {
 			var td3 = document.createElement('td');
-			td3.innerHTML = toMS(track.duration);
+			td3.innerHTML = '<span class="fade" style="float: right">' + toMS(track.duration) + '</span>';
 			this.node.appendChild(td3);
 		}
 		if (field === 'album') {
@@ -152,7 +152,7 @@ var TrackView = function (track, index, options) {
 		}
 		if (field === 'popularity') {
 			var td4 = document.createElement('td');
-			td4.innerHTML = '<meter style="width:100%" min="0" max="100" value="' + track.popularity + '">';
+			td4.innerHTML = '<meter min="0" style="max-width:35px; margin-top: -18px !important" max="100" value="' + track.popularity + '">';
 			this.node.appendChild(td4);
 		}
 		if (field === 'user') {
@@ -438,13 +438,13 @@ var AlbumView = function (album, options) {
 	console.log("ALBUM", album);
 	table.setAttribute('data-uri', album.uri);
 	var td1 = document.createElement('td');
-	td1.innerHTML = '<img src="' + album.images[0].url + '" width="256px">';
+	td1.innerHTML = '<img src="' + album.images[0].url + '" width="170px">';
 	td1.setAttribute('valign', 'top');
-	td1.setAttribute('width', '256px');
+	td1.setAttribute('width', '170px');
 	td1.style.paddingRight = '13pt';
 	var td2 = document.createElement('td');
 	td2.setAttribute('valign', 'top');
-	td2.innerHTML = '<h3><a data-uri="' + album.uri + '">' + album.name + '</a></h3>';
+	td2.innerHTML = '<h3 style="margin-bottom: 10px"><a data-uri="' + album.uri + '">' + album.name + '</a></h3>';
 	console.log(td2.innerHTML);
 	//alert(album.tracks);
 	var self = this;
