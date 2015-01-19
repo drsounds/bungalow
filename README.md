@@ -1,5 +1,7 @@
 #Bungalow streaming client
 
+![Screenshot](https://www.dropbox.com/s/j6tj3jellbo1e6g/screenshot.png?dl=1 "Screenshot")
+
 An open source streaming client based on LibSpotify (currently) and Node-webkit. 
 
 My goal is to create a parallell world spotify client that adds a Spotify Apps like API.
