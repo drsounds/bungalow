@@ -1,5 +1,18 @@
 var spotify = new SpotifyPlayer();
+
+/**
+ * from http://stackoverflow.com/questions/586182/insert-item-into-array-at-a-specific-index
+ **/
+Array.prototype.insert = function (index, item) {
+  this.splice(index, 0, item);
+};
+
 var Shell = function () {
+
+	// Global Spotify resource buffer
+	this.resourceBuffer = {};
+
+	this.cache = {};
 	this.history = [];
 	this.forward = [];
 	this.uri = "";
@@ -29,7 +42,24 @@ var Shell = function () {
 		$.event.props.push('dataTransfer');
 		var droppedURI = event.originalEvent.dataTransfer.getData('text/uri-list');
 		console.log(droppedURI);
+		$(event.originalEvent.target).removeClass('sp-dragover');
+		console.log("Adding tracks to playlist");
+		var uris = droppedURI.split(/\n/g);
+		console.log(event.originalEvent.target);
+		var playlistURI = event.originalEvent.target.getAttribute('data-uri');
+		spotify.addTracksToPlaylist(uris, 0, playlistURI);
+		spotify.resolveTracks(uris, function (tracks) {
 
+			var playlistIframe = document.querySelector('iframe#app_playlist');
+			if (playlistIframe) {
+				playlistIframe.postMessage({
+					'action': 'tracksadded',
+					'uri': playlistURI,
+					'position': 0,
+					'tracks': tracks
+				});
+			}
+		});
 	});
 	$(document).on('click', '.menu td', function (event) {
 		$.event.props.push('dataTransfer');
@@ -74,6 +104,13 @@ var Shell = function () {
 				event.source.postMessage({'action': 'gotTopList', 'data': toplist}, '*');
 			});
 		}
+
+		if (event.data.action === 'contextupdate') {
+			if (self.context.uri === event.data.uri) {
+				
+			}
+		}
+
 		if (event.data.action === 'play') {
 			$('#nowplaying_image').css({'background-image': 'initial'});
 			console.log("Got play event");
@@ -101,6 +138,12 @@ var Shell = function () {
 				
 				console.log(search);
 				event.source.postMessage({'action': 'gotSearch', 'data': search, 'type': event.data.type, 'query': event.data.query}, '*');
+			});
+		}
+
+		if (event.data.action === 'getAlbumTracks') {
+			spotify.getAlbumTracks(event.data.uri, function (tracks) {
+				event.source.postMessage({'action': 'gotAlbumTracks', 'uri': event.data.uri, 'tracks': tracks}, '*');
 			});
 		}
 
@@ -160,6 +203,10 @@ var Shell = function () {
 
 }
 
+Shell.prototype.cacheResource = function (uri, resource) {
+	this.resourceBuffer[uri] = resource;
+}
+
 /**
  * Starts the process of new playlist
  **/
@@ -198,7 +245,7 @@ Shell.prototype.login = function (event) {
 	spotify.addEventListener('ready', function () {
 		$('#loginView').fadeOut(function () {
 			$('.darken').fadeOut(function () {
-				self.navigate('spotify:finder');
+				self.navigate('spotify:user:drsounds:playlist:763eLyGqbJrXpuwdI5tlPV');
 
 				// Get user playlists
 				spotify.getUserPlaylists(function (playlists) {

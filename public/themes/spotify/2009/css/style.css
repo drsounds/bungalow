@@ -281,6 +281,7 @@ footer {
 }
 .fade {
 	color: rgba(255, 255, 255, .25);
+	pointer-events: none;
 }
 footer div {
 	padding: 10pt;

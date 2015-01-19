@@ -9,22 +9,30 @@ window.addEventListener('message', function (event) {
 		var uri = 'spotify:artist:' + id;
 
 		$('.sp-artist').hide();
-		Artist.fromURI(uri, function (artist) {
+		Artist.fromURI(uri, function (artist) {	
 			$('#name').html(artist.name);
 			$('#albums').html("");
 			$('#singles').html("");
 			
 			for (var i = 0; i < artist.albums.length; i++) {
 				var album = artist.albums[i];
-				var div = document.createElement('div');
-				div.innerHTML = '<a data-uri="' + album.uri + '"><img src="' + album.images[0].url + '" width="120pt"><br>' + album.name + '</a>';
-				$('#albums').append(div);
+				//var div = document.createElement('div');
+				//div.innerHTML = '<a data-uri="' + album.uri + '"><img src="' + album.images[0].url + '" width="120pt"><br>' + album.name + '</a>';
+			
+				var albumView = new AlbumView(album);
+				$('#albums').append(albumView.node);
+				$('#albums').append(document.createElement('hr'));
+				
 			}
 			for (var i = 0; i < artist.singles.length; i++) {
 				var single = artist.singles[i];
-				var div = document.createElement('div');
-				div.innerHTML = '<a data-uri="' + single.uri + '"><img src="' + single.images[0].url + '" width="120pt"><br>' + single.name + '</a>';
-				$('#singles').append(div);
+				//var div = document.createElement('div');
+				//div.innerHTML = '<a data-uri="' + single.uri + '"><img src="' + single.images[0].url + '" width="120pt"><br>' + single.name + '</a>';
+		
+				var albumView = new AlbumView(single);
+				$('#singles').append(albumView.node);
+				$('#singles').append(document.createElement('hr'));
+			
 			}
 			hideThrobber();
 		});

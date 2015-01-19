@@ -14,6 +14,8 @@ var Context = function () {
 
 };
 
+var activeViews = {};
+
 
 console.log(window.location.href.split(/\//g)[4]);
 
@@ -42,12 +44,13 @@ function context_to_tracks(elements) {
 }
 
 Context.prototype.play = function (uri, index) {
+	console.log("Playing from context with uri" + uri);
 	console.log("Start playing track");
-	var sel = '.sp-table[data-uri="' + uri.replace(/\:/g, '__') + '"]';
+	var sel = '.sp-table[data-uri="' + uri + '"]';
 	$(sel + ' .sp-track').removeClass('sp-now-playing');
-
-	var tracks = document.querySelectorAll('.sp-track');
-
+	console.log(sel + ' .sp-track');
+	var tracks = document.querySelectorAll(sel + ' .sp-track');
+	console.log("tracks in context " ,tracks);
 	var tracklist = {
 		'tracks': context_to_tracks(tracks),
 		'currentIndex': index,
@@ -62,7 +65,7 @@ Context.prototype.play = function (uri, index) {
 
 }
 
-var context = new Context();
+var track_contexts = new Context();
 (function ($) {
 	$.fn.spotifize = function (options) {
 		console.log("Spotifize");
@@ -79,8 +82,7 @@ $(document).on('dblclick', '.sp-track', function (event) {
 	var uri = $(parent).attr('data-uri');
 	console.log("Uri", uri);
 	console.log("Parent", parent[0]);
-	var index = $('.sp-track').index(this);
-	console.log(context);
+	var index = $(this).attr('data-track-index');
 	context.play(uri, index);
 
 });
@@ -95,12 +97,23 @@ function toMS (seconds) {
 	return deci(minutes) + ':' + deci(seconds);
 }
 
-var TrackView = function (track, options) {
+/**
+ * Update track contexts
+ **/
+function bungalow_update_context(uri, tracks, position) {
+	var context = track_contexts[uri];
+	context.insertTracks(tracks, position);
+}
+
+
+
+var TrackView = function (track, index, options) {
 	this.node = document.createElement('tr');
 	this.node.classList.add('sp-track');
 	this.node.setAttribute('data-uri', track.uri);
 	this.node.setAttribute('data-object', JSON.stringify(track));
 	this.node.setAttribute('draggable', true);
+	this.node.setAttribute('data-track-index', index);
 	this.node.addEventListener('dragstart', function (event) {
 		console.log("Begin drag");
 		var uris = "";
@@ -113,6 +126,7 @@ var TrackView = function (track, options) {
 		event.dataTransfer.setData('text/uri-list', uris);
 		event.dataTransfer.setData('text', uris);
 	}, false);
+
 	for (var i = 0; i < options.fields.length; i++) {
 		var field = options.fields[i];
 		if (field === 'title') {
@@ -148,6 +162,7 @@ var TrackView = function (track, options) {
 		}
 		
 	}
+
 	var td5 = document.createElement('td');
 		td5.innerHTML = '&nbsp;';
 		this.node.appendChild(td5);
@@ -163,6 +178,18 @@ var fieldTypes = {
 	'user': 'User'
 };
 
+/**
+ * From http://stackoverflow.com/questions/391314/jquery-insertat
+ **/
+$.fn.insertAt = function(index, $parent) {
+    return this.each(function() {
+        if (index === 0) {
+            $parent.prepend(this);
+        } else {
+            $parent.children().eq(index - 1).after(this);
+        }
+    });
+}
 
 var ContextView = function (playlist, options) {
 	var headers = false;
@@ -171,11 +198,16 @@ var ContextView = function (playlist, options) {
 		headers = options.headers;
 
 	}
+	this.uri = playlist.uri;
 	if (options && options.fields) {
 		fields = options.fields;
 	}
+	this.fields = fields;
 	this.node = document.createElement('table');
 	var tbody = document.createElement('tbody');
+	this.node.classList.add('sp-playlist');
+	this.node.setAttribute('id', 'context_' + playlist.uri.replace(/\:/g, '__'));
+	this.tbody = tbody;
 	this.node.appendChild(tbody);
 	this.node.setAttribute('width', '100%');
 	this.node.classList.add('sp-table');
@@ -188,7 +220,7 @@ var ContextView = function (playlist, options) {
 	thead.innerHTML = '<tr>' + c + '<th style="width:10%"></th></tr>';
 	this.node.setAttribute('data-uri', playlist.uri);
 	for (var i = 0; i < playlist.tracks.length; i++) {
-		var trackView = new TrackView(playlist.tracks[i], {'fields': fields});
+		var trackView = new TrackView(playlist.tracks[i], i, {'fields': fields});
 		$(tbody).append(trackView.node);
 	}
 	console.log(this.node);
@@ -214,8 +246,31 @@ var ContextView = function (playlist, options) {
 		});
 	}
 	$(this.node).spotifize();
+	track_contexts[playlist.uri] = this; // Register context here
 }
 
+var context = new Context();
+/** 
+ * Inserts a set of track into the given context and notify the parent
+ **/
+ContextView.prototype.insertTracks = function (tracks, position) {
+	for (var i = 0; i < tracks.length; i++) {
+		var trackView = new TrackView(tracks, i, this.fields);
+		$(this.tbody).eq(position + i).after(trackView.node);
+		
+
+	}
+
+	// Announce context update
+	window.parent.postMessage({
+		'action': 'contextupdated',
+		'uri': this.playlist.uri,
+		'position': position,
+		'tracks': tracks
+	}, '*');
+		
+	
+}
 
 var Playlist = function () {
 
@@ -255,11 +310,15 @@ window.addEventListener('message', function (event) {
 		Search.lists[event.data.type + ':' + event.data.query] = search;
 		console.log(event.data.query);
 	}
+	if (event.data.action == 'gotAlbumTracks') {
+		console.log("Received search result from shell");
+		albumTracks[event.data.uri] = event.data.tracks;
+	}
 	if (event.data.action === 'trackstarted') {
 		var uri = event.data.uri;
 	
 		$('.sp-track').removeClass('sp-now-playing');
-		$('.sp-table[data-uri="' + uri + '"] .sp-track').get(event.data.index).classList.add('sp-now-playing');
+		$('.sp-table[data-uri="' + uri + '"] .sp-track[data-track-index="' + event.data.index + '"]').addClass('sp-now-playing');
 		
 	}
 });
@@ -295,6 +354,20 @@ Album.fromURI = function (uri, callback) {
 	}, 100);
 	
 };
+
+var albumTracks = {};
+
+var getAlbumTracks = function (uri, callback) {
+	console.log("Asking shell for getting artist");
+	window.parent.postMessage({'action': 'getAlbumTracks', 'uri': uri}, '*');
+	var checker = setInterval(function () {
+		if (uri in albumTracks) {
+			console.log("Artist ready for consumption");
+			clearInterval(checker);
+			callback(albumTracks[uri]);
+		}
+	}, 100);
+}
 
 Artist.fromURI = function (uri, callback) {
 	console.log("Asking shell for getting artist");
@@ -360,19 +433,34 @@ function hideThrobber() {
 
 var AlbumView = function (album, options) {
 	var table = document.createElement('table');
+	table.setAttribute('width', '100%');
 	table.classList.add('sp-album');
+	console.log("ALBUM", album);
 	table.setAttribute('data-uri', album.uri);
 	var td1 = document.createElement('td');
-	td1.innerHTML = '<img src="' + album.image + '" width="64">';
+	td1.innerHTML = '<img src="' + album.images[0].url + '" width="256px">';
 	td1.setAttribute('valign', 'top');
+	td1.setAttribute('width', '256px');
+	td1.style.paddingRight = '13pt';
 	var td2 = document.createElement('td');
 	td2.setAttribute('valign', 'top');
-	td2.innerHTML = '<h3><a href="' + album.uri + '">' + album.name + '</a></h3>';
+	td2.innerHTML = '<h3><a data-uri="' + album.uri + '">' + album.name + '</a></h3>';
+	console.log(td2.innerHTML);
 	//alert(album.tracks);
-	var contextView = new ContextView(album, {'fields': ['title', 'duration', 'popularity']});
-	td2.appendChild(contextView.node);
+	var self = this;
+	getAlbumTracks(album.uri, function (tracks) {
+		album.tracks = tracks;
+		var contextView = new ContextView(album, {'fields': ['title', 'duration', 'popularity']});
+		td2.appendChild(contextView.node);
+	});
+	table.appendChild(td1);
 	table.appendChild(td2);
+	console.log(table);
 	this.node = table;
+	this.node.style.marginBottom = '26pt';
+	this.node.style.marginTop = '26pt';
+	this.node.style.paddingLeft = '26pt';
+
 }
 
 $(document).on('click', 'a', function (event) {

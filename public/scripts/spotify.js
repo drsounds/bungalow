@@ -3,6 +3,7 @@ var spotifyEngine = require('node-spotify')({ appkeyFile: 'spotify_appkey.key',t
 var SpotifyPlayer = function () {
 	var self = this;
 	this.spotify = spotifyEngine;
+	this.cache = {};
 	this.spotify.on({
 		ready: function (args) {
 			console.log(spotifyEngine);
@@ -25,6 +26,10 @@ var SpotifyPlayer = function () {
 	
 	this.callbacks = {};
 };
+
+SpotifyPlayer.prototype.addToCache = function (resource) {
+	this.cache[resource.uri] = resource;
+}
 
 SpotifyPlayer.prototype.events = {};
 
@@ -82,6 +87,37 @@ SpotifyPlayer.prototype.login = function (username, password) {
 	
 }
 
+/**
+ * Adds songs to a playlist
+ **/
+SpotifyPlayer.prototype.addTracksToPlaylist = function (uris, position, playlistURI) {
+	var tracks = [];
+	console.log("Adding tracks to playlist " + playlistURI);
+	for (var i = 0; i < uris.length; i++) {
+		var uri = uris[i];
+		var track = this.spotify.createFromLink(uris[i]);
+		tracks.push(track);
+		console.log("Added track " + uri);
+	}
+	var playlist = this.spotify.createFromLink(playlistURI);
+	console.log("Got playlist " + playlistURI);
+	console.log("Adding tracks to playlist " + playlistURI);
+	playlist.addTracks(tracks, position);
+	console.log("Added tracks to playlist " + playlistURI);
+
+}
+
+SpotifyPlayer.prototype.getAlbumTracks = function (uri, callback) {
+	var parts = uri.split(/\:/g);
+	$.getJSON('https://api.spotify.com/v1/albums/' + parts[2] + '/tracks', function (data) {
+		console.log(data);
+		var tracks = data.items.map(function (track) {
+			track.duration = track.duration_ms / 1000;
+			return track;
+		});
+		callback(tracks);
+	});
+};
 
 
 SpotifyPlayer.prototype.search = function (query, limit, offset, type, callback) {
@@ -103,24 +139,28 @@ SpotifyPlayer.prototype.loadPlaylist = function (uri, callback) {
 	var playlist = this.spotify.createFromLink(uri);
 	
 	console.log("Waiting for playlist to load", playlist);
-	this.spotify.waitForLoaded([playlist], function (playlist) {
-		playlist.on({
-		    playlistRenamed: function(err, playlist) {
+	if (playlist == null) {
+		this.spotify.waitForLoaded([playlist], function (playlist) {
+			playlist.on({
+			    playlistRenamed: function(err, playlist) {
 
-		    },
-		    tracksAdded: function(err, playlist, track, position) {
+			    },
+			    tracksAdded: function(err, playlist, track, position) {
 
-		    },
-		    tracksMoved: function(err, playlist, trackIndices, newPosition) {},
-		    tracksRemoved: function(err, playlist, trackIndices) {},
-		    trackCreatedChanged: function(err, playlist, position, user, date) {},
-		    trackSeenChanged: function(err, playlist, position, seen) {},
-		    trackMessageChanged: function(err, playlist, position, message) {}
+			    },
+			    tracksMoved: function(err, playlist, trackIndices, newPosition) {},
+			    tracksRemoved: function(err, playlist, trackIndices) {},
+			    trackCreatedChanged: function(err, playlist, position, user, date) {},
+			    trackSeenChanged: function(err, playlist, position, seen) {},
+			    trackMessageChanged: function(err, playlist, position, message) {}
+			});
+			console.log("Playlist loaded", playlist);
+			console.log(playlist);
+			callback(playlist);
 		});
-		console.log("Playlist loaded", playlist);
-		console.log(playlist);
+	} else {
 		callback(playlist);
-	});
+	}
 }
 
 SpotifyPlayer.prototype.createPlaylist = function (title, callback) {
@@ -141,6 +181,7 @@ SpotifyPlayer.prototype.createPlaylist = function (title, callback) {
 SpotifyPlayer.prototype.getTopList = function (uri, callback) {
 	var parts = uri.split(/\:/g);
 	var country = parts[3];
+	var self = this;
 	$.getJSON('https://api.spotify.com/v1/search?q=year:' + new Date().getFullYear()  + ( country !== 'world' ? '&market=' + country.toUpperCase() : '') + '&type=track&limit=50', function (data) {
 		var tracks = data.tracks.items;
 		tracks = tracks.sort(function (t1, t2) {
@@ -150,6 +191,9 @@ SpotifyPlayer.prototype.getTopList = function (uri, callback) {
 			track.duration = track.duration_ms / 1000;
 			return track;
 		});
+		for (var i = 0; i < tracks.length; i++) {
+			self.addToCache(tracks[i]);
+		}
 		callback({
 			'title': 'Top list',
 			'tracks': tracks,
@@ -198,25 +242,29 @@ SpotifyPlayer.prototype.getArtist = function (uri, callback) {
 
 SpotifyPlayer.prototype.getAlbum = function (uri, callback) {
 	var parts = uri.split(/\:/g);
+	var self = this;
 	$.getJSON('https://api.spotify.com/v1/albums/' + parts[2], function (album) {
 		album.image = album.images[0].url;
 		album.tracks = album.tracks.items;
 		album.tracks = album.tracks.map(function (track) {
 			track.duration = track.duration_ms / 1000;
+			self.addToCache(track);
 			return track;
 		});
 		callback(album);
 	});
 }
 
-SpotifyPlayer.prototype.getPlaylistTracks = function (playlist, callback) {
-	console.log("Waiting for loaded tracks");
+SpotifyPlayer.prototype.resolveTracks = function (uris, callback) {
+	var _tracks = [];
 	var tracks = [];
-	var _tracks = playlist.getTracks();
-	console.log(_tracks.length);
+	for (var i = 0; i < uris.length; i++) {
+		_tracks.push(this.spotify.createFromLink(uris[i]));
+	}
+	var countTracks = uris.length;
 	this.spotify.waitForLoaded(_tracks, function (track) {
 		//console.log("Got tracks");	
-		tracks.push({
+		var track = ({
 			'name': track.name + '',
 			'uri': track.link + '',
 			'artists': JSON.parse(JSON.stringify(track.artists)),
@@ -227,15 +275,49 @@ SpotifyPlayer.prototype.getPlaylistTracks = function (playlist, callback) {
 				'name': 'Dr. Sounds'
 			}
 		});
+		self.addToCache(track);
+		tracks.push(track);
 	});
 	var inz = setInterval(function () {
-		console.log(tracks.length);
-		if (tracks.length === playlist.numTracks) {
+		if (countTracks <= tracks.length) {
 			clearInterval(inz);
 			console.log("Sending back tracks callback");
 			callback(tracks);
 		}
-	}, 100);
+	}, 1000);
+}
+
+SpotifyPlayer.prototype.getPlaylistTracks = function (playlist, callback) {
+	console.log("Waiting for loaded tracks");
+	var tracks = [];
+	var _tracks = playlist.getTracks();
+	var self = this;
+	console.log(_tracks.length);
+	var countTracks = playlist.numTracks;
+	this.spotify.waitForLoaded(_tracks, function (track) {
+		//console.log("Got tracks");	
+		var track = ({
+			'name': track.name + '',
+			'uri': track.link + '',
+			'artists': JSON.parse(JSON.stringify(track.artists)),
+			'album': JSON.parse(JSON.stringify(track.album)),
+			'user': {
+				'link': 'spotify:user:drsounds',
+				'canoncialName': 'drsounds',
+				'name': 'Dr. Sounds'
+			}
+		});
+		self.addToCache(track);
+		tracks.push(track);
+	});
+	var inz = setInterval(function () {
+		if (countTracks <= tracks.length) {
+			clearInterval(inz);
+			console.log("Sending back tracks callback");
+			callback(tracks);
+		}
+	}, 1000);
+	
 }
 SpotifyPlayer.prototype.reorderTracks = function (playlist, indices, newPosition) {
 	playlist.reorderTracks(indices, newPosition);
