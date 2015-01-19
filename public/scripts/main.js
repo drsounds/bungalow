@@ -394,7 +394,6 @@ Shell.prototype.createApp = function (appId, callback) {
 	console.log('/apps/' + appName + '/index.html');
 	appFrame.setAttribute('id', 'app_' + appId + '');
 	appFrame.classList.add('sp-app');
-	appFrame.setAttribute('nwdisable', 'nwdisable');
 	appFrame.setAttribute('frameborder', '0');
 	appFrame.setAttribute('width', "100%");
 	appFrame.style = 'width:100%; height: 100%';
