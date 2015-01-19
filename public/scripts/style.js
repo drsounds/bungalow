@@ -1,4 +1,4 @@
-setTimeout(function () {
+
 var BUNGALOW_THEME = 'bungalow';
 
 
@@ -33,27 +33,8 @@ var settings = bungalow_load_settings();
 BUNGALOW_THEME = settings.theme;
 
 var link = document.createElement('link');
-link.setAttribute('rel', 'stylesheet/less');
+link.setAttribute('rel', 'stylesheet');
 link.setAttribute('type', 'text/css');
-link.setAttribute('href', 'app://mercy/public/themes/' + BUNGALOW_THEME + '/css/style.less');
+link.setAttribute('href', 'app://mercy/public/themes/' + BUNGALOW_THEME + '/css/style.css');
 document.head.appendChild(link);
-less = {
-    env: 'development',
-    async: true,
-    fileAsync: true, 
-    poll: 1000, 
-    functions: {}, 
-    dumpLineNumbers: 'comments', 
-    relativeUrls: false, 
-    rootpath: ''
-};
-setTimeout(function () {	
-	var scriptLess = document.createElement('script');
-	scriptLess.setAttribute('src', 'app://mercy/public/scripts/vendor/less.js');
-	scriptLess.setAttribute('type', 'text/javascript');
-	document.head.appendChild(scriptLess);
-	setTimeout(function () {
-		less.watch();
-	}, 10);
-}, 100);
-}, 10);
+
