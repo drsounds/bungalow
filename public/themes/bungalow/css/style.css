@@ -145,7 +145,7 @@ hr {
 .sp-table th {
   height: 19px;
   color: white;
-  background-color: #7eb200;
+  background-color: #ffffff;
 }
 .sp-now-playing td {
   background-color: black;
@@ -177,8 +177,9 @@ hr {
 .sp-table td {
   color: #555555;
 }
-.sp-table thead {
-  background-color: #7eb200;
+.sp-table thead tr {
+  background-color: #ffffff;
+  border-bottom: 1pt solid #e6e6e6;
 }
 .sp-track:focus {
   background-color: white;
@@ -330,22 +331,22 @@ a[data-uri] {
 }
 .menu td.active {
   background-color: #89c200;
-  color: #73a300;
+  color: #ffffff;
   text-shadow: none;
 }
 .menu td.active .fa {
-  color: #73a300;
+  color: #ffffff;
 }
 .menu td.active a {
-  color: #73a300;
+  color: #ffffff;
 }
 .sp-track-selected td {
   background-color: #89c200;
-  color: #73a300;
+  color: #ffffff;
 }
 .sp-track-selected td,
 .sp-track-selected a {
-  color: #73a300;
+  color: #ffffff;
 }
 meter {
   -webkit-appearance: none;
@@ -423,7 +424,7 @@ meter::-webkit-meter-optimum-value {
   height: 23px;
   float: left;
   list-style: none;
-  color: #000000;
+  color: #555555;
   font-weight: bold;
   border-bottom: 3pt solid #7bad00;
   background-color: #fbfbfb;

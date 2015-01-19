@@ -26,13 +26,14 @@ window.onmessage = function (event) {
 			for (var i = 0; i < palettes.length; i++) {
 				var palette = palettes[i];
 				var option = document.createElement('option');
-				option.setAttribute('value', palette.colors.primary);
+				option.setAttribute('value', palette.colors.primary + ';' + palette.colors.secondary);
 				option.innerHTML = palette.title;
 				console.log(option);
 				$('#palette').append(option);
 			}
-			$('#palette').val(event.data.config.primaryColor);
+			$('#palette').val(event.data.config.primaryColor + ';' + event.data.config.secondaryColor);
 			$('#theme').val(event.data.config.theme);
+			$('#light').prop('checked', event.data.config.light);
 
 		});
 	}
@@ -41,7 +42,10 @@ window.onmessage = function (event) {
 $('form').submit(function (event) {
 	event.preventDefault();
 	var config = $(this).serializeObject();
-	config.primaryColor = $('#palette').val();
+	var colors = $('#palette').val().split(";");
+	config.primaryColor = colors[0];
+	config.secondaryColor = colors[1];
 	config.theme = $('#theme').val();
+	config.light = $('#light').is(':checked');
 	window.parent.postMessage({'action': 'setConfig', 'config': config}, '*');
 });

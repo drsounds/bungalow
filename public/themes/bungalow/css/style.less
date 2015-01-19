@@ -1,7 +1,11 @@
 @import url(http://fonts.googleapis.com/css?family=Roboto+Condensed:300italic,300,400);
 @brand-primary: @primary-color;//#FB8521;//#31B639;//#A0D468;//#77A800;
-@background-color: #f8f8f8;// #f0f0f0;
-@foreground-color: #555;
+@dark: #555;// #f0f0f0;
+@light: #f8f8f8;
+@background-color: @islight; // #f0f0f0;
+@foreground-color: @isdark;
+
+
 @tabbar-bg-color: lighten(@background-color, 10%);
 @tabbar-active-bg: lighten(@background-color, 1);
 @tabbar-active-fg: lighten(@brand-primary, 1);
@@ -9,11 +13,11 @@
 @tabbar-active-border-color: darken(@background-color, 1);
 @selection-bg-color: lighten(@brand-primary, 5);
 @header-bg-color: @brand-primary;
-@selection-fg-color: darken(@brand-primary, 1);
+@selection-fg-color: lighten(@brand-primary, 100%);
 @aside-background-color: darken(@background-color, 5);
 @aside-border-color: lughten(@foreground-color, 1);
 @aside-foreground-color:@foreground-color;
-@table-column-bg-color: lighten(@brand-primary, 2);
+@table-column-bg-color: lighten(@background-color, 12%);
 @table-column-fg-color: white;
 header, footer, aside, main {
 
@@ -198,8 +202,9 @@ hr {
 .sp-table td {
 	color: @foreground-color;
 }
-.sp-table thead {
+.sp-table thead tr {
 	background-color: @table-column-bg-color;
+	border-bottom: 1pt solid darken(@table-column-bg-color, 10%);
 }
 .sp-track:focus {
 	background-color: @table-column-fg-color;
@@ -467,7 +472,7 @@ meter {
 	height: 23px;
 	float: left;
 	list-style: none;
-	color: darken(@foreground-color, 80%);
+	color: @foreground-color;
 	font-weight: bold;
 	border-bottom: 3pt solid @tabbar-active-fg;
 	background-color: @tabbar-active-bg;

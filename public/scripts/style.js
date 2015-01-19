@@ -17,6 +17,7 @@ function bungalow_load_settings () {
 			'bungalows': {},
 			'apps': [],
 			'theme': 'bungalow',
+			'light': true,
 			'primaryColor': '#FB8521'
 		};
 	}
@@ -37,9 +38,14 @@ function bungalow_save_settings (settings) {
 	var theme = fs.readFileSync(process.env.PWD + '/public/themes/' + settings.theme + '/css/style.less', {'encoding': 'utf-8'});
 	console.log(process.env.PWD + '/public/themes/' + settings.theme + '/css/style.less');
 	theme = theme.replace(/\@primary-color/, settings.primaryColor);
+	theme = theme.replace(/\@primary-color/, settings.secondaryColor);
+	theme = theme.replace("@islight", settings.light ? '@light' : '@dark');
+	theme = theme.replace("@isdark", !settings.light ? '@light' : '@dark');
+	
+	//alert(theme);
 	less.render(theme, {}, function (error, output) {
 		console.log(error, output);
-		alert(output);
+		//alert(output);
 		fs.writeFileSync(process.env.PWD + '/public/themes/' + settings.theme + '/css/style.css', output.css);
 	});
 }

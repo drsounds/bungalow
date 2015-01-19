@@ -145,8 +145,8 @@ var Shell = function () {
 			console.log("Config", config);
 			if (config) {
 				bungalow_save_settings(config);
-				if (prompt("You must restart Bungalow in order apply the new settings. Want to restart?")) {
-					document.location.reload(true);
+				if (confirm("You must restart Bungalow in order apply the new settings. Want to restart?")) {
+					window.reload(true);
 				}
 			}
 

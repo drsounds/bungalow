@@ -2,19 +2,36 @@
 	{
 		"title": "Exotic",
 		"colors": {
-			"primary": "#FB8521"
+			"primary": "#FB8521",
+			"secondary": "#FB8521"
 		}
 	},
 	{
 		"title": "Spotify",
 		"colors": {
-			"primary": "#77A800"
+			"primary": "#77A800",
+			"secondary": "#77A800"
+		}
+	},
+	{
+		"title": "Draw",
+		"colors": {
+			"primary": "#A0D468",
+			"secondary": "#A0D468"
 		}
 	},
 	{
 		"title": "Ocean Love",
 		"colors": {
-			"primary": "#A0D468"
+			"primary": "#4FC1E9",
+			"secondary": "#48CFAD"
+		}
+	},
+	{
+		"title": "Pink",
+		"colors": {
+			"primary": "#EC87C0",
+			"secondary": "#EC87C0"
 		}
 	}
 ]
