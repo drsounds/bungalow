@@ -438,7 +438,7 @@ var AlbumView = function (album, options) {
 	console.log("ALBUM", album);
 	table.setAttribute('data-uri', album.uri);
 	var td1 = document.createElement('td');
-	td1.innerHTML = '<img src="' + album.images[0].url + '" width="170px">';
+	td1.innerHTML = '<img class="shadow" src="' + album.images[0].url + '" width="170px">';
 	td1.setAttribute('valign', 'top');
 	td1.setAttribute('width', '170px');
 	td1.style.paddingRight = '13pt';
