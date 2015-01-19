@@ -23,6 +23,7 @@ window.addEventListener('message', function (event) {
 			contextView.node.classList.add('sp-playlist');
 			contextView.node.setAttribute('id', 'playlist_' + uri.replace(/\:/g, '__'));
 			$('#list').append(contextView.node);
+			$('#title').html(playlist.name);
 			hideThrobber();
 		});
 	}
