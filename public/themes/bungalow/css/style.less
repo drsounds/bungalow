@@ -1,19 +1,20 @@
-
-@brand-primary: #77A800;
-@background-color: lighten(@brand-primary, 90);// #f0f0f0;
+@import url(http://fonts.googleapis.com/css?family=Roboto+Condensed:300italic,300,400);
+@brand-primary: @primary-color;//#FB8521;//#31B639;//#A0D468;//#77A800;
+@background-color: #f8f8f8;// #f0f0f0;
 @foreground-color: #555;
-@tabbar-bg-color: darken(@background-color, 1);
+@tabbar-bg-color: lighten(@background-color, 10%);
 @tabbar-active-bg: lighten(@background-color, 1);
+@tabbar-active-fg: lighten(@brand-primary, 1);
 @tabbar-border-color: darken(@background-color, 1);
 @tabbar-active-border-color: darken(@background-color, 1);
 @selection-bg-color: lighten(@brand-primary, 5);
 @header-bg-color: @brand-primary;
 @selection-fg-color: darken(@brand-primary, 1);
-@aside-background-color: #f5f5ff;
+@aside-background-color: darken(@background-color, 5);
 @aside-border-color: lughten(@foreground-color, 1);
 @aside-foreground-color:@foreground-color;
 @table-column-bg-color: lighten(@brand-primary, 2);
-@table-column-fg-color: lighten(@brand-primary, 12);
+@table-column-fg-color: white;
 header, footer, aside, main {
 
 	box-sizing: border-box;
@@ -76,25 +77,13 @@ html {
 	padding: 10pt;
 }
 .btn {
+	background-color: darken(@background-color, 5);
+	color: @foreground-color;
 	padding: 3pt;
-	box-sizing: border-box;
-	background-color: #eee;
-	color: black;
-	border: 1px solid #111;
-	border-radius: 1pt;
-	border-radius: 50pt;
-	
-	border: 1px solid #353535;
-	background: #dfdfdf; /* Old browsers */
-background: -moz-linear-gradient(top,  #dfdfdf 0%, #b6b6b6 100%); /* FF3.6+ */
-background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#dfdfdf), color-stop(100%,#b6b6b6)); /* Chrome,Safari4+ */
-background: -webkit-linear-gradient(top,  #dfdfdf 0%,#b6b6b6 100%); /* Chrome10+,Safari5.1+ */
-background: -o-linear-gradient(top,  #dfdfdf 0%,#b6b6b6 100%); /* Opera 11.10+ */
-background: -ms-linear-gradient(top,  #dfdfdf 0%,#b6b6b6 100%); /* IE10+ */
-background: linear-gradient(to bottom,  #dfdfdf 0%,#b6b6b6 100%); /* W3C */
-filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#dfdfdf', endColorstr='#b6b6b6',GradientType=0 ); /* IE6-9 */
-	box-shadow:inset 0px 0px 3px #b8b8b8, inset 0px 1px 1px #e0e0e0;
-	text-shadow: 0px 1px 0px rgba(255, 255, 255, .25);
+	border: none;
+}
+.btn:active {
+	background-color: darken(@background-color, 12);
 }
 .btn:focus {
 	outline: none;
@@ -111,16 +100,17 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#dfdfdf', end
 	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#bababa', endColorstr='#7c7c7c',GradientType=0 ); /* IE6-9 */
 
 }
-.btn-black {
+.btn-primary {
 	border: none;
-	background-color: #111;
+	background-color: @brand-primary;
+	color: lighten(@brand-primary, 15);
 	color: white;
 	padding: 5px;
 }
 body {
 	background-color: @background-color;
 	-webkit-user-select: none;
-	font-family: "Tahoma";
+	font-family: "Helvetica";
 	font-size: 11px;
 	color: @foreground-color;
 	display: flex;
@@ -167,9 +157,7 @@ hr {
 }
 .sp-table th {
 	height: 19px;
-	background-image: url('../images/columnheader_normal.png');
-	color: black;
-	color: lighten(@table-column-bg-color, 10);
+	color: @table-column-fg-color;
 	background-color: @table-column-bg-color;
 }
 .sp-now-playing td {
@@ -282,9 +270,10 @@ main {
 	height: 100%;
 }
 .divider {
-	background-color: #616161;
-	color: white;
+	border-bottom: 1px solid darken(@background-color, 12%);
+	color: @foreground-color;
 	height: 22px;
+	font-size: 11pt;
 	box-sizing: border-box;
 }
 footer, header {
@@ -362,7 +351,7 @@ h1, h2, h3, h4 {
 	margin: 0;
 }
 .menu tr td .fa {
-	color: @brand-primary;
+	color: lighten(saturate(@brand-primary, -20%), 5%);
 	font-size: 10pt;
 }
 a[data-uri] {
@@ -451,7 +440,7 @@ meter {
 
 .sp-tabbar {
 	background-color: @tabbar-bg-color;
-	border-bottom: 1px solid @tabbar-border-color;
+	border-bottom: 1px solid @tabbar-active-bg;
 	border-top: 1px solid @tabbar-border-color;
 	height: 23px;
 	top: 0px;
@@ -474,11 +463,14 @@ meter {
 	border-left: 1px solid darken(@background-color, 1);;
 	border-right: 1px solid darken(@background-color, 1);;
 	border-top: 1px solid darken(@background-color, 1);;
+	/*box-shadow:inset 0px 1px 2px rgba(0, 0, 0, .005);*/
 	height: 23px;
 	float: left;
 	list-style: none;
-	color: white;
-	background: @tabbar-active-bg;
+	color: darken(@foreground-color, 80%);
+	font-weight: bold;
+	border-bottom: 3pt solid @tabbar-active-fg;
+	background-color: @tabbar-active-bg;
 }
 
 .sp-dragover {

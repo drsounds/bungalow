@@ -19,7 +19,8 @@
   },
   "node-remote": "http://*",
   "dependencies": {
-    "node-spotify": "*"
+    "node-spotify": "*",
+    "less": "*"
   },
   "author": "",
   "license": "ISC"

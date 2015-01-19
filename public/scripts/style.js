@@ -16,16 +16,32 @@ function bungalow_load_settings () {
 		return {
 			'bungalows': {},
 			'apps': [],
-			'theme': 'bungalow'
+			'theme': 'bungalow',
+			'primaryColor': '#FB8521'
 		};
 	}
 }
 
 function bungalow_save_settings (settings) {
+	console.log("Settings", settings);
+	if (!settings) {
+		return;
+	}
 	var path = require('path');
 	var fs = require('fs');
 	var path = process.env['HOME'] + path.sep + 'bungalow.json';
 	fs.writeFileSync(path, JSON.stringify(settings));
+
+	// Set theme variables
+	var less = require('less');
+	var theme = fs.readFileSync(process.env.PWD + '/public/themes/' + settings.theme + '/css/style.less', {'encoding': 'utf-8'});
+	console.log(process.env.PWD + '/public/themes/' + settings.theme + '/css/style.less');
+	theme = theme.replace(/\@primary-color/, settings.primaryColor);
+	less.render(theme, {}, function (error, output) {
+		console.log(error, output);
+		alert(output);
+		fs.writeFileSync(process.env.PWD + '/public/themes/' + settings.theme + '/css/style.css', output.css);
+	});
 }
 
 var settings = bungalow_load_settings();

@@ -132,7 +132,25 @@ var Shell = function () {
 				event.source.postMessage({'action': 'gotAlbum', 'data': album}, '*');
 			});
 		}
+		if (event.data.action === 'getConfig') {
+			var config = bungalow_load_settings();
+			console.log(config);
+			event.source.postMessage({'action': 'gotConfig', 'config': config}, '*');
+		}
+		if (event.data.action === 'setConfig') {
 
+			var config = bungalow_load_settings();
+			console.log(event.data.config);
+			$.extend(config, event.data.config); // Merge two configs
+			console.log("Config", config);
+			if (config) {
+				bungalow_save_settings(config);
+				if (prompt("You must restart Bungalow in order apply the new settings. Want to restart?")) {
+					document.location.reload(true);
+				}
+			}
+
+		}
 		if (event.data.action === 'search') {
 			spotify.search(event.data.query, event.data.limit, event.data.offset, event.data.type, function (search) {
 				
@@ -245,7 +263,7 @@ Shell.prototype.login = function (event) {
 	spotify.addEventListener('ready', function () {
 		$('#loginView').fadeOut(function () {
 			$('.darken').fadeOut(function () {
-				self.navigate('spotify:user:drsounds:playlist:763eLyGqbJrXpuwdI5tlPV');
+				self.navigate('spotify:config');
 
 				// Get user playlists
 				spotify.getUserPlaylists(function (playlists) {
