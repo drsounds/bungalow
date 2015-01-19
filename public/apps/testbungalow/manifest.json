@@ -1,0 +1,8 @@
+{
+    "BundleType": "Bungalow",
+    "BundleName": {
+    	"en": "Sample application"
+	},
+	"socket": "album-view",
+	"BundleIdentifier": "testbungalow"
+}

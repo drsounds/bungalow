@@ -12,17 +12,26 @@ window.addEventListener('message', function (event) {
 		var uri = 'spotify:toplist:country:' + id;
 
 		$('.sp-album').hide();
-		TopList.fromURI(uri, function (album) {
+		TopList.fromURI(uri + ':tracks', function (album) {
 			$('#playlist').html("");
 			console.log("Got album", album);
-			var contextView = new ContextView(album, {'headers': true, 'fields': ['title', 'artist',  'duration', 'popularity', 'album']});
+			var contextView = new ContextView(album, {'headers': false, 'fields': ['title', 'artist',  'popularity']});
 			contextView.node.classList.add('sp-toplist');
 			contextView.node.setAttribute('id', 'toplist_' + uri.replace(/\:/g, '__'));
-			$('#playlist').append(contextView.node);
+			$('#toplist1').append(contextView.node);
 			
 			hideThrobber();
 		});
-		
+		TopList.fromURI(uri + ':albums', function (album) {
+			$('#playlist').html("");
+			console.log("Got album", album);
+			var contextView = new ContextView(album, {'headers': false, 'fields': ['title', 'artist',  'popularity']});
+			contextView.node.classList.add('sp-toplist');
+			contextView.node.setAttribute('id', 'toplist_' + uri.replace(/\:/g, '__'));
+			$('#toplist2').append(contextView.node);
+			
+			hideThrobber();
+		});
 	}
 
 })

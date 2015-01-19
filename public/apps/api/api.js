@@ -384,3 +384,35 @@ $(document).on('mousedown', '.sp-track', function (event) {
 	$('.sp-track').removeClass('sp-track-selected');
 	$(this).addClass('sp-track-selected');
 });
+
+
+/**
+ * Bungalow specification
+ **/
+var Bungalow = function (section, options) {
+	this.node = document.createElement('iframe');
+}
+
+var App = function (data) {
+	this.data = data;
+};
+
+App.find = function (callback) {
+	console.log("Listing apps");
+	$.getJSON('http://appfinder.aleros.webfactional.com/api/index.php', function (apps) {
+		callback(apps);
+	});
+}
+
+App.fromURI = function (uri) {
+	var parts = uri.split(/\:/g);
+	var appId = parts[2];
+
+}
+
+App.prototype.install = function () {
+	var settings = bungalow_get_settings();
+	settings.apps.push(this.data);
+}
+
+

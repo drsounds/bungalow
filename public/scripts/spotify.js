@@ -74,7 +74,7 @@ SpotifyPlayer.prototype.seek = function (position) {
 
 SpotifyPlayer.prototype.login = function (username, password) {
 	if (this.spotify.rememberedUser) {
-		alert("A");
+		//alert("A");
 		this.spotify.login(username, password, false, true);
 	} else {
 		this.spotify.login(username, password, true, false);
@@ -173,12 +173,12 @@ SpotifyPlayer.prototype.getUserPlaylists = function (callback, callback2) {
 
 	}
 	callback(playlists);
-/*	this.spotify.waitForLoaded(_playlists, function (playlist) {
+	this.spotify.waitForLoaded(_playlists, function (playlist) {
 		callback2({
 			'name': playlist.name,
 			'uri': playlist.link
 		});
-	});*/
+	});
 }
 
 SpotifyPlayer.prototype.getArtist = function (uri, callback) {

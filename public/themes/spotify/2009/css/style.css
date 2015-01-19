@@ -13,6 +13,17 @@ h1 {
 	display: none;
 	flex-direction: column;
 }
+.app-icon {
+	width: 128px;
+	height: 128px;
+	border-radius: 15px;
+	overflow: hidden;
+	border: 1px solid #eee;
+	background-size: cover;
+	background-color: white;
+	background-image: url('http://appfinder.aleros.webfactional.com/images/app.png');
+	box-shadow:inset 0px 64px 3px rgba(255, 255, 255, .25);
+}
 html {
 	display: flex;
 }
@@ -288,7 +299,8 @@ img.shadow {
 }
 
 .menu tr td {
-	padding: 5pt;
+	padding: 3pt;
+	padding-left: 5px;
 	text-shadow: 0px 1px 0px rgba(0, 0, 0, .5);
 }
 .menu tr a {
@@ -313,6 +325,11 @@ html, body {
 	margin: 5pt;
 	min-width: 120pt;
 }
+.toplist-header {
+	background-color: #111;
+	padding: 15pt;
+	font-size:11pt;
+}
 h2.divider {
 	padding: 2pt;
 	display: block;
@@ -334,9 +351,10 @@ a[data-uri] {
 .menu td.active {
 	background-color: #b6e1fd;
 	color: #333377;
+	text-shadow: none;
 }
-.menu td.active td .fa {
-	color: #333377;
+.menu td.active .fa {
+	color: #000033;
 }
 .menu td.active a {
 	color: #000033;

@@ -81,7 +81,7 @@ var Shell = function () {
 			self.context = context;
 			console.log(context);
 			console.log("Context", context);
-			alert(context.uri);
+			//alert(context.uri);
 			event.source.postMessage({'action': 'trackstarted', 'index': context.currentIndex, 'uri': context.uri}, '*');
 			self.playTrack(context.tracks[context.currentIndex]);
 		}
@@ -113,7 +113,7 @@ var Shell = function () {
 		}
 
 		if (event.data.action === 'getPlaylist') {
-			console.log("TA", event.data.uri, self.loadedResources);
+			//console.log("TA", event.data.uri, self.loadedResources);
 				//alert(event.data.uri);
 
 				
@@ -198,7 +198,7 @@ Shell.prototype.login = function (event) {
 	spotify.addEventListener('ready', function () {
 		$('#loginView').fadeOut(function () {
 			$('.darken').fadeOut(function () {
-				self.navigate('spotify:search:friday');
+				self.navigate('spotify:finder');
 
 				// Get user playlists
 				spotify.getUserPlaylists(function (playlists) {
@@ -257,15 +257,15 @@ Shell.prototype.navigate = function (url, nohistory) {
 
 	} else {
 
+		var self = this;
 
-
-		var appFrame = this.createApp(appId);
-		appFrame.onload = function (event) {
-			console.log("Sending initial message");
-			appFrame.contentWindow.postMessage({'action': 'navigate', 'arguments': args}, '*');
-		};
-		this.activateApp(appId);
-
+		var appFrame = this.createApp(appId, function (appFrame) {
+			appFrame.onload = function (event) {
+				console.log("Sending initial message");
+				appFrame.contentWindow.postMessage({'action': 'navigate', 'arguments': args}, '*');
+			};
+			self.activateApp(appId);
+		});
 	}
 
 	$('#menu td').removeClass('active');
@@ -305,7 +305,7 @@ Shell.prototype.getAppFrame = function (appId) {
 }
 
 
-Shell.prototype.createApp = function (appId) {
+Shell.prototype.createApp = function (appId, callback) {
 	var path = require('path');
 	var fs = require('fs');
 	var appDir = 'public' + path.sep + 'apps' + path.sep + appId + path.sep;
@@ -313,13 +313,33 @@ Shell.prototype.createApp = function (appId) {
 	// check if app is already existing
 	// check if directory exists
 	var appName = 'notfound';
+	var self = this;
 	var appURL = '';
 	if (fs.existsSync(appDir) && fs.existsSync(manifestFilePath)) {
-			var manifest = JSON.parse(fs.readFileSync(manifestFilePath));
-			appName = appId;
-			appURL = '/public/apps/' + appName + '/index.html';
+		var manifest = JSON.parse(fs.readFileSync(manifestFilePath));
+		appName = appId;
+		appURL = '/public/apps/' + appName + '/index.html';
 	}  else {
+		// Check if app is available on App Finder
+		$.getJSON('http://appfinder.aleros.webfactional.com/api/index.php?id=' + appId, function (app) {
+			appURL = app.app_url;
+			appName = app.id;
+			var appFrame = document.createElement('iframe');
+			appFrame.setAttribute('src', appURL);
+			console.log('/apps/' + appName + '/index.html');
+			appFrame.setAttribute('id', 'app_' + appId + '');
+			appFrame.classList.add('sp-app');
+			appFrame.setAttribute('nwdisable', 'nwdisable');
+			appFrame.setAttribute('frameborder', '0');
+			appFrame.setAttribute('width', "100%");
+			appFrame.style = 'width:100%; height: 100%';
+			$('#viewstack').append(appFrame);
+			$(appFrame).css({'height': $('#viewstack').height()});
+			self.apps[appId] = appFrame;
 
+			callback(appFrame);
+		});
+		return;
 	}
 
 	var appFrame = document.createElement('iframe');
@@ -335,7 +355,7 @@ Shell.prototype.createApp = function (appId) {
 	$(appFrame).css({'height': $('#viewstack').height()});
 	this.apps[appId] = appFrame;
 
-	return appFrame;
+	callback(appFrame);
 }
 
 window.onresize = function () {
