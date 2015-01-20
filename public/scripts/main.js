@@ -222,7 +222,8 @@ var Shell = function () {
 		'uri': ''
 	};
 	var playback = setInterval(function () {
-		$('#track_position').attr('value', spotify.getPosition());
+		document.querySelector('#track_position').setAttribute('value', spotify.getPosition());
+		console.log("Position");
 	}, 100);
 	(function ($) {
 		$.fn.menulize = function (options) {
@@ -260,7 +261,9 @@ Shell.prototype.playTrack = function (track) {
 	console.log("Duration", track.duration);
 	$('#song_title').html(track.name);
 	$('#song_arist').html(track.artists[0].name);
+	console.log("Getting image for track");
 	spotify.getImageForTrack(track, function (image) {
+		console.log("Got image for track");
 		$('#nowplaying_image').css({'background-image': 'url("' + image + '")'});
 	});	
 

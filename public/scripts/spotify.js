@@ -67,8 +67,9 @@ SpotifyPlayer.prototype.playTrack = function (uri) {
 }
 
 SpotifyPlayer.prototype.getImageForTrack = function (track, callback) {
-	var parts = track.uri.split(/\:/g);
-	$.get('https://api.spotify.com/v1/tracks/' + parts[1], function (track) {
+	console.log(track);
+	var parts = track.link.split(/\:/g);
+	$.get('https://api.spotify.com/v1/tracks/' + parts[2], function (track) {
 		callback(track.album.images[0].url);
 	});
 }
@@ -232,6 +233,7 @@ SpotifyPlayer.prototype.getArtist = function (uri, callback) {
 			$.getJSON('https://api.spotify.com/v1/artists/' + parts[2] + '/albums?album_type=album', function (albums) {
 				artist.singles = singles.items;
 				artist.albums = albums.items;
+				
 				//alert(artist.singles[0].name == artist.albums[0].name);
 				artist.image = artist.images[0].url;
 				callback(artist);

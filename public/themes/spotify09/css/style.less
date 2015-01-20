@@ -208,6 +208,11 @@ a:hover {
 	padding-left: 10pt;
 	color: #888;
 }
+#artist_image {
+	width: 132px;
+	height: 132px;
+	background-image: url('../img/artist_image.png');
+}
 .playlist-header h1 {
 	color: #f0f0f0;
 }
@@ -216,11 +221,15 @@ a:hover {
 	border-top: 1px solid #333;
 	display: flex;
 	flex-direction: column;
-
+	height: calc(179px + 51px);
 }
 #nowplaying_header {
-	height: 32pt;
+	height: 51px;
 	background-color: #888;
+	background-image: url('../images/nowplaying_header.png');
+	text-align: center;
+	color: black;
+	font-size: 11px;
 }
 #menu {
 	flex: 1;
@@ -272,6 +281,7 @@ footer {
 	background-color: #444;
 	width: 100%;
 	background-image: url('../img/footer.png');
+	  height: 42px;
 }
 .highlight {
 	border-radius: 5pt;

@@ -48,19 +48,12 @@ function bungalow_save_settings (settings) {
 		//alert(output);
 		fs.writeFileSync(process.env.PWD + '/public/themes/' + settings.theme + '/css/style.css', output.css);
 	});
+
+	var mainCSS = '@import url("' + settings.theme + '/css/style.css")';
+	fs.writeFileSync(process.env.PWD + '/public/themes/main.css', mainCSS);
 }
 
 var settings = bungalow_load_settings();
 
 BUNGALOW_THEME = settings.theme;
-
-var link = document.createElement('link');
-link.setAttribute('rel', 'stylesheet');
-link.setAttribute('type', 'text/css');
-if (location.protocol === 'http') {
-	link.setAttribute('href', 'http://127.0.0.1:9261/themes/' + BUNGALOW_THEME + '/css/style.css');
-} else {
-	link.setAttribute('href', 'app://bungalow/public/themes/' + BUNGALOW_THEME + '/css/style.css');
-}
-document.head.appendChild(link);
 

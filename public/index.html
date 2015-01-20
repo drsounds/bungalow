@@ -1,8 +1,9 @@
 <!doctype html>
 <html ng-app="MercyApp" style="width:100%; height:100%; ">
 	<head>
-		<title>Mercy</title>
+		<title>Bungalow</title>
 		<base href="app://bungalow/public/">
+		<link rel="stylesheet" href="themes/main.css">
 		<link rel="stylesheet" href="bower_components/font-awesome/css/font-awesome.css">
 		<script src="bower_components/jquery/dist/jquery.js"></script>
 		<script src="scripts/spotify.js"></script>
@@ -64,8 +65,8 @@
 						</table>
 					</div>
 
-					<div id="nowplaying" style="height:220pt">
-						<div id="nowplaying_header" style="height:30pt">
+					<div id="nowplaying" >
+						<div id="nowplaying_header">
 							<h3 id="song_title"></h3>
 							<p id="song_artist"></p>
 							<small id="song_album"></small>
@@ -81,11 +82,17 @@
 
 				</div>
 			</main>
-			<div style="height: 1px">
-			<input type="range" min="0" max="1" value="0" id="track_position">
-			</div>
-			<footer style="height: 32px">
-				
+			
+			<footer style="">
+				<div class="controls" style="text-align: center">
+					<i id="btnSkipBack" class="fa fa-fast-backward btn"></i>
+					<i id="btnPlay" class="fa fa-play btn" style="-webkit-transform: scale(1.5)"></i>
+					<i id="btnSkipNext" class="fa fa-fast-forward btn"></i>
+				</div>
+				<input type="range" style="width: 100%" min="0" max="1" value="0" id="track_position">
+				<div class="controls" style="width: 50pt">
+					<i class="fa fa-repeat"></i>
+				</div>
 			</footer>
 			<div class="darken"></div>
 			<div id="loginView" class="lightbox">

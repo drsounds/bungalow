@@ -21,6 +21,7 @@ window.addEventListener('message', function (event) {
 			
 				var albumView = new AlbumView(album);
 				$('#albums').append(albumView.node);
+				if (i < artist.albums.length - 1)
 				$('#albums').append(document.createElement('hr'));
 				
 			}
@@ -31,6 +32,7 @@ window.addEventListener('message', function (event) {
 		
 				var albumView = new AlbumView(single);
 				$('#singles').append(albumView.node);
+				if (i < artist.singles.length - 1)
 				$('#singles').append(document.createElement('hr'));
 			
 			}

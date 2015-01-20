@@ -1,3 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: api.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: api.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
+ * @module
+ **/
+
+/**
+ * A context
+ * @class
+ * @constructor
+ */
 var Context = function () {
 	this.currentApp = window.location.href.split(/\//g)[5];
 	console.log("Current app", this.currentApp);
@@ -36,12 +73,21 @@ HTMLTableRowElement.prototype.toTrack = function () {
 
 function context_to_tracks(elements) {
 	var tracks = [];
-	for( var i = 0 ; i < elements.length; i++) {
+	for( var i = 0 ; i &lt; elements.length; i++) {
 		var elm = elements[i];
 		tracks.push(elm.toTrack());
 	}
 	return tracks;
 }
+
+/**
+ * Plays a context at certain index
+ * @class
+ * @this {Context}
+ * @param {String} uri The context's URI
+ * @param {Integer} index The index of entry to play
+ * @return {void}
+ */
 
 Context.prototype.play = function (uri, index) {
 	console.log("Playing from context with uri" + uri);
@@ -88,9 +134,13 @@ $(document).on('dblclick', '.sp-track', function (event) {
 });
 
 function deci (number) {
-	return Math.round(number) < 10 ? '0' + Math.round(number) : Math.round(number);
+	return Math.round(number) &lt; 10 ? '0' + Math.round(number) : Math.round(number);
 }
-
+/**
+ * Converts second into MM:SS string
+ * @param  {Integer} seconds Seconds
+ * @return {String} A MM:SS
+ */
 function toMS (seconds) {
 	var minutes = Math.floor(seconds / 60);
 	var seconds = (seconds % 60) / 60;
@@ -99,6 +149,10 @@ function toMS (seconds) {
 
 /**
  * Update track contexts
+ * @function
+ * @param {String} uri URI of context
+ * @param {Array} tracks Array of Track instances of the tracks to update
+ * @param {Integer} position The position where to update
  **/
 function bungalow_update_context(uri, tracks, position) {
 	var context = track_contexts[uri];
@@ -106,7 +160,14 @@ function bungalow_update_context(uri, tracks, position) {
 }
 
 
-
+/**
+ * Represents a single track entry
+ * @param {Track} track   A music track
+ * @param {[type]} index   Index of the track in the context
+ * @param {[type]} options Options
+ * @constructor
+ * @class
+ */
 var TrackView = function (track, index, options) {
 	this.node = document.createElement('tr');
 	this.node.classList.add('sp-track');
@@ -127,7 +188,7 @@ var TrackView = function (track, index, options) {
 		event.dataTransfer.setData('text', uris);
 	}, false);
 
-	for (var i = 0; i < options.fields.length; i++) {
+	for (var i = 0; i &lt; options.fields.length; i++) {
 		var field = options.fields[i];
 		if (field === 'title') {
 			var td1 = document.createElement('td');
@@ -137,34 +198,34 @@ var TrackView = function (track, index, options) {
 		if (field === 'artist') {
 			var td2 = document.createElement('td');
 
-			td2.innerHTML = '<a data-uri="' + track.artists[0].uri + '">' + track.artists[0].name + '</a>';
+			td2.innerHTML = '&lt;a data-uri="' + track.artists[0].uri + '">' + track.artists[0].name + '&lt;/a>';
 			this.node.appendChild(td2);
 		}
 		if (field === 'duration') {
 			var td3 = document.createElement('td');
-			td3.innerHTML = '<span class="fade" style="float: right">' + toMS(track.duration) + '</span>';
+			td3.innerHTML = '&lt;span class="fade" style="float: right">' + toMS(track.duration) + '&lt;/span>';
 			this.node.appendChild(td3);
 		}
 		if (field === 'album') {
 			var td4 = document.createElement('td');
-			td4.innerHTML = '<a href="javascript:void()" data-uri="' + track.album.link + '">' + track.album.name + '</a>';
+			td4.innerHTML = '&lt;a href="javascript:void()" data-uri="' + track.album.link + '">' + track.album.name + '&lt;/a>';
 			this.node.appendChild(td4);
 		}
 		if (field === 'popularity') {
 			var td4 = document.createElement('td');
-			td4.innerHTML = '<meter min="0" style="max-width:35px; margin-top: -18px !important" max="100" value="' + track.popularity + '">';
+			td4.innerHTML = '&lt;meter min="0" style="max-width:35px; margin-top: -18px !important" max="100" value="' + track.popularity + '">';
 			this.node.appendChild(td4);
 		}
 		if (field === 'user') {
 			var td4 = document.createElement('td');
-			td4.innerHTML = '<a href="javascript:void()" data-uri="' + track.user.link + '">' + track.user.name + '</a>';
+			td4.innerHTML = '&lt;a href="javascript:void()" data-uri="' + track.user.link + '">' + track.user.name + '&lt;/a>';
 			this.node.appendChild(td4);
 		}
 		
 	}
 
 	var td5 = document.createElement('td');
-		td5.innerHTML = '&nbsp;';
+		td5.innerHTML = '&amp;nbsp;';
 		this.node.appendChild(td5);
 		
 }	
@@ -191,15 +252,22 @@ $.fn.insertAt = function(index, $parent) {
     });
 }
 
+/**
+ * A tracklist view
+ * @param {Playlist|Album|List} playlist A playlist
+ * @param {Object} options Options
+ * @constructor
+ * @class
+ */
 var ContextView = function (playlist, options) {
 	var headers = false;
 	var fields = ['title', 'artist', 'duration', 'album'];
-	if (options && options.headers) {
+	if (options &amp;&amp; options.headers) {
 		headers = options.headers;
 
 	}
 	this.uri = playlist.uri;
-	if (options && options.fields) {
+	if (options &amp;&amp; options.fields) {
 		fields = options.fields;
 	}
 	this.fields = fields;
@@ -213,13 +281,13 @@ var ContextView = function (playlist, options) {
 	this.node.classList.add('sp-table');
 	var thead = document.createElement('thead');
 	var c = "";
-	for (var i = 0; i < fields.length; i++) {
+	for (var i = 0; i &lt; fields.length; i++) {
 		var field = fields[i];
-		c += "<th>" + fieldTypes[field] + '</th>';
+		c += "&lt;th>" + fieldTypes[field] + '&lt;/th>';
 	}
-	thead.innerHTML = '<tr>' + c + '<th style="width:10%"></th></tr>';
+	thead.innerHTML = '&lt;tr>' + c + '&lt;th style="width:10%">&lt;/th>&lt;/tr>';
 	this.node.setAttribute('data-uri', playlist.uri);
-	for (var i = 0; i < playlist.tracks.length; i++) {
+	for (var i = 0; i &lt; playlist.tracks.length; i++) {
 		var trackView = new TrackView(playlist.tracks[i], i, {'fields': fields});
 		$(tbody).append(trackView.node);
 	}
@@ -252,9 +320,12 @@ var ContextView = function (playlist, options) {
 var context = new Context();
 /** 
  * Inserts a set of track into the given context and notify the parent
- **/
+ * @param  {Array} tracks  array of track objects
+ * @param  {Integer} position Position of tracks
+ * @return {void}
+ */
 ContextView.prototype.insertTracks = function (tracks, position) {
-	for (var i = 0; i < tracks.length; i++) {
+	for (var i = 0; i &lt; tracks.length; i++) {
 		var trackView = new TrackView(tracks, i, this.fields);
 		$(this.tbody).eq(position + i).after(trackView.node);
 		
@@ -438,13 +509,13 @@ var AlbumView = function (album, options) {
 	console.log("ALBUM", album);
 	table.setAttribute('data-uri', album.uri);
 	var td1 = document.createElement('td');
-	td1.innerHTML = '<img class="shadow" src="' + album.images[0].url + '" width="170px">';
+	td1.innerHTML = '&lt;img class="shadow" src="' + album.images[0].url + '" width="170px">';
 	td1.setAttribute('valign', 'top');
 	td1.setAttribute('width', '170px');
 	td1.style.paddingRight = '13pt';
 	var td2 = document.createElement('td');
 	td2.setAttribute('valign', 'top');
-	td2.innerHTML = '<h3 style="margin-bottom: 10px"><a data-uri="' + album.uri + '">' + album.name + '</a></h3>';
+	td2.innerHTML = '&lt;h3 style="margin-bottom: 10px">&lt;a data-uri="' + album.uri + '">' + album.name + '&lt;/a>&lt;/h3>';
 	console.log(td2.innerHTML);
 	//alert(album.tracks);
 	var self = this;
@@ -504,3 +575,26 @@ App.prototype.install = function () {
 }
 
 
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-api.html">api</a></li><li><a href="module-views.html">views</a></li></ul><h3>Classes</h3><ul><li><a href="module-api-Context.html">Context</a></li><li><a href="module-api-Context_play.html">play</a></li><li><a href="module-api-ContextView.html">ContextView</a></li><li><a href="module-api-TrackView.html">TrackView</a></li><li><a href="module-views-Context.html">Context</a></li><li><a href="module-views-Context_play.html">play</a></li><li><a href="module-views-ContextView.html">ContextView</a></li><li><a href="module-views-TrackView.html">TrackView</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.0-alpha13</a> on Tue Jan 20 2015 14:53:17 GMT+0100 (CET)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

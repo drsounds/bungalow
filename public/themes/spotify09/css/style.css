@@ -83,6 +83,11 @@ html {
   box-shadow: inset 0px 0px 3px #b8b8b8, inset 0px 1px 1px #e0e0e0;
   text-shadow: 0px 1px 0px rgba(255, 255, 255, 0.25);
 }
+#artist_image {
+  width: 132px;
+  height: 132px;
+  background-image: url('../img/artist_image.png');
+}
 .btn:focus {
   outline: none;
 }
@@ -220,10 +225,15 @@ a:hover {
   border-top: 1px solid #333;
   display: flex;
   flex-direction: column;
+  height: calc(179px + 51px);
 }
 #nowplaying_header {
-  height: 32pt;
+  height: 51px;
   background-color: #888;
+  background-image: url('../images/nowplaying_header.png');
+  text-align: center;
+  color: black;
+  font-size: 11px;
 }
 #menu {
   flex: 1;
@@ -266,10 +276,15 @@ header {
   display: flex;
   flex-direction: row;
 }
+
 footer {
   background-color: #444;
   width: 100%;
   background-image: url('../img/footer.png');
+  height: 42px;
+}
+.controls {
+  width: 100px;
 }
 .highlight {
   border-radius: 5pt;

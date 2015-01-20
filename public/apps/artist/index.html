@@ -3,10 +3,11 @@
 	<head>
 		<title>Start</title>
 		<base href="app://mercy/public/apps/artist/">
-		<script src="app://mercy/public/scripts/style.js"></script>
+		<link rel="stylesheet" href="app://bungalow/public/themes/main.css">
 		<link rel="stylesheet" href="bower_components/font-awesome/css/font-awesome.css">
 		<script src="app://mercy/public/bower_components/jquery/dist/jquery.js"></script>
-		<script src="app://mercy/public/apps/api/api.js"></script>
+		<script src="app://mercy/public/apps/api/models.js"></script>
+		<script src="app://mercy/public/apps/api/views.js"></script>
 	</head>
 	<body style="width: 100%">
 		<div class="sp-tabbar">
@@ -16,7 +17,22 @@
 		<div id="throbber">
 			<img src="app://mercy/public/images/throbber.gif">
 		</div>
+		<table width="100%">
+			<tr>
+				<td width="132px">
+					<div id="artist_image" class="shadow"></div>
+				</td>
+				<td>
+					<p id="biography"></p>
+				</td>
+				<td width="132px">
+					<ul id="similar_artits"></ul>
+				</td>
+			</tr>
+		</table>
 		<div style="width: 100%" class="sp-container">
+			<h2 class="divider" id="top_tracks_divider">Top Tracks</h2>
+			<div id="toptracks" class="collection"></div>
 			<h2 class="divider">Albums</h2>
 			<div id="albums" class="collection"></div>
 			<h2 class="divider">Singles</h2>
