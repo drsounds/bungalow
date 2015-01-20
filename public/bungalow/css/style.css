@@ -88,8 +88,8 @@ html {
 }
 .btn-primary {
   border: none;
-  background-color: #fb8521;
-  color: #fcae6c;
+  background-color: #77a800;
+  color: #adf400;
   color: white;
   padding: 5px;
 }
@@ -185,7 +185,7 @@ hr {
   background-color: white;
 }
 a {
-  color: #fb8521;
+  color: #77a800;
   text-decoration: none;
 }
 a:hover {
@@ -217,7 +217,7 @@ a:hover {
   -webkit-flex: 1;
 }
 header {
-  background-color: #fb8521;
+  background-color: #77a800;
   display: flex;
   flex-direction: row;
   box-sizing: border-box;
@@ -323,14 +323,14 @@ h4 {
   margin: 0;
 }
 .menu tr td .fa {
-  color: #e7944e;
+  color: #81ae13;
   font-size: 10pt;
 }
 a[data-uri] {
   cursor: pointer;
 }
 .menu td.active {
-  background-color: #fb933a;
+  background-color: #89c200;
   color: #ffffff;
   text-shadow: none;
 }
@@ -341,7 +341,7 @@ a[data-uri] {
   color: #ffffff;
 }
 .sp-track-selected td {
-  background-color: #fb933a;
+  background-color: #89c200;
   color: #ffffff;
 }
 .sp-track-selected td,
@@ -426,7 +426,7 @@ meter::-webkit-meter-optimum-value {
   list-style: none;
   color: #555555;
   font-weight: bold;
-  border-bottom: 3pt solid #fb8826;
+  border-bottom: 3pt solid #7bad00;
   background-color: #fbfbfb;
 }
 .sp-dragover {

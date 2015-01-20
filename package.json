@@ -17,10 +17,11 @@
     "min_width": 400,
     "min_height": 200
   },
-  "node-remote": "http://*",
+  "node-remote": "*",
   "dependencies": {
     "node-spotify": "*",
-    "less": "*"
+    "less": "*",
+    "express": "*"
   },
   "author": "",
   "license": "ISC"

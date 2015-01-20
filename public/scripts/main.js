@@ -1,5 +1,17 @@
 var spotify = new SpotifyPlayer();
 
+// http://stackoverflow.com/questions/391314/jquery-insertat
+$.fn.insertAt = function(index, $parent) {
+    return this.each(function() {
+        if (index === 0) {
+            $parent.prepend(this);
+        } else {
+            $parent.children().eq(index - 1).after(this);
+        }
+    });
+}
+
+
 /**
  * from http://stackoverflow.com/questions/586182/insert-item-into-array-at-a-specific-index
  **/
@@ -154,7 +166,6 @@ var Shell = function () {
 		if (event.data.action === 'search') {
 			spotify.search(event.data.query, event.data.limit, event.data.offset, event.data.type, function (search) {
 				
-				console.log(search);
 				event.source.postMessage({'action': 'gotSearch', 'data': search, 'type': event.data.type, 'query': event.data.query}, '*');
 			});
 		}
@@ -238,7 +249,7 @@ Shell.prototype.startCreatePlaylist = function () {
 			td.setAttribute('data-uri', playlist.uri);
 			tr.appendChild(td);
 			td.innerHTML = '<span class="fa fa-music"></span> ' + playlist.name;
-			$('#playlists tbody').prepend(tr);
+			$('#playlists tbody').insertAt(1);
 		});
 	}	
 }
@@ -263,7 +274,7 @@ Shell.prototype.login = function (event) {
 	spotify.addEventListener('ready', function () {
 		$('#loginView').fadeOut(function () {
 			$('.darken').fadeOut(function () {
-				self.navigate('spotify:config');
+				self.navigate('spotify:rovio');
 
 				// Get user playlists
 				spotify.getUserPlaylists(function (playlists) {
@@ -300,9 +311,37 @@ Shell.prototype.searchEnter = function (event) {
 }
 
 Shell.prototype.navigate = function (url, nohistory) {
-
+	var q = url;
 	if (url.indexOf('spotify:') !== 0) {
 		url = 'spotify:search:' + url;
+	}
+
+	if (url.indexOf('spotify:search:') === 0) {
+
+		try {
+		var uri = url;	
+		console.log("Adding search query " + q);
+		// Add search history
+		var searchTable = document.querySelector('#searchHistory tbody');
+		console.log($('tr[data-uri="' + uri + '"]'));
+		if ($('tr[data-uri="' + uri + '"]').length < 1) {
+			if (searchTable.childNodes.length < 1) {
+				// Append divider
+				$(searchTable).html('<tr><td><hr></td></tr>');
+			}
+
+			// Now append search query
+			var tr = document.createElement('tr');
+			tr.setAttribute('data-uri', uri);
+			tr.innerHTML = '<td data-uri="' + uri + '"><i class="fa fa-search"></i> ' + q + '</td>';
+			$(searchTable).eq(0).after(tr);
+			if (searchTable.childNodes.length > 5) {
+				$(searchTable).get(searchTable.childNodes.length - 2).remove();
+			}
+		}
+	} catch (e) {
+		console.log(e.stack);	
+	}
 	}
 
 	var parts = url.substr('spotify:'.length).split(/\:/g);
@@ -390,7 +429,7 @@ Shell.prototype.createApp = function (appId, callback) {
 			appURL = app.app_url;
 			appName = app.id;
 			var appFrame = document.createElement('iframe');
-			appFrame.setAttribute('src', appURL);
+			appFrame.setAttribute('src', appURL + '?t=' + new Date().getTime());
 			console.log('/apps/' + appName + '/index.html');
 			appFrame.setAttribute('id', 'app_' + appId + '');
 			appFrame.classList.add('sp-app');
