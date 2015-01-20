@@ -111,7 +111,7 @@ postMessage communication between the host app and the bungalow.
 
 # Sample app #2: Time Machine
 
-![Screenshot](https://dl-web.dropbox.com/get/timemachine.png?_subject_uid=61410955&w=AADwFLU4Dk4gAp2-oTEhqdbgzPDMgDs-BubRdVc80dmTxg "Screenshot")
+![Screenshot](https://www.dropbox.com/s/aggxg4r4q5xwpox/timemachine.png?dl=1 "Screenshot")
 
 Time Machine was an app I wanted to release when Spotify had their App Finder, but I never managed to get it there, but hope to share it with my own platform instead.
 
