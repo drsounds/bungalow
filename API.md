@@ -23,38 +23,172 @@ For a bungalow or app
     	"BundleIdentifier": "testbungalow"
 	}
 
-Legend
-
 * Socket - defines what socket to override. Currently no sockets are implemented now.
 * BundleName - Like app name in Spotify Apps
 * BundleIdentifier - please be same as the folder name.
 
+Support for converting and running apps based the discountinued Spotify Apps API will come in the future. 
+
+# Overview of 'Rovi' sample app
+
+The Rovi sample application is demonstrating the intended capability of this API.
+
+
 # The index.html file
 
-The index.html file is the base point for a bungalow app. It must have the following structure
+The index.html file is the base point for a bungalow app. It must have the following structure. The Bungalow framework has it API incorporated in two files, models.js (for models) and views.js (for views).
 
     <!DOCTYPE html>
     <html>
         <head>
-            <title>App name</title>
-            <base href="Base uri">
+            <title>Rovio app</title>
+            <base href="http://rovio.aleros.webfactional.com/">
             <link rel="stylesheet" href="http://127.0.0.1:9261/public/bower_components/font-awesome/css/font-awesome.css">
             <script src="http://127.0.0.1:9261/bower_components/jquery/dist/jquery.js"></script>
-
-            <!-- The JavaScript API -->
-            <script src="http://127.0.0.1:9261/apps/api/api.js"></script>
+            <script src="http://127.0.0.1:9261/apps/api/models.js"></script>
+            <script src="http://127.0.0.1:9261/apps/api/views.js"></script>
             <link rel="stylesheet" href="http://127.0.0.1:9261/themes/main.css">
         </head>
         <body>
-            <div class="container">
-                <!-- User interface goes here -->  
-
+            <div class="sp-tabbar"> <!-- Currently only decoration now -->
+                <div class="sp-tabbar-tab sp-tabbar-tab-active">Rovio</div>
             </div>
+            <div style="height: 23px"></div>
+            <div class="sp-container">
+                <h1>Rovio sample app</h1>
+                <p>This is a sample app for Bungalow that demonstrates the capabilities of the Bungalow app framework</p>
+                <h2>Current first argument is <span id="argument"></span></h2>
+                <h3>Playlist generation demonstration</h3>
+                <p>Rovio will generate a playlist according to the app argument. Type spotify:rovio:&lt;ambient&gt; and rovio will create an ambient playlist</p>
+
+            </div>  
+                <div id="playlist"></div>
+
             <!-- Main script file -->
             <script src="scripts/main.js"></script>
         </body>
     </html>
 
-# JavaScript API
+# The JavaScript file
 
-    The Bungalow framework has it API incorporated in a single file.s
+The app logic is done in this JavaScript file. Note the extensive use of window.onmessage. Apps cannot natively access the Spotify function, instead it is doing the calls through
+postMessage communication between the host app and the bungalow.
+
+    /***
+     * Tutorial script for Rovio sample app.
+     * The central mechanism of the Bungalow app framework is the communication between the host bungalow (the music player) and the client app (this).
+     **/
+
+    window.onmessage = function (event) {
+        // Like how it was in Spotify Apps API, there is a navigation handler.
+        // Listen to navigation by doing this
+        if (event.data.action === 'navigate') {
+            // Here we will perform argumentschanged operations.
+
+            var arguments = event.data.arguments;
+                // Like how it was in Spotify, we get the URL arguments here.
+
+            // For demonstration purpose, we will show the current argument here
+            $('#argument').html(event.data.arguments[0]);
+            
+            // In this example, we will threat the first argument as a genre search query in Spotify, to demonstrate the playlist facility.
+
+            var query = 'genre:' + event.data.arguments[0];
+
+            
+            Search.search(query, 10, 0, 'track', function (tracks) {
+
+                // Create a context view for the search result
+                var contextView = new ContextView({
+                    'uri': 'spotify:search:' + query,
+                    'tracks': tracks
+                }, {headers:true, fields: ['title', 'artist', 'duration', 'popularity', 'album']});
+                $('#playlist').html("");
+                $('#playlist').append(contextView.node);
+            });
+        }   
+    }
+
+# Sample app #2: Time Machine
+
+![https://www.dropbox.com/s/aggxg4r4q5xwpox/timemachine.png?dl=0](Screenshot)
+
+Time Machine was an app I wanted to release when Spotify had their App Finder, but I never managed to get it there, but hope to share it with my own platform instead.
+
+
+# The index.html file
+
+The index.html file is the base point for a bungalow app. It must have the following structure. The Bungalow framework has it API incorporated in two files, models.js (for models) and views.js (for views).
+
+    <!DOCTYPE html>
+    <html>
+        <head>
+            <title>Rovio app</title>
+            <base href="http://rovio.aleros.webfactional.com/">
+            <link rel="stylesheet" href="http://127.0.0.1:9261/public/bower_components/font-awesome/css/font-awesome.css">
+            <script src="http://127.0.0.1:9261/bower_components/jquery/dist/jquery.js"></script>
+            <script src="http://127.0.0.1:9261/apps/api/models.js"></script>
+            <script src="http://127.0.0.1:9261/apps/api/views.js"></script>
+            <link rel="stylesheet" href="http://127.0.0.1:9261/themes/main.css">
+        </head>
+        <body>
+            <div class="sp-tabbar"> <!-- Currently only decoration now -->
+                <div class="sp-tabbar-tab sp-tabbar-tab-active">Rovio</div>
+            </div>
+            <div style="height: 23px"></div>
+            <div class="sp-container">
+                <h1>Rovio sample app</h1>
+                <p>This is a sample app for Bungalow that demonstrates the capabilities of the Bungalow app framework</p>
+                <h2>Current first argument is <span id="argument"></span></h2>
+                <h3>Playlist generation demonstration</h3>
+                <p>Rovio will generate a playlist according to the app argument. Type spotify:rovio:&lt;ambient&gt; and rovio will create an ambient playlist</p>
+
+            </div>  
+                <div id="playlist"></div>
+
+            <!-- Main script file -->
+            <script src="scripts/main.js"></script>
+        </body>
+    </html>
+
+# The JavaScript file
+
+The app logic is done in this JavaScript file. Note the extensive use of window.onmessage. Apps cannot natively access the Spotify function, instead it is doing the calls through
+postMessage communication between the host app and the bungalow.
+
+    /***
+     * Time Machine sample app
+     * The central mechanism of the Bungalow app framework is the communication between the host bungalow (the music player) and the client app (this).
+     **/
+
+    window.onmessage = function (event) {
+        // Like how it was in Spotify Apps API, there is a navigation handler.
+        // Listen to navigation by doing this
+        if (event.data.action === 'navigate') {
+            // Here we will perform argumentschanged operations.
+
+            var arguments = event.data.arguments;
+                // Like how it was in Spotify, we get the URL arguments here.
+
+            // For demonstration purpose, we will show the current argument here
+            $('#argument').html(event.data.arguments[1]);
+            
+            // In this example, we will threat the first argument as a genre search query in Spotify, to demonstrate the playlist facility.
+
+            var query = 'year:' + event.data.arguments[1];
+
+            // Highlight current year
+            $('a').removeClass('active');
+            $('a[data-year="' + event.data.arguments[1] + '"]').addClass('active');
+            Search.search(query, 50, 0, 'track', function (tracks) {
+
+                // Create a context view for the search result
+                var contextView = new ContextView({
+                    'uri': 'spotify:search:year:' + query,
+                    'tracks': tracks
+                }, {headers:true, fields: ['title', 'artist', 'duration', 'popularity', 'album']});
+                $('#playlist').html("");
+                $('#playlist').append(contextView.node);
+            });
+        }   
+    }

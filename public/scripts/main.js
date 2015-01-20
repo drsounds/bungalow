@@ -277,7 +277,7 @@ Shell.prototype.login = function (event) {
 	spotify.addEventListener('ready', function () {
 		$('#loginView').fadeOut(function () {
 			$('.darken').fadeOut(function () {
-				self.navigate('spotify:rovio');
+				self.navigate('spotify:timemachine:year:2000-2009');
 
 				// Get user playlists
 				spotify.getUserPlaylists(function (playlists) {
