@@ -111,7 +111,7 @@ postMessage communication between the host app and the bungalow.
 
 # Sample app #2: Time Machine
 
-![https://www.dropbox.com/s/aggxg4r4q5xwpox/timemachine.png?dl=1](Screenshot)
+![Screenshot](https://dl-web.dropbox.com/get/timemachine.png?_subject_uid=61410955&w=AADwFLU4Dk4gAp2-oTEhqdbgzPDMgDs-BubRdVc80dmTxg "Screenshot")
 
 Time Machine was an app I wanted to release when Spotify had their App Finder, but I never managed to get it there, but hope to share it with my own platform instead.
 
@@ -123,8 +123,8 @@ The index.html file is the base point for a bungalow app. It must have the follo
     <!DOCTYPE html>
     <html>
         <head>
-            <title>Rovio app</title>
-            <base href="http://rovio.aleros.webfactional.com/">
+            <title>Time Machine</title>
+            <base href="http://rovio.aleros.webfactional.com/timemachine/">
             <link rel="stylesheet" href="http://127.0.0.1:9261/public/bower_components/font-awesome/css/font-awesome.css">
             <script src="http://127.0.0.1:9261/bower_components/jquery/dist/jquery.js"></script>
             <script src="http://127.0.0.1:9261/apps/api/models.js"></script>
@@ -132,19 +132,42 @@ The index.html file is the base point for a bungalow app. It must have the follo
             <link rel="stylesheet" href="http://127.0.0.1:9261/themes/main.css">
         </head>
         <body>
-            <div class="sp-tabbar"> <!-- Currently only decoration now -->
-                <div class="sp-tabbar-tab sp-tabbar-tab-active">Rovio</div>
+            <style>
+            li {
+                float: left;
+                min-width: 10pt;
+                margin-left: 15pt;
+                margin-right: 15pt;
+                text-align: center;
+            }
+            a.active {
+                color: #b6e1fd;
+            }
+            </style>
+            <div class="sp-tabbar">
+                <div class="sp-tabbar-tab sp-tabbar-tab-active">Time Machine</div>
             </div>
             <div style="height: 23px"></div>
             <div class="sp-container">
-                <h1>Rovio sample app</h1>
-                <p>This is a sample app for Bungalow that demonstrates the capabilities of the Bungalow app framework</p>
-                <h2>Current first argument is <span id="argument"></span></h2>
-                <h3>Playlist generation demonstration</h3>
-                <p>Rovio will generate a playlist according to the app argument. Type spotify:rovio:&lt;ambient&gt; and rovio will create an ambient playlist</p>
-
-            </div>  
-                <div id="playlist"></div>
+                <table>
+                    <tr>
+                        <td valign="top" style="padding: 5pt">
+                            <h1>Time Machine</h1>
+                            <p>Select a decade</p>
+                            <ul style="list-style-type: none">
+                                <li><a data-year="1950-1959" data-uri="spotify:timemachine:year:1950-1959">50s</a></li>
+                                <li><a data-year="1960-1969" data-uri="spotify:timemachine:year:1960-1969">60s</a></li>
+                                <li><a data-year="1970-1979" data-uri="spotify:timemachine:year:1970-1979">70s</a></li>
+                                <li><a data-year="1980-1989" data-uri="spotify:timemachine:year:1980-1989">80s</a></li>
+                                <li><a data-year="1990-1999" data-uri="spotify:timemachine:year:1990-1999">90s</a></li>
+                                <li><a data-year="2000-2009" data-uri="spotify:timemachine:year:2000-2009">00s</a></li>
+                                <li><a data-year="2010-2019" data-uri="spotify:timemachine:year:2010-2019">10s</a></li>
+                            </ul>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <div id="playlist"></div>
 
             <!-- Main script file -->
             <script src="scripts/main.js"></script>
