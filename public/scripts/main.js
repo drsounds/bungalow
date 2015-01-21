@@ -92,8 +92,26 @@ var Shell = function () {
 		event.dataTransfer.setData('text/uri-list', uris);
 	});
 	var self = this;
+	spotify.addEventListener('trackstarted', function () {
+		$('#btnPlay').removeClass('fa-play');
+		$('#btnPlay').addClass('fa-pause');
+		
+	});
+	spotify.addEventListener('trackresumed', function () {
+
+		$('#btnPlay').removeClass('fa-play');
+		$('#btnPlay').addClass('fa-pause');
+	});
+	spotify.addEventListener('trackpaused', function () {
+
+		$('#btnPlay').addClass('fa-play');
+		$('#btnPlay').removeClass('fa-pause');
+	});
+	
 	spotify.addEventListener('trackended', function () {
 		console.log(self.currentApp);
+		$('#btnPlay').removeClass('fa-pause');
+		$('#btnPlay').addClass('fa-play');
 		self.context.currentIndex++;
 		if (self.context.currentIndex < self.context.tracks.length) {
 			var track = self.context.tracks[self.context.currentIndex];
@@ -222,7 +240,7 @@ var Shell = function () {
 		'uri': ''
 	};
 	var playback = setInterval(function () {
-		document.querySelector('#track_position').setAttribute('value', spotify.getPosition());
+		document.querySelector('#track_position').value = spotify.getPosition();
 		//console.log("Position");
 	}, 100);
 	(function ($) {
@@ -235,6 +253,10 @@ var Shell = function () {
 
 Shell.prototype.cacheResource = function (uri, resource) {
 	this.resourceBuffer[uri] = resource;
+}
+
+Shell.prototype.playPause = function () {
+	spotify.playPause();
 }
 
 /**
@@ -277,7 +299,7 @@ Shell.prototype.login = function (event) {
 	spotify.addEventListener('ready', function () {
 		$('#loginView').fadeOut(function () {
 			$('.darken').fadeOut(function () {
-				self.navigate('spotify:timemachine:year:2000-2009');
+				self.navigate('spotify:start');
 
 				// Get user playlists
 				spotify.getUserPlaylists(function (playlists) {

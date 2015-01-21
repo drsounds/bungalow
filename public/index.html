@@ -38,7 +38,7 @@
 							</tr>
 							
 							<tr>
-								<td data-uri="spotify:user:drsounds:playlist:763eLyGqbJrXpuwdI5tlPV"><span class="fa fa-glass"></span> Featured</td>
+								<td data-uri="spotify:featured"><span class="fa fa-glass"></span> Featured</td>
 							</tr>
 						</table>
 						<table id="searchHistory" cellspacing="0" width="100%" class="menu">
@@ -84,10 +84,10 @@
 			</main>
 			
 			<footer style="">
-				<div class="controls" style="text-align: center">
-					<i id="btnSkipBack" class="fa fa-fast-backward btn"></i>
-					<i id="btnPlay" class="fa fa-play btn" style="-webkit-transform: scale(1.5)"></i>
-					<i id="btnSkipNext" class="fa fa-fast-forward btn"></i>
+				<div class="controls" style="text-align: center; width:100px">
+					<i id="btnSkipBack" onclick="shell.playPrevious()" class="fa fa-fast-backward btn"></i>
+					<i id="btnPlay" onclick="shell.playPause()" class="fa fa-play btn" style="-webkit-transform: scale(1.5)"></i>
+					<i id="btnSkipNext" onclick="shell.playNext()" class="fa fa-fast-forward btn"></i>
 				</div>
 				<input type="range" style="width: 100%" min="0" max="1" value="0" id="track_position">
 				<div class="controls" style="width: 50pt">

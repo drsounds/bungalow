@@ -13,7 +13,8 @@ window.addEventListener('message', function (event) {
 			$('#name').html(artist.name);
 			$('#albums').html("");
 			$('#singles').html("");
-			
+			$('#artistLink').html(artist.name);
+			$('#artistLink').attr('data-uri', uri);
 			for (var i = 0; i < artist.albums.length; i++) {
 				var album = artist.albums[i];
 				//var div = document.createElement('div');

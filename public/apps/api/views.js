@@ -364,7 +364,7 @@ var AlbumView = function (album, options) {
 
 }
 
-$(document).on('click', 'a', function (event) {
+$(document).on('click', '[data-uri]', function (event) {
     console.log("clicked link", event.target);
     parent.postMessage({'action': 'navigate', 'uri': event.target.getAttribute('data-uri')}, '*');
 });

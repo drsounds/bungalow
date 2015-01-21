@@ -19,8 +19,9 @@ window.addEventListener('message', function (event) {
 			hideThrobber();
 		} else {
 			Playlist.fromURI(uri, function (playlist) {
+				$('.sp-playlist').hide();
 				playlists[uri] = playlist;
-				var contextView = new ContextView(playlist, {headers:true, fields: ['title', 'artist', 'duration', 'popularity', 'album']});
+				var contextView = new ContextView(playlist, {headers:true, fields: ['title', 'artist', 'album']});
 				contextView.node.classList.add('sp-playlist');
 				$('#list').append(contextView.node);
 				$('#title').html(playlist.name);

@@ -4,6 +4,7 @@ var SpotifyPlayer = function () {
 	var self = this;
 	this.spotify = spotifyEngine;
 	this.cache = {};
+	this.isPlaying = false;
 	this.spotify.on({
 		ready: function (args) {
 			console.log(spotifyEngine);
@@ -63,7 +64,20 @@ SpotifyPlayer.prototype.playTrack = function (uri) {
 	console.log(track);
 	console.log("Start playing song");
 	this.spotify.player.play(track);
+	var data = {
+		track: {
+			'name': track.name,
+			'uri': track.link
+		}
+	};
+	var event = new CustomEvent('trackstarted');
+	event.data = data;
+	this.notify(event);
 	return track;
+}
+
+SpotifyPlayer.prototype.stop = function () {
+	this.spotify.player.stop();
 }
 
 SpotifyPlayer.prototype.getImageForTrack = function (track, callback) {
@@ -296,7 +310,8 @@ SpotifyPlayer.prototype.getPlaylistTracks = function (playlist, callback) {
 	var self = this;
 	console.log(_tracks.length);
 	var countTracks = playlist.numTracks;
-	this.spotify.waitForLoaded(_tracks, function (track) {
+	for (var i = 0; i < _tracks.length; i++) {
+		var track = _tracks[i];
 		//console.log("Got tracks");	
 		var track = ({
 			'name': track.name + '',
@@ -311,15 +326,32 @@ SpotifyPlayer.prototype.getPlaylistTracks = function (playlist, callback) {
 		});
 		self.addToCache(track);
 		tracks.push(track);
-	});
+	}
 	var inz = setInterval(function () {
-		if (countTracks <= tracks.length) {
+		if (tracks.length == countTracks) {
 			clearInterval(inz);
 			console.log("Sending back tracks callback");
 			callback(tracks);
 		}
 	}, 1000);
-	
+}
+
+SpotifyPlayer.prototype.playPause = function () {
+	if (this.isPlaying) {
+		this.pause();
+	} else {
+		this.resume();
+	}
+}
+SpotifyPlayer.prototype.pause = function () {
+	this.spotify.player.pause();
+	this.isPlaying = false;
+	this.notify(new CustomEvent('trackpaused'));
+}
+SpotifyPlayer.prototype.resume = function () {
+	this.isPlaying = true;
+	this.spotify.player.resume();
+	this.notify(new CustomEvent('trackresumed'));
 }
 SpotifyPlayer.prototype.reorderTracks = function (playlist, indices, newPosition) {
 	playlist.reorderTracks(indices, newPosition);
