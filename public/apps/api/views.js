@@ -189,7 +189,7 @@ var TrackView = function (track, index, options) {
         }
         if (field === 'user') {
             var td4 = document.createElement('td');
-            td4.innerHTML = '<a href="javascript:void()" data-uri="' + track.user.link + '">' + track.user.name + '</a>';
+            td4.innerHTML = '<a href="javascript:void()" data-uri="' + track.user.uri + '">' + track.user.name + '</a>';
             this.node.appendChild(td4);
         }
         
@@ -207,7 +207,8 @@ var fieldTypes = {
     'artist': 'Artist',
     'duration': 'Duration',
     'popularity': 'Popularity',
-    'user': 'User'
+    'user': 'User',
+    'creted': 'Added'
 };
 
 /**
@@ -256,7 +257,7 @@ var ContextView = function (playlist, options) {
         var field = fields[i];
         c += "<th>" + fieldTypes[field] + '</th>';
     }
-    thead.innerHTML = '<tr>' + c + '<th style="width:10%"></th></tr>';
+    thead.innerHTML = '<tr>' + c + '<th style="width:10%; text-align: left"></th></tr>';
     this.node.setAttribute('data-uri', playlist.uri);
     for (var i = 0; i < playlist.tracks.length; i++) {
         var trackView = new TrackView(playlist.tracks[i], i, {'fields': fields});

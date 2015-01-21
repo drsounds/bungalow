@@ -266,7 +266,7 @@ SpotifyPlayer.prototype.getAlbum = function (uri, callback) {
 			track.duration = track.duration_ms / 1000;
 			self.addToCache(track);
 			return track;
-		});
+	});
 		callback(album);
 	});
 }
@@ -284,12 +284,8 @@ SpotifyPlayer.prototype.resolveTracks = function (uris, callback) {
 			'name': track.name + '',
 			'uri': track.link + '',
 			'artists': JSON.parse(JSON.stringify(track.artists)),
-			'album': JSON.parse(JSON.stringify(track.album)),
-			'user': {
-				'link': 'spotify:user:drsounds',
-				'canoncialName': 'drsounds',
-				'name': 'Dr. Sounds'
-			}
+			'album': JSON.parse(JSON.stringify(track.album))
+
 		});
 		self.addToCache(track);
 		tracks.push(track);
@@ -310,7 +306,10 @@ SpotifyPlayer.prototype.getPlaylistTracks = function (playlist, callback) {
 	var self = this;
 	console.log(_tracks.length);
 	var countTracks = playlist.numTracks;
-	for (var i = 0; i < _tracks.length; i++) {
+	if (countTracks > 1000) {
+		countTracks = 1000;
+	}
+	for (var i = 0; i < countTracks; i++) {
 		var track = _tracks[i];
 		//console.log("Got tracks");	
 		var track = ({
@@ -319,16 +318,17 @@ SpotifyPlayer.prototype.getPlaylistTracks = function (playlist, callback) {
 			'artists': JSON.parse(JSON.stringify(track.artists)),
 			'album': JSON.parse(JSON.stringify(track.album)),
 			'user': {
-				'link': 'spotify:user:drsounds',
-				'canoncialName': 'drsounds',
-				'name': 'Dr. Sounds'
-			}
+				'uri': track.creator.link,
+				'canoncialName': track.creator.canoncialName,
+				'name': track.creator.displayName
+			},
+			'added': track.createTime
 		});
 		self.addToCache(track);
 		tracks.push(track);
 	}
 	var inz = setInterval(function () {
-		if (tracks.length == countTracks) {
+		if (tracks.length <= countTracks) {
 			clearInterval(inz);
 			console.log("Sending back tracks callback");
 			callback(tracks);
