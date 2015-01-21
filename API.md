@@ -215,3 +215,11 @@ postMessage communication between the host app and the bungalow.
             });
         }   
     }
+
+# Converting Spotify HTML5 Apps to Bungalow Apps
+
+My intention is to make it possible to run application written for the discountinued Spotify App finder to run in Bungalow. However, due to the complexity between the APIs, some manual tasks must be done.
+
+1. Replace BundleName with AppName in the manifest.json
+2. In each code file, remove require calls for Track, Artist, TopList and Album classes
+3. 

@@ -223,7 +223,7 @@ var Shell = function () {
 	};
 	var playback = setInterval(function () {
 		document.querySelector('#track_position').setAttribute('value', spotify.getPosition());
-		console.log("Position");
+		//console.log("Position");
 	}, 100);
 	(function ($) {
 		$.fn.menulize = function (options) {

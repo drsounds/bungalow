@@ -35,22 +35,42 @@ function bungalow_save_settings (settings) {
 
 	// Set theme variables
 	var less = require('less');
-	var theme = fs.readFileSync(process.env.PWD + '/public/themes/' + settings.theme + '/css/style.less', {'encoding': 'utf-8'});
+	var lightTheme = fs.readFileSync(process.env.PWD + '/public/themes/' + settings.theme + '/css/light.less', {'encoding': 'utf-8'});
 	console.log(process.env.PWD + '/public/themes/' + settings.theme + '/css/style.less');
-	theme = theme.replace(/\@primary-color/, settings.primaryColor);
-	theme = theme.replace(/\@primary-color/, settings.secondaryColor);
-	theme = theme.replace("@islight", settings.light ? '@light' : '@dark');
-	theme = theme.replace("@isdark", !settings.light ? '@light' : '@dark');
+	lightTheme = lightTheme.replace(/\@primary-color/, settings.primaryColor);
+	lightTheme = lightTheme.replace(/\@secondary-color/, settings.secondaryColor);
+	lightTheme = lightTheme.replace("@islight", true ? '@light' : '@dark');
+	lightTheme = lightTheme.replace("@isdark", !true ? '@light' : '@dark');
+
+	var darkTheme = fs.readFileSync(process.env.PWD + '/public/themes/' + settings.theme + '/css/dark.less', {'encoding': 'utf-8'});
+	console.log(process.env.PWD + '/public/themes/' + settings.theme + '/css/style.less');
+	darkTheme = darkTheme.replace(/\@primary-color/, settings.primaryColor);
+	darkTheme = darkTheme.replace(/\@secondary-color/, settings.secondaryColor);
+	darkTheme = darkTheme.replace("@islight", true ? '@light' : '@dark');
+	darkTheme = darkTheme.replace("@isdark", !true ? '@light' : '@dark');
 	
 	//alert(theme);
-	less.render(theme, {}, function (error, output) {
+	less.render(lightTheme, {}, function (error, output) {
 		console.log(error, output);
 		//alert(output);
-		fs.writeFileSync(process.env.PWD + '/public/themes/' + settings.theme + '/css/style.css', output.css);
+		fs.writeFileSync(process.env.PWD + '/public/themes/' + settings.theme + '/css/light.css', output.css);
 	});
+
+	less.render(darkTheme, {}, function (error, output) {
+		console.log(error, output);
+		//alert(output);
+		fs.writeFileSync(process.env.PWD + '/public/themes/' + settings.theme + '/css/dark.css', output.css);
+	});
+	fs.writeFileSync(process.env.PWD + '/public/themes/' + settings.theme + '/css/main.css', '@import url("' + (settings.light ? 'light' : 'dark') + '.css")');
+	
 
 	var mainCSS = '@import url("' + settings.theme + '/css/style.css")';
 	fs.writeFileSync(process.env.PWD + '/public/themes/main.css', mainCSS);
+
+	fs.writeFileSync(process.env.PWD + '/public/themes/main.css', '@import url("http://127.0.0.1:9261/themes/' + settings.theme + '/css/main.css")');
+	fs.writeFileSync(process.env.PWD + '/public/themes/light.css', '@import url("http://127.0.0.1:9261/themes/' + settings.theme + '/css/light.css")');
+	fs.writeFileSync(process.env.PWD + '/public/themes/dark.css', '@import url("http://127.0.0.1:9261/themes/' + settings.theme + '/css/dark.css")');
+
 }
 
 var settings = bungalow_load_settings();
