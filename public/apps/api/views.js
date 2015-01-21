@@ -169,7 +169,7 @@ var TrackView = function (track, index, options) {
         if (field === 'artist') {
             var td2 = document.createElement('td');
 
-            td2.innerHTML = '<a data-uri="' + track.artists[0].uri + '">' + track.artists[0].name + '</a>';
+            td2.innerHTML = '<a data-uri="' + (track.artists[0].uri || track.artists[0].link) + '">' + track.artists[0].name + '</a>';
             this.node.appendChild(td2);
         }
         if (field === 'duration') {
@@ -339,7 +339,7 @@ var AlbumView = function (album, options) {
     console.log("ALBUM", album);
     table.setAttribute('data-uri', album.uri);
     var td1 = document.createElement('td');
-    td1.innerHTML = '<img class="shadow" src="' + album.images[0].url + '" width="170px">';
+    td1.innerHTML = '<img class="shadow" data-uri="' + (album.uri) + '" src="' + album.images[0].url + '" width="170px">';
     td1.setAttribute('valign', 'top');
     td1.setAttribute('width', '170px');
     td1.style.paddingRight = '13pt';

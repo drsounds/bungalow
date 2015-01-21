@@ -18,15 +18,17 @@
 		<div id="throbber">
 			<img src="app://mercy/public/images/throbber.gif">
 		</div>
-		<table width="100%">
+		<table style="width: calc(100% - 26pt);margin-left: 26pt">
 			<tr>
-				<td width="132px">
+				<td valign="top" width="132px">
 					<div id="artist_image" class="shadow"></div>
 				</td>
-				<td>
+				<td valign="top">
+					<h1 id="name" style="min-height: 28px"></h1>
+					<div class="sp-toolbar"></div>
 					<p id="biography"></p>
 				</td>
-				<td width="132px">
+				<td valign="top" width="132px">
 					<ul id="similar_artists"></ul>
 				</td>
 			</tr>

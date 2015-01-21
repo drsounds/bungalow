@@ -10,7 +10,13 @@ window.addEventListener('message', function (event) {
 
 		$('.sp-artist').hide();
 		Artist.fromURI(uri, function (artist) {	
+			$('#artist_image').removeClass('shadow');
 			$('#name').html(artist.name);
+			$('#name').attr('data-uri', uri);
+			$('#artist_image').attr('src', artist.images[0].url);
+			if (artist.images[0].url) {
+				$('#artist_image').addClass('shadow');
+			}
 			$('#albums').html("");
 			$('#singles').html("");
 			$('#artistLink').html(artist.name);
