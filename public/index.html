@@ -25,44 +25,37 @@
 			<main style="">
 				<aside>
 					<div id="menu" style="overflow:scroll">
-						<table cellspacing="0" width="100%" class="menu">
-							<tr>
-								<td data-uri="spotify:start"><span class="fa fa-home"></span> Home</td>
-							</tr>
+						<ul cellspacing="0" width="100%" class="menu">
+							<li data-uri="spotify:start"><span class="fa fa-home"></span> Home
+							</li>
 							
-							<tr>
-								<td data-uri="spotify:playqueue"><span class="fa fa-bars"></span> Play queue</td>
-							</tr>
-							<tr>
-								<td data-uri="spotify:toplist"><span class="fa fa-flag-o"></span> Top Lists</td>
-							</tr>
+							<li data-uri="spotify:playqueue"><span class="fa fa-bars"></span> Play queue
+							</li>
+							<li data-uri="spotify:toplist"><span class="fa fa-flag-o"></span> Top Lists
+						
 							
-							<tr>
-								<td data-uri="spotify:featured"><span class="fa fa-glass"></span> Featured</td>
-							</tr>
-						</table>
-						<table id="searchHistory" cellspacing="0" width="100%" class="menu">
+							<li data-uri="spotify:featured"><span class="fa fa-glass"></span> Featured
+							</li>
+						</ul>
+						<ul id="searchHistory" cellspacing="0" width="100%" class="menu">
 							<tbody></tbody>
-						</table>
-						<table cellspacing="0" width="100%" class="menu">
-							<tr>
-								<td><hr></td>
-							</tr>
-							<tr>
-								<td data-uri="spotify:finder"><span class="fa fa-cube"></span> Apps</td>
-							</tr>
-							<tr>
-								<td><hr></td>
-							</tr>
+						</ul>
+						<hr>
+						<ul cellspacing="0" width="100%" class="menu">
 							
-						</table><br>
-						<a class="btn-black" onclick="shell.startCreatePlaylist()">+ New Playlist</a>
+							<li data-uri="spotify:finder"><span class="fa fa-cube"></span> Apps</td>
+							</li>
+							
+						</ul>
+						<ul id="apps" cellspacing="0" width="100%" class="menu">
+						
+						</ul>
+						<hr><br>
+						<a class="btn-black" onclick="shell.startCreatePlaylist()" style="margin-left: 15pt">+ New Playlist</a>
 						<br><br>
-						<table id="playlists" cellspacing="0" width="100%" class="menu">
-							<tbody>
-
-							</tbody>
-						</table>
+						<ul id="playlists" cellspacing="0" width="100%" class="menu">
+							
+						</ul>
 					</div>
 
 					<div id="nowplaying" >
@@ -84,13 +77,13 @@
 			</main>
 			
 			<footer style="">
-				<div class="controls" style="text-align: center; width:100px">
+				<div class="conliols" style="text-align: center; width:100px">
 					<i id="btnSkipBack" onclick="shell.playPrevious()" class="fa fa-fast-backward btn"></i>
-					<i id="btnPlay" onclick="shell.playPause()" class="fa fa-play btn" style="-webkit-transform: scale(1.5)"></i>
+					<i id="btnPlay" onclick="shell.playPause()" class="fa fa-play btn" style="-webkit-liansform: scale(1.5)"></i>
 					<i id="btnSkipNext" onclick="shell.playNext()" class="fa fa-fast-forward btn"></i>
 				</div>
-				<input type="range" style="width: 100%" min="0" max="1" value="0" id="track_position">
-				<div class="controls" style="width: 50pt">
+				<input type="range" style="width: 100%" min="0" max="1" value="0" id="liack_position">
+				<div class="conliols" style="width: 50pt">
 					<i class="fa fa-repeat"></i>
 				</div>
 			</footer>

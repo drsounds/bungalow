@@ -35,7 +35,7 @@ var Shell = function () {
 
 		})
 	});
-	$(document).on('dragover', '.menu td', function (event) {
+	$(document).on('dragover', '.menu li', function (event) {
 		$.event.props.push('dataTransfer');
 		//if (event.originalEvent.dataTransfer.getData('text/uri-list').match(/((spotify\:user\:(.*)\:playlist\:(.*))+)/)) {
 			event.preventDefault();
@@ -45,12 +45,12 @@ var Shell = function () {
    			$(this).addClass('sp-dragover');
 		//}
 	});
-	$(document).on('dragleave', '.menu td', function (event) {
+	$(document).on('dragleave', '.menu li', function (event) {
 		
 		$(this).removeClass('sp-dragover');
 	
 	});
-	$(document).on('drop', '.menu td', function (event) {
+	$(document).on('drop', '.menu li', function (event) {
 		$.event.props.push('dataTransfer');
 		var droppedURI = event.originalEvent.dataTransfer.getData('text/uri-list');
 		console.log(droppedURI);
@@ -73,7 +73,7 @@ var Shell = function () {
 			}
 		});
 	});
-	$(document).on('click', '.menu td', function (event) {
+	$(document).on('click', '.menu li', function (event) {
 		$.event.props.push('dataTransfer');
 		var uri = event.target.getAttribute('data-uri');
 		console.log(event.target);
@@ -251,6 +251,12 @@ var Shell = function () {
 
 }
 
+Shell.prototype.addApp = function (app) {
+	var settings = bungalow_load_settings();
+	settings.apps.push(app);
+	bungalow_save_settings(app);
+}
+
 Shell.prototype.cacheResource = function (uri, resource) {
 	this.resourceBuffer[uri] = resource;
 }
@@ -296,6 +302,20 @@ Shell.prototype.login = function (event) {
 	event.preventDefault();
 	spotify.login($('#username').val(), $('#password').val());
 	$('#throbber').show();
+
+	// Add apps to sidebar
+	var settings = bungalow_load_settings();
+	for (var i = 0; i < settings.apps.length; i++) {
+		
+		var app = settings.apps[i];
+		console.log(app);
+		var tr = document.createElement('li');
+		var icon = app.icon.indexOf('fa') === 0 ? '<span class="fa ' + app.icon + '"></span> ' : '';
+		tr.setAttribute('data-uri', app.uri);
+		tr.innerHTML = '' + icon + app.name + '';
+		//alert(tr.innerHTML);
+		$('#apps').append(tr);	
+	}
 	spotify.addEventListener('ready', function () {
 		$('#loginView').fadeOut(function () {
 			$('.darken').fadeOut(function () {
@@ -308,9 +328,9 @@ Shell.prototype.login = function (event) {
 						var listItem = document.createElement('tr');
 						listItem.setAttribute('data-uri', playlist.uri);
 						console.log(playlist.user);
-						listItem.innerHTML = '<td data-uri="' + playlist.uri + '"><i class="fa fa-music"></i> ' + playlist.name + ' <span class="fade">by ' + playlist.user.displayName + '</span></td>';
+						listItem.innerHTML = '<li data-uri="' + playlist.uri + '"><i class="fa fa-music"></i> ' + playlist.name + ' <span class="fade">by ' + playlist.user.displayName + '</span></li>';
 						listItem.setAttribute('data-uri', playlist.uri);
-						$('#playlists tbody').append(listItem);
+						$('#playlists').append(listItem);
 						$(listItem).click(function (event) {
 							var uri = event.target.getAttribute('data-uri');
 							console.log(event.target);
@@ -320,13 +340,14 @@ Shell.prototype.login = function (event) {
 					}
 				}, function (playlist) {
 					var $item = $('.menu tr[data-uri="' + playlist.uri + '"]');
-					$item.html('<td data-uri="' + playlist.uri + '"><i class="fa fa-music"></i> ' + playlist.name + ' <span class="fade">by ' + playlist.user.displayName + '</span></td>');
+					$item.html('<li data-uri="' + playlist.uri + '"><i class="fa fa-music"></i> ' + playlist.name + ' <span class="fade">by ' + playlist.user.displayName + '</span></li>');
 
 				});
 				$('#throbber').hide();
 			});
 		});
 	});
+
 	return false;
 }
 
@@ -350,17 +371,17 @@ Shell.prototype.navigate = function (url, nohistory) {
 		console.log("Adding search query " + q);
 		// Add search history
 		var searchTable = document.querySelector('#searchHistory tbody');
-		console.log($('tr[data-uri="' + uri + '"]'));
-		if ($('tr[data-uri="' + uri + '"]').length < 1) {
+		console.log($('li[data-uri="' + uri + '"]'));
+		if ($('li[data-uri="' + uri + '"]').length < 1) {
 			if (searchTable.childNodes.length < 1) {
 				// Append divider
-				$(searchTable).html('<tr><td><hr></td></tr>');
+				$(searchTable).html('');
 			}
 
 			// Now append search query
 			var tr = document.createElement('tr');
 			tr.setAttribute('data-uri', uri);
-			tr.innerHTML = '<td data-uri="' + uri + '"><i class="fa fa-search"></i> ' + q + '</td>';
+			tr.innerHTML = '<li data-uri="' + uri + '"><i class="fa fa-search"></i> ' + q + '</li>';
 			$(searchTable).eq(0).after(tr);
 			if (searchTable.childNodes.length > 5) {
 				$(searchTable).get(searchTable.childNodes.length - 2).remove();
@@ -399,8 +420,8 @@ Shell.prototype.navigate = function (url, nohistory) {
 		});
 	}
 
-	$('#menu td').removeClass('active');
-	$('#menu td[data-uri="' + url + '"]').addClass('active');
+	$('#menu li').removeClass('active');
+	$('#menu li[data-uri="' + url + '"]').addClass('active');
 	if (!nohistory) {
 		this.future = [];
 		this.history.push(url);

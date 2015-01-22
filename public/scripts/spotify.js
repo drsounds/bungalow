@@ -102,6 +102,10 @@ SpotifyPlayer.prototype.login = function (username, password) {
 	
 }
 
+SpotifyPlayer.followPlaylist = function (playlist) {
+	
+}
+
 /**
  * Adds songs to a playlist
  **/
@@ -184,7 +188,7 @@ SpotifyPlayer.prototype.loadPlaylist = function (uri, callback) {
 			});
 		});
 	} else {
-		
+
 		callback(playlist);
 	}
 }

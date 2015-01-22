@@ -1,0 +1,16 @@
+Added author in sidebar, but Broken playlist fix this soon
+
+# Please enter the commit message for your changes. Lines starting
+# with '#' will be ignored, and an empty message aborts the commit.
+#
+# Committer: Alexander Forselius <alecca@alexanders-imac.lan>
+#
+# On branch master
+# Changes to be committed:
+#	modified:   public/apps/playlist/index.html
+#	modified:   public/apps/playlist/scripts/main.js
+#	modified:   public/scripts/main.js
+#	modified:   public/scripts/server.js
+#	modified:   public/scripts/spotify.js
+#	modified:   settings/Users/drsounds-user/offline2
+#

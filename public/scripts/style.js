@@ -9,6 +9,7 @@ function bungalow_load_settings () {
 	var path = require('path');
 	var fs = require('fs');
 	var path = process.env['HOME'] + path.sep + 'bungalow.json';
+	
 	if (fs.existsSync(path)) {
 		var settings = JSON.parse(fs.readFileSync(path));
 		return settings;

@@ -25,7 +25,7 @@ window.addEventListener('message', function (event) {
 				contextView.node.classList.add('sp-playlist');
 				$('#list').append(contextView.node);
 				$('#title').html(playlist.name);
-				$('#author').html(playlist.user.displayName);
+				//$('#author').html(playlist.user.displayName);
 				$('#description').html(playlist.description);
 				hideThrobber();
 			});
@@ -33,3 +33,9 @@ window.addEventListener('message', function (event) {
 	}
 
 })
+
+function followPlaylist () {
+	Playlist.fromURI(uri, function (playlist) {
+		Playlist.follow(uri);
+	});
+}
