@@ -307,7 +307,8 @@ Shell.prototype.login = function (event) {
 						var playlist = playlists[i];
 						var listItem = document.createElement('tr');
 						listItem.setAttribute('data-uri', playlist.uri);
-						listItem.innerHTML = '<td data-uri="' + playlist.uri + '"><i class="fa fa-music"></i> ' + playlist.name + ' <span class="fade">by someone</span></td>';
+						console.log(playlist.user);
+						listItem.innerHTML = '<td data-uri="' + playlist.uri + '"><i class="fa fa-music"></i> ' + playlist.name + ' <span class="fade">by ' + playlist.user.displayName + '</span></td>';
 						listItem.setAttribute('data-uri', playlist.uri);
 						$('#playlists tbody').append(listItem);
 						$(listItem).click(function (event) {
@@ -317,9 +318,10 @@ Shell.prototype.login = function (event) {
 							self.navigate(uri);
 						});
 					}
-				}, function (playlist2) {
+				}, function (playlist) {
 					var $item = $('.menu tr[data-uri="' + playlist.uri + '"]');
-					$item.html(playlist2.name);
+					$item.html('<td data-uri="' + playlist.uri + '"><i class="fa fa-music"></i> ' + playlist.name + ' <span class="fade">by ' + playlist.user.displayName + '</span></td>');
+
 				});
 				$('#throbber').hide();
 			});

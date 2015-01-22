@@ -171,9 +171,20 @@ SpotifyPlayer.prototype.loadPlaylist = function (uri, callback) {
 			});
 			console.log("Playlist loaded", playlist);
 			console.log(playlist);
-			callback(playlist);
+			callback({
+			'uri': playlist.link,
+			'collaborative': playlist.collaborative,
+			'name': playlist.name,
+			'user': {
+				'uri': playlist.owner.link,
+				'canoncialName': playlist.owner.canoncialName,
+				'displayName': playlist.owner.displayName
+			},
+			'description': playlist.description
+			});
 		});
 	} else {
+		
 		callback(playlist);
 	}
 }
@@ -226,7 +237,13 @@ SpotifyPlayer.prototype.getUserPlaylists = function (callback, callback2) {
 		//console.log(_playlists[i].name);
 		var playlist = {
 			'name': _playlists[i].name,
-			'uri': _playlists[i].link
+			'uri': _playlists[i].link,
+			'user': {
+				'uri': _playlists[i].owner.link,
+				'canoncialName': _playlists[i].owner.canoncialName,
+				'displayName': _playlists[i].owner.displayName
+			},
+			'description': _playlists[i].description				
 		};
 		playlists.push(playlist);
 

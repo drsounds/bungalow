@@ -25,7 +25,8 @@ window.addEventListener('message', function (event) {
 				contextView.node.classList.add('sp-playlist');
 				$('#list').append(contextView.node);
 				$('#title').html(playlist.name);
-				// $('#description').html(playlist.description);
+				$('#author').html(playlist.user.displayName);
+				$('#description').html(playlist.description);
 				hideThrobber();
 			});
 		}
