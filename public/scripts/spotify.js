@@ -266,7 +266,7 @@ SpotifyPlayer.prototype.getAlbum = function (uri, callback) {
 			track.duration = track.duration_ms / 1000;
 			self.addToCache(track);
 			return track;
-	});
+		});
 		callback(album);
 	});
 }

@@ -1,5 +1,5 @@
 {
-  "name": "mercury",
+  "name": "Bungalow",
   "version": "1.0.0",
   "main": "public/index.html",
   "description": "",
@@ -24,5 +24,9 @@
     "express": "*"
   },
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "devDependencies": {
+    "grunt": "^0.4.5",
+    "grunt-node-webkit-builder": "^1.0.0"
+  }
 }

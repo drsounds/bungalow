@@ -13,13 +13,15 @@ function bungalow_load_settings () {
 		var settings = JSON.parse(fs.readFileSync(path));
 		return settings;
 	} else {
-		return {
+		var settings = {
 			'bungalows': {},
 			'apps': [],
-			'theme': 'bungalow',
+			'theme': 'spotify09',
 			'light': true,
 			'primaryColor': '#FB8521'
 		};
+		bungalow_save_settings (settings);
+		return settings;
 	}
 }
 
