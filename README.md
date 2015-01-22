@@ -28,6 +28,7 @@ Spotify functionality is encapsulated so it can be substituted with any other mu
     cd node_modules/node-spotify
     nw-gyp rebuild --target=0.8.6
 
+Note that you need to create your own spotify appkey on developer.spotify.com and place it in the project dir. I don't supply my app key for legal reason.
     
 
 
