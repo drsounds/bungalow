@@ -19,8 +19,26 @@ Array.prototype.insert = function (index, item) {
   this.splice(index, 0, item);
 };
 
+var LocalSettings = function () {
+	
+}
+
 var Shell = function () {
 
+	this.mashcast = new Mashcast();
+
+	this.mashcast.addEventListener('episodestopped', function (event) {
+
+	});
+
+
+	var self = this;
+	$(document).keydown = function (event) {
+		if (event.keyCode === 171) {
+			// On Windows X
+			self.playPause();
+		}
+	}
 	// Global Spotify resource buffer
 	this.resourceBuffer = {};
 
@@ -240,8 +258,12 @@ var Shell = function () {
 		'uri': ''
 	};
 	var playback = setInterval(function () {
-		document.querySelector('#track_position').value = spotify.getPosition();
-		//console.log("Position");
+		try {
+			document.querySelector('#track_position').value = spotify.getPosition();
+			//console.log("Position");
+		} catch (e) {
+
+		}
 	}, 100);
 	(function ($) {
 		$.fn.menulize = function (options) {
@@ -319,7 +341,7 @@ Shell.prototype.login = function (event) {
 	spotify.addEventListener('ready', function () {
 		$('#loginView').fadeOut(function () {
 			$('.darken').fadeOut(function () {
-				self.navigate('spotify:start');
+				self.navigate('spotify:search:dr sounds endurium');
 
 				// Get user playlists
 				spotify.getUserPlaylists(function (playlists) {

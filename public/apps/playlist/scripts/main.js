@@ -15,15 +15,17 @@ window.addEventListener('message', function (event) {
 		var uri = 'spotify:user:' + user + ':playlist:' + playlist;
 		$('.sp-playlist').hide();
 		if (uri in playlists) {
-			$('#context_' + uri.replace(/\:/g, '__')).show();
+			playlists[uri].show();
 			hideThrobber();
 		} else {
 			Playlist.fromURI(uri, function (playlist) {
 				$('.sp-playlist').hide();
-				playlists[uri] = playlist;
 				var contextView = new ContextView(playlist, {headers:true, fields: ['title', 'artist', 'album', 'user']});
 				contextView.node.classList.add('sp-playlist');
+				playlists[uri] = contextView;
+
 				$('#list').append(contextView.node);
+				contextView.show();
 				$('#title').html(playlist.name);
 				//$('#author').html(playlist.user.displayName);
 				$('#description').html(playlist.description);

@@ -238,6 +238,7 @@ var ContextView = function (playlist, options) {
         headers = options.headers;
 
     }
+    this.headers = headers;
     this.uri = playlist.uri;
     if (options && options.fields) {
         fields = options.fields;
@@ -252,6 +253,7 @@ var ContextView = function (playlist, options) {
     this.node.setAttribute('width', '100%');
     this.node.classList.add('sp-table');
     var thead = document.createElement('thead');
+    this.thead = thead;
     var c = "";
     for (var i = 0; i < fields.length; i++) {
         var field = fields[i];
@@ -265,6 +267,16 @@ var ContextView = function (playlist, options) {
     }
     console.log(this.node);
     var tableY = 0;
+    var background = document.createElement('div');
+    this.background = background;
+    var listTop =  this.node.offsetTop + (headers ? (thead.offsetHheight) : 0);
+    $(background).css({'position': 'absolute', 'z-index': -1, 'left': this.node.style.left, 'top': listTop + 'px', 'height': (window.innerHeight - listTop) + 'px'});
+    $(this.background).addClass('sp-table-background');
+    window.addEventListener('resize', function (event) {
+        
+        $(background).css({'position': 'absolute', 'left': this.node.style.left, 'top': listTop + 'px', 'height': (window.innerHeight - listTop) + 'px'});
+    
+    })
     // To make the header hovering
     if (headers) {
         this.node.appendChild(thead);
@@ -284,9 +296,32 @@ var ContextView = function (playlist, options) {
 
             }
         });
+       
     }
     $(this.node).spotifize();
     track_contexts[playlist.uri] = this; // Register context here
+    
+    
+
+}
+
+ContextView.prototype.show = function () {
+    $(this).show();
+
+    try {
+        this.parentNode.appendChild(this.background);
+    } catch (e) {
+
+    }
+    $(this.background).show();
+    var listTop =  this.node.offsetTop + (this.headers ? (this.thead.offsetHheight) : 0);
+    
+    $(this.background).css({'position': 'absolute', 'left': this.node.style.left, 'top': listTop + 'px', 'height': (window.innerHeight - listTop) + 'px'});
+    
+}
+ContextView.prototype.hide = function () {
+    $(this).hide();
+    $(this.background).hide();
 }
 
 var context = new Context();
@@ -324,6 +359,16 @@ function  showThrobber() {
 
 function hideThrobber() {
     $('#throbber').hide();
+}
+
+
+var CollectionItem = function (object, options) {
+    this.node = document.createElement('div');
+    $(this.node).classList.add('col-md-4');
+    var box = document.createElement('div');
+    $(box).addClass('box');
+    $(box).html('<div class="box-header"></div><div class="box-content"><h3><a data-uri="' + object.uri + '">' + object.name + '</a></h3><p>' + object.description + '</p><a class="btn btn-primary">Add</a></div>');
+    $(this.node).append(box);
 }
 
 /** 

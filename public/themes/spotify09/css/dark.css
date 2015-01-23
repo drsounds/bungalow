@@ -25,6 +25,9 @@ h1 {
   background-image: url('http://appfinder.aleros.webfactional.com/images/app.png');
   box-shadow: inset 0px 64px 3px rgba(255, 255, 255, 0.25);
 }
+.sp-table-background {
+  background-image: url('../images/table_background.png');
+}
 html {
   display: flex;
 }
@@ -350,6 +353,12 @@ h4 {
   padding: 0;
   margin: 0;
 }
+
+.sp-table td, .menu li {
+  white-space: nowrap;
+  word-break: break-all;  
+}
+
 .menu {
   padding-left: 0px;
   padding-top: 0px;
