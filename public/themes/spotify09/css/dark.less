@@ -74,7 +74,7 @@ background: -o-linear-gradient(top,  #dfdfdf 0%,#b6b6b6 100%); /* Opera 11.10+ *
 background: -ms-linear-gradient(top,  #dfdfdf 0%,#b6b6b6 100%); /* IE10+ */
 background: linear-gradient(to bottom,  #dfdfdf 0%,#b6b6b6 100%); /* W3C */
 filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#dfdfdf', endColorstr='#b6b6b6',GradientType=0 ); /* IE6-9 */
-	box-shadow:inset 0px 1px 0px #f5f5f5, 0px -1px 0px #888, inset 0px 0px 3px #b8b8b8, inset 0px 1px 1px #e0e0e0, 0px 1px 5px rgba(0, 0, 0, .5);
+ box-shadow:inset 0px 0.5px 0px #f5f5f5,inset 0px -0.5px 0px #555, inset 0px 0px 1px #b8b8b8, inset 0px 1px 1px #e0e0e0, 0px 1px 1px rgba(0, 0, 0, .5);
 	text-shadow: 0px 1px 0px rgba(255, 255, 255, .25);
 }
 .btn:focus {
@@ -151,7 +151,9 @@ hr {
 	background-color: black;
 	color: #aaffaa;
 }
-
+.sp-table tr.sp-track-unavailable td, .sp-table tr.sp-track-unavailable td a {
+  color: #aa8888;
+}
 .sp-table thead {
 
 }

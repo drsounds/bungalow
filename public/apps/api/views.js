@@ -1,7 +1,7 @@
 /**
  * @module
  **/
-
+window.views = {};
 /**
  * A context
  * @class
@@ -81,6 +81,8 @@ Context.prototype.play = function (uri, index) {
     track.classList.add('sp-now-playing');
 
 }
+
+window.views.List = Context;
 
 var track_contexts = new Context();
 (function ($) {
@@ -196,10 +198,37 @@ var TrackView = function (track, index, options) {
     }
 
     var td5 = document.createElement('td');
-        td5.innerHTML = '&nbsp;';
-        this.node.appendChild(td5);
+    td5.innerHTML = '&nbsp;';
+    this.node.appendChild(td5);
+    if ('availability' in track && track.availability !== 1) {
+        $(this.node).addClass('sp-track-unavailable');
+    } 
         
 }   
+
+window.views.Track = TrackView;
+
+/**
+ * Image view
+ * @param {Track|Album|Playlist} object The resource
+ * @param {Object} options [description]
+ */
+var Image = function (object, options) {
+    this.node = document.createElement('div');
+}
+
+/**
+ * Player view
+ * @param {Track|Album|Playlist} object The resource
+ * @param {Object} options [description]
+ */
+var Player = function (object, options) {
+    this.node = document.createElement('div');
+}
+
+window.views.Player = Player;
+
+window.views.Image = Image;
 
 var fieldTypes = {
     'title': 'Title',
@@ -306,9 +335,9 @@ var ContextView = function (playlist, options) {
 }
 
 ContextView.prototype.show = function () {
-    $(this).show();
+    $(this.node).show();
 
-    try {
+  /*  try {
         this.parentNode.appendChild(this.background);
     } catch (e) {
 
@@ -317,7 +346,7 @@ ContextView.prototype.show = function () {
     var listTop =  this.node.offsetTop + (this.headers ? (this.thead.offsetHheight) : 0);
     
     $(this.background).css({'position': 'absolute', 'left': this.node.style.left, 'top': listTop + 'px', 'height': (window.innerHeight - listTop) + 'px'});
-    
+    */
 }
 ContextView.prototype.hide = function () {
     $(this).hide();

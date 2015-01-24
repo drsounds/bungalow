@@ -1,0 +1,555 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<!-- saved from url=(0059)https://developer.spotify.com/technologies/apps/guidelines/ -->
+<html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+		
+		
+		
+		<title>Integration guidelines</title>
+	  
+		<!-- CSS -->
+		<link rel="stylesheet" href="./Integration guidelines_files/style.css" type="text/css" media="screen">
+		
+		<!-- Javascript -->
+		<script type="text/javascript" src="./Integration guidelines_files/jquery-1.6.4.min.js"></script>
+		<script type="text/javascript" src="./Integration guidelines_files/master.js"></script>
+	</head>
+	
+	<body>
+	
+		<div id="sidebar">
+			
+			<a href="http://www.spotify.com/" id="logo"><img src="./Integration guidelines_files/logo.png" alt="Spotify" title="Spotify"></a>
+			
+			<ul id="section-nav">
+				<li class="active"><a href="https://developer.spotify.com/technologies/apps/guidelines/01_integration-guidelines.html">Integration guidelines</a></li><li><a href="https://developer.spotify.com/technologies/apps/guidelines/02_ux-guidelines.html">UX guidelines</a></li><li><a href="https://developer.spotify.com/technologies/apps/guidelines/03_ui-guidelines.html">UI guidelines</a></li><li><a href="https://developer.spotify.com/technologies/apps/guidelines/04_changelog.html">Changelog</a></li>
+			</ul>
+			
+			<h3>On this page</h3>
+			
+			<ul id="toc">
+			<li><a href="https://developer.spotify.com/technologies/apps/guidelines/#spotifyapplications">Spotify Applications</a></li><li><a href="https://developer.spotify.com/technologies/apps/guidelines/#gettingstarted">Getting Started</a></li><li><a href="https://developer.spotify.com/technologies/apps/guidelines/#architecture">Architecture</a></li><li><a href="https://developer.spotify.com/technologies/apps/guidelines/#functionalityguidelines">Functionality Guidelines</a></li></ul>
+
+			<h3>Version</h3>
+			<p>0.8.0-931-ge961511</p>
+			
+		</div>
+		
+		<div id="main">
+			<h1 id="integrationguidelines">Integration guidelines</h1>
+
+<h2 id="spotifyapplications">Spotify Applications</h2>
+
+<p>Developers proficient in modern web application programming languages are now able to produce rich applications <em>within</em> the Spotify desktop application.</p>
+
+<p>To provide you and our users with a safe and trusted environment, there are a number of security measures and restrictions in place - applications are loaded inside their own secure environment within Spotify, and only have access to a limited number of resources and APIs. In addition, applications must request permission to access various parts of the API.</p>
+
+<h2 id="gettingstarted">Getting Started</h2>
+
+<h3 id="creatinganappskeleton">Creating an App Skeleton</h3>
+
+<p>To get started developing - create the following folder:</p>
+
+<ul>
+<li>~/Spotify (Mac OS X)</li>
+<li>“My Documents\Spotify” (Windows)</li>
+</ul>
+
+<p>Within this folder…</p>
+
+<ol>
+<li>Create an new folder, giving it the name of your application (let’s call this <strong>$FOLDERNAME</strong>)</li>
+<li>Within <strong>$FOLDERNAME</strong>, create an empty file called <strong>index.html</strong></li>
+</ol>
+
+<p>Getting Spotify to load your application is easy - place the input focus in Spotify’s search field and type spotify:app:<strong>$FOLDERNAME</strong> and press enter to have Spotify load <em>index.html</em> from within your application’s folder.</p>
+
+<h4 id="debugging">Debugging</h4>
+
+<p>To be able to debug your application you will need to have some special attributes set on the currently logged in Spotify user. Get in touch with Spotify to get these attributes set.</p>
+
+<p>Once your Spotify user has the appropriate attributes set, the Spotify desktop application will display a new menu item in its main menu, called <strong>Develop</strong>. This menu provides access to:</p>
+
+<ol>
+<li>The web inspector for your application</li>
+<li>The possibility to reload your application</li>
+<li>A shortcut to an HTML5 test application that showcases what functionality the built-in web browser engine supports</li>
+</ol>
+
+<p>You could also right click anywhere within your application to bring up a contextual menu that lets you invoke the web inspector and reload your application.</p>
+
+<p>Please know that the web inspector will only show errors/warnings in HTML/JS land - more errors may lurk behind the scenes. Please refer to the Spotify application’s console log to find out if your application is violating the sandbox, exceptions are thrown etc. The Spotify application’s console can be viewed by <a href="http://en.wikipedia.org/wiki/Console_(Mac_OS_X)">Console.app</a> on Mac OS X, and using Spotify’s internal console on Windows (press Ctrl+Alt+Home when Spotify is in focus to invoke it).</p>
+
+<h3 id="built-inexampleapplications">Built-in Example Applications</h3>
+
+<p>There are two applications built in, <a href="spotify:app:tabs">Tabs</a> (a simple implementation that shows how you could use tabs), and <a href="spotify:app:api">API</a> (shows you how to use our playback widgets).</p>
+
+<h2 id="architecture">Architecture</h2>
+
+<h3 id="applicationstructure">Application Structure</h3>
+
+<p>Spotify applications have a common but flexible directory structure, and resources are accessed using a special <code>sp://</code> URL scheme. The only file names and directories that are reserved are…</p>
+
+<table>
+<colgroup>
+<col style="text-align:left;">
+<col style="text-align:left;">
+</colgroup>
+
+<thead>
+<tr>
+	<th style="text-align:left;">Filename</th>
+	<th style="text-align:left;">Description</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+	<td style="text-align:left;"><code>manifest.json</code></td>
+	<td style="text-align:left;">This is required in all applications. See the <a href="https://developer.spotify.com/technologies/apps/guidelines/#applicationmanifest">Application Manifest</a> chapter for more details.</td>
+</tr>
+<tr>
+	<td style="text-align:left;"><code>index.html</code></td>
+	<td style="text-align:left;">This is required in all applications, and is the first page that will be displayed by Spotify when your application is loaded.</td>
+</tr>
+<tr>
+	<td style="text-align:left;"><code>license.html</code></td>
+	<td style="text-align:left;">This is optional, and contains a custom license agreement for your application if required.</td>
+</tr>
+</tbody>
+</table>
+<p>Other than those reserved names, files can be named and organised as you wish.</p>
+
+<h3 id="internalresourceurls">Internal Resource URLs</h3>
+
+<p>All resources within your application will be supplied to your application through the <code>sp://</code> URL scheme. The root URL for your application will always be <code>sp://</code> followed by your application’s identifier. These URLs can be used anywhere a http URL might be used.</p>
+
+<table>
+<colgroup>
+<col style="text-align:left;">
+<col style="text-align:left;">
+</colgroup>
+
+<thead>
+<tr>
+	<th style="text-align:left;">URL</th>
+	<th style="text-align:left;">File Location, Relative to application root level</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+	<td style="text-align:left;"><code>sp://whatsnew/index.html</code></td>
+	<td style="text-align:left;"><code>/index.html</code></td>
+</tr>
+<tr>
+	<td style="text-align:left;"><code>sp://whatsnew/css/whatsnew.css</code></td>
+	<td style="text-align:left;"><code>/css/whatsnew.css</code></td>
+</tr>
+<tr>
+	<td style="text-align:left;"><code>sp://whatsnew/images/album.png</code></td>
+	<td style="text-align:left;"><code>/images/album.png</code></td>
+</tr>
+</tbody>
+</table>
+<p>Please note that you <em>cannot</em> access another application’s resources, even if you know its application ID.</p>
+
+<h3 id="externalresourcesandapis">External Resources and APIs</h3>
+
+<p>Your application can make requests to external resources and APIs <strong>if</strong> needed. The access control origin for requests from your application will be <code>sp://$APPLICATION_IDENTIFIER</code>, e.g. <code>sp://whatsnew</code>.</p>
+
+<p>This doesn’t mean that you’re allowed to serve your app remotely - you must make sure to bundle all logic/layout/graphics/etc within your app bundle so that it can’t be replaced during runtime (such changes would need a new submission of your application).</p>
+
+<p>In short - only request dynamic data from your own backend, and let all other data go into the app bundle itself.</p>
+
+<h3 id="applicationmanifest">Application Manifest</h3>
+
+<p>Every application <em>must</em> contain a file called <code>manifest.json</code> at the root level of the application. This file should contain a JSON dictionary, providing details about the application and its requirements. Make sure that the encoding of this file is <em>UTF–8</em>, or it won’t parse correctly.</p>
+
+<p><strong>The JSON within the manifest needs to validate, or you’ll get undefined behavior.</strong> Please use a <a href="http://jsonlint.com/">validator</a> to make sure that your JSON is correct, or stuff might break in all kinds of ways.</p>
+
+<p>If you make changes to the manifest, please make sure to restart Spotify since it will be caching the manifest (until it is restarted).</p>
+
+<table>
+<colgroup>
+<col style="text-align:left;">
+<col style="text-align:left;">
+<col style="text-align:left;">
+</colgroup>
+
+<thead>
+<tr>
+	<th style="text-align:left;">Application manifest key</th>
+	<th style="text-align:left;">Required</th>
+	<th style="text-align:left;">Comments</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+	<td style="text-align:left;"><code>AcceptedLinkTypes</code></td>
+	<td style="text-align:left;">NO</td>
+	<td style="text-align:left;">A list of Spotify link types that the application accepts, e.g. when dropping files onto the application in the sidebar. Can contain the following types: <code>album</code>, <code>artist</code>, <code>playlist</code>, <code>track</code> and <code>user</code>.</td>
+</tr>
+<tr>
+	<td style="text-align:left;"><code>AppDescription</code></td>
+	<td style="text-align:left;">YES</td>
+	<td style="text-align:left;">A short description (max 60 chars) of your application. <strong>Must be localized</strong>.</td>
+</tr>
+<tr>
+	<td style="text-align:left;"><code>AppIcon</code></td>
+	<td style="text-align:left;">YES</td>
+	<td style="text-align:left;">A list of application icons relative to your application’s root directory. Must contain the following keys:<br> * <code>18x18</code> or <code>36x18</code>: A 18x18px or 36x18px icon in png format. If you specify a 36x18 icon, the first half of the image will be used in the sidebar when the application is not highlighted, the second half when it is. The icon should be centered within the image, leaving one pixel of margin around it.<br> * <code>64x64</code>: a 64x64px icon in png format. This icon will be presented in the “App Finder” view inside Spotify along the description for your application.<br> * <code>128x128</code>: A 128x128px icon in png format. This icon will be presented to the user while the application is being downloaded, as well as on open.spotify.com (when the user browses to the URL of your app from an external web page).</td>
+</tr>
+<tr>
+	<td style="text-align:left;"><code>AppName</code></td>
+	<td style="text-align:left;">YES</td>
+	<td style="text-align:left;">A user-displayable name for your application, e.g. <code>My Application</code>. <strong>Must be localized</strong>.</td>
+</tr>
+<tr>
+	<td style="text-align:left;"><code>AppURL</code></td>
+	<td style="text-align:left;">NO</td>
+	<td style="text-align:left;">An http URL to your application’s home page, if any.</td>
+</tr>
+<tr>
+	<td style="text-align:left;"><code>BundleCopyright</code></td>
+	<td style="text-align:left;">NO</td>
+	<td style="text-align:left;">Your application’s copyright statement.</td>
+</tr>
+<tr>
+	<td style="text-align:left;"><code>BundleIdentifier</code></td>
+	<td style="text-align:left;">YES</td>
+	<td style="text-align:left;">A unique identifier for your application. For example, <code>myapp</code>. This identifer will be used in your application’s URI, like “spotify:app:<code>$IDENTIFIER</code>”.</td>
+</tr>
+<tr>
+	<td style="text-align:left;"><code>BundleType</code></td>
+	<td style="text-align:left;">YES</td>
+	<td style="text-align:left;">Must be “Application”.</td>
+</tr>
+<tr>
+	<td style="text-align:left;"><code>BundleVersion</code></td>
+	<td style="text-align:left;">YES</td>
+	<td style="text-align:left;">A unique (string) identifier for this version of the application, e.g. “1.2” or “0.8.0.701.gc2d793ad”. Needs to be unique for each version of your application.</td>
+</tr>
+<tr>
+	<td style="text-align:left;"><code>DefaultTabs</code></td>
+	<td style="text-align:left;">NO</td>
+	<td style="text-align:left;">If your application requires tabs, specify them in the manifest file as a list (see the <a href="https://developer.spotify.com/technologies/apps/guidelines/#tabs">Tabs</a> chapter for more information). <strong>Must be localized</strong>.</td>
+</tr>
+<tr>
+	<td style="text-align:left;"><code>RequiredInterface</code></td>
+	<td style="text-align:left;">YES</td>
+	<td style="text-align:left;">The API version to be used with this application. Must be 1.</td>
+</tr>
+<tr>
+	<td style="text-align:left;"><code>RequiredPermissions</code></td>
+	<td style="text-align:left;">NO</td>
+	<td style="text-align:left;">A list of hosts that your application needs to communicate with. For more information, see the <a href="https://developer.spotify.com/technologies/apps/guidelines/#permissions">Permissions</a> chapter of this document.</td>
+</tr>
+<tr>
+	<td style="text-align:left;"><code>SupportedLanguages</code></td>
+	<td style="text-align:left;">YES</td>
+	<td style="text-align:left;">A list of languages that your application is localized in. All languages listed needs to be IETF tags (see <a href="https://developer.spotify.com/technologies/apps/guidelines/#localization">localization</a> for details). <strong>If you specify languages here</strong>, only these languages will be valid for your localized application name, tab names etc.</td>
+</tr>
+<tr>
+	<td style="text-align:left;"><code>VendorIdentifier</code></td>
+	<td style="text-align:left;">YES</td>
+	<td style="text-align:left;">A unique identifier for your organisation, e.g. <code>com.spotify</code>.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="tabs">Tabs</h3>
+
+<p>If the application needs to use a tab bar at the top to switch between different areas, it must use the tab bar provided by Spotify. The application can specify what tabs it wants in the manifest file, in the <code>DefaultTabs</code> attribute. The attribute must be a list of records. Each record must contain the attributes <code>arguments</code> and <code>title</code>. The title can, and should, be localized by making it into a record with attributes for each language (currently <code>en</code>, <code>fr</code> and <code>es</code>).</p>
+
+<p>When the application is started, it can call <code>sp.core.getArguments()</code> to get the current tab and its arguments. When switching between tabs, the <code>argumentsChanged</code> event will be sent to the listeners of <code>sp.core</code>.</p>
+
+<p>Please be aware that <strong>if</strong> your application uses the <code>DefaultTabs</code> key (and hence is given a tab bar by Spotify) it will <strong>always</strong> have a tab selected - there’s no concept of a section within your application that <strong>does not</strong> belong to a tab in the tab bar. This means that if you try to navigate to a URI like <code>spotify:app:appname:awesomesection:subid</code> and you <strong>don’t</strong> have a tab with the argument <code>awesomesection</code> in your manifest, you will end up on the current tab with its arguments PLUS <code>awesomesection:subid</code> appended at the end (give it a try with <code>sp.core.getArguments()</code> if you don’t believe us).</p>
+
+<h3 id="localization">Localization</h3>
+
+<p>Spotify provides automatic localization to your applications with no extra programming effort required on your part - just specify what languages you support in the <a href="https://developer.spotify.com/technologies/apps/guidelines/#applicationmanifest">application manifest</a>.</p>
+
+<p>To provide the actual localized content, create a directory in the root of your application named after the IETF tag for your desired locale ( <code>en</code> for English, or <code>fr</code> for French and so on), followed by <code>.loc</code>. At runtime, Spotify will try to resolve resources within localized folders before falling back on resolving the resource in the root folder. You can only use application codes that are supported by the Spotify client. Currently these are: <code>de</code>, <code>en</code>, <code>es</code>, <code>fr</code> and <code>nl</code>. If your application is only available in another langunage (such as Swedish <code>sv</code>) please use <code>en</code> as the supported language.</p>
+
+<p>Please note that <em>all</em> resources available through URLs will be resolved using this method, except for the manifest.json file, which must always be placed in the root of the application. Even the icon for the sidebar will be localizable in this way, but the placeholder icon for applications that have not yet been downloaded will be the version for the English version.</p>
+
+<p>For example, if the system is running in the “French” locale (<code>fr</code>), the <code>sp://home/index.html</code> URL will be resolved by looking for files in the following locations in the following order:</p>
+
+<ol>
+<li><code>/fr.loc/index.html</code></li>
+<li><code>/index.html</code></li>
+</ol>
+
+<p>The first file to be found will be used. If no files are found in the given sequence, a standard http 404 error will be generated.</p>
+
+<h3 id="permissions">Permissions</h3>
+
+<p>You need to set the <code>RequiredPermissions</code> key in the manifest if you wish to request external resources from within your application. Spotify will block any requests for external resources from hosts <strong>not present</strong> in this list, and an error message will be appened to the Spotify application’s log.</p>
+
+<p>The below example highlights how you specify that you want to request stuff from <strong>any</strong> spotify.com subdomain, spotify.com itself, as well as the <strong>test</strong> subdomain on example.com:</p>
+
+<p><code>"RequiredPermissions": [
+    "http://*.spotify.com",
+    "http://spotify.com",
+    "http://test.example.com"
+]</code></p>
+
+<h3 id="webbrowserengine">Web Browser Engine</h3>
+
+<p>Spotify currently uses the Chromium rendering engine to run and display your applications. However, this is an implementation detail and may change in the future. Please do not assume anything about the browser other than it is WebKit based (so WebKit-only CSS attributes can be used).</p>
+
+<h3 id="storage">Storage</h3>
+
+<p>Your application will be able to use the local storage HTML5 API which as a limited amount of space available to your application (5 MB). Please be aware that any state you save here will be local, and hence you won’t be able to restore from it if the user logs into Spotify on another computer and browses to your application.</p>
+
+<p>To restore state regardless of which computer a user is currently using, please use your own backend. </p>
+
+<h3 id="applicationlifetime">Application Lifetime</h3>
+
+<h4 id="loading">Loading</h4>
+
+<p>The <code>index.html</code> file in your application will be loaded when the user navigates to your application. This includes, but is not limited to:</p>
+
+<ul>
+<li>The user clicking your application’s icon in the Spotify sidebar.</li>
+<li>The user activating your application from the application catalog.</li>
+<li>The user navigating to a link that references your application from elsewhere in the Spotify client or their system.</li>
+</ul>
+
+<h4 id="unloading">Unloading</h4>
+
+<p>Your application will be halted and unloaded by the Spotify client when the user navigates away from your application.</p>
+
+<p>The only exception to this is if the Spotify client is playing audio that was initiated by your application. In this case, your application will continue to run until:</p>
+
+<ul>
+<li>The user starts playback from outside your application.</li>
+<li>Your application ceases playback and is idle for an amount of time.</li>
+</ul>
+
+<p>Please be aware that the user may navigate back to your application at any time, so storing state in local or remote persistent storage is required for a consistent experience.</p>
+
+<h3 id="interactingwithotheruicomponents">Interacting with Other UI Components</h3>
+
+<p>The user can “give” your application data to work with by drag-and-dropping tracks, artists, albums, playlists and more from elsewhere in the Spotify client either onto your application’s view or its sidebar icon.</p>
+
+<p>Dropping items onto the application’s view will trigger standard HTML5 drop actions, while items dropped onto the sidebar icon will trigger the <em>TBD</em> JavaScript event.</p>
+
+<p>You can give items “back” to the client in the form of Spotify URIs. For example, if your application presents a link with a <code>href</code> containing a Spotify track URI, the user will be able to drag that to a playlist in the Spotify client sidebar to add that track to a playlist.</p>
+
+<p>If you don’t want to roll with your own drag-n-drop images, please use our prebuilt mechanism that Spotify itself uses. Here’s a simple sample app - all its links will get the fancy drag image once the user starts to drag them:</p>
+
+<pre><code>&lt;!DOCTYPE html&gt;
+&lt;html lang="en"&gt;
+&lt;head&gt;
+ &nbsp; &nbsp;&lt;meta charset="utf-8"&gt;
+ &nbsp;&lt;link rel="stylesheet" href="sp://import/css/eve.css"&gt;
+ &nbsp;&lt;script&gt;
+ &nbsp; &nbsp;var sp = getSpotifyApi(1);
+ &nbsp; &nbsp;var ui = sp.require('sp://import/scripts/dnd');
+ &nbsp;&lt;/script&gt;
+&lt;/head&gt;
+&lt;body&gt;
+&lt;a href="test" class="creator"&gt;A title&lt;/a&gt;
+&lt;/body&gt;
+&lt;/html&gt; 
+</code></pre>
+
+<h3 id="encodedstrings">Encoded Strings</h3>
+
+<p>To ensure that applications do not use strings in potentially unsafe ways, all strings given by the Spotify APIs are encoded so that accidental misuse will not cause injection vulnerabilities. If the application does not decode these strings, using the two methods described below, the strings will display as garbage to the user. The only exception to this is URIs, which are never encoded and thus require no decoding. The API documentation states for each method which strings must be decoded or not.</p>
+
+<p>Two methods have been added to the JavaScript strings: decodeForText() and decodeForHTML(). If the string is intended to be used in a safe manner, such as setting the innerText or creating a text node using document.createTextNode(), the decodeForText() should be used. It will return a raw non-escaped string, so make sure it is never inserted into any context where will be interpreted as HTML. If the string is inteded to go into an innerHTML or in any piece of code that will be intepreted as HTML, the decodeForHTML() <strong>must</strong> be used. It will ensure that &lt; and &gt; is encoded as &lt; and &gt; etc. For example:</p>
+
+<pre><code>getElementById('song-title').innerHTML = track.title.decodeForHTML();
+getElementById('song-title').innerText = track.title.decodeForText();
+getElementById('song-title').appendChild(document.createTextNode(track.title.decodeForText()));
+</code></pre>
+
+<p>Applications that do not use these methods will a) not be able to display metadata or any other data from the Spotify API, and b) will be rejected in the upload process. Also ensure that you propery escape unsafe HTML strings from wherever they happen to come from, e.g., your backend servers.</p>
+
+<h3 id="minifyingjavascript">Minifying JavaScript</h3>
+
+<p>In order for Spotify to be able to verify the security aspects of the submitted applications, the JavaScript code <strong>must not</strong> be minified or obfuscated. The upload process will automatically minify the JavaScript, CSS and HTML files. If we cannot manually inspect the code or run the automated verification steps the application will be rejected.</p>
+
+<h3 id="spotifyuris">Spotify URIs</h3>
+
+<p>All Spotify entities you’ll be dealing with have a unique ID in the from of a Spotify URI, for example, a valid track URI is <code>spotify:track:2toEICLQiCx8twlZw21eBB</code>. You can send the user to Spotify entities in the client by exposing that URI in, for example, the <code>href</code> attribute of an <code>a</code> element.</p>
+
+<p>In addition, track URIs support linking to a particular point in the track by adding a timestamp as an anchor at the end of the URI, for example: <code>spotify:track:2toEICLQiCx8twlZw21eBB#2:30</code> will cause the Spotify client to start playing back the track from the 2:30 mark.</p>
+
+<h3 id="applicationuris">Application URIs</h3>
+
+<p>For interacting with the outside world, your application will be given a Spotify URI similar to that of other Spotify entities. This URI is constructed in the following manner:</p>
+
+<p><code>spotify:app:$APPLICATION_IDENTIFIER</code>.</p>
+
+<p>For example, <code>spotify:app:whatsnew</code>.</p>
+
+<p>This URI scheme supports passing arguments to your application from external sources such as your website. To do this, simply add values separated by colons to the end of your URI. For example:</p>
+
+<p><code>spotify:app:whatsnew:name:daniel</code></p>
+
+<p>This URI will cause the Spotify client to load the application with the URI <code>spotify:app:whatsnew</code>, or fire the <code>argumentsChanged</code> event if it is already loaded, at which point the application can call <code>sp.core.getArguments()</code> to get the value <code>[name, daniel]</code>.</p>
+
+<p>In addition, you can route these URIs through <code>http://open.spotify.com</code>, which will make sure the user has Spotify installed before launching your URI. </p>
+
+<h3 id="drag-n-dropoflinks">Drag-n-drop of Links</h3>
+
+<p>Any links that are dragged onto your application canvas will need to be handled by your application.</p>
+
+<p>If the user drops a link onto your application’s icon in the sidebar, the <code>linksChanged</code> event will fire, at which point the application can call <code>sp.core.getLinks()</code> to get URIs of the links dropped.</p>
+
+<h2 id="functionalityguidelines">Functionality Guidelines</h2>
+
+<h3 id="loadingresources">Loading Resources</h3>
+
+<p>You are expected to design your application so that it behaves like an integral part of Spotify. This means that you should avoid full page reloads - request new elements/resources in the background and then manipulate the current page’s DOM upon arrival of new data.</p>
+
+<p>In addition, make use of local storage where possible to reduce the latency of requesting resources from a remote location.</p>
+
+<h4 id="staticvs.localcontent">Static vs. Local Content</h4>
+
+<p>When designing your application, make sure to keep in mind that once submitted, the contents of your application are served by the Spotify backend and immutable until another submission is made and approved.</p>
+
+<h3 id="offlinemode">Offline Mode</h3>
+
+<p>You need to design your application to handle the occasional loss of internet connection (everyone is not on fiber 24/7!). Also - even though <strong>your</strong> application might be able to access your backend service, the Spotify application itself might have issues communicating with our internal services. Please respect and treat error codes and callbacks carefully, or your application will behave badly during such conditions.</p>
+
+<h3 id="slowconnections">Slow Connections</h3>
+
+<p>You should design your application so that it behaves well even when your computer doesn’t have access to a blazingly fast internet connection. Streaming a track inside Spotify requires a moderate 2.75G (EDGE) connection, so you will want to simulate your current connection to speeds like this while developing to make sure that you’ve designed it correctly (i.e. load critical data first, and then not-so-critical data later).</p>
+
+<p>If you’re on Mac OS X, there’s a nifty little preference pane called <a href="http://mattgemmell.com/2011/07/25/network-link-conditioner-in-lion/">Network Link Conditioner</a> (ships with Xcode) that lets you do just this.</p>
+
+<h3 id="integratingwiththespotifyapplicationshistory">Integrating with the Spotify Application’s History</h3>
+
+<p>When your application is launched, Spotify will load its <code>index.html</code> from within the application bundle and push it onto the global history stack. To load subsequent pages/sections, use the full URI of the resource you’re going to load, like…</p>
+
+<p><code>&lt;a href="href="spotify:app:$APPNAME:argument"&gt;Section&lt;/a&gt;</code></p>
+
+<p>…or the history of your application won’t be attached to the global history in Spotify, meaning the back/forward buttons in Spotify won’t behave as expected.</p>
+
+<p>You can also push new states programmatically, by setting <code>window.location</code> to <code>spotify:app:$APPNAME:arguments"</code>.</p>
+
+<p>Avoid <code>history.pushState()</code> for pushing new pages onto the stack - you’ll get a security exception if you try to do so.</p>
+
+<h3 id="signingintoyourownservice">Signing into Your Own Service</h3>
+
+<p>If your application requires Spotify users to log in to your own service, you must explicitly tell the user that their Spotify details will be exposed to your service <em>before</em> letting them log in. Please see the “App flows” document for more details.</p>
+
+<h3 id="persistingstate">Persisting State</h3>
+
+<p>Since your application will be loaded and unloaded multiple times, it is expected that it will persist its UI state (scroll position, current content, etc) using local storage, so the application will look exactly how the user left it.</p>
+
+<h3 id="spotifylook-and-feel">Spotify Look-And-Feel</h3>
+
+<p>Your application must adhere to the Spotify client look-and-feel, including colour schemes, images and scrollbars. We provide some basic UI elements and styles that complies with the standards outlined in the in the <a href="https://developer.spotify.com/technologies/apps/guidelines/03_ui-guidelines.html">UI guidelines</a> - at the very least, you must import <code>sp://import/css/eve.css</code> for our “light” theme (which will automatically give you correct scrollbars and basic colours). We also advise you to include <code>sp://import/css/shared.css</code>, which will give you access to Spotify styled button CSS and more.</p>
+
+<p>Example for how to include our resources in CSS:
+<code>@import url("sp://import/css/eve.css");</code></p>
+
+<p>Example for how to include our resources in HTML:
+<code>&lt;link rel="stylesheet" href="sp://import/css/eve.css"&gt;</code></p>
+
+<p>A full list of CSS files that might be of interest:</p>
+
+<ol>
+<li>eve.css (light style)</li>
+<li>adam.css (dark style)</li>
+<li>api.css (shared resources and css for the widgets - read its source to see its individual includes)</li>
+</ol>
+
+<p>Once you’ve got these imported, please have a look in the resource pane in the web inspector for a full declaration of what’s in there.</p>
+
+<h4 id="buttons">Buttons</h4>
+
+<p>You should use our ready made buttons - it’s as easy as…</p>
+
+<pre><code>&lt;!DOCTYPE html&gt;
+&lt;html lang="en"&gt;
+&lt;head&gt;
+  &lt;meta charset="utf-8"&gt;
+  &lt;link rel="stylesheet" href="sp://import/css/eve.css"&gt;
+&lt;/head&gt;
+&lt;body&gt;
+
+&lt;button class="add-playlist button icon" value="spotify:album:0fqSVcXza5It71LS2BJdLR"&gt;&lt;span class="plus"&gt;&lt;/span&gt;Add as Playlist&lt;/button&gt;&lt;br /&gt;
+&lt;br /&gt;
+&lt;button class="add-playlist button icon" value="spotify:album:0fqSVcXza5It71LS2BJdLR"&gt;&lt;span class="share"&gt;&lt;/span&gt;Share me&lt;/button&gt;
+&lt;br /&gt;
+&lt;button class="new-button"&gt;Another shiny button with random text!&lt;/a&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;
+</code></pre>
+
+<h3 id="cappedcontent">Capped Content</h3>
+
+<p>Users on the free tier of Spotify subscriptions may have a limit on the amount of playback they can do - both in terms of total playback time and the number of times an individual track can be played.</p>
+
+<p>It is important that you handle this correctly both in terms of not needlessly wasting the user’s playback time and handling error callbacks when a track can’t be played due to playback limits or other errors.</p>
+
+<h3 id="currentlyunavailablecontent">Currently Unavailable Content</h3>
+
+<p>If you’ve got content that you would like to include or link to that is currently not available on Spotify, you can still generate “local tracks” that the Spotify application can interact with. Such tracks <strong>will</strong> be playable if…</p>
+
+<ol>
+<li>The user happens to have local copies of the tracks in question (as MP3s, or any other format that the Spotify application accepts) that Spotify knows about (i.e. they’re listed in the “local files” view in Spotify).</li>
+<li>Spotify has aquired the right for them lately.</li>
+</ol>
+
+<p>In short, the Spotify application will <strong>always</strong> try to resolve an alternate version for local tracks, so it’s better to incorporate them than to skip them just because they’re not available in Spotify’s catalogue at the moment.</p>
+
+<p>The format of our local tracks looks like this:</p>
+
+<p><code>spotify:local:An+artist+name:An+album+name:A+track+name:duration</code> (where duration is in seconds).</p>
+
+<p>An example of how this could look like (don’t mind that we actually <em>have</em> this track in our catalogue):</p>
+
+<p><code>spotify:local:Rolling+Stones:A+Bigger+Bang:Rain+Fall+Down:293</code></p>
+
+<p>If you construct URIs like the above, they can then be used as ordinary tracks in the JS API.</p>
+
+<h3 id="audioadverts">Audio Adverts</h3>
+
+<p>It’s important to bear in mind that users on the free tier of Spotify will have adverts inserted into their playback. Your application must react to the the appropriate callbacks when the current track changes and update your UI accordingly. In addition, when an advert is playing, skipping and seeking tracks is disabled.</p>
+
+<h3 id="non-spotifyaudiocontent">Non-Spotify Audio Content</h3>
+
+<p>You are not allowed to playback non-Spotify audio content.</p>
+
+<h3 id="flashcontent">Flash Content</h3>
+
+<p>Flash is not supported.</p>
+
+<h3 id="modifyingusercontent">Modifying User Content</h3>
+
+<p>Your application must <em>not</em> modify user content such as playlists, even if you have the application permissions to do so, unless you explicitly ask the user for permission to do so first. This must be an opt-in feature of your application, not opt-out. </p>
+
+<h3 id="usertrackinganalytics">User Tracking &amp; Analytics</h3>
+
+<p>When tracking users, you must not upload any user-identifiable data or data that could be used to identify the user by cross-referencing it with your own data from the Spotify API to your service, <em>unless</em> the user has explicitly logged in to your service within your application. Additionally, any tracking/analytics tools you use must <em>not</em> negatively affect the performance or memory usage of your application, or the Spotify application itself.</p>
+
+<p>If you want to use Google Analytics, we provide a wrapper in JS (since the out-of-the-box ga.js won’t work that well in the <code>sp://</code> namespace). Here’s how you use it:</p>
+
+<ol>
+<li><code>var googletracker = sp.require("sp://import/scripts/googletracker")</code></li>
+<li><code>var tracker = new googletracker.GoogleTracker("UA-XXXXXXXX-X")</code> (replace with your own tracking number)</li>
+<li><code>tracker.track("some/path/or/whatever/you/want")</code></li>
+</ol>
+
+<p>Don’t forget to add <code>http://www.google-analytics.com</code> in the <code>RequiredPermissions</code> list in your application’s manifest, or the requests will silently be ignored.</p>
+
+<p>Please make sure that you’re using a unique UA tracking number, or you will mess up tracking for whatever you’re tracking already.</p>
+
+<h3 id="ratelimiting">Rate Limiting</h3>
+
+<p>TBD: The application API will be rate-limited to prevent performance problems. Your application must bear this in mind and respond to API failures due to rate-limiting gracefully. Also, your application must cache information where possible.</p>
+
+		</div>
+		
+	
+	
+
+</body></html>

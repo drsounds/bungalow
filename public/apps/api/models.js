@@ -1,12 +1,23 @@
 /**
  * @module
  */
-
+window.models = {};
 var Promise = function (func) {
     this._done = function () {}
     this._fail = function () {}
 
 }
+
+window.sp = {
+    require: function (url) {
+        var xmlHttp = new XMLHttpRequest();
+        xmlHttp.onreadystatechange = function (event) {
+
+        }
+    }
+}
+
+models.Promise = Promise;
 
 Promise.prototype.done = function (callback) {
     this._done = callback;
@@ -34,12 +45,16 @@ var Playlist = function () {
 
 }
 
+models.Playlist = Playlist;
+
 /** 
  * Represents an album
  */
 var Album = function () {
 
 }
+
+models.Album = Album;
 
 window.addEventListener('message', function (event) {
     if (event.data.action == 'gotPlaylist') {
@@ -91,6 +106,8 @@ window.addEventListener('message', function (event) {
 var Artist = function () {
 
 }
+
+models.Artist = Artist;
 
 Playlist.lists = {};
 Album.lists = {};
@@ -175,9 +192,13 @@ Search.search = function (query, limit, offset, type, callback) {
     }, 100);
 };
 
+models.Search = Search;
+
 var TopList = function () {
 
 }
+
+models.TopList = TopList;
 
 TopList.lists = {};
 

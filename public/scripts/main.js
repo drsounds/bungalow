@@ -20,15 +20,15 @@ Array.prototype.insert = function (index, item) {
 };
 
 var LocalSettings = function () {
-	
+
 }
 
 var Shell = function () {
-
+	var self = this;
 	this.mashcast = new Mashcast();
 
 	this.mashcast.addEventListener('episodestopped', function (event) {
-
+		self
 	});
 
 
@@ -341,7 +341,7 @@ Shell.prototype.login = function (event) {
 	spotify.addEventListener('ready', function () {
 		$('#loginView').fadeOut(function () {
 			$('.darken').fadeOut(function () {
-				self.navigate('spotify:search:dr sounds endurium');
+				self.navigate('spotify:tutorial');
 
 				// Get user playlists
 				spotify.getUserPlaylists(function (playlists) {

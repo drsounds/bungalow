@@ -216,10 +216,268 @@ postMessage communication between the host app and the bungalow.
         }   
     }
 
-# Converting Spotify HTML5 Apps to Bungalow Apps
+# Converting Spotify HTML5 Apps to Bungalow Apps (Example app is apps-tutorial by Spotify iself)
 
 My intention is to make it possible to run application written for the discountinued Spotify App finder to run in Bungalow. However, due to the complexity between the APIs, some manual tasks must be done.
 
 1. Replace BundleName with AppName in the manifest.json
-2. In each code file, remove require calls for Track, Artist, TopList and Album classes
-3. 
+
+```json
+{
+  "AppName": {
+    "en": "Spotify Apps API Tutorial"
+  },
+  "BundleIdentifier": "api-tutorial",
+  "AppDescription": {
+    "en": "A tutorial app for Spotify Apps API"
+  },
+  "AppIcon": {
+    "18x18": "img/icons/icon-18x18.png",
+    "32x32": "img/icons/icon-32x32.png",
+    "64x64": "img/icons/icon-64x64.png",
+    "128x128": "img/icons/icon-128x128.png",
+    "300x300": "img/icons/icon-300x300.png"
+  },
+  "AcceptedLinkTypes": [
+    "playlist"
+  ],
+  "BundleType": "Application",
+  "BundleVersion": "0.2",
+  "DefaultTabs": [
+    {
+      "arguments": "index",
+      "title": {
+        "en": "Home"
+      }
+    },
+    {
+      "arguments": "tabs",
+      "title": {
+        "en": "How to use tabs"
+      }
+    }
+  ],
+  "Dependencies": {
+    "api": "1.38.0",
+    "views": "1.18.1"
+  },
+  "SupportedLanguages": [
+    "en"
+  ],
+  "VendorIdentifier": "com.spotify"
+}
+```
+
+to
+
+```json
+{
+  "BundleName": {
+    "en": "Spotify Apps API Tutorial"
+  },
+  "BundleIdentifier": "api-tutorial",
+  "AppDescription": {
+    "en": "A tutorial app for Spotify Apps API"
+  },
+  "AppIcon": {
+    "18x18": "img/icons/icon-18x18.png",
+    "32x32": "img/icons/icon-32x32.png",
+    "64x64": "img/icons/icon-64x64.png",
+    "128x128": "img/icons/icon-128x128.png",
+    "300x300": "img/icons/icon-300x300.png"
+  },
+  "AcceptedLinkTypes": [
+    "playlist"
+  ],
+  "BundleType": "Application",
+  "BundleVersion": "0.2",
+  "DefaultTabs": [
+    {
+      "arguments": "index",
+      "title": {
+        "en": "Home"
+      }
+    },
+    {
+      "arguments": "tabs",
+      "title": {
+        "en": "How to use tabs"
+      }
+    }
+  ],
+  "Dependencies": {
+    "api": "1.38.0",
+    "views": "1.18.1"
+  },
+  "SupportedLanguages": [
+    "en"
+  ],
+  "VendorIdentifier": "com.spotify"
+}
+```
+
+2. Convert the require directives to requirejs compliant (use require.js)
+
+
+from
+```javascript
+require([
+    '$api/models',
+    ], function(models) {
+
+    function htmlEscape(str) {
+        return String(str)
+                .replace(/&/g, '&amp;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#39;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;');
+    }
+
+    function tabs() {
+        var args = models.application.arguments;
+        if (args) {
+            var lastArg = args[args.length - 1];
+            if (lastArg !== 'index' && lastArg !== 'tabs') {
+                return;
+           }
+       }
+
+        // compose file
+        var file = args.length == 1 ? (args[0] + '.html') : '/tutorials/' + args.slice(0, args.length-1).join('/') + '.html';
+        var xhr = new XMLHttpRequest();
+        xhr.open('GET', file);
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState != 4 || xhr.status != 200) return;
+
+            var wrapper = document.getElementById('wrapper');
+            wrapper.innerHTML = args[0] === 'index' ? '' : '<ul class="breadcrumb"><li><a href="spotify:app:api-tutorial:index">&laquo; Back to main page</a></li></ul>';
+            if (args[0] === 'index') {
+                var aux = document.createElement('div');
+                aux.innerHTML = xhr.responseText;
+                wrapper.innerHTML = aux.querySelector('#wrapper').innerHTML;
+            } else {
+                wrapper.innerHTML += xhr.responseText;
+            }
+
+            window.scrollTo(0, 0);
+            var htmlSnippets = wrapper.querySelectorAll(".html-snippet");
+            for (i = 0; i < htmlSnippets.length; i++) {
+                container = htmlSnippets[i].getAttribute("data-container");
+                if (container) {
+                    document.getElementById(container).innerHTML = '<pre><code data-language="html">' + htmlEscape(htmlSnippets[i].innerHTML) + '</code></pre>';
+                }
+            }
+
+            // search js snippets
+            var scripts = wrapper.querySelectorAll("script");
+            for (var i = 0; i < scripts.length; i++) {
+                if (scripts[i].getAttribute('type') == 'script/snippet') {
+                    var dataExecute = scripts[i].getAttribute('data-execute');
+                    if (!dataExecute || dataExecute != 'no') {
+                        eval(scripts[i].innerHTML);
+                    }
+                    var container = scripts[i].getAttribute("data-container");
+                    if (container) {
+                        document.getElementById(container).innerHTML = '<pre><code data-language="javascript">' + htmlEscape(scripts[i].innerHTML) + '</code></pre>';
+                    }
+                }
+            }
+
+            // search html snippets
+            Rainbow.color();
+        };
+        xhr.send(null);
+    }
+
+    // When application has loaded, run pages function
+    models.application.load('arguments').done(tabs);
+
+    // When arguments change, run pages function
+    models.application.addEventListener('arguments', tabs);
+}); // require
+```
+
+to
+
+```javascript
+
+    function htmlEscape(str) {
+        return String(str)
+                .replace(/&/g, '&amp;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#39;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;');
+    }
+
+    function tabs() {
+        
+        // Insert window.onmessage listener for navigate action
+        window.onmessage = function (event) {
+            if (event.data.action === 'navigate') {
+                var args = event.data.arguments;
+                if (args) {
+                    var lastArg = args[args.length - 1];
+                    if (lastArg !== 'index' && lastArg !== 'tabs') {
+                        return;
+                   }
+                }
+            }
+        }
+
+        // compose file
+        var file = args.length == 1 ? (args[0] + '.html') : '/tutorials/' + args.slice(0, args.length-1).join('/') + '.html';
+        var xhr = new XMLHttpRequest();
+        xhr.open('GET', file);
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState != 4 || xhr.status != 200) return;
+
+            var wrapper = document.getElementById('wrapper');
+            wrapper.innerHTML = args[0] === 'index' ? '' : '<ul class="breadcrumb"><li><a href="spotify:app:api-tutorial:index">&laquo; Back to main page</a></li></ul>';
+            if (args[0] === 'index') {
+                var aux = document.createElement('div');
+                aux.innerHTML = xhr.responseText;
+                wrapper.innerHTML = aux.querySelector('#wrapper').innerHTML;
+            } else {
+                wrapper.innerHTML += xhr.responseText;
+            }
+
+            window.scrollTo(0, 0);
+            var htmlSnippets = wrapper.querySelectorAll(".html-snippet");
+            for (i = 0; i < htmlSnippets.length; i++) {
+                container = htmlSnippets[i].getAttribute("data-container");
+                if (container) {
+                    document.getElementById(container).innerHTML = '<pre><code data-language="html">' + htmlEscape(htmlSnippets[i].innerHTML) + '</code></pre>';
+                }
+            }
+
+            // search js snippets
+            var scripts = wrapper.querySelectorAll("script");
+            for (var i = 0; i < scripts.length; i++) {
+                if (scripts[i].getAttribute('type') == 'script/snippet') {
+                    var dataExecute = scripts[i].getAttribute('data-execute');
+                    if (!dataExecute || dataExecute != 'no') {
+                        eval(scripts[i].innerHTML);
+                    }
+                    var container = scripts[i].getAttribute("data-container");
+                    if (container) {
+                        document.getElementById(container).innerHTML = '<pre><code data-language="javascript">' + htmlEscape(scripts[i].innerHTML) + '</code></pre>';
+                    }
+                }
+            }
+
+            // search html snippets
+            Rainbow.color();
+        };
+        xhr.send(null);
+    }
+
+    // When application has loaded, run pages function
+    models.application.load('arguments').done(tabs);
+
+    // When arguments change, run pages function
+    models.application.addEventListener('arguments', tabs);
+```
+
+3. Convert 

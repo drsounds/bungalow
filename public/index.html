@@ -25,6 +25,9 @@
 					<input type="search" id="search" placeholder="Search">
 				</form>
 			</header>
+			<div class="alert alert-warning">
+				<p>Test alert<a style="color: black;margin-right: 10pt;float: right">x</a></p>
+			</div>
 			<main style="">
 				<aside>
 					<div id="menu" style="overflow:scroll">
@@ -38,6 +41,8 @@
 						
 							
 							<li data-uri="spotify:featured"><span class="fa fa-glass"></span> Featured
+							</li>
+							<li data-uri="spotify:user:spotify:playlist:7kJcmbrVwkKiqM0tPYoMuF"><span class="fa fa-music"></span> Collaborative mix
 							</li>
 						</ul>
 						<ul id="searchHistory" cellspacing="0" width="100%" class="menu">
@@ -92,7 +97,7 @@
 			</footer>
 			<div class="darken"></div>
 			<div id="loginView" class="lightbox">
-				<form onsubmit="shell.login(event); return false">
+				<form onsubmit="try {shell.login(event); } catch(e) {console.log(e.stack);} return false">
 					<h1>Bungalow Spotify client</h1>
 					<input name="username" id="username" placeholder="username" value="drsounds"><br>
 					<input name="password" id="password" type="password" placeholder="password"><br>

@@ -128,14 +128,26 @@ SpotifyPlayer.prototype.addTracksToPlaylist = function (uris, position, playlist
 
 SpotifyPlayer.prototype.getAlbumTracks = function (uri, callback) {
 	var parts = uri.split(/\:/g);
-	$.getJSON('https://api.spotify.com/v1/albums/' + parts[2] + '/tracks', function (data) {
-		console.log(data);
-		var tracks = data.items.map(function (track) {
-			track.duration = track.duration_ms / 1000;
-			return track;
-		});
+	var album = this.spotify.createFromLink(uri);
+	var tracks = [];
+	album.browse( function(err, browsedAlbum) {
+			for (var i = 0; i < browsedAlbum.tracks.length; i++) {
+				var track = browsedAlbum.tracks[i];
+				var track = ({
+					'name': track.name + '',
+					'uri': track.link + '',
+					'artists': JSON.parse(JSON.stringify(track.artists)),
+					'album': JSON.parse(JSON.stringify(track.album)),
+					'availability': track.availability,
+					'popularity': track.popularity,
+					'duration': track.duration
+				});
+				tracks.push(track);
+			}
+		console.log(tracks);	
 		callback(tracks);
 	});
+	
 };
 
 
@@ -247,7 +259,7 @@ SpotifyPlayer.prototype.getUserPlaylists = function (callback, callback2) {
 				'canoncialName': _playlists[i].owner.canoncialName,
 				'displayName': _playlists[i].owner.displayName
 			},
-			'description': _playlists[i].description				
+			'description': _playlists[i].description		
 		};
 		playlists.push(playlist);
 
@@ -280,15 +292,29 @@ SpotifyPlayer.prototype.getArtist = function (uri, callback) {
 SpotifyPlayer.prototype.getAlbum = function (uri, callback) {
 	var parts = uri.split(/\:/g);
 	var self = this;
+
 	$.getJSON('https://api.spotify.com/v1/albums/' + parts[2], function (album) {
 		album.image = album.images[0].url;
-		album.tracks = album.tracks.items;
-		album.tracks = album.tracks.map(function (track) {
-			track.duration = track.duration_ms / 1000;
-			self.addToCache(track);
-			return track;
+		album.tracks = [];
+		var _album = self.spotify.createFromLink(uri);
+		var tracks = [];
+		_album.browse( function(err, browsedAlbum) {
+			for (var i = 0; i < browsedAlbum.tracks.length; i++) {
+				var track = browsedAlbum.tracks[i];
+				var track = ({
+					'name': track.name + '',
+					'uri': track.link + '',
+					'artists': JSON.parse(JSON.stringify(track.artists)),
+					'album': JSON.parse(JSON.stringify(track.album)),
+					'availability': track.availability,
+					'popularity': track.popularity,
+					'duration': track.duration
+				});
+				album.tracks.push(track);
+			}
+			console.log(tracks);	
+			callback(album);
 		});
-		callback(album);
 	});
 }
 
@@ -305,8 +331,8 @@ SpotifyPlayer.prototype.resolveTracks = function (uris, callback) {
 			'name': track.name + '',
 			'uri': track.link + '',
 			'artists': JSON.parse(JSON.stringify(track.artists)),
-			'album': JSON.parse(JSON.stringify(track.album))
-
+			'album': JSON.parse(JSON.stringify(track.album)),
+			'availability': track.availability
 		});
 		self.addToCache(track);
 		tracks.push(track);
@@ -343,6 +369,7 @@ SpotifyPlayer.prototype.getPlaylistTracks = function (playlist, callback) {
 				'canoncialName': track.creator.canoncialName,
 				'name': track.creator.displayName
 			},
+			'availability': track.availability,
 			'added': track.createTime
 		});
 		self.addToCache(track);

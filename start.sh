@@ -1,0 +1,3 @@
+#!/bin/bash
+
+/Applications/node-webkit.app/Contents/MacOS/node-webkit .
