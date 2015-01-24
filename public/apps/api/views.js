@@ -497,16 +497,30 @@ $(document).on('drop', '.sp-track', function (event) {
                 uris += $(this).attr('data-uri');
             });
 
+            var indicies = [];
+            $tracks.each(function (i) {
+                indicies.push($playlist.find('tbody tr').index(this));
+            });
             // Remove all selected songs
             $tracks.remove();
             for (var i = 0; i < $tracks.length; i++) {
 
                 $playlist.find('tbody').insertAt($tracks[i], newIndex + i);
             }
+
+            // notify parent
+            window.parent.postMessage({
+                'action': 'reorderedtracks',
+                'context': contextUri,
+                'oldIndex': startIndex,
+                'newIndex': newIndex,
+                'indicies': indicies,
+                'uris': uris
+            }, '*');
         }
     }
-        $playlist.attr('data-drag-index', -1);
-        $playlist.attr('data-drag-new-index', -1);
+    $playlist.attr('data-drag-index', -1);
+    $playlist.attr('data-drag-new-index', -1);
 });
 $(document).on('click', '[data-uri]', function (event) {
     console.log("clicked link", event.target);

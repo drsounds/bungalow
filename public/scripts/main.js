@@ -153,6 +153,18 @@ var Shell = function () {
 			});
 		}
 
+		if (event.data.action === 'reorderedtracks') {
+			// Occurs on reorder tracks
+			var playlistUri = event.data.context;
+			var oldIndex = event.data.oldIndex;
+			var newIndex = event.data.newIndex;
+			var indicies = event.data.indicies;
+			var numTracks = event.data.uris.length;
+			console.log("Reordering ", indicies, " in playlist " + playlistUri + ' from position ' + oldIndex + ' to position ' + newIndex);
+
+			spotify.reorderTracks(playlistUri, indicies, newIndex);
+		}
+
 		if (event.data.action === 'contextupdate') {
 			if (self.context.uri === event.data.uri) {
 				

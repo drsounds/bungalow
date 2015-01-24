@@ -28,6 +28,8 @@ var SpotifyPlayer = function () {
 	this.callbacks = {};
 };
 
+
+
 SpotifyPlayer.prototype.addToCache = function (resource) {
 	this.cache[resource.uri] = resource;
 }
@@ -401,8 +403,11 @@ SpotifyPlayer.prototype.resume = function () {
 	this.spotify.player.resume();
 	this.notify(new CustomEvent('trackresumed'));
 }
-SpotifyPlayer.prototype.reorderTracks = function (playlist, indices, newPosition) {
+SpotifyPlayer.prototype.reorderTracks = function (playlistUri, indices, newPosition) {
+	console.log("Spotify is now reordering tracks");
+	var playlist = this.spotify.createFromLink(playlistUri);
 	playlist.reorderTracks(indices, newPosition);
+	console.log("Done successfully");
 }
 
 SpotifyPlayer.prototype.removeTracks = function (playlist, indices) {
