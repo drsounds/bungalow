@@ -341,7 +341,7 @@ Shell.prototype.login = function (event) {
 	spotify.addEventListener('ready', function () {
 		$('#loginView').fadeOut(function () {
 			$('.darken').fadeOut(function () {
-				self.navigate('spotify:tutorial');
+				self.navigate('spotify:user:drsounds:playlist:24Oez7EJVmgG0U7uldaVJ2');
 
 				// Get user playlists
 				spotify.getUserPlaylists(function (playlists) {

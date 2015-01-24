@@ -20,7 +20,7 @@ window.addEventListener('message', function (event) {
 		} else {
 			Playlist.fromURI(uri, function (playlist) {
 				$('.sp-playlist').hide();
-				var contextView = new ContextView(playlist, {headers:true, fields: ['title', 'artist', 'album', 'user']});
+				var contextView = new ContextView(playlist, {headers:true, reorder:true, fields: ['title', 'artist', 'album', 'user']});
 				contextView.node.classList.add('sp-playlist');
 				playlists[uri] = contextView;
 
