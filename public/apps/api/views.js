@@ -67,16 +67,19 @@ Context.prototype.play = function (uri, index) {
     $(sel + ' .sp-track').removeClass('sp-now-playing');
     console.log(sel + ' .sp-track');
     var tracks = document.querySelectorAll(sel + ' .sp-track');
+    tracks = context_to_tracks(tracks);
+    var track = tracks[index];
     console.log("tracks in context " ,tracks);
     var tracklist = {
-        'tracks': context_to_tracks(tracks),
+        'tracks': tracks,
+        'track': track,
         'currentIndex': index,
         'uri': uri
     };
 
     console.log(this.currentApp, "Current app");
     window.parent.postMessage({'action': 'activateApp', 'app': this.currentApp}, '*');
-    window.parent.postMessage({'action': 'play', 'data': JSON.stringify(tracklist)}, '*');
+    window.parent.postMessage({'action': 'play', 'track': JSON.parse(JSON.stringify(track)), 'data': JSON.stringify(tracklist)}, '*');
     this.currentIndex = 0;
     track.classList.add('sp-now-playing');
 
@@ -433,7 +436,7 @@ var AlbumView = function (album, options) {
 }
 $(document).on('dragstart', '.sp-track', function (event) {
     $.event.props.push('dataTransfer');
-    var $playlist = $(this).parent().parent();
+    var $playlist = $('.sp-table[data-uri="' + $(this).attr('data-context-uri') + '"]');
 
     var contextUri = $playlist.attr('data-uri');
     var startIndex = $('.sp-table[data-uri="' + contextUri + '"] tbody tr').index(this);
@@ -454,7 +457,7 @@ $(document).on('dragleave', '.sp-track', function (event) {
 });
 $(document).on('dragenter', '.sp-track', function (event) {
     $.event.props.push('dataTransfer');
-    var $playlist = $(this).parent().parent();
+    var $playlist = $('.sp-table[data-uri="' + $(this).attr('data-context-uri') + '"]');
      if ($playlist.attr('data-reorder') === 'true') {
 
         event.originalEvent.dataTransfer.effectAllowed = 'copyMove';
@@ -472,40 +475,39 @@ $(document).on('dragend', '.sp-track', function (event) {
     $.event.props.push('dataTransfer');
     event.originalEvent.preventDefault();
 
-    var contextUri = $(this).data('context-uri');
-    var $playlist = $(this).parent().parent();
 });
 $(document).on('drop', '.sp-track', function (event) {
     $.event.props.push('dataTransfer');
-    var contextUri = $(this).data('context-uri');
-    var $playlist = $(this).parent().parent();
-    var $tracks = $('.sp-playlist[data-uri="' + contextUri + '"] tbody tr');
+    var contextUri = $(this).attr('data-context-uri');
+    console.log(contextUri);
+    var $playlist = $('.sp-table[data-uri="' + contextUri + '"]');
+    var $tracks = $('.sp-table[data-uri="' + contextUri + '"] tbody tr');
     var newIndex = $tracks.index($(this));
-
+    console.log(this.innerHTML);
 
     console.log(newIndex, $playlist.attr('data-drag-start-index'));
 
-    if ($playlist.attr('data-reorder')) {
+    if ($playlist.attr('data-reorder') === 'true') {
         var startIndex = $playlist.attr('data-drag-start-index');
 
         // If we are at the same playlist
         if (startIndex > -1) {
             // Get all selected tracks uris
             var uris = [];
-            var $tracks = $('.sp-playlist[data-uri="' + contextUri + '"] tbody tr.sp-track-selected');
-            $tracks.each(function (i) {
+            var $selectedTracks = $('.sp-table[data-uri="' + contextUri + '"] tbody tr.sp-track-selected');
+            $selectedTracks.each(function (i) {
                 uris += $(this).attr('data-uri');
             });
 
             var indicies = [];
-            $tracks.each(function (i) {
-                indicies.push($playlist.find('tbody tr').index(this));
+            $selectedTracks.each(function (i) {
+                indicies.push($tracks.index(this));
             });
             // Remove all selected songs
-            $tracks.remove();
-            for (var i = 0; i < $tracks.length; i++) {
+            $selectedTracks.remove();
+            for (var i = 0; i < $selectedTracks.length; i++) {
 
-                $playlist.find('tbody').insertAt($tracks[i], newIndex + i);
+                $playlist.find('tbody').insertAt($selectedTracks[i], newIndex + i);
             }
 
             // notify parent
@@ -519,10 +521,10 @@ $(document).on('drop', '.sp-track', function (event) {
             }, '*');
         }
     }
-    $playlist.attr('data-drag-index', -1);
+    $playlist.attr('data-drag-start-index', -1);
     $playlist.attr('data-drag-new-index', -1);
 });
-$(document).on('click', '[data-uri]', function (event) {
+$(document).on('click', 'a[data-uri]', function (event) {
     console.log("clicked link", event.target);
     parent.postMessage({'action': 'navigate', 'uri': event.target.getAttribute('data-uri')}, '*');
 });

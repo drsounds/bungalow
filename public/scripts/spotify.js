@@ -128,10 +128,13 @@ SpotifyPlayer.prototype.addTracksToPlaylist = function (uris, position, playlist
 
 }
 
+SpotifyPlayer.constants = spotifyEngine.constants;
+
 SpotifyPlayer.prototype.getAlbumTracks = function (uri, callback) {
 	var parts = uri.split(/\:/g);
 	var album = this.spotify.createFromLink(uri);
 	var tracks = [];
+	var self = this;
 	album.browse( function(err, browsedAlbum) {
 			for (var i = 0; i < browsedAlbum.tracks.length; i++) {
 				var track = browsedAlbum.tracks[i];
@@ -248,31 +251,30 @@ SpotifyPlayer.prototype.getTopList = function (uri, callback) {
 
 SpotifyPlayer.prototype.getUserPlaylists = function (callback, callback2) {
 	console.log("Getting user playlists");
-	var _playlists = this.spotify.playlistContainer.getPlaylists();
-	var playlists = [];
-//	console.log(_playlists);
-	for (var i = 0; i < _playlists.length; i++) {
-		//console.log(_playlists[i].name);
-		var playlist = {
-			'name': _playlists[i].name,
-			'uri': _playlists[i].link,
-			'user': {
-				'uri': _playlists[i].owner.link,
-				'canoncialName': _playlists[i].owner.canoncialName,
-				'displayName': _playlists[i].owner.displayName
-			},
-			'description': _playlists[i].description		
-		};
-		playlists.push(playlist);
+	try {
+		var _playlists = this.spotify.playlistContainer.getPlaylists();
+		var playlists = [];
+	//	console.log(_playlists);
+		for (var i = 0; i < _playlists.length; i++) {
+			//console.log(_playlists[i].name);
+			var playlist = {
+				'name': _playlists[i].name,
+				'uri': _playlists[i].link/*,
+				'user': {
+					'uri': _playlists[i].owner.link,
+					'canoncialName': _playlists[i].owner.canoncialName,
+					'displayName': _playlists[i].owner.displayName
+				}*/,
+				'description': _playlists[i].description		
+			};
+			playlists.push(playlist);
+			console.log(playlist);
 
+		}
+		callback(playlists);
+	} catch (e) {
+		alert(e.stack);
 	}
-	callback(playlists);
-	this.spotify.waitForLoaded(_playlists, function (playlist) {
-		callback2({
-			'name': playlist.name,
-			'uri': playlist.link
-		});
-	});
 }
 
 SpotifyPlayer.prototype.getArtist = function (uri, callback) {

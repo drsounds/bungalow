@@ -160,7 +160,7 @@ var Shell = function () {
 			var newIndex = event.data.newIndex;
 			var indicies = event.data.indicies;
 			var numTracks = event.data.uris.length;
-			console.log("Reordering ", indicies, " in playlist " + playlistUri + ' from position ' + oldIndex + ' to position ' + newIndex);
+			console.log("Reordering ", indicies, 	" in playlist " + playlistUri + ' from position ' + oldIndex + ' to position ' + newIndex);
 
 			spotify.reorderTracks(playlistUri, indicies, newIndex);
 		}
@@ -172,6 +172,12 @@ var Shell = function () {
 		}
 
 		if (event.data.action === 'play') {
+			console.log(event.data.track.availability);
+			if (event.data.track.availability !== 1) {
+				alert("Track is not available");
+				return;
+			}
+
 			$('#nowplaying_image').css({'background-image': 'initial'});
 			console.log("Got play event");
 			var context = JSON.parse(event.data.data);
@@ -362,7 +368,7 @@ Shell.prototype.login = function (event) {
 						var listItem = document.createElement('tr');
 						listItem.setAttribute('data-uri', playlist.uri);
 						console.log(playlist.user);
-						listItem.innerHTML = '<li data-uri="' + playlist.uri + '"><i class="fa fa-music"></i> ' + playlist.name + ' <span class="fade">by ' + playlist.user.displayName + '</span></li>';
+						listItem.innerHTML = '<li data-uri="' + playlist.uri + '"><i class="fa fa-music"></i> ' + playlist.name /*+ ' <span class="fade">by ' + playlist.user.displayName + '</span></li>'*/;
 						listItem.setAttribute('data-uri', playlist.uri);
 						$('#playlists').append(listItem);
 						$(listItem).click(function (event) {
@@ -543,6 +549,11 @@ Shell.prototype.createApp = function (appId, callback) {
 	callback(appFrame);
 }
 
+Shell.prototype.alert = function (message) {
+	$('#alert').show();
+	$('#alert').html('<p>' + message + '</p>');
+}
+
 window.onresize = function () {
 	$('iframe').css({'height': $('#viewstack').height()});
 }
@@ -557,3 +568,4 @@ Shell.prototype.activateApp = function (appId) {
 var shell = new Shell();
 
 
+window.alert = shell.alert;
