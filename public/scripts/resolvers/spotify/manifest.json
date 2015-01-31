@@ -1,0 +1,7 @@
+{
+    "BundleType": "Resolver",
+    "BundleIdentifier": "spotify",
+    "BundleName": {
+        "en": "Spotify"
+    }
+}

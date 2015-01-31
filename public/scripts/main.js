@@ -1,4 +1,3 @@
-var spotify = new SpotifyPlayer();
 
 // http://stackoverflow.com/questions/391314/jquery-insertat
 $.fn.insertAt = function(index, $parent) {
@@ -31,6 +30,37 @@ var Shell = function () {
 		self
 	});
 
+	this.spotify = spotify;
+	this.spotify.addEventListener('playlisttracksadded', function (event) {
+		console.log("Got playlist track added event");
+		var playlistURI = event.data.uri;
+		var tracks = event.data.tracks;
+		var position = event.data.position;
+
+		var appIframe = ('iframe#app_playlist');
+		if (appIframe !== null) {
+			appIframe.contentWindow.postMessage({
+				'action': 'tracksadded',
+				'uri': playlistURI,
+				'tracks': tracks,
+				'position': position
+			}, '*');
+		}
+	});
+	this.spotify.addEventListener('playlisttracksmoved', function (event) {
+		var playlistURI = event.data.uri;
+		var indicies = event.data.indicies;
+		var position = event.data.position;
+
+		var appIframe = ('iframe#app_playlist');
+		if (appIframe !== null) {
+			appIframe.contentWindow.postMessage({
+				'action': 'tracksmoved',
+				'indicies': indicies,
+				'position': position
+			}, '*');
+		}
+	});
 
 	var self = this;
 	$(document).keydown = function (event) {
@@ -514,6 +544,13 @@ Shell.prototype.createApp = function (appId, callback) {
 	}  else {
 		// Check if app is available on App Finder
 		$.getJSON('http://appfinder.aleros.webfactional.com/api/index.php?id=' + appId, function (app) {
+			if (!app) {
+				app = {
+					'name':	'Not Found',
+					'app_url': 'app://bungalow/public/apps/notfound/index.html',
+					'id': 'notfound'
+				};
+			}
 			appURL = app.app_url;
 			appName = app.id;
 			var appFrame = document.createElement('iframe');

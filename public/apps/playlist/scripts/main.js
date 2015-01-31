@@ -7,6 +7,16 @@ window.addEventListener('message', function (event) {
 		var position = event.data.position;
 		var tracks = event.data.tracks;
 	}
+	if (event.data.action === 'tracksadded') {
+		var uri = event.data.uri;
+		if (uri in playlists) {
+			var $playlist = $('.sp-playlist[data-uri="' + uri + '"]');
+			var playlist = playlists[uri];
+			var tracks = event.data.tracks;
+			var position = event.data.position;
+			playlist.insertTracks(tracks, position);
+		}
+	}
 	if (event.data.action === 'navigate') {
 		showThrobber();
 		console.log(event.data.arguments);

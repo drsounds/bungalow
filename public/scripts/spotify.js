@@ -5,6 +5,59 @@ var SpotifyPlayer = function () {
 	this.spotify = spotifyEngine;
 	this.cache = {};
 	this.isPlaying = false;
+	this.playlistEvents = {
+	    playlistRenamed: function(err, playlist) {
+	    	var event = new CustomEvent('playlistrenamed');
+	    	event.data = {
+	    		uri: playlist.uri,
+	    		name: playlist.name
+	    	};
+			self.notify(event);
+	    },
+	    tracksAdded: function(err, playlist, _tracks, position) {
+	    	var tracks = []
+	    	console.log("Got tracks added");
+	    	for (var i = 0; i < _tracks.length; i++) {
+		    	var track = track_to_track(_tracks[i]);
+		    }
+		    var event = new Event('playlisttracksadded');
+		    event.data = {
+		    	uri: playlist,
+		    	tracks: tracks,
+		    	position: position
+		    };
+	    	self.notify(event);
+	    },
+	    tracksMoved: function(err, playlist, trackIndices, newPosition) {
+	    	var event = new CustomEvent('playlisttracksmoved');
+	    	event.data = {
+	    		uri: playlist.uri,
+	    		indicies: trackIndicies,
+	    		position: newPosition
+	    	};
+	    	self.notify(event);
+	    },
+	    tracksRemoved: function(err, playlist, trackIndices) {
+	    	var event = new CustomEvent('playlisttracksremoved');
+	    	event.data = {
+	    		uri: playlist.uri,
+	    		indicies: trackIndicies
+	    	};
+	    	self.notify(event);
+	    },
+	    trackCreatedChanged: function(err, playlist, position, user, date) {
+	    	var event = new CustomEvent('playlisttrackcreatedchanged');
+	    	event.data = {
+	    		uri: playlist.uri,
+	    		position: position,
+	    		user: user.uri,
+	    		date: date
+	    	};
+	    	self.notify(event);
+	    },
+	    trackSeenChanged: function(err, playlist, position, seen) {},
+	    trackMessageChanged: function(err, playlist, position, message) {}
+	};	
 	this.spotify.on({
 		ready: function (args) {
 			console.log(spotifyEngine);
@@ -128,6 +181,18 @@ SpotifyPlayer.prototype.addTracksToPlaylist = function (uris, position, playlist
 
 }
 
+var track_to_track = function (track) {
+	return {
+		'name': track.name + '',
+		'uri': track.link + '',
+		'artists': JSON.parse(JSON.stringify(track.artists)),
+		'album': JSON.parse(JSON.stringify(track.album)),
+		'availability': track.availability,
+		'popularity': track.popularity,
+		'duration': track.duration
+	};
+}
+
 SpotifyPlayer.constants = spotifyEngine.constants;
 
 SpotifyPlayer.prototype.getAlbumTracks = function (uri, callback) {
@@ -138,15 +203,7 @@ SpotifyPlayer.prototype.getAlbumTracks = function (uri, callback) {
 	album.browse( function(err, browsedAlbum) {
 			for (var i = 0; i < browsedAlbum.tracks.length; i++) {
 				var track = browsedAlbum.tracks[i];
-				var track = ({
-					'name': track.name + '',
-					'uri': track.link + '',
-					'artists': JSON.parse(JSON.stringify(track.artists)),
-					'album': JSON.parse(JSON.stringify(track.album)),
-					'availability': track.availability,
-					'popularity': track.popularity,
-					'duration': track.duration
-				});
+				var track = track_to_track(track);
 				tracks.push(track);
 			}
 		console.log(tracks);	
@@ -173,23 +230,11 @@ SpotifyPlayer.prototype.search = function (query, limit, offset, type, callback)
 SpotifyPlayer.prototype.loadPlaylist = function (uri, callback) {
 	console.log("Loading playlist", uri);
 	var playlist = this.spotify.createFromLink(uri);
-	
+	var self = this;
 	console.log("Waiting for playlist to load", playlist);
 	if (playlist == null) {
 		this.spotify.waitForLoaded([playlist], function (playlist) {
-			playlist.on({
-			    playlistRenamed: function(err, playlist) {
-
-			    },
-			    tracksAdded: function(err, playlist, track, position) {
-
-			    },
-			    tracksMoved: function(err, playlist, trackIndices, newPosition) {},
-			    tracksRemoved: function(err, playlist, trackIndices) {},
-			    trackCreatedChanged: function(err, playlist, position, user, date) {},
-			    trackSeenChanged: function(err, playlist, position, seen) {},
-			    trackMessageChanged: function(err, playlist, position, message) {}
-			});
+			playlist.on(self.playlistEvents);
 			console.log("Playlist loaded", playlist);
 			console.log(playlist);
 			callback({
@@ -203,6 +248,7 @@ SpotifyPlayer.prototype.loadPlaylist = function (uri, callback) {
 			},
 			'description': playlist.description
 			});
+
 		});
 	} else {
 
@@ -216,6 +262,7 @@ SpotifyPlayer.prototype.createPlaylist = function (title, callback) {
 	var self = this;
 	console.log("Adding playlist");
 	this.callbacks['playlistAdded'] = function (_playlist, position) {
+		_playlist.on(playlistEvents);
 		playlist = {
 			'name': _playlist.name,
 			'uri': _playlist.link
@@ -273,7 +320,7 @@ SpotifyPlayer.prototype.getUserPlaylists = function (callback, callback2) {
 		}
 		callback(playlists);
 	} catch (e) {
-		alert(e.stack);
+		console.log(e.stack);
 	}
 }
 
@@ -297,28 +344,24 @@ SpotifyPlayer.prototype.getAlbum = function (uri, callback) {
 	var parts = uri.split(/\:/g);
 	var self = this;
 
-	$.getJSON('https://api.spotify.com/v1/albums/' + parts[2], function (album) {
-		album.image = album.images[0].url;
-		album.tracks = [];
-		var _album = self.spotify.createFromLink(uri);
-		var tracks = [];
-		_album.browse( function(err, browsedAlbum) {
-			for (var i = 0; i < browsedAlbum.tracks.length; i++) {
-				var track = browsedAlbum.tracks[i];
-				var track = ({
-					'name': track.name + '',
-					'uri': track.link + '',
-					'artists': JSON.parse(JSON.stringify(track.artists)),
-					'album': JSON.parse(JSON.stringify(track.album)),
-					'availability': track.availability,
-					'popularity': track.popularity,
-					'duration': track.duration
-				});
-				album.tracks.push(track);
-			}
-			console.log(tracks);	
-			callback(album);
-		});
+	var _album = self.spotify.createFromLink(uri);
+	var tracks = [];
+	_album.browse( function(err, browsedAlbum) {
+		for (var i = 0; i < browsedAlbum.tracks.length; i++) {
+			var track = browsedAlbum.tracks[i];
+			var track = ({
+				'name': track.name + '',
+				'uri': track.link + '',
+				'artists': JSON.parse(JSON.stringify(track.artists)),
+				'album': JSON.parse(JSON.stringify(track.album)),
+				'availability': track.availability,
+				'popularity': track.popularity,
+				'duration': track.duration
+			});
+			album.tracks.push(track);
+		}
+		console.log(tracks);	
+		callback(album);
 	});
 }
 

@@ -1,11 +1,21 @@
 
 var BUNGALOW_THEME = 'bungalow';
+var Fungalow = function () {
+	this.resolver = null;
 
 
 
 
-// Configuration
-function bungalow_load_settings () {
+	// Configuration
+
+	this.settings = this.loadSettings();
+	// load resolver
+	var Resolver = require('resolvers/' + this.settings.resolver + '/main.js');
+	this.resolver = new Resolver();
+	BUNGALOW_THEME = this.settings.theme;
+}
+
+Fungalow.prototype.loadSettings = function () {
 	var path = require('path');
 	var fs = require('fs');
 	var path = process.env['HOME'] + path.sep + 'bungalow.json';
@@ -21,12 +31,14 @@ function bungalow_load_settings () {
 			'light': true,
 			'primaryColor': '#FB8521'
 		};
-		bungalow_save_settings (settings);
+		this.saveSettings(settings);
 		return settings;
 	}
+
+	
 }
 
-function bungalow_save_settings (settings) {
+Fungalow.prototype.saveSettings = function (settings) {
 	console.log("Settings", settings);
 	if (!settings) {
 		return;
@@ -76,7 +88,4 @@ function bungalow_save_settings (settings) {
 
 }
 
-var settings = bungalow_load_settings();
-
-BUNGALOW_THEME = settings.theme;
-
+exports.Fungalow = Fungalow;
