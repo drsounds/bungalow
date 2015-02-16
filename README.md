@@ -1,5 +1,7 @@
 #Bungalow streaming client
 
+*As of 2015-02-10 This project is currently sleeping because the author is busy with a big project within the music industry!
+
 ![Screenshot](https://www.dropbox.com/s/j6tj3jellbo1e6g/screenshot.png?dl=1 "Screenshot")
 
 An open source streaming client based on LibSpotify (currently) and Node-webkit. 
