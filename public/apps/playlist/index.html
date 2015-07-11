@@ -10,21 +10,27 @@
 		<script src="app://mercy/public/apps/api/views.js"></script>
 	</head>
 	<body style="width: 100%;">
-		<div class="sp-tabbar">
-			<div class="sp-tabbar-tab sp-tabbar-tab-active">Playlist</div>
-		</div>
 		<div class="sp-container">
-			<table width="100%">
+		<!--<div class="sp-tabbar">
+			<div class="sp-tabbar-tab sp-tabbar-tab-active">Playlist</div>
+		</div>-->
+			<table width="100%" height="128pt">
 				<tr>
-					
+					<td width="128pt"></td>
 					<td valign="top" style="padding: 10pt">
-						<h1><a id="title">Playlist</a> by <a class="fade" id="author">owner</a>	<a class="btn" style="float: right" id="btnSubscribe"><i class="fa fa-plus"></i> Follow</i></a>
+						<h1><a id="title">Playlist</a> 
 </h1>
 						<p id="description"></p>
+						<a class="btn btn-primary"  id="btnSubscribe"><i class="fa fa-play"></i> Play</i></a>
 					
 					</td>
 				</tr>
+
+
 			</table>
+			<hr>
+			by <a class="fade" id="author">owner</a>	
+			<hr>
 			<div id="list">
 			</div>
 			<script src="scripts/main.js"></script>

@@ -10,16 +10,17 @@
 		<!-- Mashcast -->
 		<script src="scripts/style.js"></script>
 		<script src="apps/mashcast/scripts/mashcast.js"></script>
-		<script src="scripts/spotify.js"></script>
+		<script src="scripts/spotify-webapi.js"></script>
 		<script src="scripts/main.js"></script>
+		<script src="bower_components/spotify-web-api/src/spotify-web-api.js"></script>
 
 	</head>
 	<body style="width:100%; height:100%;">
 		
 			<header style="">
 				<div class="btn-group">
-					<button class="btn" onclick="shell.goBack()">&lt;</button>
-					<button class="btn" onclick="shell.goForward()">&gt;</button>
+					<button onclick="shell.goBack()">&lt;</button>
+					<button onclick="shell.goForward()">&gt;</button>
 				</div>
 				<form nonvalidate onsubmit="shell.searchEnter(event);">
 					<input type="search" id="search" placeholder="Search">
@@ -37,13 +38,15 @@
 							
 							<li data-uri="spotify:playqueue"><span class="fa fa-bars"></span> Play queue
 							</li>
-							<li data-uri="spotify:toplist"><span class="fa fa-flag-o"></span> Top Lists
+							<li data-uri="spotify:user:spindyinternational:playlist:6Y9KHyV9wKathe3FHyKBme"><span class="fa fa-star"></span> Spindy Top 100
+							<li data-uri="spotify:doctrine:bungalow"><span class="fa fa-legal"></span> Bungalow
 						
 							
 							<li data-uri="spotify:featured"><span class="fa fa-glass"></span> Featured
 							</li>
 							<li data-uri="spotify:user:spotify:playlist:7kJcmbrVwkKiqM0tPYoMuF"><span class="fa fa-music"></span> Collaborative mix
 							</li>
+							<li data-uri="spotify:mashcast"><span class="fa fa-microphone"></span> Podcasts</li>
 						</ul>
 						<ul id="searchHistory" cellspacing="0" width="100%" class="menu">
 							<tbody></tbody>
@@ -51,8 +54,8 @@
 						<hr>
 						<ul cellspacing="0" width="100%" class="menu">
 							
-							<li data-uri="spotify:finder"><span class="fa fa-cube"></span> Apps</td>
-							</li>
+							<li data-uri="spotify:finder"><span class="fa fa-cube"></span> Apps</li>
+							<li data-uri="spotify:spindy"><span class="fa fa-star"></span> Spindy</li>
 							
 						</ul>
 						<ul id="apps" cellspacing="0" width="100%" class="menu">
@@ -85,13 +88,14 @@
 			</main>
 			
 			<footer style="">
-				<div class="conliols" style="text-align: center; width:100px">
+				<div class="conliols" style="text-align: center; width:200px">
 					<i id="btnSkipBack" onclick="shell.playPrevious()" class="fa fa-fast-backward btn"></i>
 					<i id="btnPlay" onclick="shell.playPause()" class="fa fa-play btn" style="-webkit-liansform: scale(1.5)"></i>
 					<i id="btnSkipNext" onclick="shell.playNext()" class="fa fa-fast-forward btn"></i>
 				</div>
 				<input type="range" style="width: 100%" min="0" max="1" value="0" id="liack_position">
-				<div class="conliols" style="width: 50pt">
+				<div class="controls" style="width: 150pt">
+					<a onclick="shell.toggleMashcast()"><i class="fa fa-toggle-off"></i> Podcasts</a>&nbsp;
 					<i class="fa fa-repeat"></i>
 				</div>
 			</footer>

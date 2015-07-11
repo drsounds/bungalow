@@ -340,7 +340,30 @@ Shell.prototype.playTrack = function (track) {
 Shell.prototype.login = function (event) {
 	var self = this;
 	event.preventDefault();
-	spotify.login($('#username').val(), $('#password').val());
+	spotify.login().then(function (ready) {
+		// Get user playlists
+		spotify.getUserPlaylists(function (playlists) {
+			for (var i =0; i < playlists.length && i < 100; i++) {
+				var playlist = playlists[i];
+				var listItem = document.createElement('tr');
+				listItem.setAttribute('data-uri', playlist.uri);
+				console.log(playlist.user);
+				listItem.innerHTML = '<li data-uri="' + playlist.uri + '"><i class="fa fa-music"></i> ' + playlist.name /*+ ' <span class="fade">by ' + playlist.user.displayName + '</span></li>'*/;
+				listItem.setAttribute('data-uri', playlist.uri);
+				$('#playlists').append(listItem);
+				$(listItem).click(function (event) {
+					var uri = event.target.getAttribute('data-uri');
+					console.log(event.target);
+					//alert(event.target.getAttribute('data-uri'));
+					self.navigate(uri);
+				});
+			}
+		}, function (playlist) {
+			var $item = $('.menu tr[data-uri="' + playlist.uri + '"]');
+			$item.html('<li data-uri="' + playlist.uri + '"><i class="fa fa-music"></i> ' + playlist.name + ' <span class="fade">by ' + playlist.user.displayName + '</span></li>');
+
+		});
+	});
 	$('#throbber').show();
 
 	// Add apps to sidebar
@@ -356,37 +379,9 @@ Shell.prototype.login = function (event) {
 		//alert(tr.innerHTML);
 		$('#apps').append(tr);	
 	}
-	spotify.addEventListener('ready', function () {
-		$('#loginView').fadeOut(function () {
-			$('.darken').fadeOut(function () {
-				self.navigate('spotify:user:drsounds:playlist:24Oez7EJVmgG0U7uldaVJ2');
+	self.navigate('spotify:spindy');
 
-				// Get user playlists
-				spotify.getUserPlaylists(function (playlists) {
-					for (var i =0; i < playlists.length && i < 100; i++) {
-						var playlist = playlists[i];
-						var listItem = document.createElement('tr');
-						listItem.setAttribute('data-uri', playlist.uri);
-						console.log(playlist.user);
-						listItem.innerHTML = '<li data-uri="' + playlist.uri + '"><i class="fa fa-music"></i> ' + playlist.name /*+ ' <span class="fade">by ' + playlist.user.displayName + '</span></li>'*/;
-						listItem.setAttribute('data-uri', playlist.uri);
-						$('#playlists').append(listItem);
-						$(listItem).click(function (event) {
-							var uri = event.target.getAttribute('data-uri');
-							console.log(event.target);
-							//alert(event.target.getAttribute('data-uri'));
-							self.navigate(uri);
-						});
-					}
-				}, function (playlist) {
-					var $item = $('.menu tr[data-uri="' + playlist.uri + '"]');
-					$item.html('<li data-uri="' + playlist.uri + '"><i class="fa fa-music"></i> ' + playlist.name + ' <span class="fade">by ' + playlist.user.displayName + '</span></li>');
 
-				});
-				$('#throbber').hide();
-			});
-		});
-	});
 
 	return false;
 }
@@ -515,6 +510,7 @@ Shell.prototype.createApp = function (appId, callback) {
 		// Check if app is available on App Finder
 		$.getJSON('http://appfinder.aleros.webfactional.com/api/index.php?id=' + appId, function (app) {
 			appURL = app.app_url;
+			alert(appURL);
 			appName = app.id;
 			var appFrame = document.createElement('iframe');
 			appFrame.setAttribute('src', appURL + '?t=' + new Date().getTime());
