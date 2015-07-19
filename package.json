@@ -1,7 +1,7 @@
 {
   "name": "Bungalow",
   "version": "1.0.0",
-  "main": "public/index.html",
+  "main": "index.html",
   "description": "",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -21,7 +21,8 @@
   "dependencies": {
     "node-spotify": "*",
     "less": "*",
-    "express": "*"
+    "express": "*",
+    "express-async": "*"
   },
   "author": "",
   "license": "ISC",

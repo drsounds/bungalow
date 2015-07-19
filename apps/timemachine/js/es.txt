@@ -1,0 +1,3 @@
+// CHANGED BY drsounds@gmail.com to match the app
+													if(flattened<(-1*(parseInt(knob.css('width'))/2)) + 10){
+														flattened=(-1*(parseInt(knob.css('width'))/2) + 10);
