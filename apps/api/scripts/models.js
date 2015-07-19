@@ -29,7 +29,7 @@ require([], function () {
   
   
   var BridgeLoadable = function (uri) {
-      this.backend = 'https://api.spotify.com/v1';
+      this.backend = 'https://localhost:9162/api';
       this.images = {};
   if (typeof(uri) === 'undefined') {
           return;

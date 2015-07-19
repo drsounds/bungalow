@@ -22,7 +22,8 @@
     "node-spotify": "*",
     "less": "*",
     "express": "*",
-    "express-async": "*"
+    "express-async": "*",
+    "swig": "*"
   },
   "author": "",
   "license": "ISC",

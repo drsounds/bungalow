@@ -141,6 +141,7 @@ var Shell = function () {
 			$('#track_position').attr('max', track.duration);
 		}
 	});
+
 	this.apps = {};
 	window.onmessage = function (event) {
 		console.log(event);
@@ -395,11 +396,11 @@ Shell.prototype.searchEnter = function (event) {
 
 Shell.prototype.navigate = function (url, nohistory) {
 	var q = url;
-	if (url.indexOf('music:') !== 0) {
-		url = 'music:search:' + url;
+	if (url.indexOf('bungalow:') !== 0) {
+		url = 'bungalow:search:' + url;
 	}
 
-	if (url.indexOf('music:search:') === 0) {
+	if (url.indexOf('bungalow:search:') === 0) {
 
 		try {
 		var uri = url;	
@@ -427,7 +428,7 @@ Shell.prototype.navigate = function (url, nohistory) {
 	}
 	}
 
-	var parts = url.substr('music:'.length).split(/\:/g);
+	var parts = url.substr('bungalow:'.length).split(/\:/g);
 	var appId = parts[0];
 	var args = parts.slice(1);
 	if (url.match(/music\:user\:(.*)\:playlist\:(.*)/)) {
@@ -493,66 +494,23 @@ Shell.prototype.getAppFrame = function (appId) {
 
 
 Shell.prototype.createApp = function (appId, callback) {
-	/*
-	var appDir = 'public' + path.sep + 'apps' + path.sep + appId + path.sep;
-	var manifestFilePath = appDir + path.sep + 'manifest.json';
-	// check if app is already existing
-	// check if directory exists
-	var appName = 'notfound';
-	var self = this;
-	var appURL = '';
-	if (fs.existsSync(appDir) && fs.existsSync(manifestFilePath)) {
-		var manifest = JSON.parse(fs.readFileSync(manifestFilePath));
-		appName = appId;
-		appURL = '/public/apps/' + appName + '/index.html';
-	}  else {
-		// Check if app is available on App Finder
-		$.getJSON('http://appfinder.aleros.webfactional.com/api/index.php?id=' + appId, function (app) {
-			appURL = app.app_url;
-			alert(appURL);
-			appName = app.id;
-			var appFrame = document.createElement('iframe');
-			appFrame.setAttribute('src', appURL + '?t=' + new Date().getTime());
-			console.log('/apps/' + appName + '/index.html');
-			appFrame.setAttribute('id', 'app_' + appId + '');
-			appFrame.classList.add('sp-app');
-			appFrame.setAttribute('nwdisable', 'nwdisable');
-			appFrame.setAttribute('frameborder', '0');
-			appFrame.setAttribute('width', "100%");
-			appFrame.style = 'width:100%; height: 100%';
-			$('#viewstack').append(appFrame);
-			$(appFrame).css({'height': $('#viewstack').height()});
-			self.apps[appId] = appFrame;
 
-			callback(appFrame);
-		});
-		return;
-	}
 
 	var appFrame = document.createElement('iframe');
-	appFrame.setAttribute('src', appURL);
-	console.log('/apps/' + appName + '/index.html');
+	appFrame.setAttribute('src', 'http://localhost:9261/app/' + appId + '/index.html?t=' + new Date().getTime());
+	console.log('/apps/' + appId + '/index.html');
 	appFrame.setAttribute('id', 'app_' + appId + '');
 	appFrame.classList.add('sp-app');
+	appFrame.setAttribute('nwdisable', 'nwdisable');
 	appFrame.setAttribute('frameborder', '0');
 	appFrame.setAttribute('width', "100%");
 	appFrame.style = 'width:100%; height: 100%';
 	$('#viewstack').append(appFrame);
 	$(appFrame).css({'height': $('#viewstack').height()});
-	this.apps[appId] = appFrame;
+	self.apps[appId] = appFrame;
 
-	callback(appFrame);*/
+	callback(appFrame);
 
-	var appFrame = document.createElement('iframe');
-	appFrame.setAttribute('src', 'http://localhost:9261/app/' + appId + '/index.html');
-	appFrame.setAttribute('id', 'app_' + appId + '');
-	appFrame.classList.add('sp-app');
-	appFrame.setAttribute('frameborder', '0');
-	appFrame.setAttribute('width', "100%");
-	appFrame.style = 'width:100%; height: 100%';
-	$('#viewstack').append(appFrame);
-	$(appFrame).css({'height': $('#viewstack').height()});
-	this.apps[appId] = appFrame;
 
 }
 
@@ -574,5 +532,9 @@ Shell.prototype.activateApp = function (appId) {
 
 var shell = new Shell();
 
+(function ($) {
+		$.fn.menulize = function (options) {
 
+		}
+}( jQuery ));
 window.alert = shell.alert;

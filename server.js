@@ -22,12 +22,27 @@ var allowCrossDomain = function(req, res, next) {
 app.use(allowCrossDomain);
 app.use(express.static(execPath + '/'));
 
+
 app.get('/player/play', function (req, res) {
     var id = req.params.id;
     music.getAlbumTracks(id).then(function (artist) {
         var data = JSON.stringify(artist);
         res.json(artist);
     });
+});
+
+app.get('/', function (req, res) {
+
+    var index = fs.readFileSync('./index.html');
+    res.write(index);
+    res.end();
+});
+
+app.get('/index.html', function (req, res) {
+
+    var index = fs.readFileSync('./index.html');
+    res.write(index);
+    res.end();
 });
 
 app.get('/settings.json', function (req, res) {
@@ -155,7 +170,6 @@ app.get('/api/users/:username/playlists', function (req, res) {
 });
 
 var external_apps = {};
-
 app.get('/app/*', function (req, res) {
 
     var app_path = req.params[0].split('/');
@@ -170,7 +184,6 @@ app.get('/app/*', function (req, res) {
         var manifestFilePath = appDir + path.sep + 'manifest.json';
         // check if app is already existing
         // check if directory exists
-        var appName = 'notfound';
         var self = this;
         var appURL = '';
 
@@ -182,7 +195,7 @@ app.get('/app/*', function (req, res) {
             var data = fs.readFileSync(file);
 
             res.write(data);
-            res.next();
+            res.end();
         } else {
             // Check if app is available on App Finder
             request('http://appfinder.aleros.webfactional.com/api/index.php?id=' + appId, function (error, response, body) {
@@ -190,15 +203,22 @@ app.get('/app/*', function (req, res) {
                 external_apps[appId] = app.app_url;
                 var url = external_apps[appId] + app_path.slice(1).join('/');
                 request(url, function (error, response, body) {
-                    res.render(body);
+                    res.write(body);
+                    res.end();
                 })
 
             });
         }
     } else {
         request(external_apps[appId] + '/' + app_path.slice(1).join('/'), function (error, response, body) {
+            if (error) {
+                var notfound = fs.readFileSync('./notfound/index.html');
+                res.write(notfound);
+                res.end();
+                return;
+            }
             res.write(body);
-            res.next();
+            res.end();
         })
     }
 });
@@ -219,6 +239,13 @@ app.get('/api/users/:username/playlists/:id/tracks', function (req, res) {
         var data = JSON.stringify(playlist);
         res.json(data);
     });
+});
+
+app.get('/chrome/*', function (req, res) {
+    var app_path = req.params[0].split('/');
+    var file = fs.readFileSync('./' + app_path.join('/'));
+    res.write(file);
+    res.end();
 });
 
 app.listen(process.env.PORT || 9261);

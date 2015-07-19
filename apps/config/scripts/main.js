@@ -20,7 +20,7 @@ $.fn.serializeObject = function()
 
 window.onmessage = function (event) {
 	if (event.data.action === 'gotConfig') {
-		$.getJSON('app://mercy/public/themes/palette.json', function (palettes) {
+		$.getJSON('http://localhost:9261/chrome/themes/palette.json', function (palettes) {
 			console.log(palettes);
 			$('#theme').val(event.data.config.theme);
 			for (var i = 0; i < palettes.length; i++) {
