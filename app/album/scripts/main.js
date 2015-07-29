@@ -7,9 +7,7 @@ window.addEventListener('message', function (event) {
 		console.log(event.data.arguments);
 		var id = event.data.arguments[0];
 		$('.sp-album').hide();
-		var t = Album.byId(id);
-		console.log(t);
-		Album.byId(id).then(function (album) {
+		Album.fromId(id).then(function (album) {
 			$('#list').html("");
 			console.log("Got album", album);
 			var contextView = new TrackContextView(album, {'fields': ['title', 'duration', 'popularity']});

@@ -466,6 +466,8 @@ Shell.prototype.navigate = function (url, nohistory) {
 		url = 'bungalow:' + url.split(/\:/g).slice(1).join(':');
 	}
 
+
+
 	if (url.indexOf('bungalow:search:') === 0) {
 
 		try {
@@ -497,7 +499,7 @@ Shell.prototype.navigate = function (url, nohistory) {
 	var parts = url.substr('bungalow:'.length).split(/\:/g);
 	var appId = parts[0];
 	var args = parts.slice(1);
-	if (url.match(/music\:user\:(.*)\:playlist\:(.*)/)) {
+	if (url.match(/bungalow\:user\:(.*)\:playlist\:(.*)/)) {
 		appId = 'playlist';
 	
 	}

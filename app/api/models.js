@@ -47,6 +47,7 @@ Collection.prototype.next = function() {
                 self.objects = self.objects.concat(result.objects);
             }
             resolve(self);
+            self.offset += self.limit;
         });
     });
 };
@@ -195,17 +196,20 @@ Artist.byId = function (id) {
 
 Search = function (data) {
     Object.assign(this, data);
-    this.tracks = new Collection('/music/search?q=' + this.q, 'bungalow:search:' + this.q + ':tracks');
+    this.uri = 'bungalow:search:' + this.query;
+    this.tracks = new Collection('/music/search?q=' + this.q + '&type=track&', this.uri + ':tracks');
+    this.artists = new Collection('/music/search?q=' + this.q + '&type=artist&', this.uri + ':artists');
+    this.albums = new Collection('/music/search?q=' + this.q + '&type=album&', this.uri + ':albums');
+    this.users = new Collection('/music/search?q=' + this.q + '&type=user&', this.uri + ':users');
+    this.playlists = new Collection('/music/search?q=' + this.q + '&type=user&', this.uri + ':playlists');
 };
 
 Search.lists = {};
 
 
-Search.search = function (query, limit, offset, type) {
-    return new Promise(function (resolve, fail) {
-        var self = this;
-        resolve(new Search(response));
-
+Search.search = function (query) {
+    return new Search({
+        query: query
     });
 };
 

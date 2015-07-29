@@ -11,16 +11,16 @@ window.addEventListener('message', function (event) {
 		showThrobber();
 		console.log(event.data.arguments);
 		var user = event.data.arguments[0];
-		var playlist = event.data.arguments[2];
-		var uri = 'spotify:user:' + user + ':playlist:' + playlist;
+		var id = event.data.arguments[2];
+		var uri = 'spotify:user:' + user + ':playlist:' + id;
 		$('.sp-playlist').hide();
 		if (uri in playlists) {
 			playlists[uri].show();
 			hideThrobber();
 		} else {
-			Playlist.fromURI(uri, function (playlist) {
+			Playlist.fromUserId(user, id).then(function (playlist) {
 				$('.sp-playlist').hide();
-				var contextView = new ContextView(playlist, {headers:true, reorder:true, fields: ['title', 'artist', 'album', 'user']});
+				var contextView = new TrackContextView(playlist, {headers:true, reorder:true, fields: ['title', 'artist', 'album', 'user']});
 				contextView.node.classList.add('sp-playlist');
 				playlists[uri] = contextView;
 

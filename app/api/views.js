@@ -244,6 +244,28 @@ var fieldTypes = {
     'creted': 'Added'
 };
 
+var CollectionView = function (resource, options) {
+    this.resource = resource;
+    this.options = options;
+    this.node = document.createElement('div');
+    this.tbody = this.node;
+    this.loading = false;
+    this.type = 'track';
+}
+
+CollectionView.prototype.next = function () {
+    var tbody = this.tbody;
+    var fields = this.fields;
+    var collection = this.resource[this.type + 's'];
+    this.loading = true;
+    collection.next().then(function (collection) {
+        for (var i = 0; i < collection.objects.length; i++) {
+            var trackView = new TrackView(collection.objects[i], i, collection.uri, {'fields': fields});
+            $(tbody).append(trackView.node);
+            this.loading = false;
+        }
+    });
+}
 
 /**
  * A tracklist view
@@ -253,6 +275,11 @@ var fieldTypes = {
  * @class
  */
 var TrackContextView = function (resource, options) {
+    CollectionView.call(this, resource, options);
+    var table = document.createElement('table');
+    this.node = table;
+    this.type = 'track';
+    this.loading = false;
     var headers = false;
     var fields = ['title', 'artist', 'duration', 'album'];
     this.reorder = false;
@@ -297,9 +324,10 @@ var TrackContextView = function (resource, options) {
     var listTop =  this.node.offsetTop + (headers ? (thead.offsetHheight) : 0);
     $(background).css({'position': 'absolute', 'z-index': -1, 'left': this.node.style.left, 'top': listTop + 'px', 'height': (window.innerHeight - listTop) + 'px'});
     $(this.background).addClass('sp-table-background');
+    var self = this;
     window.addEventListener('resize', function (event) {
         
-        $(background).css({'position': 'absolute', 'left': this.node.style.left, 'top': listTop + 'px', 'height': (window.innerHeight - listTop) + 'px'});
+        $(background).css({'position': 'absolute', 'left': self.node.style.left, 'top': listTop + 'px', 'height': (window.innerHeight - listTop) + 'px'});
     
     })
     // To make the header hovering
@@ -325,22 +353,13 @@ var TrackContextView = function (resource, options) {
     }
     $(this.node).spotifize();
     collection_contexts[resource.uri] = this; // Register context here
-    
-    
-    this.next();
+    setTimeout(function () {
+        sync_contexts();
+    }, 100);
 }
 
-TrackContextView.prototype.next = function () {
-    var tbody = this.tbody;
-    var fields = this.fields;
-    var collection = this.resource.tracks;
-    collection.next().then(function (collection) {
-        for (var i = 0; i < collection.objects.length; i++) {
-            var trackView = new TrackView(collection.objects[i], i, collection.uri, {'fields': fields});
-            $(tbody).append(trackView.node);
-        }
-    });
-}
+TrackContextView.prototype = Object.create(CollectionView.prototype);
+TrackContextView.prototype.constructor = CollectionView;
 
 
 TrackContextView.prototype.show = function () {
@@ -409,6 +428,16 @@ var CollectionItem = function (object, options) {
     $(this.node).append(box);
 }
 
+var AlbumCollectionView = function (collection, options) {
+    this.node = document.createElement('div');
+    this.node.classList.add('sp-context');
+
+}
+
+AlbumCollectionView.prototype.next = function () {
+
+}
+
 /** 
  * Represents an album view
  * @param {Album} album Album instance
@@ -420,6 +449,8 @@ var AlbumView = function (album, options) {
     var table = document.createElement('table');
     table.setAttribute('width', '100%');
     table.classList.add('sp-album');
+    this.classList.add('sp-context');
+    this.loading = false;
     console.log("ALBUM", album);
     table.setAttribute('data-uri', album.uri);
     var td1 = document.createElement('td');
@@ -433,11 +464,10 @@ var AlbumView = function (album, options) {
     console.log(td2.innerHTML);
     //alert(album.tracks);
     var self = this;
-    getAlbumTracks(album.uri, function (tracks) {
-        album.tracks = tracks;
-        var contextView = new ContextView(album, {'fields': ['title', 'duration', 'popularity']});
-        td2.appendChild(contextView.node);
-    });
+
+    var contextView = new TrackContextView(album, {'fields': ['title', 'duration', 'popularity']});
+    td2.appendChild(contextView.node);
+
     table.appendChild(td1);
     table.appendChild(td2);
     console.log(table);
@@ -447,6 +477,7 @@ var AlbumView = function (album, options) {
     this.node.style.paddingLeft = '26pt';
 
 }
+
 $(document).on('dragstart', '.sp-track', function (event) {
     $.event.props.push('dataTransfer');
     var $collection = $('.sp-table[data-uri="' + $(this).attr('data-context-uri') + '"]');
@@ -555,4 +586,18 @@ var Bungalow = function (section, options) {
     this.node = document.createElement('iframe');
 }
 
+function sync_contexts() {
+    $('.sp-collection').each(function (i) {
+        if ((this.getBoundingClientRect().bottom + this.getBoundingClientRect().top) < $(window).scrollTop() + window.innerHeight) {
+            var collectionView = collection_contexts[this.getAttribute('data-uri')];
+            if (!collectionView.loading) {
+                collectionView.next();
+            }
+        }
+    })
+}
+
+$(window).scroll(function () {
+    sync_contexts();
+});
 

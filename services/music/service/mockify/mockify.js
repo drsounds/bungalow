@@ -44,7 +44,7 @@ MockifyPlayer.prototype.request = function (method, url, data) {
             if (parts[0] == 'search') {
                 var q = parts[1];
                 var tracks = [];
-                for (var i = 0; i < tracks.length; i++) {
+                for (var i = 0; i < 5; i++) {
                     tracks.push({
                         'id': 'track' + i,
                         'artists': [{
@@ -61,7 +61,7 @@ MockifyPlayer.prototype.request = function (method, url, data) {
                     });
                 }
                 resolve({
-                    'tracks': tracks
+                    'objects': tracks
                 });
             }
             if (parts[0] == 'artists') {
@@ -219,7 +219,12 @@ MockifyPlayer.prototype.request = function (method, url, data) {
                                             'name': 'Text',
                                             'id': 'album'
                                         },
-                                        'uri': 'bungalow:playlist:track' + i
+                                        'uri': 'bungalow:playlist:track' + i,
+                                        'user':{
+                                            'id': 'drsounds',
+                                            'name': 'Dr. Sounds',
+                                            'uri': 'bungalow:user:drsounds'
+                                        }
                                     });
                                 }
                                 resolve({
