@@ -5128,7 +5128,7 @@ function Browser(window, document, $log, $sniffer) {
    * The listener gets called with new url as parameter.
    *
    * NOTE: this api is intended for use only by the $location service. Please use the
-   * {@link ng.$location $location service} to monitor url changes in angular apps.
+   * {@link ng.$location $location service} to monitor url changes in angular app.
    *
    * @param {function(string)} listener Listener function to be called when url changes.
    * @return {function(string)} Returns the registered listener fn - handy if the fn is anonymous.
@@ -18434,7 +18434,7 @@ function FormController(element, attrs, $scope, $animate, $interpolate) {
  * # Submitting a form and preventing the default action
  *
  * Since the role of forms in client-side Angular applications is different than in classical
- * roundtrip apps, it is desirable for the browser not to translate the form submission into a full
+ * roundtrip app, it is desirable for the browser not to translate the form submission into a full
  * page reload that sends the data to the server. Instead some javascript logic should be triggered
  * to handle the form submission in an application-specific way.
  *
@@ -19815,7 +19815,7 @@ function badInputChecker(scope, element, attr, ctrl) {
       var validity = element.prop(VALIDITY_STATE_PROPERTY) || {};
       // Detect bug in FF35 for input[email] (https://bugzilla.mozilla.org/show_bug.cgi?id=1064430):
       // - also sets validity.badInput (should only be validity.typeMismatch).
-      // - see http://www.whatwg.org/specs/web-apps/current-work/multipage/forms.html#e-mail-state-(type=email)
+      // - see http://www.whatwg.org/specs/web-app/current-work/multipage/forms.html#e-mail-state-(type=email)
       // - can ignore this case as we can still read out the erroneous email...
       return validity.badInput && !validity.typeMismatch ? undefined : value;
     });
@@ -21162,7 +21162,7 @@ var ngControllerDirective = [function() {
  *
  * This is necessary when developing things like Google Chrome Extensions or Universal Windows Apps.
  *
- * CSP forbids apps to use `eval` or `Function(string)` generated functions (among other things).
+ * CSP forbids app to use `eval` or `Function(string)` generated functions (among other things).
  * For Angular to be CSP compatible there are only two things that we need to do differently:
  *
  * - don't use `Function` constructor to generate optimized value getters

@@ -1,0 +1,39 @@
+<!doctype html>
+<html>
+	<head>
+		<title>Start</title>
+		<base href="http://localhost:9261/app/album/">
+		<link rel="stylesheet" href="http://localhost:9261/themes/main.css">
+		<link rel="stylesheet" href="bower_components/font-awesome/css/font-awesome.css">
+		<script src="http://localhost:9261/bower_components/jquery/dist/jquery.js"></script>
+		<script src="http://localhost:9261/app/api/polyfill.min.js"></script>
+		<script src="http://localhost:9261/app/api/models.js"></script>
+		<script src="http://localhost:9261/app/api/views.js"></script>
+		<link rel="stylesheet" href="themes/main.css">
+	</head>
+	<body style="width: 100%">
+		<div class="sp-tabbar">
+			<div class="sp-tabbar-tab sp-tabbar-tab-active">Album</div>
+		</div>
+		<div style="height: 23px"></div>
+		<div id="throbber">
+			<img src="http://localhost:9261/images/throbber.gif">
+		</div>
+		<div class="sp-container" style="width: 100%">
+			<table width="100%">
+				<tr>
+					<td width="256pt" valign="top" style="padding: 10pt">
+						<img id="image" class="shadow" width="256pt">
+					</td>
+					<td valign="top" style="">
+						<h3 id="name" style="height: 30px"></h3>
+						<div id="playlist">
+						</div>
+						<span id="copyrights"></span>
+					</td>
+				</tr>
+			</table>
+		</div>
+		<script src="scripts/main.js"></script>
+	</body>
+</html>

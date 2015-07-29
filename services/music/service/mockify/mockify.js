@@ -36,191 +36,221 @@ MockifyPlayer.prototype.getMe = function () {
 }
 MockifyPlayer.prototype.request = function (method, url, data) {
     var self = this;
+    self.url = url;
     var promise = new Promise(function (resolve, fail) {
         var activity = function () {
 
-            setTimeout(function () {
-                url = url.substr(1);
-                var parts = url.split(/\//g);
-
-                if (parts[0] == 'artists') {
-                    if (parts.length > 2) {
-                        if (parts[2] == 'albums') {
-                            var albums = [];
-                            for (var i = 0; i < 5; i++) {
-                                albums.push({
-                                    'id': 'album' + i,
-                                    'artists': [{
-                                        'id': id,
-                                        'name': id
-                                    }],
-                                    'name': 'Album #' + i
-                                });
-                            }
-                            resolve({
-                                'objects': albums
-                            });
-                        }
-                    } else {
-                        var id = parts[1];
-                        resolve({
-                            'id': id,
-                            'name': 'Artist',
-                            'uri': 'mockify:artist:' + id,
-                            'followers': 640
-                        });
-                        return;
-                    }
-                }
-
-                if (parts[0] == 'albums') {
-                    if (parts.length > 2) {
-                        var tracks = [];
-                        for (var i = 0; i < 10; i++) {
-                            var track = {
-                                'id': i,
-                                'name': 'Mock track',
-                                'uri': 'mockify:track:' + i,
-                                'artists':[{
-                                    'id': 'id1',
-                                    'name': 'Mock artist',
-                                    'uri': 'mockify:artist:id1'
-                                 }],
-                                'album': {
-                                    'id': id,
-                                    'name': 'Mock album',
-                                    'uri': 'mockify:album:id1',
-                                    'artists':[{
-                                        'id': 'id1',
-                                        'name': 'Mock artist',
-                                        'uri': 'mockify:artist:id1'
-                                     }],
-                                }
-                            };
-                            tracks.push(track);
-                        }
-                        resolve({
-                            objects: tracks
-                        });
-                    } else {
-                        var id = parts[1];
-                        resolve({
-                            'id': id,
-                            'name': 'Mock album',
-                            'uri': 'mockify:album:' + id,
-                            'artists': [{
-                                'id': 'id1',
-                                'name': 'Mock artist',
-                                'uri': 'mockify:artist:id1'
-                            }]
-                        });
-                    }
-                }
-                if (parts[0] == 'tracks') {
-                    var id = parts[1];
-                    resolve({
-                        'id': id,
-                        'name': 'Mock track',
-                        'uri': 'mockify:track:' + id,
-                        'artists':[{
-                            'id': 'id1',
-                            'name': 'Mock artist',
-                            'uri': 'mockify:artist:id1'
+            var parts = url.split(/\//g);
+            if (parts[0] == 'search') {
+                var q = parts[1];
+                var tracks = [];
+                for (var i = 0; i < tracks.length; i++) {
+                    tracks.push({
+                        'id': 'track' + i,
+                        'artists': [{
+                            'id': 'testartist',
+                            'name': 'Test artist'
                         }],
+                        name: 'test',
                         'album': {
-                            'id': 'id1',
-                            'name': 'Mock album',
-                            'uri': 'mockify:album:id1',
-                            'artists':[{
-                                'id': 'id1',
-                                'name': 'Mock artist',
-                                'uri': 'mockify:artist:id1'
-                            }],
+                            'artists': [{
+                                'id': 'testartist',
+                                'name': 'Test artist'
+                            }]
                         }
                     });
                 }
-                if (parts[0] == 'users') {
-                    var userid = parts[1];
-                    if (parts.length > 2) {
-                        if (parts[2] == 'playlists') {
-                            if (parts.length < 5) {
-                                var playlists = [];
-                                for (var i = 0; i < playlists.length; i++) {
-                                    playlists.append({
-                                        'id': 'pls' + i,
-                                        'name': 'Playlist ' + i,
-                                        'user': {
-                                            'id': userid,
-                                            'name': 'User ' + userid
-                                        },
-                                        'description': 'Text',
-                                        'uri': 'mockify:playlist:pls' + i,
-                                        'followers': 1920000
+                resolve({
+                    'tracks': tracks
+                });
+            }
+            if (parts[0] == 'artists') {
+                if (parts.length > 2) {
+                    if (parts[2] == 'albums') {
+                        var albums = [];
+                        for (var i = 0; i < 5; i++) {
+                            albums.push({
+                                'id': 'album' + i,
+                                'artists': [{
+                                    'id': id,
+                                    'name': id
+                                }],
+                                'name': 'Album #' + i
+                            });
+                        }
+                        resolve({
+                            'objects': albums
+                        });
+                    }
+                } else {
+                    var id = parts[1];
+                    resolve({
+                        'id': id,
+                        'name': 'Artist',
+                        'uri': 'bungalow:artist:' + id,
+                        'followers': 640,
+                        'images':[{
+                            'url': ''
+                        }]
+                    });
+                    return;
+                }
+            }
+
+            if (parts[0] == 'albums') {
+                if (parts.length > 2) {
+                    var tracks = [];
+                    for (var i = 0; i < 10; i++) {
+                        var track = {
+                            'id': i,
+                            'name': 'Mock track',
+                            'uri': 'bungalow:track:' + i,
+                            'artists':[{
+                                'id': 'id1',
+                                'name': 'Mock artist',
+                                'uri': 'bungalow:artist:id1'
+                             }],
+                            'images':[{
+                                'url': ''
+                            }],
+                            'album': {
+                                'id': id,
+                                'name': 'Mock album',
+                                'uri': 'bungalow:album:id1',
+                                'artists':[{
+                                    'id': 'id1',
+                                    'name': 'Mock artist',
+                                    'uri': 'bungalow:artist:id1'
+                                 }],
+                            }
+                        };
+                        tracks.push(track);
+                    }
+                    resolve({
+                        objects: tracks
+                    });
+                } else {
+                    var id = parts[1];
+                    resolve({
+                        'id': id,
+                        'name': 'Mock album',
+                        'uri': 'bungalow:album:' + id,
+                        'artists': [{
+                            'id': 'id1',
+                            'name': 'Mock artist',
+                            'uri': 'bungalow:artist:id1'
+                        }],
+                        'images': [{
+                            'url': ''
+                        }]
+                    });
+                }
+            }
+            if (parts[0] == 'tracks') {
+                var id = parts[1];
+                resolve({
+                    'id': id,
+                    'name': 'Mock track',
+                    'uri': 'bungalow:track:' + id,
+                    'duration': 3 * 60 * 60,
+                    'artists':[{
+                        'id': 'id1',
+                        'name': 'Mock artist',
+                        'uri': 'bungalow:artist:id1'
+                    }],
+                    'album': {
+                        'id': 'id1',
+                        'name': 'Mock album',
+                        'uri': 'bungalow:album:id1',
+                        'artists':[{
+                            'id': 'id1',
+                            'name': 'Mock artist',
+                            'uri': 'bungalow:artist:id1'
+                        }],
+                    }
+                });
+            }
+            if (parts[0] == 'users') {
+                var userid = parts[1];
+                if (parts.length > 2) {
+                    if (parts[2] == 'playlists') {
+                        if (parts.length < 4) {
+                            var playlists = [];
+                            for (var i = 0; i < playlists.length; i++) {
+                                playlists.push({
+                                    'id': 'pls' + i,
+                                    'name': 'Playlist ' + i,
+                                    'user': {
+                                        'id': userid,
+                                        'name': 'User ' + userid
+                                    },
+                                    'description': 'Text',
+                                    'uri': 'bungalow:playlist:pls' + i,
+                                    'followers': 1920000
+                                });
+                            }
+                            resolve({
+                                'objects': playlists
+                            });
+                        } else {
+                            if (parts[4] == 'followers') {
+                                var users = [];
+                                for (var i = 0; i < 10; i++) {
+                                    uesrs.push({
+                                        'id': 'follower' + i,
+                                        'name': 'Track ' + i,
+                                        'uri': 'bungalow:user:follower' + i
                                     });
                                 }
                                 resolve({
-                                    'objects': playlists
+                                    'objects': users
                                 });
-                            } else {
-                                if (parts[5] == 'followers') {
-                                    var users = [];
-                                    for (var i = 0; i < 10; i++) {
-                                        uesrs.append({
-                                            'id': 'follower' + i,
-                                            'name': 'Track ' + i,
-                                            'uri': 'mockify:user:follower' + i
-                                        });
-                                    }
-                                    callback({
-                                        'objects': users
-                                    });
-                                } else if (parts[5] == 'tracks') {
-                                    var tracks = [];
-                                    for (var i = 0; i < 10; i++) {
-                                        tracks.append({
-                                            'id': 'track' + i,
-                                            'name': 'Track ' + i,
-                                            'artists': [{
-                                                'id': 'artist1',
-                                                'name': 'Artist ' + userid
-                                            }],
-                                            'album': {
-                                                'name': 'Text',
-                                                'id': 'album'
-                                            },
-                                            'uri': 'mockify:playlist:track' + i
-                                        });
-                                    }
-                                    resolve({
-                                        'objects': tracks
-                                    })
-
-                                } else {
-                                    var playlist_id = parts[4];
-                                    var playlist = {
-                                        'id': playlist_id,
-                                        'name': 'Playlist ' + i,
-                                        'user': {
-                                            'id': userid,
-                                            'name': 'User ' + userid
+                            } else if (parts[4] == 'tracks') {
+                                var tracks = [];
+                                for (var i = 0; i < 10; i++) {
+                                    tracks.push({
+                                        'id': 'track' + i,
+                                        'name': 'Track ' + i,
+                                        'artists': [{
+                                            'id': 'artist1',
+                                            'name': 'Artist ' + userid
+                                        }],
+                                        'album': {
+                                            'name': 'Text',
+                                            'id': 'album'
                                         },
-                                        'description': 'Text',
-                                        'uri': 'mockify:playlist:' + playlist_id
-                                    };
-                                    resolve(playlist);
+                                        'uri': 'bungalow:playlist:track' + i
+                                    });
                                 }
+                                resolve({
+                                    'objects': tracks
+                                })
+
+                            } else {
+                                var playlist_id = parts[4];
+                                var playlist = {
+                                    'id': playlist_id,
+                                    'name': 'Playlist ' + i,
+                                    'user': {
+                                        'id': userid,
+                                        'name': 'User ' + userid
+                                    },
+                                    'description': 'Text',
+                                    'uri': 'bungalow:playlist:' + playlist_id
+                                };
+                                resolve(playlist);
                             }
                         }
-
-                    } else {
-                        resolve({
-                            'id': userid,
-                            'name': userid,
-                            'canonicalName': userid
-                        });
                     }
+
+                } else {
+                    resolve({
+                        'id': userid,
+                        'name': userid,
+                        'canonicalName': userid
+                    });
                 }
-            }, 1000);
+            }
 
 
         };
@@ -430,11 +460,11 @@ MockifyPlayer.prototype.getArtistById = function (id) {
 MockifyPlayer.prototype.getAlbumById = function (id) {
     var self = this;
     var promise = new Promise(function (resolve, fail) {
-        self.request('/albums/' + id).then(function (album) {
+        self.request('GET', '/albums/' + id).then(function (album) {
             album.image = album.images[0].url;
             album.tracks = [];
-            this.request('GET', '/albums/' + uri.id + '/tracks').then(function (data) {
-                album.tracks = data.tracks.items;
+            self.request('GET', '/albums/' + album.id + '/tracks').then(function (data) {
+                album.tracks = data.objects;
                 resolve(album);
 
             });

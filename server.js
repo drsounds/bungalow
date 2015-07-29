@@ -20,7 +20,7 @@ var allowCrossDomain = function(req, res, next) {
     next();
 }
 app.use(allowCrossDomain);
-app.use(express.static(execPath + '/'));
+app.use(express.static(__dirname + '/'));
 
 
 app.get('/player/play', function (req, res) {
@@ -104,10 +104,19 @@ app.put('/settings.json', function (req, res) {
     fs.writeFileSync(process.env.PWD + '/themes/dark.css', '@import url("http://127.0.0.1:9261/themes/' + settings.theme + '/css/dark.css")');
 
 })
-
+/*
 app.post('/api/login', function (req, res) {
 
 });
+
+app.get('/api/albums/:id', function (req, res) {
+    var id = req.params.id;
+    music.getAlbumById(id).then(function (artist) {
+        var data = JSON.stringify(artist);
+        res.json(artist);
+    });
+});
+
 
 app.get('/api/albums/:id/tracks', function (req, res) {
     var id = req.params.id;
@@ -146,6 +155,7 @@ app.get('/api/artists/:id', function (req, res) {
 });
 
 app.get('/api/albums/:id', function (req, res) {
+    var id = req.params.id;
     music.getAlbumById(id).then(function (artist) {
         var data = JSON.stringify(artist);
         res.json(data);
@@ -170,13 +180,14 @@ app.get('/api/users/:username/playlists', function (req, res) {
 });
 
 var external_apps = {};
+/*
 app.get('/app/*', function (req, res) {
 
     var app_path = req.params[0].split('/');
     var appId = app_path[0];
     if (!(appId in external_apps)) {
         var address = app_path.slice(1).join('/');
-        var appDir = './apps' + path.sep + appId + path.sep;
+        var appDir = './app' + path.sep + appId + path.sep;
         if (!fs.existsSync(appDir)) {
             appDir = '~/Spotify' + path.sep + appId + path.sep;
         }
@@ -190,7 +201,7 @@ app.get('/app/*', function (req, res) {
         if (fs.existsSync(appDir) && fs.existsSync(manifestFilePath)) {
             var manifest = JSON.parse(fs.readFileSync(manifestFilePath));
             appName = appId;
-            appURL = '/apps/' + appName + '/';
+            appURL = '/app/' + appName + '/';
             var file = appDir + app_path.slice(1).join('/');
             var data = fs.readFileSync(file);
 
@@ -221,8 +232,8 @@ app.get('/app/*', function (req, res) {
             res.end();
         })
     }
-});
-
+});*/
+/*
 app.get('/api/users/:username', function (req, res) {
     var username = req.params.username;
     var id = req.params.id;
@@ -246,6 +257,12 @@ app.get('/chrome/*', function (req, res) {
     var file = fs.readFileSync('./' + app_path.join('/'));
     res.write(file);
     res.end();
+});*/
+app.get('/api/music/*', function (req, res) {
+    music.request("GET", req.params[0]).then(function (result) {
+
+        res.json(result);
+    });
 });
 
 app.listen(process.env.PORT || 9261);

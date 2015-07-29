@@ -1,0 +1,46 @@
+<!doctype html>
+<html>
+	<head>
+		<title>Start</title>
+		<base href="http://localhost:9261/app/artist/">
+		<link rel="stylesheet" href="http://localhost:9261/themes/main.css">
+		<link rel="stylesheet" href="bower_components/font-awesome/css/font-awesome.css">
+		<script src="http://localhost:9261/bower_components/jquery/dist/jquery.js"></script>
+		<script src="http://localhost:9261/app/api/models.js"></script>
+		<script src="http://localhost:9261/app/api/views.js"></script>
+	</head>
+	<body style="width: 100%">
+		<div class="sp-tabbar">
+			<div class="sp-tabbar-tab sp-tabbar-tab-active">Overview</div>
+			<span class="right sp-tabbar-link" ><a id="artistLink"></a></span>
+		</div>
+		<div style="height:23px"></div>
+		<div id="throbber">
+			<img src="http://localhost:9261/images/throbber.gif">
+		</div>
+		<table style="width: calc(100% - 26pt);margin-left: 26pt">
+			<tr>
+				<td valign="top" width="132px">
+					<div id="artist_image" class="shadow"></div>
+				</td>
+				<td valign="top">
+					<h1 id="name" style="min-height: 28px"></h1>
+					<div class="sp-toolbar"></div>
+					<p id="biography"></p>
+				</td>
+				<td valign="top" width="132px">
+					<ul id="similar_artists"></ul>
+				</td>
+			</tr>
+		</table>
+		<div style="width: 100%" class="sp-container">
+			<h2 class="divider" id="top_tracks_divider">Top Tracks</h2>
+			<div id="toptracks" class="collection"></div>
+			<h2 class="divider">Albums</h2>
+			<div id="albums" class="collection"></div>
+			<h2 class="divider">Singles</h2>
+			<div id="singles" class="collection"></div>
+		</div>
+		<script src="scripts/main.js"></script>
+	</body>
+</html>

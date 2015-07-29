@@ -2,6 +2,55 @@ var Music = function () {
 
 };
 
+var XHR = function () {
+
+}
+
+XHR.prototype.request = function (method, url, params, data) {
+	return new Promise(function (resolve, fail) {
+		var xhr = new XMLHttpRequest();
+
+		xhr.onreadystatechange = function () {
+			if (xhr.readyState == 4 && xhr.status == 200) {
+				var data = xhr.response;
+				resolve(data);
+			}
+		};
+		xhr.responseType = 'json';
+		xhr.open(method, url, true);
+		xhr.send(data);
+	});
+};
+
+Music.prototype.request = function (method, url) {
+	return new Promise(function (resolve, fail) {
+		new XHR().request(method, '/api/music' + url).then(function (result) {
+			resolve(result);
+		});
+	});
+};
+
+Music.prototype.addEventListener = function () {
+
+}
+
+Music.prototype.getAlbum = function (id) {
+	return new Promise(function (resolve, fail) {
+		new XHR().request('GET', '/api/albums/' + id).then(function (data) {
+			new XHR().request('GET', '/api/albums/' + id + '/tracks').then(function (album) {
+				data.tracks = album.tracks;
+				resolve(data);
+			});
+		});
+	});
+}
+
+Music.prototype.login = function () {
+	return new Promise(function (resolve, fail) {
+
+	});
+}
+
 var music = new Music();
 
 // http://stackoverflow.com/questions/391314/jquery-insertat
@@ -194,10 +243,13 @@ var Shell = function () {
 			self.navigate(event.data.uri);
 		}
 		if (event.data.action === 'getAlbum') {
-			music.getAlbum(event.data.uri, function (album) {
-				
-				console.log(album);
-				event.source.postMessage({'action': 'gotAlbum', 'data': album}, '*');
+			var id = event.data.uri.split(/\:/)[2];
+			music.request('GET', '/albums/' + id).then(function (album) {
+				music.request('GET', '/albums/' + id + '/tracks').then(function (tracklist) {
+					album.tracks = tracklist.objects;
+					console.log(album);
+					event.source.postMessage({'action': 'gotAlbum', 'data': album}, '*');
+				});
 			});
 		}
 		if (event.data.action === 'getConfig') {
@@ -220,20 +272,23 @@ var Shell = function () {
 
 		}
 		if (event.data.action === 'search') {
-			music.search(event.data.query, event.data.limit, event.data.offset, event.data.type, function (search) {
+			music.request('GET', '/search/?q=' + encodeURI(event.data.query) + '&limit=' + event.data.limit + '&offest=' + event.data.offset + '&type=' + event.data.type).then(function (search) {
 				
 				event.source.postMessage({'action': 'gotSearch', 'data': search, 'type': event.data.type, 'query': event.data.query}, '*');
 			});
 		}
 
 		if (event.data.action === 'getAlbumTracks') {
-			music.getAlbumTracks(event.data.uri, function (tracks) {
+			var id = event.data.uri.split(/\:/g)[2];
+			music.request('GET', '/albums/' + id + '/tracks').then(function (tracks) {
 				event.source.postMessage({'action': 'gotAlbumTracks', 'uri': event.data.uri, 'tracks': tracks}, '*');
 			});
 		}
 
-		if (event.data.action === 'getArtist') {
-			music.getArtist(event.data.uri, function (artist) {
+		if (event.data.action === 'getArtist')
+		{
+			var id = event.data.uri.split(/\:/g)[2];
+			music.request('GET', '/artists/' + id).then(function (artist) {
 				
 				console.log(artist);
 				event.source.postMessage({'action': 'gotArtist', 'data': artist}, '*');
@@ -251,7 +306,9 @@ var Shell = function () {
 				event.source.postMessage({'action': 'gotPlaylist', 'data': (playlist)}, event.origin);
 				return;
 			}
-			var playlist = music.loadPlaylist(event.data.uri, function (playlist) {
+			var parts = event.data.uri.split(/\:/g);
+
+			var playlist = music.request('GET', '/users/' + parts[2] + '/playlists/' + parts[4]).then(function (playlist) {
 				console.log("Playlist", playlist);
 
 				var tracks = music.getPlaylistTracks(playlist, function (tracks) {
@@ -368,7 +425,7 @@ Shell.prototype.login = function (event) {
 	});
 	$('#throbber').show();
 
-	// Add apps to sidebar
+	// Add app to sidebar
 	var settings = bungalow_load_settings();
 	for (var i = 0; i < settings.apps.length; i++) {
 		
@@ -379,7 +436,7 @@ Shell.prototype.login = function (event) {
 		tr.setAttribute('data-uri', app.uri);
 		tr.innerHTML = '' + icon + app.name + '';
 		//alert(tr.innerHTML);
-		$('#apps').append(tr);	
+		$('#app').append(tr);
 	}
 
 
@@ -389,15 +446,24 @@ Shell.prototype.login = function (event) {
 
 
 Shell.prototype.searchEnter = function (event) {
-	this.navigate($('#search').val());
 	event.preventDefault();
+	this.navigate($('#search').val());
 	return false;
 }
 
 Shell.prototype.navigate = function (url, nohistory) {
 	var q = url;
+	if (url.indexOf('#') === 0) {
+		url = 'bungalow:hashtag:' + url.substr(1);
+	}
+	if (url.indexOf('spotify:') == 0) {
+		url = 'bungalow:' + url.split(/\:/g).slice(1).join(':');
+	}
 	if (url.indexOf('bungalow:') !== 0) {
 		url = 'bungalow:search:' + url;
+	}
+	if (url.indexOf('bungalow:app:') !== 0) {
+		url = 'bungalow:' + url.split(/\:/g).slice(1).join(':');
 	}
 
 	if (url.indexOf('bungalow:search:') === 0) {
@@ -498,7 +564,7 @@ Shell.prototype.createApp = function (appId, callback) {
 
 	var appFrame = document.createElement('iframe');
 	appFrame.setAttribute('src', 'http://localhost:9261/app/' + appId + '/index.html?t=' + new Date().getTime());
-	console.log('/apps/' + appId + '/index.html');
+	console.log('/app/' + appId + '/index.html');
 	appFrame.setAttribute('id', 'app_' + appId + '');
 	appFrame.classList.add('sp-app');
 	appFrame.setAttribute('nwdisable', 'nwdisable');
