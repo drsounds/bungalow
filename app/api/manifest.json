@@ -1,5 +1,5 @@
 {
-	"BundleType": "Application",
+	"BundleType": "Library",
 	"BundleName": {
 		"en": "Album"
 	}

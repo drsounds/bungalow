@@ -1,29 +1,35 @@
-var playlists = {};
+require(['http://localhost:9261/app/api/app.js'], function () {
+	require(['$', 'models', 'views'], function ($, models, views) {
 
-window.addEventListener('message', function (event) {
+		window.addEventListener('message', function (event) {
 
-	if (event.data.action === 'navigate') {
-		$('#search').html("");
-		$('#artists').html("");
-		$('#albums').html("");
-		showThrobber();
+			if (event.data.action === 'navigate') {
+				$('#search').html("");
+				$('#artists').html("");
+				$('#albums').html("");
+				showThrobber();
 
-		var query = event.data.arguments.join(':');
-		var uri = 'bungalow:search:' + query;
-		$('.sp-table').hide();
-		if (uri in playlists) {
-			playlists[uri].show();
-			return;
-		}
+				var query = event.data.arguments.join(':');
+				var uri = 'bungalow:search:' + query;
+				$('.sp-table').hide();
+				if (uri in playlists) {
+					playlists[uri].show();
+					return;
+				}
 
-		var search = Search.search(query, 50, 0);
+				var search = models.Search.search(query, 50, 0);
 
-		var contextView = new TrackContextView(search, {headers:true, fields: ['title', 'artist', 'duration', 'popularity', 'album']});
-		playlists['bungalow:search:' + query] = contextView;
-		$('#search').append(contextView.node);
-		contextView.show();
+				var contextView = new views.TrackContextView(search, {
+					headers: true,
+					fields: ['title', 'artist', 'duration', 'popularity', 'album']
+				});
+				playlists['bungalow:search:' + query] = contextView;
+				$('#search').append(contextView.node);
+				contextView.show();
 
 
-		hideThrobber();
-	}
+				hideThrobber();
+			}
+		});
+	});
 });
