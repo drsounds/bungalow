@@ -600,7 +600,7 @@ Shell.prototype.activateApp = function (appId) {
 
 var shell = new Shell();
 window.addEventListener('load', function () {
-	shell.navigate('spotify:artist:2FOROU2Fdxew72QmueWSUy');
+	shell.navigate('spotify:hashtag:nowplaying');
 })
 (function ($) {
 		$.fn.menulize = function (options) {

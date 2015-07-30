@@ -646,9 +646,7 @@ require(['$api/models'], function (models) {
 
     function sync_contexts() {
         $('.sp-collection').each(function (i) {
-            console.log("T");
-            console.log(this.getBoundingClientRect().bottom, $(window).height());
-            if ((this.getBoundingClientRect().bottom) < $(window).height()) {
+           if ((this.getBoundingClientRect().bottom) - $(window).scrollTop() < $(window).height()) {
                 console.log("A");
                 var collectionView = collection_contexts[this.getAttribute('data-uri')];
                 console.log(collectionView);
