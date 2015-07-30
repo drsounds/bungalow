@@ -1,5 +1,4 @@
-define(function () {
-    var exports = {};
+require([], function () {
     var Cosmos = function () {
 
     }

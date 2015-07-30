@@ -1,360 +1,287 @@
+/* Rerun without minification for verbose metadata */
+require(['$api/cosmos'], function (Cosmos) {
+    (function (undefined) {
+        Element.prototype.closest = function (t) {
+            for (var e = this; e;) {
+                if (e.matches(t))return e;
+                e = e.parentElement
+            }
+            return null
+        };
+        Object.assign = function (r, t) {
+            for (var n, e, a = 1; a < arguments.length; ++a) {
+                e = arguments[a];
+                for (n in e)Object.prototype.hasOwnProperty.call(e, n) && (r[n] = e[n])
+            }
+            return r
+        };
+        String.prototype.includes = function (t, e) {
+            if ("object" == typeof t && t instanceof RegExp)throw new TypeError("First argument to String.prototype.includes must not be a regular expression");
+            return -1 !== this.indexOf(t, e)
+        };
+    }).call('object' === typeof window && window || 'object' === typeof self && self || 'object' === typeof global && global || {});
 
-require([], function () {
-  
-  
-  
-  var Loadable = function () {
-      
-  }
-  Loadable.prototype = new Observer();
-  Loadable.prototype.constructor = Observer;
-  
-  Loadable.define = function (clazz, names, opt_func) {
-      // TODO fix this soon
-  };
-  Loadable.prototype.resolve = function (name, value, opt_silent) {
-      this[name] = value;
-  };
-  
-  Loadable.prototype.load = function (properties) {
-     // TODO Abstract function 
-  };
-  Loadable.fromURI = function (uri) {
-      return new Loadable(uri);
-  }
-  
-  var Artist = function (uri) {
-      this.uri = uri;
-  };
-  
-  
-  var BridgeLoadable = function (uri) {
-      this.backend = 'https://localhost:9162/api';
-      this.images = {};
-  if (typeof(uri) === 'undefined') {
-          return;
-      }
-      this.uri = uri;
-  }
-  BridgeLoadable.prototype = new Loadable();
-  BridgeLoadable.prototype.constructor = Loadable;
-  
-  /**
-   * Mock bridge loading by spotify ws 
-   * @param {Object} properties
-   */
-  BridgeLoadable.prototype.load = function (properties) {
-      var self = this;
-      this.images = {};
-      var promise = new Promise();
-      if ('uri' in this) {
-      var xmlHttp = new XMLHttpRequest();
-      xmlHttp.onreadystatechange = function () {
-          if (xmlHttp.readyState == 4) {
-              if (xmlHttp.status == 200) {
-                  
-                  //var obj = JSON.parse(xmlHttp.responseText);
-                  //promise.setDone(obj);
-                  var data = JSON.parse(xmlHttp.responseText);
-                  if (self.uri.split(':')[1] == 'track' || self.uri.split(':')[1] == 'album'  || self.uri.split(':')[1] == 'artist') {
-                      if (self.uri.split(':')[1] == 'track')
-                      
-                          self.resolve('album', Album.fromURI(data.album.uri), true);
-                      self.resolve('uri', self.uri);
-                      if (self.uri.split(':')[1] == 'track' || self.uri.split(':')[1] == 'album' ) {
-                          self.resolve('artists', Artist.fromURIs(data.artists.map(function (a) { return a.uri;})), true);
-                      }
-                      console.log(self.uri);
-                      if (self.uri.split(':')[1] == 'album') {
-                          var images = data.images;
-                          console.log("Images", data.images);
-                          for (var i = 0; i < images.length; i++) {
-                              var image = images[i];
-                              console.log("Images", self);
-                              self.images[image.height] = image.url;
-                          }
-                      }
-                      self.resolve('name', data.name, true);
-                      self.resolve('popularity', data.popularity, true);
-                      self.resolve('type', self.uri[1]);
-                      self.resolve('explicit', data.explicit);
-                      promise.setDone(self);
-                  } else {
-                      promise.setFail();
-                  }
-              } else {
-                  promise.setFail();
-              }
-          }
-      }
-        
-      
-      var url = this.backend + '/' + ((this.uri.split(':').length > 3 && this.uri.split(':')[3]) == 'playlist' ? this.uri.split(':')[3] + 's/' + this.uri.split(':')[4] : this.uri.split(':')[1] + 's/' + this.uri.split(':')[2]);
-      console.log("URL", this.uri);
-      console.log(url);
-      xmlHttp.open('GET', url, true);
-          console.log(url);
-          xmlHttp.send(null);
-      } else {
-          setTimeout(function () {
-              promise.setDone(self);
-          }, 100);
-      }
-      return promise;
-  };
-  
-  var Snapshot = function (collection, opt_start, opt_end, opt_raw) {
-      this.objects = [];
-      this.collection = collection;
-      this.uri = this.collection.uri;
-      this.start = opt_start ? opt_start : 0;
-      this.end = opt_end ? opt_end : 100;
-      this.backend = 'https://api.spotify.com/v1'
-  };
-  Snapshot.prototype = new Loadable();
-  Snapshot.prototype.constructor = Loadable;
-  Snapshot.prototype.toArray = function () {
-      return this.objects;
-  }
-  Snapshot.prototype.toURIs = function () {
-      return this.objects.map(function (a) { return a.uri; });
-  }
-  Snapshot.prototype.load = function (properties) {
-      var self = this;
-      var promise = new Promise();
-     
-      if ('uri' in this) {
-      if (this.uri.indexOf('spotify:trackset:') == 0) {
-          return;
-      }
-      var xmlHttp = new XMLHttpRequest();
-      xmlHttp.onreadystatechange = function () {
-          if (xmlHttp.readyState == 4) {
-              if (xmlHttp.status == 200) {
-                  
-                  //var obj = JSON.parse(xmlHttp.responseText);
-                  //promise.setDone(obj);
-                  
-                // console.log(xmlHttp.responseText);
-                  var data = JSON.parse(xmlHttp.responseText);
-                 
-                      console.log("SELF", self);
-                  if (self.uri.split(':')[1] == 'playlist' || self.uri.split(':')[1] == 'album') {
-                      var items = 0;
-                      
-                      var tracks = data.tracks.items;
-                      for (var i = 0; i < tracks.length; i++) {
-                          var track = Track.fromURI(tracks[i].uri);
-                          self.objects.push(track);
-                      }
-                      promise.setDone(self);
-                  }
-                  if (self.uri.split(':')[1] == 'album') {
-                      var images = data.images;
-                      console.log("Images", data.images);
-                      for (var i = 0; i < images.length; i++) {
-                          var image = images[i];
-                          self.images[image.height] = image.url;
-                      }
-                  }
-                  promise.setFail();
-              } else {
-                  promise.setFail();
-              }              
-          }
-      }
-      var url = this.backend + '/' + ((this.uri.split(':').length > 3 && this.uri.split(':')[3]) == 'playlist' ? this.uri.split(':')[3] + 's/' + this.uri.split(':')[4] : this.uri.split(':')[1] + 's/' + this.uri.split(':')[2]);
-      console.log(url);
-      xmlHttp.open('GET', url, true);
-          xmlHttp.send(null);
-      } else {
-          setTimeout(function () {
-              promise.setDone(self);
-          }, 100);
-      }
-      return promise;
-  }
-  
-  var MdL = function () {
-      
-  };
-  MdL.prototype = new BridgeLoadable();
-  MdL.prototype.constructor = BridgeLoadable;
-  MdL.init = function (uri) {
-      return new MdL(uri);  
-  };
-  MdL.prototype.imageForSize = function (size) {
-      return "";
-  };
-  Artist.prototype = new MdL();
-  Artist.prototype.constructor = MdL;
-  Artist.fromURI = function (uri) {
-      return new Artist(uri);
-  }
-  Artist.fromURIs = function (uris) {
-      return uris.map(function (uri) { 
-          return Artist.fromURI(uri);
-      });
-  }
-  
-  var ListDescriptor = function (type, opt_params) {
-        this.type = type;  
-  };
-  ListDescriptor.Types = {
-      LIST: 'list',
-  LISTS: 'lists',
-  SORT: 'sort',
-  FILTER: 'filter',
-  RANGE: 'range',
-  SHUFFLE: 'shuffle'
-  };
-  ListDescriptor.compare = function (a, b) {
-      return a.type == b.type;
-  }
-  ListDescriptor.create = function (uri) {
-       return new ListDescriptor(uri);  
-  };
-  ListDescriptor.createConcatenated = function (lists) {
-      // TODO fix it soon
-  };
-  ListDescriptor.prototype.filter = function (operation, field, value) {
-      
-  };
-  
-  var Collection = function (itemClass, uri, snapshot, opt_descriptor, opt_itemFactory) {
-      if (arguments.length < 3) {
-          return;
-      }
-      console.log(uri);
-      this.uri = uri;
-      this.descriptor = opt_descriptor;
-      this.type = SP.bind(itemClass.fromURI, uri);  
-  }
- 
-  Collection.prototype = new MdL();
-  Collection.prototype.constructor = MdL;
-  
-  Collection.prototype.range = function (offset, length) {
-      
-  };
-   Collection.prototype.snapshot = function (start, end) {
-      start = start ? start : 0;
-      end = end ? end : 100;
-      var snapshot = new Snapshot(this, start, end, false);
-      return snapshot;
-  }
-  var Album = function (uri) {
-      console.log(Album);
-      var collection = new Collection(Album, uri, Snapshot.prototype.load);
-      this.tracks = collection;
-      this.uri = uri;
-  }
-  Album.fromURI = function (uri) {
-      return new Album(uri);
-  }
-  Album.prototype = new MdL();
-  Album.prototype.constructor = MdL;
-  
-  var Playlist = function (uri) {
-      //alert(uri);
-      this.uri = uri;
-      var tracks = new Collection(Playlist, uri, Snapshot.prototype.load);
-      this.tracks = tracks;
-  }
-  Playlist.fromURI = function (uri) {
-      return new Playlist(uri);
-  }
-  Playlist.prototype = new MdL();
-  Playlist.prototype.constructor = MdL;
-  
-  var Track = function (uri) {
-    this.uri = uri;
-  }
-  Track.prototype = new MdL();
-  Track.prototype.constructor = MdL;
-  Track.fromURI = function (uri) {
-      return new Track(uri);
-  }
-  exports.Artist = Artist;
-  exports.Playlist = Playlist;
-  exports.Album = Album;
-  exports.Track = Track;
-  exports.Loadable = Loadable;
-  exports.BridgeLoadable = BridgeLoadable;
-  exports.MdL = MdL;
-  exports.Collection = Collection;
-  
-  var Application = function (arguments, dropped, identifier, name, uri) {
-      this.arguments = arguments;
-      this.dropped = dropped;
-      this.identifier = identifier;
-      this.name = name;
-      this.uri = uri;
-  };
-  Application.prototype = new Observer();
-  Application.prototype.constructor = Observer;
-  Application.prototype.activate = function () {
-      // TODO Mock function
-  };
-  Application.prototype.deactivate = function () {
-      // TODO Mock function
-  };
-  Application.prototype.setTitle = function (title) {
-      // TODO Mock function
-  };
-  
-  exports.Application = Application;
-  exports.application = __application;
-  
-  var Session = function () {
-    this.offline = false;
-    this.connecting = false;
-    this.country = 'SE';
-    this.developer = true,
-    this.incognito = false;
-    this.online = true;
-    this.partner = 'Bungalow Doctrine';
-    this.product = 'Spotify';
-    this.resolution = 1;
-    this.streaming = 'disabled'; // TODO Fix this
-    this.testGroup = 'LGH1102';
-    this.user = null;
-  }
-  Session.prototype = new BridgeLoadable();
-  Session.prototype.constructor = BridgeLoadable;
-  exports.Session = Session;
-  
-  var Track = function (uri) {
-      this.uri = uri;
-  }
-  Track.prototype = new MdL();
-  Track.prototype.constructor = MdL;
-  Track.fromURI = function (uri) {
-      return new Track(uri);
-  }
-  exports.Track = Track;
-  exports.ListDescriptor = ListDescriptor;
-  
-  var Context = function (uri) {
-      this.uri = uri;
-  }
-  Context.prototype = new Loadable();
-  Context.prototype.constructor = Loadable;
-  
-  var Player = function () {
-    this.contexts = [];
-    this.context = null;
-    this.index = 0;
-    this,playing = false;
-    this.position = 0;
-    this.repeat = false;
-    this.shuffle = false;
-    this.track = null;    
-  };
-  Player.prototype = new BridgeLoadable();
-  Player.prototype.constructor = BridgeLoadable;
-  
-  
-  
-  exports.Player = Player;
-})
+
+    /**
+     * @module
+     */
+
+
+    var Collection = function (endpoint, uri) {
+        this.endpoint = endpoint;
+        this.uri = uri;
+        this.objects = [];
+        this.limit = 0;
+        this.offset = 0;
+        this.type = 'object';
+    };
+
+    Collection.prototype.next = function () {
+        var self = this;
+        return new Promise(function (resolve, fail) {
+            Cosmos.request('GET', self.endpoint + '&offset=' + self.offset + '&limit=' + self.limit + '&type=' + self.type).then(function (result) {
+                for (var i = 0; i < result.objects.length; i++) {
+                    self.objects = self.objects.concat(result.objects);
+                }
+                resolve(self);
+                self.offset += self.limit;
+            });
+        });
+    };
+
+    var collection_stack = {};
+
+    window.sp = {
+        require: function (url) {
+            var xmlHttp = new XMLHttpRequest();
+            xmlHttp.onreadystatechange = function (event) {
+
+            }
+        }
+    }
+
+
+    /**
+     * Represents a playlist
+     * @class
+     */
+    var Playlist = function (data) {
+        Object.assign(this, data);
+        this.tracks = new Collection('/music/users/' + this.user.id + '/playlists/' + this.id + '/tracks?', 'bungalow:user:' + this.user.id + ':playlist:' + this.id);
+    }
+
+    exports.Playlist = Playlist;
+
+    /**
+     * Represents an album
+     */
+    var Album = function (data) {
+        Object.assign(this, data);
+        this.tracks = new Collection('/music/albums/' + this.id + '/tracks', 'bungalow:album:' + this.id);
+    }
+
+    exports.Album = Album;
+
+    window.addEventListener('message', function (event) {
+        if (event.data.action == 'gotPlaylist') {
+            console.log("Received playlist from shell");
+            var playlist = (event.data.data);
+            Playlist.lists[playlist.uri] = playlist;
+        }
+        if (event.data.action == 'gotAlbum') {
+            console.log("Received album from shell");
+            var album = (event.data.data);
+            Album.lists[album.uri] = album;
+            console.log(album.uri);
+        }
+        if (event.data.action == 'gotTopList') {
+            console.log("Received top list from shell");
+            var toplist = (event.data.data);
+            TopList.lists[toplist.uri] = toplist;
+            console.log(toplist.uri);
+        }
+        if (event.data.action == 'gotArtist') {
+            console.log("Received artist from shell");
+            var artist = (event.data.data);
+            Artist.lists[artist.uri] = artist;
+            console.log(artisturi);
+        }
+        if (event.data.action == 'gotSearch') {
+            console.log("Received search result from shell");
+            var search = (event.data.data);
+            Search.lists[event.data.type + ':' + event.data.query] = search;
+            console.log(event.data.query);
+        }
+        if (event.data.action == 'gotAlbumTracks') {
+            console.log("Received search result from shell");
+            albumTracks[event.data.uri] = event.data.tracks;
+        }
+        if (event.data.action === 'trackstarted') {
+            var uri = event.data.uri;
+
+            $('.sp-track').removeClass('sp-now-playing');
+            $('.sp-table[data-uri="' + uri + '"] .sp-track[data-track-index="' + event.data.index + '"]').addClass('sp-now-playing');
+
+        }
+    });
+
+    /**
+     * Represents an artist
+     */
+
+    var Artist = function (data) {
+        Object.assign(this, data);
+
+        this.albums = new Collection('/music/artists/' + this.id + '/albums?', 'bungalow:artist:' + this.id + ':albums');
+        this.tracks = new Collection('/music/artists/' + this.id + '/tracks?', 'bungalow:artist:' + this.id + ':tracks');
+    }
+
+    exports.Artist = Artist;
+
+    Playlist.lists = {};
+    Album.lists = {};
+    Artist.lists = {};
+
+    /**
+     * Creates a playlist from URI
+     * @param  {String}   uri      [description]
+     * @return {Promise}            [description]
+     */
+    Playlist.fromUserId = function (user, id) {
+        return new Promise(function (resolve, fail) {
+            Cosmos.request('GET', '/music/users/' + user + '/playlists/' + id).then(function (playlist) {
+                resolve(new Playlist(playlist));
+            });
+        });
+    };
+
+    Album.fromId = function (id) {
+        return new Promise(function (resolve, fail) {
+            Cosmos.request('GET', '/music/albums/' + id).then(function (album) {
+                resolve(new Album(album));
+            });
+        });
+    };
+
+    var User = function (data) {
+        Object.assign(this, data);
+        this.playlists = new Collection('/music/users/' + this.id + '/playlists?', 'bungalow:user:' + this.id + ':playlists');
+    }
+
+    User.fromId = function (id) {
+        return new Promise(function (resolve, fail) {
+            var parts = uri.split(/\:/g);
+            var user = parts[2];
+            Cosmos.request('GET', '/music/users/' + id).then(function (user) {
+                resolve(new User(user));
+            });
+        });
+    }
+
+    exports.User = User;
+
+    var albumTracks = {};
+
+
+    Artist.byId = function (id) {
+        return new Promise(function (resolve, fail) {
+            Cosmos.request('GET', '/music/artists/' + id).then(function (response) {
+                resolve(response);
+            });
+        });
+    };
+
+    Search = function (data) {
+        Object.assign(this, data);
+        this.uri = 'bungalow:search:' + this.query;
+        this.tracks = new Collection('/music/search?q=' + this.q + '&type=track&', this.uri + ':tracks');
+        this.artists = new Collection('/music/search?q=' + this.q + '&type=artist&', this.uri + ':artists');
+        this.albums = new Collection('/music/search?q=' + this.q + '&type=album&', this.uri + ':albums');
+        this.users = new Collection('/music/search?q=' + this.q + '&type=user&', this.uri + ':users');
+        this.playlists = new Collection('/music/search?q=' + this.q + '&type=user&', this.uri + ':playlists');
+    };
+
+    Search.lists = {};
+
+
+    Search.search = function (query) {
+        return new Search({
+            query: query
+        });
+    };
+
+
+    exports.Search = Search;
+
+    var Chart = function (data) {
+        Object.assign(this, data);
+
+        this.tracks = new Collection('/music/charts/' + this.id + '/tracks?', 'bungalow:chart:' + this.id + ':tracks');
+        this.albums = new Collection('/music/charts/' + this.id + '/albums?', 'bungalow:chart:' + this.id + ':albums');
+    }
+
+    exports.Chart = Chart;
+
+
+    Chart.fromId = function (id) {
+        return new Promise(function (resolve, fail) {
+            console.log("Asking shell for getting artist");
+
+            Cosmos.request('GET', '/music/charts/' + id.split(/\:/g)[2]).then(function (result) {
+                resolve(new Chart(result));
+            })
+        });
+    }
+
+    var Year = function (data) {
+        Object.assign(this, data);
+        this.albums = new Collection('/music/years/' + this.year + '/albums?', 'bungalow:year:' + this.year + ':tracks');
+        this.tracks = new Collection('/music/years/' + this.year + '/tracks?', 'bungalow:year:' + this.year + ':tracks');
+    }
+
+    Year.fromYear = function (year) {
+        return new Promise(function (resolve, fail) {
+            Cosmos.request('GET', '/music/years/' + year).then(function (result) {
+                resolve(new Year(year));
+            });
+        });
+    }
+
+    var Country = function (data) {
+        Object.assign(this, data);
+
+    }
+
+    Country.fromCode = function (countryCode) {
+        return new Promise(function (resolve, fail) {
+            Cosmos.request('GET', '/music/countries/' + countryCode).then(function (result) {
+                resolve(new Country(result));
+            });
+        });
+    }
+
+    exports.Country = Country;
+
+
+    var App = function (data) {
+        this.data = data;
+    };
+
+
+    App.find = function (callback) {
+        console.log("Listing app");
+        $.getJSON('http://appfinder.aleros.webfactional.com/api/index.php', function (apps) {
+            callback(apps);
+        });
+    }
+
+    App.fromId = function (appId) {
+
+    }
+
+    App.prototype.install = function () {
+        var settings = bungalow_get_settings();
+        settings.apps.push(this.data);
+    }
+
+});

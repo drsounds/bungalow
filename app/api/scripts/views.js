@@ -1,5 +1,4 @@
-define(['$'], function ($) {
-    var exports = {};
+require(['$api/models'], function (models) {
     /**
      * A context
      * @class
@@ -395,7 +394,7 @@ define(['$'], function ($) {
         $(this.background).hide();
     }
 
-    exports.TrackCollectionView = TrackContextView;
+    exports.TrackContextView = TrackContextView;
 
     var context = new Context();
     /**
@@ -432,6 +431,9 @@ define(['$'], function ($) {
     function hideThrobber() {
         $('#throbber').hide();
     }
+
+    exports.showThrobber = showThrobber;
+    exports.hideThrobber = hideThrobber;
 
 
     var CollectionItem = function (object, options) {
@@ -617,5 +619,4 @@ define(['$'], function ($) {
     $(window).scroll(function () {
         sync_contexts();
     });
-    return exports;
 });
