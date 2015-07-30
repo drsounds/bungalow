@@ -7,6 +7,7 @@ var MusicService = require('./services/music/service/mockify/mockify.js');
 var music = new MusicService();
 var less = require('less');
 var request = require('request');
+var url = require('url');
 var execPath = process.env.PWD;
 
     execPath = process.env.PWD;
@@ -259,7 +260,7 @@ app.get('/chrome/*', function (req, res) {
     res.end();
 });*/
 app.get('/api/music/*', function (req, res) {
-    music.request("GET", req.params[0]).then(function (result) {
+    music.request("GET", req.params[0], req.query).then(function (result) {
 
         res.json(result);
     });

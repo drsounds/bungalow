@@ -599,7 +599,9 @@ Shell.prototype.activateApp = function (appId) {
 }
 
 var shell = new Shell();
-
+window.addEventListener('load', function () {
+	shell.navigate('spotify:artist:2FOROU2Fdxew72QmueWSUy');
+})
 (function ($) {
 		$.fn.menulize = function (options) {
 

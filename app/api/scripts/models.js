@@ -27,21 +27,30 @@ require(['$api/cosmos'], function (Cosmos) {
      */
 
 
-    var Collection = function (endpoint, uri) {
+    var Collection = function (endpoint, uri, type) {
         this.endpoint = endpoint;
         this.uri = uri;
         this.objects = [];
-        this.limit = 0;
+        this.limit = 10;
         this.offset = 0;
-        this.type = 'object';
+        this.type = type;
+        this.complete = false;
     };
 
     Collection.prototype.next = function () {
         var self = this;
         return new Promise(function (resolve, fail) {
+            if (self.complete) {
+                return;
+            }
+            console.log("Collection", self);
             Cosmos.request('GET', self.endpoint + '&offset=' + self.offset + '&limit=' + self.limit + '&type=' + self.type).then(function (result) {
+                console.log(result);
                 for (var i = 0; i < result.objects.length; i++) {
                     self.objects = self.objects.concat(result.objects);
+                }
+                if (self.objects.length < 1) {
+                    self.complete = true;
                 }
                 resolve(self);
                 self.offset += self.limit;
@@ -67,7 +76,7 @@ require(['$api/cosmos'], function (Cosmos) {
      */
     var Playlist = function (data) {
         Object.assign(this, data);
-        this.tracks = new Collection('/music/users/' + this.user.id + '/playlists/' + this.id + '/tracks?', 'bungalow:user:' + this.user.id + ':playlist:' + this.id);
+        this.tracks = new Collection('/music/users/' + this.user.id + '/playlists/' + this.id + '/tracks?', 'bungalow:user:' + this.user.id + ':playlist:' + this.id, 'track');
     }
 
     exports.Playlist = Playlist;
@@ -77,7 +86,7 @@ require(['$api/cosmos'], function (Cosmos) {
      */
     var Album = function (data) {
         Object.assign(this, data);
-        this.tracks = new Collection('/music/albums/' + this.id + '/tracks', 'bungalow:album:' + this.id);
+        this.tracks = new Collection('/music/albums/' + this.id + '/tracks', 'bungalow:album:' + this.id, 'track');
     }
 
     exports.Album = Album;
@@ -132,8 +141,8 @@ require(['$api/cosmos'], function (Cosmos) {
     var Artist = function (data) {
         Object.assign(this, data);
 
-        this.albums = new Collection('/music/artists/' + this.id + '/albums?', 'bungalow:artist:' + this.id + ':albums');
-        this.tracks = new Collection('/music/artists/' + this.id + '/tracks?', 'bungalow:artist:' + this.id + ':tracks');
+        this.albums = new Collection('/music/artists/' + this.id + '/albums?', 'bungalow:artist:' + this.id + ':albums', 'album');
+        this.tracks = new Collection('/music/artists/' + this.id + '/tracks?', 'bungalow:artist:' + this.id + ':tracks', 'track');
     }
 
     exports.Artist = Artist;
@@ -165,7 +174,7 @@ require(['$api/cosmos'], function (Cosmos) {
 
     var User = function (data) {
         Object.assign(this, data);
-        this.playlists = new Collection('/music/users/' + this.id + '/playlists?', 'bungalow:user:' + this.id + ':playlists');
+        this.playlists = new Collection('/music/users/' + this.id + '/playlists?', 'bungalow:user:' + this.id + ':playlists', 'playlist');
     }
 
     User.fromId = function (id) {
@@ -183,10 +192,10 @@ require(['$api/cosmos'], function (Cosmos) {
     var albumTracks = {};
 
 
-    Artist.byId = function (id) {
+    Artist.fromId = function (id) {
         return new Promise(function (resolve, fail) {
             Cosmos.request('GET', '/music/artists/' + id).then(function (response) {
-                resolve(response);
+                resolve(new Artist(response));
             });
         });
     };
@@ -194,11 +203,11 @@ require(['$api/cosmos'], function (Cosmos) {
     Search = function (data) {
         Object.assign(this, data);
         this.uri = 'bungalow:search:' + this.query;
-        this.tracks = new Collection('/music/search?q=' + this.q + '&type=track&', this.uri + ':tracks');
-        this.artists = new Collection('/music/search?q=' + this.q + '&type=artist&', this.uri + ':artists');
-        this.albums = new Collection('/music/search?q=' + this.q + '&type=album&', this.uri + ':albums');
-        this.users = new Collection('/music/search?q=' + this.q + '&type=user&', this.uri + ':users');
-        this.playlists = new Collection('/music/search?q=' + this.q + '&type=user&', this.uri + ':playlists');
+        this.tracks = new Collection('/music/search?q=' + this.q , this.uri + ':tracks', 'track');
+        this.artists = new Collection('/music/search?q=' + this.q , this.uri + ':artists', 'artist');
+        this.albums = new Collection('/music/search?q=' + this.q, this.uri + ':albums', 'album');
+        this.users = new Collection('/music/search?q=' + this.q, this.uri + ':users', 'user');
+        this.playlists = new Collection('/music/search?q=' + this.q, this.uri + ':playlists', 'playlist');
     };
 
     Search.lists = {};
@@ -216,8 +225,8 @@ require(['$api/cosmos'], function (Cosmos) {
     var Chart = function (data) {
         Object.assign(this, data);
 
-        this.tracks = new Collection('/music/charts/' + this.id + '/tracks?', 'bungalow:chart:' + this.id + ':tracks');
-        this.albums = new Collection('/music/charts/' + this.id + '/albums?', 'bungalow:chart:' + this.id + ':albums');
+        this.tracks = new Collection('/music/charts/' + this.id + '/tracks?', 'bungalow:chart:' + this.id + ':tracks', 'track');
+        this.albums = new Collection('/music/charts/' + this.id + '/albums?', 'bungalow:chart:' + this.id + ':albums', 'album');
     }
 
     exports.Chart = Chart;

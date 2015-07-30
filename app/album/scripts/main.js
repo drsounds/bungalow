@@ -1,9 +1,9 @@
-define(['models', 'views'], function (models, views) {
+require(['$api/models', '$api/views'], function (models, views) {
 
 	window.addEventListener('message', function (event) {
 		console.log("Event data", event.data);
 		if (event.data.action === 'navigate') {
-			showThrobber();
+			views.showThrobber();
 			console.log(event.data.arguments);
 			var id = event.data.arguments[0];
 			$('.sp-album').hide();
@@ -17,7 +17,7 @@ define(['models', 'views'], function (models, views) {
 				$('#copyrights').html(album.copyrights);
 				$('#name').html('<a>' + album.name + '</a> <a class="fade" data-uri="' + album.artists[0].uri + '"> by ' + album.artists[0].name + '</a>');
 				$('#image').attr('src', album.images[0].url);
-				hideThrobber();
+				views.hideThrobber();
 			});
 
 		}

@@ -445,14 +445,38 @@ require(['$api/models'], function (models) {
         $(this.node).append(box);
     }
 
-    var AlbumCollectionView = function (collection, options) {
+    var AlbumCollectionView = function (resource, options) {
+        CollectionView.call(this, resource, options);
+        this.resource = resource;
         this.node = document.createElement('div');
-        this.node.classList.add('sp-context');
+        this.type = 'album';
+        this.node.setAttribute('data-uri', resource.uri + ':albums');
+        this.tbody = this.node;
+        this.node.classList.add('sp-collection');
+        console.log(resource);
+        collection_contexts[resource.uri + ':albums'] = this; // Register context here
+        setTimeout(function () {
+            sync_contexts();
+            console.log("Running next");
+        }, 100);
+        console.log("Created album collection view");
 
     }
 
     AlbumCollectionView.prototype.next = function () {
-
+        var tbody = this.tbody;
+        var fields = this.fields;
+        var collection = this.resource[this.type + 's'];
+        this.loading = true;
+        console.log("Running next");
+        collection.next().then(function (collection) {
+            console.log("Got next album page");
+            for (var i = 0; i < collection.objects.length; i++) {
+                var trackView = new AlbumView(collection.objects[i], i, collection.uri, {'fields': fields});
+                $(tbody).append(trackView.node);
+            }
+            this.loading = false;
+        });
     }
 
     /**
@@ -466,7 +490,7 @@ require(['$api/models'], function (models) {
         var table = document.createElement('table');
         table.setAttribute('width', '100%');
         table.classList.add('sp-album');
-        this.classList.add('sp-context');
+        table.classList.add('sp-context');
         this.loading = false;
         console.log("ALBUM", album);
         table.setAttribute('data-uri', album.uri);
@@ -539,6 +563,21 @@ require(['$api/models'], function (models) {
         event.originalEvent.preventDefault();
 
     });
+    // from http://stackoverflow.com/questions/487073/check-if-element-is-visible-after-scrolling
+    function isScrolledIntoView(elem)
+    {
+        var $elem = $(elem);
+        var $window = $(window);
+
+        var docViewTop = $window.scrollTop();
+        var docViewBottom = docViewTop + $window.height();
+
+        var elemTop = $elem.offset().top;
+        var elemBottom = elemTop + $elem.height();
+
+        return ((elemBottom <= docViewBottom) && (elemTop >= docViewTop));
+    }
+
     $(document).on('drop', '.sp-track', function (event) {
         $.event.props.push('dataTransfer');
         var contextUri = $(this).attr('data-context-uri');
@@ -607,8 +646,12 @@ require(['$api/models'], function (models) {
 
     function sync_contexts() {
         $('.sp-collection').each(function (i) {
-            if ((this.getBoundingClientRect().bottom + this.getBoundingClientRect().top) < $(window).scrollTop() + window.innerHeight) {
+            console.log("T");
+            console.log(this.getBoundingClientRect().bottom, $(window).height());
+            if ((this.getBoundingClientRect().bottom) < $(window).height()) {
+                console.log("A");
                 var collectionView = collection_contexts[this.getAttribute('data-uri')];
+                console.log(collectionView);
                 if (!collectionView.loading) {
                     collectionView.next();
                 }

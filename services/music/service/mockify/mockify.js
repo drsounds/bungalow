@@ -34,141 +34,106 @@ MockifyPlayer.prototype.renewAccessToken = function (callback) {
 MockifyPlayer.prototype.getMe = function () {
     return JSON.parse(localStorage.getItem("me"));
 }
-MockifyPlayer.prototype.request = function (method, url, data) {
+MockifyPlayer.prototype.request = function (method, url, payload) {
     var self = this;
     self.url = url;
+    var hasQuery =  url.indexOf('?') > -1;
     var promise = new Promise(function (resolve, fail) {
         var activity = function () {
 
             var parts = url.split(/\//g);
             if (parts[0] == 'search') {
-                var q = parts[1];
-                var tracks = [];
-                for (var i = 0; i < 5; i++) {
-                    tracks.push({
-                        'id': 'track' + i,
-                        'artists': [{
-                            'id': 'testartist',
-                            'name': 'Test artist'
-                        }],
-                        name: 'test',
-                        'album': {
-                            'artists': [{
-                                'id': 'testartist',
-                                'name': 'Test artist'
-                            }]
+                request({
+                        url: 'https://api.spotify.com/v1/search?q=' + payload.q + '&type=' + payload.type + '&limit=' + payload.limit + '&offset=' + payload.offset
+                    },
+                    function (error, response, body) {
+                        body = body.replace(/spotify\:/, 'bungalow:');
+                        var data = JSON.parse(body);
+                        try {
+                            resolve({'objects': data[payload.type + 's'].items});
+                        } catch (e) {
+                            fail(e);
                         }
-                    });
-                }
-                resolve({
-                    'objects': tracks
-                });
+                    }
+                );
             }
             if (parts[0] == 'artists') {
                 if (parts.length > 2) {
                     if (parts[2] == 'albums') {
-                        var albums = [];
-                        for (var i = 0; i < 5; i++) {
-                            albums.push({
-                                'id': 'album' + i,
-                                'artists': [{
-                                    'id': id,
-                                    'name': id
-                                }],
-                                'name': 'Album #' + i
-                            });
-                        }
-                        resolve({
-                            'objects': albums
-                        });
+                        request({
+                                url: 'https://api.spotify.com/v1/artists/' + parts[1] + '/albums?limit=' + payload.limit + '&offset=' + payload.offset
+                            },
+                            function (error, response, body) {
+                                body = body.replace('spotify:', 'bungalow:');
+                                var data = JSON.parse(body);
+                                try {
+                                    resolve({'objects': data.items});
+                                } catch (e) {
+                                    fail();
+                                }
+                            }
+                        );
                     }
                 } else {
-                    var id = parts[1];
-                    resolve({
-                        'id': id,
-                        'name': 'Artist',
-                        'uri': 'bungalow:artist:' + id,
-                        'followers': 640,
-                        'images':[{
-                            'url': ''
-                        }]
-                    });
+                    request({
+                            url: 'https://api.spotify.com/v1/artists/' + parts[1]
+                        },
+                        function (error, response, body) {
+                            body = body.replace('spotify:', 'bungalow:');
+                            var data = JSON.parse(body);
+                            resolve(data);
+                        }
+                    );
                     return;
                 }
             }
 
             if (parts[0] == 'albums') {
                 if (parts.length > 2) {
-                    var tracks = [];
-                    for (var i = 0; i < 10; i++) {
-                        var track = {
-                            'id': i,
-                            'name': 'Mock track',
-                            'uri': 'bungalow:track:' + i,
-                            'artists':[{
-                                'id': 'id1',
-                                'name': 'Mock artist',
-                                'uri': 'bungalow:artist:id1'
-                             }],
-                            'images':[{
-                                'url': ''
-                            }],
-                            'album': {
-                                'id': id,
-                                'name': 'Mock album',
-                                'uri': 'bungalow:album:id1',
-                                'artists':[{
-                                    'id': 'id1',
-                                    'name': 'Mock artist',
-                                    'uri': 'bungalow:artist:id1'
-                                 }],
+                    request({
+                            url: 'https://api.spotify.com/v1/albums/' + parts[1] + '/tracks?limit=' + payload.limit + '&offset=' + payload.offset
+                        },
+                        function (error, response, body) {
+                            body = body.replace('spotify:', 'bungalow:');
+                            var data = JSON.parse(body);
+                            try {
+                                resolve({
+                                    'objects': data.items
+                                });
+                            } catch (e) {
+                                fail();
                             }
-                        };
-                        tracks.push(track);
-                    }
-                    resolve({
-                        objects: tracks
-                    });
+                        }
+                    );
                 } else {
-                    var id = parts[1];
-                    resolve({
-                        'id': id,
-                        'name': 'Mock album',
-                        'uri': 'bungalow:album:' + id,
-                        'artists': [{
-                            'id': 'id1',
-                            'name': 'Mock artist',
-                            'uri': 'bungalow:artist:id1'
-                        }],
-                        'images': [{
-                            'url': ''
-                        }]
-                    });
+                    request({
+                            url: 'https://api.spotify.com/v1/albums/' + parts[1] + ''
+                        },
+                        function (error, response, body) {
+                            body = body.replace(/spotify\:/, 'bungalow:');
+                            var data = JSON.parse(body);
+                            try {
+                                resolve(data);
+                            } catch (e) {
+                                fail();
+                            }
+                        }
+                    );
                 }
             }
             if (parts[0] == 'tracks') {
-                var id = parts[1];
-                resolve({
-                    'id': id,
-                    'name': 'Mock track',
-                    'uri': 'bungalow:track:' + id,
-                    'duration': 3 * 60 * 60,
-                    'artists':[{
-                        'id': 'id1',
-                        'name': 'Mock artist',
-                        'uri': 'bungalow:artist:id1'
-                    }],
-                    'album': {
-                        'id': 'id1',
-                        'name': 'Mock album',
-                        'uri': 'bungalow:album:id1',
-                        'artists':[{
-                            'id': 'id1',
-                            'name': 'Mock artist',
-                            'uri': 'bungalow:artist:id1'
-                        }],
+                request({
+                        url: 'https://api.spotify.com/v1/tracks/' + parts[1] + ''
+                    },
+                    function (error, response, body) {
+                        var data = JSON.parse(body);
+                        try {
+                            resolve(data);
+                        } catch (e) {
+                            fail();
+                        }
                     }
-                });
+                );
             }
             if (parts[0] == 'users') {
                 var userid = parts[1];
