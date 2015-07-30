@@ -100,7 +100,6 @@ var Shell = function () {
 	this.uri = "";
 	this.loadedResources = {};
 	$(window).load(function () {
-        alert("A");
 		shell.login();
 	});
 	$(document).on('dragover', '.menu li', function (event) {
@@ -600,7 +599,7 @@ Shell.prototype.activateApp = function (appId) {
 
 var shell = new Shell();
 window.addEventListener('load', function () {
-	shell.navigate('spotify:hashtag:nowplaying');
+	shell.navigate('spotify:artist:2FOROU2Fdxew72QmueWSUy');
 })
 (function ($) {
 		$.fn.menulize = function (options) {

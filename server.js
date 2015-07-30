@@ -92,17 +92,17 @@ app.put('/settings.json', function (req, res) {
     less.render(darkTheme, {}, function (error, output) {
         console.log(error, output);
         //alert(output);
-        fs.writeFileSync(process.env.PWD + '/themes/' + settings.theme + '/css/dark.css', output.css);
+        fs.writeFileSync(process.env.PWD + '/themes/' + settings.theme + '/css/main.scss', output.css);
     });
-    fs.writeFileSync(process.env.PWD + '/themes/' + settings.theme + '/css/main.css', '@import url("' + (settings.light ? 'light' : 'dark') + '.css")');
+    fs.writeFileSync(process.env.PWD + '/themes/' + settings.theme + '/css/main.scss', '@import url("' + (settings.light ? 'light' : 'dark') + '.css")');
 
 
     var mainCSS = '@import url("' + settings.theme + '/css/style.css")';
-    fs.writeFileSync(process.env.PWD + '/themes/main.css', mainCSS);
+    fs.writeFileSync(process.env.PWD + '/themes/main.scss', mainCSS);
 
-    fs.writeFileSync(process.env.PWD + '/themes/main.css', '@import url("http://127.0.0.1:9261/themes/' + settings.theme + '/css/main.css")');
+    fs.writeFileSync(process.env.PWD + '/themes/main.scss', '@import url("http://127.0.0.1:9261/themes/' + settings.theme + '/css/main.scss")');
     fs.writeFileSync(process.env.PWD + '/themes/light.css', '@import url("http://127.0.0.1:9261/themes/' + settings.theme + '/css/light.css")');
-    fs.writeFileSync(process.env.PWD + '/themes/dark.css', '@import url("http://127.0.0.1:9261/themes/' + settings.theme + '/css/dark.css")');
+    fs.writeFileSync(process.env.PWD + '/themes/main.scss', '@import url("http://127.0.0.1:9261/themes/' + settings.theme + '/css/main.scss")');
 
 })
 /*

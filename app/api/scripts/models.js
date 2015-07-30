@@ -31,7 +31,7 @@ require(['$api/cosmos'], function (Cosmos) {
         this.endpoint = endpoint;
         this.uri = uri;
         this.objects = [];
-        this.limit = 10;
+        this.limit = 20;
         this.offset = 0;
         this.type = type;
         this.complete = false;
@@ -43,17 +43,21 @@ require(['$api/cosmos'], function (Cosmos) {
             if (self.complete) {
                 return;
             }
-            console.log("Collection", self);
-            Cosmos.request('GET', self.endpoint + '&offset=' + self.offset + '&limit=' + self.limit + '&type=' + self.type).then(function (result) {
+            var url = self.endpoint + '&offset=' + self.offset + '&limit=' + self.limit + '&type=' + self.type;
+
+
+            Cosmos.request('GET', url).then(function (result) {
+                console.log("GOT REPLY FROM " + url);
+                // console.log(result);
                 console.log(result);
                 for (var i = 0; i < result.objects.length; i++) {
-                    self.objects = self.objects.concat(result.objects);
+                    self.objects = result.objects;
                 }
                 if (self.objects.length < 1) {
                     self.complete = true;
                 }
                 resolve(self);
-                self.offset += self.limit;
+                self.offset = self.offset + self.limit;
             });
         });
     };
@@ -86,43 +90,43 @@ require(['$api/cosmos'], function (Cosmos) {
      */
     var Album = function (data) {
         Object.assign(this, data);
-        this.tracks = new Collection('/music/albums/' + this.id + '/tracks', 'bungalow:album:' + this.id, 'track');
+        this.tracks = new Collection('/music/albums/' + this.id + '/tracks?', 'bungalow:album:' + this.id, 'track');
     }
 
     exports.Album = Album;
 
     window.addEventListener('message', function (event) {
         if (event.data.action == 'gotPlaylist') {
-            console.log("Received playlist from shell");
+            // console.log("Received playlist from shell");
             var playlist = (event.data.data);
             Playlist.lists[playlist.uri] = playlist;
         }
         if (event.data.action == 'gotAlbum') {
-            console.log("Received album from shell");
+            // console.log("Received album from shell");
             var album = (event.data.data);
             Album.lists[album.uri] = album;
-            console.log(album.uri);
+            // console.log(album.uri);
         }
         if (event.data.action == 'gotTopList') {
-            console.log("Received top list from shell");
+            // console.log("Received top list from shell");
             var toplist = (event.data.data);
             TopList.lists[toplist.uri] = toplist;
-            console.log(toplist.uri);
+            // console.log(toplist.uri);
         }
         if (event.data.action == 'gotArtist') {
-            console.log("Received artist from shell");
+            // console.log("Received artist from shell");
             var artist = (event.data.data);
             Artist.lists[artist.uri] = artist;
-            console.log(artisturi);
+            // console.log(artisturi);
         }
         if (event.data.action == 'gotSearch') {
-            console.log("Received search result from shell");
+            // console.log("Received search result from shell");
             var search = (event.data.data);
             Search.lists[event.data.type + ':' + event.data.query] = search;
-            console.log(event.data.query);
+            // console.log(event.data.query);
         }
         if (event.data.action == 'gotAlbumTracks') {
-            console.log("Received search result from shell");
+            // console.log("Received search result from shell");
             albumTracks[event.data.uri] = event.data.tracks;
         }
         if (event.data.action === 'trackstarted') {
@@ -215,7 +219,7 @@ require(['$api/cosmos'], function (Cosmos) {
 
     Search.search = function (query) {
         return new Search({
-            query: query
+            q: query
         });
     };
 
@@ -234,7 +238,7 @@ require(['$api/cosmos'], function (Cosmos) {
 
     Chart.fromId = function (id) {
         return new Promise(function (resolve, fail) {
-            console.log("Asking shell for getting artist");
+            // console.log("Asking shell for getting artist");
 
             Cosmos.request('GET', '/music/charts/' + id.split(/\:/g)[2]).then(function (result) {
                 resolve(new Chart(result));
@@ -278,7 +282,7 @@ require(['$api/cosmos'], function (Cosmos) {
 
 
     App.find = function (callback) {
-        console.log("Listing app");
+        // console.log("Listing app");
         $.getJSON('http://appfinder.aleros.webfactional.com/api/index.php', function (apps) {
             callback(apps);
         });

@@ -1,5 +1,4 @@
 require(['$api/models', '$api/views'], function (models, views) {
-	var artists = {};
 
 	window.addEventListener('message', function (event) {
 		console.log("Event data", event.data);
@@ -10,6 +9,7 @@ require(['$api/models', '$api/views'], function (models, views) {
 
 			$('.sp-artist').hide();
 			models.Artist.fromId(id).then(function (artist) {
+				console.log("Loaded artist");
 				$('#artist_image').removeClass('shadow');
 				$('#name').html(artist.name);
 				$('#name').attr('data-uri', 'bungalow:artist:' + id);
@@ -22,8 +22,14 @@ require(['$api/models', '$api/views'], function (models, views) {
 				$('#artistLink').html(artist.name);
 				$('#artistLink').attr('data-uri', 'bungalow:artist:' + id);
 				var albumCollection = new views.AlbumCollectionView(artist);
+				console.log("Appending album collection");
 				$('#albums').append(albumCollection.node);
 				views.hideThrobber();
+
+				var header = new views.Header(artist);
+				$(header.node).insertAfter('.sp-tabbar');
+
+
 			});
 
 		}

@@ -1,8 +1,8 @@
-var imports = {}
-var __context = this;
-var depth = 0;
+var __level = 0;
 var requirejs = function (exports) {
     exports.require = function () {
+        var __imports = {};
+        var __context = {};
         var modules = arguments[0];
         var callback = arguments[1];
         var items = [];
@@ -17,35 +17,35 @@ var requirejs = function (exports) {
 
 
             }
-            console.log(module);
             var _class = module.indexOf('#') > 0 ? module.split('#')[1] : null;
             if (_class != null) {
                 module = module.split('#')[0];
             }
 
-            if (module in imports) {
-                items.push(imports[module]);
+            if (module in __imports) {
+                items.push(__imports[module]);
                 return;
             }
             module = module + '.js';
             xmlHttp.open('GET', module, false);
             xmlHttp.send(null);
             if (xmlHttp.readyState == 4 && xmlHttp.status == 200) {
-                console.log(xmlHttp.responseText);
-                var code = ("(function () { var exports = {}; " + xmlHttp.responseText + "; console.log('exports" + depth + "', exports); return exports;  })();");
-                console.log(code);
+                __level--;
+                var code = ("(function () { var exports = {}; " + xmlHttp.responseText + "; return exports;  })();");
+
                 var mod = eval(code);
-                console.log("Mod", mod);
+                __level++;
                 if (_class != null) {
-                    console.log(mod);
                     mod = mod[_class];
                 }
                 items.push(mod);
-                imports[module] = mod;
+                __imports[module] = mod;
 
             }
         }
+        console.log(items);
         callback.apply(__context, items);
+
     }
 
 };

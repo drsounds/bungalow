@@ -101,7 +101,9 @@ MockifyPlayer.prototype.request = function (method, url, payload) {
                                     'objects': data.items
                                 });
                             } catch (e) {
-                                fail();
+                                resolve({
+                                    'objects': []
+                                })
                             }
                         }
                     );
