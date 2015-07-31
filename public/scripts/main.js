@@ -238,6 +238,10 @@ var Shell = function () {
 			event.source.postMessage({'action': 'trackstarted', 'index': context.currentIndex, 'uri': context.uri}, '*');
 			self.playTrack(context.tracks[context.currentIndex]);
 		}
+		if (event.data.action === 'hashchange') {
+			window.location.hash = event.data.hash;
+			console.log("Changed hash");
+		}
 		if (event.data.action === 'navigate') {
 			self.navigate(event.data.uri);
 		}
@@ -510,7 +514,6 @@ Shell.prototype.navigate = function (url, nohistory) {
 		this.activateApp(appId);
 		var appFrame = this.getAppFrame(appId);
 		appFrame.contentWindow.postMessage({'action': 'navigate', 'arguments': (args)}, '*');
-		
 
 	} else {
 
@@ -524,6 +527,7 @@ Shell.prototype.navigate = function (url, nohistory) {
 			self.activateApp(appId);
 		});
 	}
+	this.currentApp = appId;
 
 	$('#menu li').removeClass('active');
 	$('#menu li[data-uri="' + url + '"]').addClass('active');
@@ -621,4 +625,13 @@ window.addEventListener('load', function () {
 	}
 	console.log(location);
 	shell.navigate(location, true);
+	setHash(window.location.hash.slice(1));
+});
+function setHash(hash) {
+	console.log("Hash changed");
+	console.log(shell.apps[shell.currentApp]);
+	document.querySelector('iframe#app_' + shell.currentApp).contentWindow.postMessage({ 'action': 'hashchange', 'hash': hash}, '*');
+}
+window.addEventListener('hashchange', function (event) {
+	setHash(window.location.hash.slice(1));
 });

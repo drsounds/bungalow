@@ -9,10 +9,7 @@
 		<script src="http://localhost:9261/app/vendor/scripts/jquery.js"></script>
 	</head>
 	<body style="width: 100%">
-		<div class="sp-tabbar">
-			<div class="sp-tabbar-tab sp-tabbar-tab-active">Overview</div>
-			<span class="right sp-tabbar-link" ><a id="artistLink"></a></span>
-		</div>
+
 		<div id="header"></div>
 		<div style="height:23px"></div>
 		<div id="throbber">
@@ -20,9 +17,13 @@
 		</div>
 
 		<div style="width: 100%" class="sp-container">
+			<div class="sp-section" id="overview">
+				<h2 class="divider">Albums</h2>
+				<div id="albums" class="collection"></div>
+			</div>
+			<div class="sp-section" id="biography">
 
-			<h2 class="divider">Albums</h2>
-			<div id="albums" class="collection"></div>
+			</div>
 		</div>
 		<script src="scripts/main.js"></script>
 	</body>

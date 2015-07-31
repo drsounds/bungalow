@@ -154,8 +154,14 @@ $sp-cover-image-size: 128px;
     height: $sp-cover-image-size;
     background-size: cover;
 }
+.sp-section {
+    display: none;
+}
+.sp-section:first-child {
+    display: block;
+}
 .sp-header {
-    min-height: 320px;
+    min-height: 220px;
     width: 100%;
     overflow: hidden;
 
@@ -164,7 +170,7 @@ $sp-cover-image-size: 128px;
     position: absolute;
     left: 0pt;
     top: 0pt;
-    padding: 110pt;
+    padding: 0pt;
     width: 100%;
     color: white;
     line-height: 0pt;
@@ -178,6 +184,13 @@ $sp-cover-image-size: 128px;
     padding: 8pt 10pt;
     height: 16px;
     border-bottom: 1px solid lighten($bg-color, 12%);
+}
+.sp-header .content {
+    padding: 10pt;
+    position: relative;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
 }
 .sp-header-background-image {
     width: 100%;
@@ -458,8 +471,8 @@ meter::-webkit-meter-optimum-value {
 .sp-tabbar {
     background-color: darken($header-bg-color, 10%);
     top: 0px;
-    position: fixed;
     width: 100%;
+    text-align: center;
 }
 .sp-tabbar-tab {
     color: #aaa;

@@ -8,6 +8,17 @@ require(['$api/models', '$api/views'], function (models, views) {
 			var id = event.data.arguments[0];
 
 			$('.sp-artist').hide();
+
+			var tabBar = new views.TabBar({
+				'views':[
+					{id: 'overview', title: 'Overview'},
+					{id: 'biography', title: 'Biography'}
+				]
+			});
+
+
+			$(tabBar.node).insertAfter('#header');
+
 			models.Artist.fromId(id).then(function (artist) {
 				console.log("Loaded artist");
 				$('#artist_image').removeClass('shadow');

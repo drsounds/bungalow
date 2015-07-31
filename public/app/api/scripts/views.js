@@ -258,6 +258,10 @@ require(['$api/models'], function (models) {
     CollectionView.prototype.next = function () {
         var tbody = this.tbody;
         var fields = this.fields;
+        if (!$(this.node).is(':visible')) {
+            return;
+        }
+
         var collection = this.resource[this.type + 's'];
         var self = this;
         if (!collection)
@@ -702,7 +706,7 @@ require(['$api/models'], function (models) {
     }
 
     var Header = function (resource, type, coverSize) {
-        coverSize = coverSize ? coverSize : 192;
+        coverSize = coverSize ? coverSize : 128;
         this.node = document.createElement('div');
         this.node.classList.add('sp-header');
         var bgdiv = document.createElement('div');
@@ -712,6 +716,7 @@ require(['$api/models'], function (models) {
 
         var content = document.createElement('div');
         this.node.appendChild(content);
+        content.classList.add('content');
 
         var table = document.createElement('table');
         content.appendChild(table);
@@ -767,11 +772,67 @@ require(['$api/models'], function (models) {
 
             });
         }
+
+        content.style.top =  '-150px';
+        content.style.left =  '30px';
+    }
+
+    var TabBar = function (data) {
+        this.node = document.createElement('div');
+        this.node.classList.add('sp-tabbar');
+        var self = this;
+        Object.assign(this, data);
+        for (var i = 0; i < this.views.length; i++) {
+            var tabItem = new TabBarTab(this.views[i]);
+            this.node.appendChild(tabItem.node);
+        }
+        var tabbarY = 0;
+        window.addEventListener('scroll', function (event) {
+            var tabbar = $(self.node)   ;
+
+            var absolutePos = $(tabbar).offset();
+            if (tabbarY == 0) {
+                tabbarY = absolutePos.top;
+            }
+            if ($(window).scrollTop() >= tabbarY) {
+                var scrollOffset = $(window).scrollTop() - tabbarY ;
+                $(tabbar).css({'transform': 'translate(0px, ' + (scrollOffset) + 'px)'});
+            } else {
+                $(tabbar).css({'transform': 'none'});
+
+            }
+        });
+    }
+
+    var TabBarTab = function (data) {
+        Object.assign(this, data);
+        this.node = document.createElement('div');
+        this.node.setAttribute('class', 'sp-tabbar-tab');
+        this.node.setAttribute('data-id', data.id);
+        $(this.node).html(this.title);
+        this.node.addEventListener('click', function (event) {
+            window.parent.postMessage({'action': 'hashchange', hash: event.target.dataset['id']}, '*');
+        });
     }
 
     exports.Header = Header;
-
+    exports.TabBar = TabBar;
+    exports.TabBarTab = TabBarTab;
     $(window).scroll(function () {
         sync_contexts();
     });
+
+    window.addEventListener('message', function (event) {
+        var data = event.data;
+        if (data.action == 'hashchange') {
+            setView(data.hash);
+        }
+    });
+
+    function setView (viewId) {
+        $('.sp-tabbar-tab').removeClass('sp-tabbar-tab-active');
+        $('.sp-tabbar-tab[data-id="' + viewId + '"]').addClass('sp-tabbar-tab-active');
+        $('.sp-section').hide();
+        $('.sp-section#' + viewId).show();
+    }
 });
