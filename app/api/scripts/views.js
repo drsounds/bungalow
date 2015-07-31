@@ -238,10 +238,10 @@ require(['$api/models'], function (models) {
         'title': 'Title',
         'album': 'Album',
         'artist': 'Artist',
-        'duration': 'Duration',
-        'popularity': 'Popularity',
+        'duration': 'fa-clock',
+        'popularity': 'fa-thumbs-o-up',
         'user': 'User',
-        'creted': 'Added'
+        'creted': 'fa-clock'
     };
 
     var CollectionView = function (resource, options, ViewClass) {
@@ -275,13 +275,19 @@ require(['$api/models'], function (models) {
                     var trackView = new self.ViewClass(collection.objects[i], i, collection.uri, {'fields': fields});
                     $(tbody).append(trackView.node);
                     self.loading = false;
+                    sync_contexts();
                 }
             });
         }
     }
 
     exports.CollectionView = CollectionView;
-
+    var header_types = {
+        'number': '#',
+        'track': 'Track',
+        'duration': 'fa-clock',
+        'popularity': 'fa-like'
+    }
     /**
      * A tracklist view
      * @param {collection|Album|List} collection A collection
@@ -328,7 +334,11 @@ require(['$api/models'], function (models) {
         var c = "";
         for (var i = 0; i < fields.length; i++) {
             var field = fields[i];
-            c += "<th>" + fieldTypes[field] + '</th>';
+            var title = fieldTypes[field];
+            if (title.indexOf('fa-') == 0) {
+                title = '<i class="fa ' + title + '"></i>';
+            }
+            c += "<th>" + title + '</th>';
         }
         thead.innerHTML = '<tr>' + c + '<th style="width:10%; text-align: left"></th></tr>';
         this.node.setAttribute('data-uri', resource.uri);
@@ -461,8 +471,9 @@ require(['$api/models'], function (models) {
         $(this.node).append(box);
     }
 
-    var AlbumCollectionView = function (resource, options) {
+    var AlbumCollectionView = function (resource, options, coverSize) {
         CollectionView.call(this, resource, options, AlbumView);
+        this.coverSize = coverSize ? coverSize : 128;
         this.ViewClass = AlbumView;
         this.resource = resource;
         this.node = document.createElement('div');
@@ -475,6 +486,10 @@ require(['$api/models'], function (models) {
             sync_contexts();
         }, 100);
 
+    };
+
+    AlbumCollectionView.prototype.next = function () {
+        CollectionView.prototype.next.call(this, arguments);
     }
 
     /**
@@ -502,7 +517,9 @@ require(['$api/models'], function (models) {
         var tr2 = document.createElement('tr');
         var td2 = document.createElement('td');
         td2.setAttribute('valign', 'top');
-        td2.innerHTML = '<h3 style="margin-bottom: 10px"><a data-uri="' + album.uri + '">' + album.name + '</a></h3>';
+        console.log(album);
+        album.release_date = '1970-01-01';
+        td2.innerHTML = '<small>' + album.release_date + '</small><h3 style="margin-bottom: 10px"><a data-uri="' + album.uri + '">' + album.name + '</a></h3>';
         // // console.log(td2.innerHTML);
         //alert(album.tracks);
         var self = this;
@@ -674,10 +691,62 @@ require(['$api/models'], function (models) {
         })
     }
 
-    var Header = function (resource) {
+    var CoverImage = function (resource, size) {
+        this.node = document.createElement('div');
+        this.node.classList.add('sp-cover-image');
+        var size = size ? size : 128;
+        this.node.style.backgroundImage = 'url("' + resource.images[0].url + '")';
+        this.node.style.width = size + 'px';
+        this.node.style.height = size + 'px';
+
+    }
+
+    var Header = function (resource, type, coverSize) {
+        coverSize = coverSize ? coverSize : 192;
         this.node = document.createElement('div');
         this.node.classList.add('sp-header');
-        this.node.style.backgroundImage.src = resource.images[0].src;
+        var bgdiv = document.createElement('div');
+        bgdiv.style.backgroundImage = 'url("' + resource.images[0].url + '")';
+        bgdiv.classList.add('sp-header-background-image');
+        this.node.appendChild(bgdiv);
+
+        var content = document.createElement('div');
+        this.node.appendChild(content);
+
+        var table = document.createElement('table');
+        content.appendChild(table);
+        table.classList.add('sp-header-content');
+
+        var tbody = document.createElement('tbody');
+
+        table.appendChild(tbody);
+
+        var tr = document.createElement('tr');
+
+        tbody.appendChild(tr);
+
+        var td1 = document.createElement('td');
+
+        var coverImage = new CoverImage(resource, coverSize);
+        td1.width = (coverSize + 10) + "px";
+        td1.appendChild(coverImage.node);
+
+        var td2 = document.createElement('td');
+        td2.style.verticalAlign = 'top';
+        td2.innerHTML = '<small>' + type + '</small><p class="h1">' + resource.name + '</p>';
+
+        var toolbar = document.createElement('div');
+        toolbar.classList.add('sp-toolbar');
+
+        td2.appendChild(toolbar);
+
+        toolbar.innerHTML = '<button class="btn btn-primary">Play</button><button class="btn btn-default"><i class="fa fa-share"></i> Share</button>';
+
+
+        tr.appendChild(td1);
+        tr.appendChild(td2);
+
+
         $('.sp-tabbar').css({'background-opacity': '0'});
         var tabbar = $('.sp-tabbar')[0];
         if (tabbar) {

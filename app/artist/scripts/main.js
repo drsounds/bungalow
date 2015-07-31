@@ -25,9 +25,10 @@ require(['$api/models', '$api/views'], function (models, views) {
 				console.log("Appending album collection");
 				$('#albums').append(albumCollection.node);
 				views.hideThrobber();
-
-				var header = new views.Header(artist);
-				$(header.node).insertAfter('.sp-tabbar');
+				console.log(artist);
+				var header = new views.Header(artist, "Artist");
+				$('#header').html("");
+				$('#header').append(header.node);
 
 
 			});
