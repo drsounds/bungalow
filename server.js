@@ -21,7 +21,7 @@ var allowCrossDomain = function(req, res, next) {
     next();
 }
 app.use(allowCrossDomain);
-app.use(express.static(__dirname + '/'));
+app.use(express.static(__dirname + '/public'));
 
 
 app.get('/player/play', function (req, res) {
@@ -264,6 +264,13 @@ app.get('/api/music/*', function (req, res) {
 
         res.json(result);
     });
+});
+
+app.get('*', function (req, res) {
+
+    var index = fs.readFileSync(__dirname + '/public/index.html');
+    res.write(index);
+    res.end();
 });
 
 app.listen(process.env.PORT || 9261);

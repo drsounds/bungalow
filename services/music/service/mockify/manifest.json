@@ -1,0 +1,5 @@
+{
+  "BundleType": "Service",
+  "ServiceType": "music",
+  "entrypoint": "mockify.js"
+}
