@@ -143,7 +143,7 @@ MockifyPlayer.prototype.request = function (method, url, payload) {
                     if (parts[2] == 'playlists') {
                         if (parts.length < 4) {
                             var playlists = [];
-                            for (var i = 0; i < playlists.length; i++) {
+                            for (var i = 0; i < 10; i++) {
                                 playlists.push({
                                     'id': 'pls' + i,
                                     'name': 'Playlist ' + i,
@@ -153,7 +153,13 @@ MockifyPlayer.prototype.request = function (method, url, payload) {
                                     },
                                     'description': 'Text',
                                     'uri': 'bungalow:playlist:pls' + i,
-                                    'followers': 1920000
+                                    'followers': {
+                                        'count': 1920000
+                                    },
+                                    'images': [{
+                                        'url': ''
+                                    }]
+
                                 });
                             }
                             resolve({
@@ -219,7 +225,15 @@ MockifyPlayer.prototype.request = function (method, url, payload) {
                     resolve({
                         'id': userid,
                         'name': userid,
-                        'canonicalName': userid
+                        'canonicalName': userid,
+                        'uri': 'bungalow:user:' + userid,
+                        'followers': {
+                            'count': 28000000,
+                            'uri': 'bungalow:user:' + userid + ':followers'
+                        },
+                        'images': [{
+                            'url': ''
+                        }]
                     });
                 }
             }

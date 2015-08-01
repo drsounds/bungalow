@@ -179,12 +179,13 @@ require(['$api/cosmos'], function (Cosmos) {
     var User = function (data) {
         Object.assign(this, data);
         this.playlists = new Collection('/music/users/' + this.id + '/playlists?', 'bungalow:user:' + this.id + ':playlists', 'playlist');
+        this.followers = new Collection('/music/users/' + this.id + '/followers?', 'bungalow:user:' + this.id + ':followers', 'user');
     }
 
     User.fromId = function (id) {
         return new Promise(function (resolve, fail) {
-            var parts = uri.split(/\:/g);
-            var user = parts[2];
+
+
             Cosmos.request('GET', '/music/users/' + id).then(function (user) {
                 resolve(new User(user));
             });

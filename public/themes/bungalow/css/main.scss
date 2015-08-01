@@ -166,6 +166,24 @@ $sp-cover-image-size: 128px;
     overflow: hidden;
 
 }
+.sp-card {
+    width: 10%;
+    background-color: darken($bg-color, 2%);
+    padding: 0px;
+    min-height: 50pt;
+    float: left;
+    margin-right: 10pt;
+    margin-bottom: 10pt;
+}
+.sp-card-image {
+    min-height: 50pt;
+    background-color: white;
+    width: 100%;
+    background-size: cover;
+}
+.sp-card-content {
+    padding: 5pt;
+}
 .sp-header .sp-header-content {
     position: absolute;
     left: 0pt;
@@ -383,7 +401,6 @@ body {
 .collection div {
     float: left;
     list-style: none;
-    margin: 5pt;
     min-width: 120pt;
 }
 .toplist-header {

@@ -244,8 +244,8 @@ require(['$api/models'], function (models) {
         'creted': 'fa-clock'
     };
 
-    var CollectionView = function (resource, options, ViewClass) {
-        this.resource = resource;
+    var CollectionView = function (collection, options, ViewClass) {
+        this.collection = collection;
         this.options = options;
         this.node = document.createElement('div');
         this.tbody = this.node;
@@ -262,7 +262,7 @@ require(['$api/models'], function (models) {
             return;
         }
 
-        var collection = this.resource[this.type + 's'];
+        var collection = this.collection;
         var self = this;
         if (!collection)
             return;
@@ -310,6 +310,7 @@ require(['$api/models'], function (models) {
         var fields = ['title', 'artist', 'duration', 'album'];
         this.reorder = false;
         this.resource = resource;
+        this.collection = resource.tracks;
         if (options && options.headers) {
             headers = options.headers;
 
@@ -475,11 +476,85 @@ require(['$api/models'], function (models) {
         $(this.node).append(box);
     }
 
+    /**
+     *
+     * @param resource
+     * @param options
+     * @constructor
+     */
+    var CardView = function (resource, options, type) {
+        this.node = document.createElement('div');
+        this.node.classList.add('sp-card');
+        var imageDiv = document.createElement('div');
+        imageDiv.classList.add('sp-card-image');
+
+        var content = document.createElement('div');
+        content.classList.add('sp-card-content');
+
+        this.node.appendChild(imageDiv);
+        this.node.appendChild(content);
+        this.node.setAttribute('data-uri', resource.uri);
+        this.node.setAttribute('data-id', resource.id);
+        this.node.setAttribute('data-type', type);
+
+        imageDiv.style.backgroundImage = 'url("' + resource.images[0].url + '")';
+        content.innerHTML = '<h4><a href="' + resource.uri + '">' + resource.name + '</a></h4>';
+        content.innerHTML += '<p>' + resource.description + '</p>';
+        content.innerHTML += '<small>' + type + '</small>';
+        if ('followers' in resource) {
+            content.innerHTML += resource.followers.count + ' followers';
+        }
+
+    }
+
+    var AlbumCardCollectionView = function (resource, options, coverSize) {
+        CollectionView.call(this, resource, options, CardView);
+        this.coverSize = coverSize ? coverSize : 128;
+        this.ViewClass = AlbumView;
+        this.resource = resource;
+        this.node = document.createElement('div');
+        this.type = 'album';
+        this.node.setAttribute('data-uri', resource.uri + ':albums');
+        this.tbody = this.node;
+        this.node.classList.add('sp-collection');
+        collection_contexts[resource.uri + ':albums'] = this; // Register context here
+        setTimeout(function () {
+            sync_contexts();
+        }, 100);
+
+    };
+
+    var CardCollectionView = function (collection, options, type) {
+        CollectionView.call(this, collection, options, CardView);
+        this.ViewClass = CardView;
+        this.resource = {};
+        this.collection = collection;
+        this.node = document.createElement('div');
+        this.type = type;
+        console.log(collection.uri);
+        this.node.setAttribute('data-uri', collection.uri + ':' + type + 's');
+        this.tbody = this.node;
+        this.node.classList.add('sp-collection');
+        collection_contexts[collection.uri + ':' + type + 's'] = this; // Register context here
+        setTimeout(function () {
+            sync_contexts();
+        }, 100);
+    };
+
+    CardCollectionView.prototype = Object.create(CollectionView.prototype);
+    CardCollectionView.prototype.constructor = CollectionView;
+
+    exports.CardView = CardView;
+    exports.AlbumCardCollectionView = AlbumCardCollectionView;
+    exports.CardCollectionView = CardCollectionView;
+
+
     var AlbumCollectionView = function (resource, options, coverSize) {
         CollectionView.call(this, resource, options, AlbumView);
         this.coverSize = coverSize ? coverSize : 128;
         this.ViewClass = AlbumView;
         this.resource = resource;
+        this.collection = resource.albums;
         this.node = document.createElement('div');
         this.type = 'album';
         this.node.setAttribute('data-uri', resource.uri + ':albums');

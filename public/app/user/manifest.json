@@ -1,0 +1,6 @@
+{
+  "BundleName": "User",
+  "BundleType": "Application",
+  "UserInstallable": false,
+  "BundleIdentifier": "user"
+}
