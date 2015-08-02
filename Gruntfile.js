@@ -17,7 +17,7 @@ grunt.loadNpmTasks('grunt-node-webkit-builder');
             platforms: ['osx'],
             buildDir: './webkitbuilds', // Where the build version of my node-webkit app is saved
         },
-        src: ['./public/**/*'] // Your node-webkit app
+        src: ['./public_new/**/*'] // Your node-webkit app
       },
     })
 }

@@ -6,16 +6,16 @@ require(['$api/models', '$api/views'], function (models, views) {
 			views.showThrobber();
 			console.log(event.data.arguments);
 			var id = event.data.arguments[0];
-
+			$('.sp-tabbar').remove();
 			$('.sp-artist').hide();
 
 			var tabBar = new views.TabBar({
 				'views':[
 					{id: 'overview', title: 'Overview'},
 					{id: 'biography', title: 'Biography'}
-				]
+				],
+				slicky: true
 			});
-
 
 			$(tabBar.node).insertAfter('#header');
 
@@ -32,7 +32,7 @@ require(['$api/models', '$api/views'], function (models, views) {
 				$('#singles').html("");
 				$('#artistLink').html(artist.name);
 				$('#artistLink').attr('data-uri', 'bungalow:artist:' + id);
-				var albumCollection = new views.AlbumCollectionView(artist);
+				var albumCollection = new views.CardCollectionView(artist.albums, {}, 'album');
 				console.log("Appending album collection");
 				$('#albums').append(albumCollection.node);
 				views.hideThrobber();

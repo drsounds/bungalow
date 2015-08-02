@@ -1,9 +1,16 @@
 @import url("http://fonts.googleapis.com/css?family=Source+Sans+Pro");
 @import url("http://fonts.googleapis.com/css?family=Montserrat");
 @import url(http://fonts.googleapis.com/css?family=Open+Sans:300);
-$primary-color: #77A800;
-$bg-color: #222;
+$primary-color: #FF9800;
+$bg-color: #181818;
+$sidebar-color: lighten($bg-color, 2%);
 $header-bg-color: lighten($bg-color, 3%);
+
+.container {
+    margin-left: 10%;
+    margin-right: 10%;
+}
+
 header,
 footer,
 aside,
@@ -111,7 +118,7 @@ body, input {
     font-size: 12pt;
 }
 body {
-    background-color: #333;
+    background-color: $bg-color;
     -webkit-user-select: none;
     font-family: "Open Sans";
     font-weight: 100;
@@ -166,23 +173,30 @@ $sp-cover-image-size: 128px;
     overflow: hidden;
 
 }
-.sp-card {
-    width: 10%;
-    background-color: darken($bg-color, 2%);
-    padding: 0px;
-    min-height: 50pt;
+.sp-card-holder {
+    padding: 10pt;
+    min-height: 200pt;
+
     float: left;
-    margin-right: 10pt;
-    margin-bottom: 10pt;
+    width: 25%;
+    box-sizing: border-box;
+}
+.sp-card {
+    background-color: lighten($bg-color, 10%);
+    padding: 0px;
+    margin: 0px;
+    min-height: 100%;
 }
 .sp-card-image {
-    min-height: 50pt;
+    min-height: 100pt;
     background-color: white;
     width: 100%;
     background-size: cover;
 }
 .sp-card-content {
     padding: 5pt;
+    font-size: 10pt;
+    word-wrap: break-word;
 }
 .sp-header .sp-header-content {
     position: absolute;
@@ -486,23 +500,24 @@ meter::-webkit-meter-optimum-value {
     border-radius: 0pt 5pt 5pt 0pt;
 }
 .sp-tabbar {
-    background-color: darken($header-bg-color, 10%);
+    background-color: rgba(0, 0, 0, .8);
     top: 0px;
     width: 100%;
     text-align: center;
+    height: 20pt;
 }
 .sp-tabbar-tab {
+
     color: #aaa;
     width: 100px;
-    float: left;
     list-style: none;
     text-align: center;
     padding: 3pt;
     box-sizing: border-box;
 }
 .sp-tabbar-tab-active {
-    border-bottom: 3pt solid lighten($primary-color, 25%);
-    float: left;
+    border-bottom: 1pt solid lighten($primary-color, 25%);
+
     list-style: none;
     color: white;
     background-color: transparent;

@@ -10,7 +10,7 @@ var SpotifyPlayer = function () {
     this.resources = {};
     
     this.callbacks = {};
-    this.apikeys = JSON.parse(fs.readFileSync('./public/scripts/spotify.key.json'));
+    this.apikeys = JSON.parse(fs.readFileSync('./public_new/scripts/spotify.key.json'));
     this.nodeSpotifyApi = new SpotifyNodeApi(this.apikeys);
     this.spotifyAPI = new SpotifyWebApi();
     this.me = null;

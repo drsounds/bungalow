@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Start</title>
+        <link rel="stylesheet" href="../../stylesheets/boxmodel.css">
+        <link rel="stylesheet" href="../../themes/main.css">
+        <script src="/public_new/bower_components/jquery/dist/jquery.js"></script>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+        <script src="../../bower_components/webcomponentsjs/webcomponents.js"></script>
+        <script src="../../scripts/bungalow-app.js" type="text/JavaScript"></script>
+        <script src="../../scripts/cosmos.js" type="text/JavaScript"></script>
+        <link rel="import" href="../../components/profile-header.html">
+        <link rel="import" href="../../components/tab-bar.html">
+        <link rel="import" href="../../components/tab-item.html">
+        <link rel="import" href="../../components/album.html">
+    </head>
+    <body>
+
+        <div class="container">
+            <bungalow-profile-header id="header" style="width: 100%" theme="light" icon="bug" name="Dr. Sounds" followers="0" following="0" type="artist">
+                <bungalow-tab-item name="Overview" tabid="overview"></bungalow-tab-item>
+                <bungalow-tab-item name="Biography" tabid="biography"></bungalow-tab-item>
+                <bungalow-tab-item name="Related artists" tabid="related"></bungalow-tab-item>             
+            </bungalow-profile-header>
+            
+            <div class="tab-pane" data-id="overview">
+                <bungalow-album uri="spotify:album:4YtVNtKyVLfesnHdrll0sK"></bungalow-album>
+            </div>
+            <div class="tab-pane" data-id="biography">
+                <h1>Pane 2</h1>
+            </div>
+             <div class="tab-pane" data-id="related">
+                <h1>Related artists</h1>
+            </div>
+        </div>
+        <script src="scripts/main.js"></script>
+    </body>
+</html>

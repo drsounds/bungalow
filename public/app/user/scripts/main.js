@@ -11,7 +11,8 @@ require(['$api/models', '$api/views'], function (models, views) {
 
             var tabBar = new views.TabBar({
                 'views':[
-                    {id: 'overview', title: 'Overview'}
+                    {id: 'overview', title: 'Overview'},
+                    {id: 'public_playlists', title: 'Public playlists'}
                 ]
             });
 

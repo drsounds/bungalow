@@ -34,14 +34,14 @@ app.get('/player/play', function (req, res) {
 
 app.get('/', function (req, res) {
 
-    var index = fs.readFileSync('./index.html');
+    var index = fs.readFileSync(__dirname + '/public/index.html');
     res.write(index);
     res.end();
 });
 
 app.get('/index.html', function (req, res) {
 
-    var index = fs.readFileSync('./index.html');
+    var index = fs.readFileSync(__dirname + '/public/index.html');
     res.write(index);
     res.end();
 });

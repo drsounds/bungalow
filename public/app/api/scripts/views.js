@@ -484,25 +484,27 @@ require(['$api/models'], function (models) {
      */
     var CardView = function (resource, options, type) {
         this.node = document.createElement('div');
-        this.node.classList.add('sp-card');
+        this.node.classList.add('sp-card-holder');
+        var card = document.createElement('div');
+        card.classList.add('sp-card');
         var imageDiv = document.createElement('div');
         imageDiv.classList.add('sp-card-image');
 
         var content = document.createElement('div');
         content.classList.add('sp-card-content');
 
-        this.node.appendChild(imageDiv);
-        this.node.appendChild(content);
-        this.node.setAttribute('data-uri', resource.uri);
-        this.node.setAttribute('data-id', resource.id);
-        this.node.setAttribute('data-type', type);
+        card.appendChild(imageDiv);
+        card.appendChild(content);
+        card.setAttribute('data-uri', resource.uri);
+        card.setAttribute('data-id', resource.id);
+        card.setAttribute('data-type', type);
 
         imageDiv.style.backgroundImage = 'url("' + resource.images[0].url + '")';
-        content.innerHTML = '<h4><a href="' + resource.uri + '">' + resource.name + '</a></h4>';
+        content.innerHTML = '<h4><a href="/' + resource.uri.split(/\:/).slice(1).join('/') + '" data-uri="' + resource.uri + '">' + resource.name + '</a></h4>';
         content.innerHTML += '<p>' + resource.description + '</p>';
-        content.innerHTML += '<small>' + type + '</small>';
+        this.node.appendChild(card);
         if ('followers' in resource) {
-            content.innerHTML += resource.followers.count + ' followers';
+            content.innerHTML += '<small>' + resource.followers.count + ' followers</small>';
         }
 
     }
@@ -869,19 +871,30 @@ require(['$api/models'], function (models) {
             if (tabbarY == 0) {
                 tabbarY = absolutePos.top;
             }
-            if ($(window).scrollTop() >= tabbarY) {
-                var scrollOffset = $(window).scrollTop() - tabbarY ;
-                $(tabbar).css({'transform': 'translate(0px, ' + (scrollOffset) + 'px)'});
+            console.log($(window).scrollTop() > tabbarY)
+            if ($(window).scrollTop() >= tabbarY - (self.slicky ? $(tabbar).height(): 0)) {
+                var scrollOffset = $(window).scrollTop() - tabbarY  ;
+                console.log("Scrolloffset: " + scrollOffset);
+                var translate = 'translate(0px, ' + (scrollOffset) + 'px)';
+                $(tabbar).css({'transform': translate});
             } else {
-                $(tabbar).css({'transform': 'none'});
+                $(tabbar).css({'transform': 'translate(0px, -' + (self.slicky ? 100 : 0) + '%)' });
 
             }
         });
+        var tabbar = $(this.node);
+        if ($(window).scrollTop() >= tabbarY - (self.slicky ? $(tabbar).height() * 2: 0)) {
+            var scrollOffset = $(window).scrollTop() - tabbarY - (self.slicky ? $(tabbar).height() :0)  ;
+            $(tabbar).css({'transform': 'translate(0px, -' + (scrollOffset) + 'px)'});
+        } else {
+            $(tabbar).css({'transform': 'translate(0px, -' + (this.slicky ? 100 : 0) + '%)' });
+
+        }
     }
 
     var TabBarTab = function (data) {
         Object.assign(this, data);
-        this.node = document.createElement('div');
+        this.node = document.createElement('span');
         this.node.setAttribute('class', 'sp-tabbar-tab');
         this.node.setAttribute('data-id', data.id);
         $(this.node).html(this.title);

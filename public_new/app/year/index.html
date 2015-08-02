@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Start</title>
+        <link rel="stylesheet" href="../../stylesheets/boxmodel.css">
+        <link rel="stylesheet" href="../../themes/main.css">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+        <script src="../../bower_components/jquery/dist/jquery.js"></script>
+        <script src="../../bower_components/webcomponentsjs/webcomponents.js"></script>
+        <script src="../../scripts/bungalow-app.js" type="text/JavaScript"></script>
+        <link rel="import" href="../../components/profile-header.html">
+        <link rel="import" href="../../components/tab-bar.html">
+        <link rel="import" href="../../components/tab-item.html">
+        <link rel="import" href="../../components/album.html">
+    </head>
+    <body>
+        <div class="container">
+
+            <bungalow-profile-header style="width: 100%" type="year" icon="calendar" action="See">
+                <name>----</name>
+                <description>Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo.  Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt.</description>
+                <bungalow-tab-item name="Overview" tabid="overview"></bungalow-tab-item>
+                <bungalow-tab-item name="Biography" tabid="biography"></bungalow-tab-item>
+            </bungalow-profile-header>
+           
+            <div class="tab-pane" data-id="overview">
+                <h1>Overview</h1>
+            </div>
+            <div class="tab-pane" data-id="biography">
+                <h1>Biography</h1>
+            </div>
+            <script type="text/JavaScript">
+            window.onargumentschanged = function (event) {
+     
+                document.body.querySelector('bungalow-profile-header name').innerHTML = event.data[0];
+            };
+            </script>
+        </div>
+    </body>
+</html>
