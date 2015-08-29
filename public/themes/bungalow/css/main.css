@@ -421,6 +421,9 @@ h4 {
   min-width: 20px;
   margin-left: 10px; }
 
+.menu .sub {
+  font-size: 10px; }
+
 a[data-uri] {
   cursor: pointer; }
 
