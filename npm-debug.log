@@ -1,0 +1,263 @@
+0 info it worked if it ends with ok
+1 verbose cli [ 'C:\\Program Files (x86)\\nodejs\\\\node.exe',
+1 verbose cli   'C:\\Program Files (x86)\\nodejs\\node_modules\\npm\\bin\\npm-cli.js',
+1 verbose cli   'install',
+1 verbose cli   'es6-promisenpm',
+1 verbose cli   'install',
+1 verbose cli   'es6-promisenpm',
+1 verbose cli   'install',
+1 verbose cli   'es6-promise' ]
+2 info using npm@1.4.28
+3 info using node@v0.10.36
+4 verbose node symlink C:\Program Files (x86)\nodejs\\node.exe
+5 warn package.json Bungalow@1.0.0 No repository field.
+6 verbose readDependencies using package.json deps
+7 verbose cache add [ 'es6-promisenpm', null ]
+8 verbose cache add name=undefined spec="es6-promisenpm" args=["es6-promisenpm",null]
+9 verbose parsed url { protocol: null,
+9 verbose parsed url   slashes: null,
+9 verbose parsed url   auth: null,
+9 verbose parsed url   host: null,
+9 verbose parsed url   port: null,
+9 verbose parsed url   hostname: null,
+9 verbose parsed url   hash: null,
+9 verbose parsed url   search: null,
+9 verbose parsed url   query: null,
+9 verbose parsed url   pathname: 'es6-promisenpm',
+9 verbose parsed url   path: 'es6-promisenpm',
+9 verbose parsed url   href: 'es6-promisenpm' }
+10 verbose cache add [ 'install', null ]
+11 verbose cache add name=undefined spec="install" args=["install",null]
+12 verbose parsed url { protocol: null,
+12 verbose parsed url   slashes: null,
+12 verbose parsed url   auth: null,
+12 verbose parsed url   host: null,
+12 verbose parsed url   port: null,
+12 verbose parsed url   hostname: null,
+12 verbose parsed url   hash: null,
+12 verbose parsed url   search: null,
+12 verbose parsed url   query: null,
+12 verbose parsed url   pathname: 'install',
+12 verbose parsed url   path: 'install',
+12 verbose parsed url   href: 'install' }
+13 verbose cache add [ 'es6-promisenpm', null ]
+14 verbose cache add name=undefined spec="es6-promisenpm" args=["es6-promisenpm",null]
+15 verbose parsed url { protocol: null,
+15 verbose parsed url   slashes: null,
+15 verbose parsed url   auth: null,
+15 verbose parsed url   host: null,
+15 verbose parsed url   port: null,
+15 verbose parsed url   hostname: null,
+15 verbose parsed url   hash: null,
+15 verbose parsed url   search: null,
+15 verbose parsed url   query: null,
+15 verbose parsed url   pathname: 'es6-promisenpm',
+15 verbose parsed url   path: 'es6-promisenpm',
+15 verbose parsed url   href: 'es6-promisenpm' }
+16 verbose cache add [ 'install', null ]
+17 verbose cache add name=undefined spec="install" args=["install",null]
+18 verbose parsed url { protocol: null,
+18 verbose parsed url   slashes: null,
+18 verbose parsed url   auth: null,
+18 verbose parsed url   host: null,
+18 verbose parsed url   port: null,
+18 verbose parsed url   hostname: null,
+18 verbose parsed url   hash: null,
+18 verbose parsed url   search: null,
+18 verbose parsed url   query: null,
+18 verbose parsed url   pathname: 'install',
+18 verbose parsed url   path: 'install',
+18 verbose parsed url   href: 'install' }
+19 verbose cache add [ 'es6-promise', null ]
+20 verbose cache add name=undefined spec="es6-promise" args=["es6-promise",null]
+21 verbose parsed url { protocol: null,
+21 verbose parsed url   slashes: null,
+21 verbose parsed url   auth: null,
+21 verbose parsed url   host: null,
+21 verbose parsed url   port: null,
+21 verbose parsed url   hostname: null,
+21 verbose parsed url   hash: null,
+21 verbose parsed url   search: null,
+21 verbose parsed url   query: null,
+21 verbose parsed url   pathname: 'es6-promise',
+21 verbose parsed url   path: 'es6-promise',
+21 verbose parsed url   href: 'es6-promise' }
+22 silly lockFile 3161ae23-es6-promisenpm es6-promisenpm
+23 verbose lock es6-promisenpm C:\Users\Alecca\AppData\Roaming\npm-cache\3161ae23-es6-promisenpm.lock
+24 silly lockFile 89fb511f-install install
+25 verbose lock install C:\Users\Alecca\AppData\Roaming\npm-cache\89fb511f-install.lock
+26 silly lockFile 3161ae23-es6-promisenpm es6-promisenpm
+27 verbose lock es6-promisenpm C:\Users\Alecca\AppData\Roaming\npm-cache\3161ae23-es6-promisenpm.lock
+28 silly lockFile 89fb511f-install install
+29 verbose lock install C:\Users\Alecca\AppData\Roaming\npm-cache\89fb511f-install.lock
+30 silly lockFile 622dc92c-es6-promise es6-promise
+31 verbose lock es6-promise C:\Users\Alecca\AppData\Roaming\npm-cache\622dc92c-es6-promise.lock
+32 silly lockFile 3161ae23-es6-promisenpm es6-promisenpm
+33 silly lockFile 3161ae23-es6-promisenpm es6-promisenpm
+34 silly lockFile 89fb511f-install install
+35 silly lockFile 89fb511f-install install
+36 silly lockFile 622dc92c-es6-promise es6-promise
+37 silly lockFile 622dc92c-es6-promise es6-promise
+38 verbose addNamed [ 'es6-promisenpm', '' ]
+39 verbose addNamed [ null, '*' ]
+40 silly lockFile 4de39ee4-es6-promisenpm es6-promisenpm@
+41 verbose lock es6-promisenpm@ C:\Users\Alecca\AppData\Roaming\npm-cache\4de39ee4-es6-promisenpm.lock
+42 verbose addNamed [ 'install', '' ]
+43 verbose addNamed [ null, '*' ]
+44 silly lockFile cadb329f-install install@
+45 verbose lock install@ C:\Users\Alecca\AppData\Roaming\npm-cache\cadb329f-install.lock
+46 verbose addNamed [ 'es6-promise', '' ]
+47 verbose addNamed [ null, '*' ]
+48 silly lockFile bac4a9a6-es6-promise es6-promise@
+49 verbose lock es6-promise@ C:\Users\Alecca\AppData\Roaming\npm-cache\bac4a9a6-es6-promise.lock
+50 silly addNameRange { name: 'es6-promisenpm', range: '*', hasData: false }
+51 silly addNameRange { name: 'install', range: '*', hasData: false }
+52 verbose request where is /es6-promisenpm
+53 verbose request registry https://registry.npmjs.org/
+54 verbose request id 177cb1f2270ac9d6
+55 verbose url raw /es6-promisenpm
+56 verbose url resolving [ 'https://registry.npmjs.org/', './es6-promisenpm' ]
+57 verbose url resolved https://registry.npmjs.org/es6-promisenpm
+58 verbose request where is https://registry.npmjs.org/es6-promisenpm
+59 info trying registry request attempt 1 at 21:49:05
+60 http GET https://registry.npmjs.org/es6-promisenpm
+61 silly addNameRange { name: 'es6-promise', range: '*', hasData: false }
+62 verbose request where is /es6-promise
+63 verbose request registry https://registry.npmjs.org/
+64 verbose url raw /es6-promise
+65 verbose url resolving [ 'https://registry.npmjs.org/', './es6-promise' ]
+66 verbose url resolved https://registry.npmjs.org/es6-promise
+67 verbose request where is https://registry.npmjs.org/es6-promise
+68 info trying registry request attempt 1 at 21:49:05
+69 http GET https://registry.npmjs.org/es6-promise
+70 verbose request where is /install
+71 verbose request registry https://registry.npmjs.org/
+72 verbose url raw /install
+73 verbose url resolving [ 'https://registry.npmjs.org/', './install' ]
+74 verbose url resolved https://registry.npmjs.org/install
+75 verbose request where is https://registry.npmjs.org/install
+76 info trying registry request attempt 1 at 21:49:05
+77 verbose etag "113P54VHX3FJP3LDSDBKOLHUM"
+78 http GET https://registry.npmjs.org/install
+79 silly lockFile 3161ae23-es6-promisenpm es6-promisenpm
+80 silly lockFile 3161ae23-es6-promisenpm es6-promisenpm
+81 silly lockFile 89fb511f-install install
+82 silly lockFile 89fb511f-install install
+83 verbose addNamed [ 'es6-promisenpm', '' ]
+84 verbose addNamed [ 'install', '' ]
+85 http 200 https://registry.npmjs.org/install
+86 silly registry.get cb [ 200,
+86 silly registry.get   { server: 'CouchDB/1.5.0 (Erlang OTP/R16B03)',
+86 silly registry.get     etag: '"E366EZ1PP0PRHGRS019U820V3"',
+86 silly registry.get     'content-type': 'application/json',
+86 silly registry.get     'cache-control': 'max-age=60',
+86 silly registry.get     'content-length': '10423',
+86 silly registry.get     'accept-ranges': 'bytes',
+86 silly registry.get     date: 'Sat, 29 Aug 2015 19:49:03 GMT',
+86 silly registry.get     via: '1.1 varnish',
+86 silly registry.get     age: '12',
+86 silly registry.get     connection: 'keep-alive',
+86 silly registry.get     'x-served-by': 'cache-fra1244-FRA',
+86 silly registry.get     'x-cache': 'HIT',
+86 silly registry.get     'x-cache-hits': '2',
+86 silly registry.get     'x-timer': 'S1440877743.156458,VS0,VE0',
+86 silly registry.get     vary: 'Accept' } ]
+87 silly addNameRange number 2 { name: 'install', range: '*', hasData: true }
+88 silly addNameRange versions [ 'install',
+88 silly addNameRange   [ '0.1.1',
+88 silly addNameRange     '0.1.2',
+88 silly addNameRange     '0.1.3',
+88 silly addNameRange     '0.1.4',
+88 silly addNameRange     '0.1.5',
+88 silly addNameRange     '0.1.6',
+88 silly addNameRange     '0.1.7',
+88 silly addNameRange     '0.1.8' ] ]
+89 verbose addNamed [ 'install', '0.1.8' ]
+90 verbose addNamed [ '0.1.8', '0.1.8' ]
+91 silly lockFile 584c81dc-install-0-1-8 install@0.1.8
+92 verbose lock install@0.1.8 C:\Users\Alecca\AppData\Roaming\npm-cache\584c81dc-install-0-1-8.lock
+93 silly lockFile 584c81dc-install-0-1-8 install@0.1.8
+94 silly lockFile 584c81dc-install-0-1-8 install@0.1.8
+95 silly lockFile cadb329f-install install@
+96 silly lockFile cadb329f-install install@
+97 http 200 https://registry.npmjs.org/es6-promise
+98 silly registry.get cb [ 200,
+98 silly registry.get   { server: 'CouchDB/1.5.0 (Erlang OTP/R16B03)',
+98 silly registry.get     etag: '"BB3M6NNGY3NPQO2RJ728YRYB4"',
+98 silly registry.get     'content-type': 'application/json',
+98 silly registry.get     'cache-control': 'max-age=60',
+98 silly registry.get     'content-length': '28431',
+98 silly registry.get     'accept-ranges': 'bytes',
+98 silly registry.get     date: 'Sat, 29 Aug 2015 19:49:03 GMT',
+98 silly registry.get     via: '1.1 varnish',
+98 silly registry.get     age: '8',
+98 silly registry.get     connection: 'keep-alive',
+98 silly registry.get     'x-served-by': 'cache-fra1248-FRA',
+98 silly registry.get     'x-cache': 'HIT',
+98 silly registry.get     'x-cache-hits': '1',
+98 silly registry.get     'x-timer': 'S1440877743.168744,VS0,VE0',
+98 silly registry.get     vary: 'Accept' } ]
+99 silly addNameRange number 2 { name: 'es6-promise', range: '*', hasData: true }
+100 silly addNameRange versions [ 'es6-promise',
+100 silly addNameRange   [ '0.1.0',
+100 silly addNameRange     '0.1.1',
+100 silly addNameRange     '0.1.2',
+100 silly addNameRange     '1.0.0',
+100 silly addNameRange     '2.0.0',
+100 silly addNameRange     '2.0.1',
+100 silly addNameRange     '2.1.0',
+100 silly addNameRange     '2.1.1',
+100 silly addNameRange     '2.2.0',
+100 silly addNameRange     '2.3.0',
+100 silly addNameRange     '3.0.0',
+100 silly addNameRange     '3.0.1',
+100 silly addNameRange     '3.0.2' ] ]
+101 verbose addNamed [ 'es6-promise', '3.0.2' ]
+102 verbose addNamed [ '3.0.2', '3.0.2' ]
+103 silly lockFile 23e86e7f-es6-promise-3-0-2 es6-promise@3.0.2
+104 verbose lock es6-promise@3.0.2 C:\Users\Alecca\AppData\Roaming\npm-cache\23e86e7f-es6-promise-3-0-2.lock
+105 silly lockFile f272f9fc-s6-promise-es6-promise-3-0-2-tgz https://registry.npmjs.org/es6-promise/-/es6-promise-3.0.2.tgz
+106 verbose lock https://registry.npmjs.org/es6-promise/-/es6-promise-3.0.2.tgz C:\Users\Alecca\AppData\Roaming\npm-cache\f272f9fc-s6-promise-es6-promise-3-0-2-tgz.lock
+107 verbose addRemoteTarball [ 'https://registry.npmjs.org/es6-promise/-/es6-promise-3.0.2.tgz',
+107 verbose addRemoteTarball   '010d5858423a5f118979665f46486a95c6ee2bb6' ]
+108 info retry fetch attempt 1 at 21:49:05
+109 verbose fetch to= C:\Users\Alecca\AppData\Local\Temp\npm-8176-EJtB8P8e\registry.npmjs.org\es6-promise\-\es6-promise-3.0.2.tgz
+110 http GET https://registry.npmjs.org/es6-promise/-/es6-promise-3.0.2.tgz
+111 http 404 https://registry.npmjs.org/es6-promisenpm
+112 silly registry.get cb [ 404,
+112 silly registry.get   { 'content-type': 'application/json',
+112 silly registry.get     'cache-control': 'max-age=0',
+112 silly registry.get     'content-length': '2',
+112 silly registry.get     'accept-ranges': 'bytes',
+112 silly registry.get     date: 'Sat, 29 Aug 2015 19:49:03 GMT',
+112 silly registry.get     via: '1.1 varnish',
+112 silly registry.get     age: '0',
+112 silly registry.get     connection: 'keep-alive',
+112 silly registry.get     'x-served-by': 'cache-fra1228-FRA',
+112 silly registry.get     'x-cache': 'MISS',
+112 silly registry.get     'x-cache-hits': '0',
+112 silly registry.get     'x-timer': 'S1440877743.176941,VS0,VE177' } ]
+113 silly lockFile 4de39ee4-es6-promisenpm es6-promisenpm@
+114 silly lockFile 4de39ee4-es6-promisenpm es6-promisenpm@
+115 http 200 https://registry.npmjs.org/es6-promise/-/es6-promise-3.0.2.tgz
+116 silly lockFile f272f9fc-s6-promise-es6-promise-3-0-2-tgz https://registry.npmjs.org/es6-promise/-/es6-promise-3.0.2.tgz
+117 silly lockFile f272f9fc-s6-promise-es6-promise-3-0-2-tgz https://registry.npmjs.org/es6-promise/-/es6-promise-3.0.2.tgz
+118 silly lockFile 23e86e7f-es6-promise-3-0-2 es6-promise@3.0.2
+119 silly lockFile 23e86e7f-es6-promise-3-0-2 es6-promise@3.0.2
+120 silly lockFile bac4a9a6-es6-promise es6-promise@
+121 silly lockFile bac4a9a6-es6-promise es6-promise@
+122 error 404 Not Found
+122 error 404
+122 error 404 'es6-promisenpm' is not in the npm registry.
+122 error 404 You should bug the author to publish it
+122 error 404 It was specified as a dependency of 'Bungalow'
+122 error 404
+122 error 404 Note that you can also install from a
+122 error 404 tarball, folder, or http url, or git url.
+123 error System Windows_NT 6.2.9200
+124 error command "C:\\Program Files (x86)\\nodejs\\\\node.exe" "C:\\Program Files (x86)\\nodejs\\node_modules\\npm\\bin\\npm-cli.js" "install" "es6-promisenpm" "install" "es6-promisenpm" "install" "es6-promise"
+125 error cwd C:\Users\Alecca\Documents\bungalow
+126 error node -v v0.10.36
+127 error npm -v 1.4.28
+128 error code E404
+129 verbose exit [ 1, true ]

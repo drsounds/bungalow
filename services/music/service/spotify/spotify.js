@@ -2,6 +2,7 @@ var fs = require('fs');
 var SpotifyNodeApi = require('spotify-web-api-node');
 var SpotifyWebApi = require('spotify-web-api');
 var request = require('request');
+var Promise = require("es6-promise").Promise;
 var SpotifyPlayer = function () {
     var self = this;
     this.cache = {};
@@ -10,46 +11,110 @@ var SpotifyPlayer = function () {
     this.resources = {};
     
     this.callbacks = {};
-    this.apikeys = JSON.parse(fs.readFileSync('./public_new/scripts/spotify.key.json'));
+    this.apikeys = JSON.parse(fs.readFileSync(__dirname + '/spotify.key.json'));
+    this.accessToken = null;
+
     this.nodeSpotifyApi = new SpotifyNodeApi(this.apikeys);
     this.spotifyAPI = new SpotifyWebApi();
     this.me = null;
 
 };
 
-SpotifyPlayer.prototype.getAccessToken = function () {
-    return JSON.parse(localStorage.getItem("accessToken", null));
+SpotifyPlayer.prototype.authenticate = function (code) {
+    var self = this;
+    console.log(this.apikeys);
+    return new Promise(function (resolve, fail) {
+        request({
+            url: 'https://accounts.spotify.com/api/token',
+            method: 'POST',
+            form: {
+                grant_type: 'authorization_code',
+                code: code,
+                redirect_uri: 'http://play.bungalow.qi/callback.html'
+            },
+            headers: {
+                'Authorization': 'Basic ' + new Buffer(self.apikeys.client_id + ':' + self.apikeys.client_secret).toString('base64') 
+            }
+        }, function (error, response, body) {
+            console.log(error);
+            if (error) {
+                fail(error);
+                return;
+            }
+            self.setAccessToken(JSON.parse(body));
+            resolve(JSON.parse(body));
+        });
+    });
+    
 }
 
-SpotifyPlayer.prototype.setAccessToken = function (accessToken, callback) {
-    localStorage.setItem('accessToken', JSON.encode(accessToken));
-    this.spotifyAPI.setAccessToken(acccessToken);
-    this.nodeSpotifyAPI.setAccessToken(acccessToken.accessToken);
-    this.nodeSpotifyAPI.setRefreshToken(accessToken.refreshToken);
+SpotifyPlayer.prototype.getAccessToken = function () {
+    try {
+        return JSON.parse(fs.readFileSync(__dirname + '/access_token.json'));
+    } catch (e) {
+        return null;
+    }
+}
+
+SpotifyPlayer.prototype.setAccessToken = function (accessToken) {
+
+    accessToken.time = new Date().getTime();
+    console.log(accessToken);
+    fs.writeFileSync(__dirname + '/access_token.json', JSON.stringify(accessToken));
 
 }
 
 SpotifyPlayer.prototype.isAccessTokenValid = function () {
-    return new Date() < new Date() + this.getAccessToken().expiresIn;
+    var access_token = this.getAccessToken();
+    return new Date() < new Date(access_token.time) + access_token.expires_in;
 }
 
-SpotifyPlayer.prototype.renewAccessToken = function (callback) {
-    this.nodeSpotifyAPI.refreshAccessToken().then(function () {
-        callback();
-    })
+SpotifyPlayer.prototype.refreshAccessToken = function () {
+    var self = this;
+    return new Promise(function (resolve, fail) {
+        var accessToken = self.getAccessToken();
+        var refresh_token = accessToken.refresh_token;
+        request({
+            url: 'https://accounts.spotify.com/api/token',
+            method: 'POST',
+            form: {
+                grant_type: 'refresh_token',
+                refresh_token: refresh_token,
+                redirect_uri: 'http://play.bungalow.qi/callback.html'
+            },
+            headers: {
+                'Authorization': 'Basic ' + new Buffer(self.apikeys.client_id + ':' + self.apikeys.client_secret).toString('base64')
+            }
+        }, function (error, response, body) {
+            /*if (error || 'error' in body) {
+                fail();
+                return;
+            }*/
+            var accessToken = JSON.parse(body);
+            accessToken.refresh_token = refresh_token 
+            self.setAccessToken(accessToken);
+            
+            resolve(JSON.parse(body));
+        });
+    });
 }
 SpotifyPlayer.prototype.getMe = function () {
     return JSON.parse(localStorage.getItem("me"));
 }
-SpotifyPlayer.prototype.request = function (method, url, data) {
+
+SpotifyPlayer.prototype.request = function (method, url, payload) {
     var self = this;
     var promise = new Promise(function (resolve, fail) {
+
+        console.log("Got request");
+        console.log("Doing request");
+        
         var activity = function () {
 
             var token = self.getAccessToken();
             var headers = {};
-            headers["Authorization"] = "Bearer " + token;
-            if (data instanceof Object) {
+            headers["Authorization"] = "Bearer " + token.access_token;
+            if (payload instanceof Object) {
                 headers["Content-type"] = "application/json";
 
             } else {
@@ -57,33 +122,256 @@ SpotifyPlayer.prototype.request = function (method, url, data) {
 
 
             }
-            request({
-                method: method,
-                url: "https://api.spotify.com/v1" + url,
-                headers: headers,
-                form: "grant_type=authorization_code&code=" + code + "&redirect_uri=" + encodeURI(self.apikeys.redirectURI),
-            },
-                function (error, response, body) {
-                    if (!error) {
+
+            var parts = url.split(/\//g);
+            if (parts[0] == 'search') {
+                request({
+                        url: 'https://api.spotify.com/v1/search?q=' + payload.q + '&type=' + payload.type + '&limit=' + payload.limit + '&offset=' + payload.offset
+                    },
+                    function (error, response, body) {
+                        body = body.replace(/spotify\:/, 'bungalow:');
                         var data = JSON.parse(body);
-                        resolve(data);
-                    } else {
-                        fail();
+                        try {
+                            resolve({'objects': data[payload.type + 's'].items});
+                        } catch (e) {
+                            fail(e);
+                        }
+                    }
+                );
+            }
+            if (parts[0] == 'artists') {
+                if (parts.length > 2) {
+                    if (parts[2] == 'albums') {
+                        request({
+                                url: 'https://api.spotify.com/v1/artists/' + parts[1] + '/albums?limit=' + payload.limit + '&offset=' + payload.offset
+                            },
+                            function (error, response, body) {
+                                body = body.replace('spotify:', 'bungalow:');
+                                var data = JSON.parse(body);
+                                try {
+                                    resolve({'objects': data.items});
+                                } catch (e) {
+                                    fail();
+                                }
+                            }
+                        );
+                    }
+                } else {
+                    request({
+                            url: 'https://api.spotify.com/v1/artists/' + parts[1]
+                        },
+                        function (error, response, body) {
+                            body = body.replace('spotify:', 'bungalow:');
+                            var data = JSON.parse(body);
+                            resolve(data);
+                        }
+                    );
+                    return;
+                }
+            }
+
+            if (parts[0] == 'albums') {
+                if (parts.length > 2) {
+                    request({
+                            url: 'https://api.spotify.com/v1/albums/' + parts[1] + '/tracks?limit=' + payload.limit + '&offset=' + payload.offset
+                        },
+                        function (error, response, body) {
+                            body = body.replace('spotify:', 'bungalow:');
+                            var data = JSON.parse(body);
+                            try {
+                                resolve({
+                                    'objects': data.items
+                                });
+                            } catch (e) {
+                                resolve({
+                                    'objects': []
+                                })
+                            }
+                        }
+                    );
+                } else {
+                    request({
+                            url: 'https://api.spotify.com/v1/albums/' + parts[1] + ''
+                        },
+                        function (error, response, body) {
+                            body = body.replace(/spotify\:/, 'bungalow:');
+                            var data = JSON.parse(body);
+                            try {
+                                resolve(data);
+                            } catch (e) {
+                                fail();
+                            }
+                        }
+                    );
+                }
+            }
+            if (parts[0] == 'tracks') {
+                request({
+                        url: 'https://api.spotify.com/v1/tracks/' + parts[1] + ''
+                    },
+                    function (error, response, body) {
+                        var data = JSON.parse(body);
+                        try {
+                            resolve(data);
+                        } catch (e) {
+                            fail();
+                        }
+                    }
+                );
+            }
+            if (parts[0] == 'labels') {
+                if (parts.length > 2) {
+                    if (parts[2] == 'artists') {
+                        request({
+                            url: 'https://api.spotify.com/v1/search/?q=label:"' + encodeURI(parts[1]) + '"&type=artist&limit=' + payload.limit + '&offset=' + payload.offset,
+                            headers: headers
+                        },  function (error, response, body) {
+                            resolve(body);
+                        });
+                        resolve({objects: labels});
                     }
                 }
-            );
+            }
+            if (parts[0] == 'countries') {
+                if (parts.length > 1) {
+                    var code = parts[1];
+                    if (parts.length > 2) {
 
+                        if (parts[2] == 'charts') {
+                            var chart = parts[3];
+                            var type = parts[4];
+                            if (type === 'tracks') {
+                                resolve({'objects': []});
+                            }
+                        }
+                        if (parts[2] == 'labels') {
+                            var labels = [
+                                {
+                                    'id': 'substream',
+                                    'name': 'Substream Music Group',
+                                    'uri': 'bungalow:label:substream'
+                                }
+                            ];
+                            resolve({objects: labels});
+                        }
+                        
+                    } else {
+
+                        resolve({
+                            'id': code,
+                            'name': code,
+                            'followers': {
+                                'count': 5000000,
+                                'href': 'bungalow:country:' + code + ':followers'
+                            }
+                        })
+                    }
+                }
+            }
+            if (parts[0] == 'users') {
+                var userid = parts[1];
+                if (parts.length > 2) {
+                    if (parts[2] == 'playlists') {
+                        if (parts.length < 4) {
+                            payload = {
+                                limit: 10,
+                                offset: 0
+                            };
+                            request({
+                                url: 'https://api.spotify.com/v1/users/' + userid + '/playlists?limit=' + payload.limit + '&offset=' + payload.offset,
+                                headers: headers
+                            }, function (error, response, body) {
+                                var result = JSON.parse(body);
+                                resolve({
+                                    'objects': result.items.map(function (playlist) {
+                                        return {
+                                            'id': playlist.id,
+                                            'uri': 'bungalow:user:' + playlist.owner.id,
+                                            'name': playlist.name,
+                                            'images': [{
+                                                    'url': ''
+                                                }],
+                                            'description': '',
+                                            'source': 'spotify'
+                                        };
+                                    }),
+                                    'source': 'spotify'
+                                });
+                            });
+                        } else {
+                            if (parts[4] == 'followers') {
+                                var users = [];
+                                for (var i = 0; i < 10; i++) {
+                                    uesrs.push({
+                                        'id': 'follower' + i,
+                                        'name': 'Track ' + i,
+                                        'uri': 'bungalow:user:follower' + i
+                                    });
+                                }
+                                resolve({
+                                    'objects': users
+                                });
+                            } else if (parts[4] == 'tracks') {
+                                request({
+                                    url: 'https://api.spotify.com/v1/users/' + parts[1] + '/playlists/' + parts[3] + '/tracks',
+                                    headers: headers
+                                }, function (error, response, body) {
+                                    var result = JSON.parse(body);
+                                    resolve({
+                                        'objects': result.items.map(function (track) {
+                                            track.uri = 'bungalow:track:' + track.id;
+                                            return track;
+                                        })
+                                    })
+                                });
+                            } else {
+                                request({
+                                    url: 'https://api.spotify.com/v1/users/' + parts[1] + '/playlists/' + parts[3] + '',
+                                    headers: headers
+                                }, function (error, response, body) {
+                                    var result = JSON.parse(body);
+                                    resolve(result);
+                                });
+                            }
+                        }
+                    }
+
+                } else {
+                    console.log("Getting users");
+                    request({
+                        url: 'https://api.spotify.com/v1/users/' + parts[1] + '',
+                        headers: headers
+                    },
+                        function (error, response, body) {
+                        var user = JSON.parse(body);
+                            resolve({
+                            'id': user.id,
+                            'name': user.display_name,
+                            'canonicalName': user.display_name,
+                            'uri': 'bungalow:user:' + user.id,
+                            'followers': {
+                                'count': user.followers.total,
+                                'uri': 'bungalow:user:' + user.id + ':followers'
+                            },
+                            'images': [{
+                                'url': ''
+                            }]});
+                        }
+                    );
+
+                }
+            }
         };
-
-        if (!this.isAccessTokenValid()) {
-            this.renewAccessToken(activity);
-        } else {
-            activity();
+        if (!self.isAccessTokenValid()) {
+            self.refreshAccessToken().then(activity);
+            return;
         }
-
+        activity();
+        
     });
     return promise;
 }
+
 
 SpotifyPlayer.prototype.requestAccessToken = function (code) {
     var self = this;
@@ -96,7 +384,7 @@ SpotifyPlayer.prototype.requestAccessToken = function (code) {
 
         request({
                 url: 'https://accounts.spotify.com/api/token',
-                headers: headers, form: "grant_type=authorization_code&code=" + code + "&redirect_uri=" + encodeURI(self.apikeys.redirectURI)},
+                headers: headers, form: "grant_type=authorization_code&code=" + code + "&redirect_uri=" + encodeURI(self.apikeys.redirect_uri)},
             function (error, response, body) {
                 var data = JSON.parse(body);
                 if (!('accessToken' in data)) {
@@ -167,7 +455,7 @@ SpotifyPlayer.prototype.login = function () {
     var self = this;
     var promise = new Promise(function (resolve, fail) {
         alert("AFFF");
-        var win = gui.Window.get(window.open('https://accounts.spotify.com/authorize/?client_id=' + this.apikeys.clientId + '&response_type=code&redirect_uri=' + encodeURI(this.apiKeys.redirectUri) + '&scope=user-read-private%20user-read-email&state=34fFs29kd09', {
+        var win = gui.Window.get(window.open('https://accounts.spotify.com/authorize/?client_id=' + this.apikeys.client_id + '&response_type=code&redirect_uri=' + encodeURI(this.apiKeys.redirect_uri) + '&scope=user-read-private%20user-read-email&state=34fFs29kd09', {
             "position": "center",
             "focus": true,
             "toolbar": false,

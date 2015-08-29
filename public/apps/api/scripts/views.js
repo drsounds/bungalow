@@ -162,6 +162,9 @@ require(['$api/models'], function (models) {
      * @class
      */
     var TrackView = function (track, index, contextUri, options) {
+        if ('track' in track) {
+            track = Object.assign(track, track.track);
+        }
         this.node = document.createElement('tr');
         this.node.classList.add('sp-track');
         this.node.setAttribute('data-uri', track.uri);

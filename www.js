@@ -3,13 +3,12 @@ var app = utils.createApp();
 var express = require('express');
 var fs = require('fs');
 app.use(express.static(__dirname + '/public'));
-app.get('/', function (req, res) {
+app.get('/callback.html', function (req, res) {
 
-    var index = fs.readFileSync(__dirname + '/public/index.html');
+    var index = fs.readFileSync(__dirname + '/public/callback.html');
     res.write(index);
     res.end();
 });
-
 app.get('/*', function (req, res) {
 
     var index = fs.readFileSync(__dirname + '/public/index.html');

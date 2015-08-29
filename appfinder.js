@@ -113,7 +113,8 @@ AppFinder.prototype.listen = function () {
                 res.write(data);
                 res.end();
             } else {
-                /*// Check if app is available on App Finder
+                // Check if app is available on App Finder
+                if (false)
                 request('http://appfinder.aleros.webfactional.com/api/index.php?id=' + appId, function (error, response, body) {
                     var app = JSON.parse(body);
                     external_apps[appId] = app.app_url;
@@ -124,7 +125,7 @@ AppFinder.prototype.listen = function () {
                         res.end();
                     })
 
-                });*/
+                });
                 var notfound = fs.readFileSync(__dirname + path.sep + 'public/apps/notfound/index.html');
                 res.write(notfound);
                 res.end();

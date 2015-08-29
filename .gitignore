@@ -8,4 +8,5 @@ cache
 trace.txt
 settings
 public/apps/mashcast
-public/scripts/spotify.key.json
+access_token.json
+spotify.key.json

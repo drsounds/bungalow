@@ -1,0 +1,2 @@
+C:\Users\Alecca\Documents\Bungalow\obj\Debug\Bungalow.njsprojResolveAssemblyReference.cache
+C:\Users\Alecca\Documents\Bungalow\bin\Microsoft.NodejsTools.WebRole.dll

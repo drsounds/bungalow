@@ -19,11 +19,12 @@
   },
   "node-remote": "*",
   "dependencies": {
+    "es6-promise": "*",
     "hostile": "*",
     "vhost": "*",
     "node-spotify": "*",
     "less": "*",
-    "express": "*",
+    "express": "3.*",
     "express-async": "*",
     "swig": "*",
     "bluebird": "*",

@@ -263,7 +263,9 @@ require(['$api/cosmos'], function (Cosmos) {
 
 
     var User = function (data) {
+        
         Loadable.call(this, data);
+        this.type = 'user';
         this.playlists = new Collection('/music/users/' + this.id + '/playlists?', 'bungalow:user:' + this.id + ':playlists', 'playlist');
         this.followers = new Collection('/music/users/' + this.id + '/followers?', 'bungalow:user:' + this.id + ':followers', 'user');
     }
@@ -272,9 +274,19 @@ require(['$api/cosmos'], function (Cosmos) {
     User.prototype.constructor = Loadable;
 
     User.fromId = function (id) {
-        return new User({'id': id});
+        return new User({'id': id, type: 'user'});
     }
 
+    User.prototype.load = function () {
+        var self = this;
+        console.log(self.id);
+        return new Promise(function (resolve, fail) {
+            Cosmos.request('GET', '/music/users/' + self.id).then(function (result) {
+                console.log(result);
+                resolve(new User(result));
+            });
+        });
+    }
 
 
     exports.User = User;

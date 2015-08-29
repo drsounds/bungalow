@@ -1,7 +1,7 @@
 var path = require('path');
 var fs = require('fs');
 var async = require('async');
-var MusicService = require('./services/music/service/mockify/mockify.js');
+var MusicService = require('./services/music/service/spotify/spotify.js');
 var music = new MusicService();
 var less = require('less');
 var request = require('request');
@@ -28,6 +28,20 @@ app.get('/settings.json', function (req, res) {
     }
 });
 
+app.get('/services/:id/authenticate', function (req, res) {
+    console.log("Got authenticate request");
+    music.authenticate(req.query.code).then(function (success) {
+        console.log("success");
+        res.statusCode = 200;
+        res.send('success')
+        res.end();
+    }, function (error) {
+        console.log(error);
+        res.statusCode = 500;
+        res.end(error);
+    });
+
+}); 
 app.put('/settings.json', function (req, res) {
     var settings = JSON.stringify(req.json);
     fs.writeFileSync('settings.json', settings);
@@ -171,18 +185,16 @@ app.get('/chrome/*', function (req, res) {
     res.end();
 });*/
 app.get('/music/*', function (req, res) {
+    console.log("A");
+    console.log(music);
     music.request("GET", req.params[0], req.query).then(function (result) {
 
         res.json(result);
+    }, function (reject) {
+        res.json(reject);
     });
 });
 
-app.get('*', function (req, res) {
-
-    var index = fs.readFileSync(__dirname + '/public/index.html');
-    res.write(index);
-    res.end();
-});
 
 
 app.get('/player/play', function (req, res) {

@@ -99,13 +99,13 @@ html {
 
 .btn-primary {
   border-style: solid;
-  background-color: #00BCD4;
-  border-color: #00BCD4;
+  background-color: #FFA726;
+  border-color: #FFA726;
   color: white; }
 
 .btn-primary:active {
-  background-color: #00b3ca;
-  border-color: #00b3ca;
+  background-color: #ffa31c;
+  border-color: #ffa31c;
   color: white; }
 
 body, input {
@@ -418,8 +418,10 @@ h4 {
   margin: 0; }
 
 .menu li .fa {
-  min-width: 20px;
-  margin-left: 10px; }
+  min-width: 30px;
+  margin-left: 10px;
+  font-size: 14pt;
+  color: #888; }
 
 .menu .sub {
   font-size: 10px; }
@@ -428,9 +430,11 @@ a[data-uri] {
   cursor: pointer; }
 
 .menu li.active {
-  background-color: #444;
   color: white;
-  border-left: 5pt solid #00BCD4; }
+  border-left: 5pt solid #FFA726; }
+
+.menu li.active * {
+  font-weight: bold; }
 
 .menu li.active .fa {
   color: white; }
@@ -502,7 +506,7 @@ meter::-webkit-meter-optimum-value {
   box-sizing: border-box; }
 
 .sp-tabbar-tab-active {
-  border-bottom: 1pt solid #55ecff;
+  border-bottom: 1pt solid #ffdba6;
   list-style: none;
   color: white;
   background-color: transparent; }

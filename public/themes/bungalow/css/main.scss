@@ -1,7 +1,7 @@
 @import url("http://fonts.googleapis.com/css?family=Source+Sans+Pro");
 @import url("http://fonts.googleapis.com/css?family=Montserrat");
 @import url("http://fonts.googleapis.com/css?family=Open+Sans:300");
-$primary-color: #00BCD4; //#1db954;
+$primary-color: #FFA726; //#00BCD4; //#1db954;
 $bg-color: #181818;
 $sidebar-color: lighten($bg-color, 2%);
 $header-bg-color: lighten($bg-color, 3%);
@@ -439,8 +439,10 @@ h4 {
     margin: 0;
 }
 .menu li .fa {
-    min-width: 20px;
+    min-width: 30px;
     margin-left: 10px;
+    font-size: 14pt;
+    color: #888;
 }
 .menu .sub {
     font-size: 10px;
@@ -451,9 +453,12 @@ a[data-uri] {
 .menu li .fa {
 }
 .menu li.active {
-    background-color: #444;
+
     color: white;
     border-left: 5pt solid $primary-color;
+}
+.menu li.active * {
+    font-weight: bold;
 }
 .menu li.active .fa {
     color: white;

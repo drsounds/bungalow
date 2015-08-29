@@ -47,7 +47,13 @@ Music.prototype.getAlbum = function (id) {
 
 Music.prototype.login = function () {
 	return new Promise(function (resolve, fail) {
+		/*var loginWindow = window.open('https://accounts.spotify.com/authorize?client_id=9cae232f0ddd4ba3b55b7e54ca6e76f0&scope=user-read-private&response_type=code&redirect_uri=' + encodeURI('http://play.bungalow.qi/callback.html'));
+		var t = setInterval(function () {
+			if (!loginWindow) {
+				clearInterval(t);
 
+			}
+		});*/
 	});
 }
 

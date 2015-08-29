@@ -79,7 +79,7 @@ var sprequirejs = function (exports) {
                 if (module.indexOf('/') == 0)
                 module = module.substr(1);
                 }
-                xmlHttp.open('GET', + 'http://localhost:9261:/apps/' + module, false);
+                xmlHttp.open('GET', + 'http://play.bungalow.qi:/apps/' + module, false);
                 xmlHttp.send(null);
             
                 if (xmlHttp.readyState == 4 && xmlHttp.status == 200) {

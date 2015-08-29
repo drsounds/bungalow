@@ -19,9 +19,9 @@ require(['$api/models', '$api/views'], function (models, views) {
 
             $(tabBar.node).insertAfter('#header');
 
-            models.User.fromId(id).then(function (user) {
+            models.User.fromId(id).load().then(function (user) {
                 console.log(user);
-                var header = new views.Header(user, "User");
+                var header = new views.Header(user, { type: "user" }, 128);
                 $('#header').html("");
                 $('#header').append(header.node);
 
