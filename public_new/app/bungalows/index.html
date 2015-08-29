@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>__entity__</title>
+        <link rel="stylesheet" href="../../stylesheets/boxmodel.css">
+        <link rel="stylesheet" href="../../themes/main.css">
+        <script src="../../bower_components/jquery/dist/jquery.js"></script>
+
+        <script src="../../scripts/ydn.db.js"></script>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+        <script src="../../bower_components/webcomponentsjs/webcomponents.js"></script>
+        <script src="../../scripts/bungalow-app.js" type="text/JavaScript"></script>
+        <script src="//localhost:2403/dpd.js"></script>
+       
+        <link rel="import" href="../../components/view-header.html">
+
+    </head>
+    <body>
+        <div class="container">
+            <bungalow-header type="collection" icon="home">
+                <name>s</name>
+            </bungalow-header>
+            <div class="toolbar">
+                <a class="btn btn-primary" id="addbtn" href="javascript:void(event)" onclick="show_add(event)"><i class="fa fa-plus"></i> Add bungalow</a>
+            </div>
+            
+            <table class="table" width="100%">
+                <thead>
+                    <tr>
+                        <td></td>
+                        
+                        <td>Name</td>
+                        
+                        <td></td>
+                        <td></td>
+                    </tr>
+                    <tbody>
+                    </tbody>
+                </thead>
+            </table>
+            <div id="form" style="display: none">
+                <form onsubmit="add(event); return false;">
+                    
+                    
+
+                    <label for="name">Name</label><br>
+                    
+                    <input type="" id="field_name"><br>
+                    
+
+                    <button type="submit" class="btn btn-primary">Add</button>
+                </form>
+            </div>            
+        </div>
+        <script src="scripts/main.js"></script>
+    </body>
+</html>

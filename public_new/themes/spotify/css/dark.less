@@ -1,0 +1,250 @@
+@brand-primary: #84bd00;
+@brand-danger: #840000;
+@import url("http://fonts.googleapis.com/css?family=Source+Sans+Pro:200,400,200italic");
+header, aside, footer {
+    background-color: rgba(34, 35, 38, 1);
+}
+
+body {
+    background-color: rgba(18, 19, 20, 1);
+    color: rgba(173, 173, 173, 1); 
+    font-family: "Arial";
+}
+aside {
+    width: 350px;
+}
+
+header {
+    border-bottom: 1px solid black;
+    height: 52px;
+}
+
+footer {
+    border-top: 1px solid black;
+    height: 60px;
+}
+
+::-webkit-scrollbar, ::-webkit-scrollbar-track-piece, ::-webkit-scrollbar-corner {
+    background: transparent;
+}
+
+.menu {
+
+}
+
+.item-content {
+    padding: 10pt;
+}
+
+.popover {
+    position: absolute;
+    box-shadow: 0px 3px 15px black;
+    background-color: rgba(51, 51, 51, 1);
+    padding: 15pt;
+
+}
+
+hr {
+    border: none;
+    border-top: 1px solid rgba(43, 43, 43, 1);
+}
+a {
+    color: white;
+    cursor: pointer;
+}
+.bungalow-header .toolbar {
+    vertical-align: bottom;
+}
+.bungalow-header p {
+    font-size: 10pt;
+}
+input {
+    border-radius: 10pt;
+    border: none;
+    padding: 5pt;
+}
+bungalow-item {
+    width: 25%;
+    background-color: rgba(34, 35, 38, 1);
+    padding: 0px;
+    display: inline-block;
+
+}
+bungalow-item .item-content {
+    padding: 5pt;
+}
+bungalow-item .item-header {
+    min-height: 30pt;
+    background-color: black;
+    background-size: cover;
+}
+bungalow-item h3 {
+    font-size: 10pt;
+}
+
+.header {
+                height: 200px;
+                background-color: #111;
+            }
+.btn {
+    display: inline-block;
+
+    border-radius: 150pt;
+    padding: 5pt;
+    padding-left: 15pt;
+    padding-right: 15pt;
+}
+.cover {
+    width: 180pt;
+    height: 180pt;
+    background-color: rgba(34, 35, 38, 1);
+}
+.cover .fa {
+    -webkit-transform: translate(-50%, -50%);
+    position: relative;
+    left: 50%;
+    top: 50%;
+    font-size: 125pt;
+    color: rgba(62, 62, 62, 1);
+}
+.btn-default {
+    border: 1px solid rgba(173, 173, 173, 1);
+    text-transform: uppercase;
+    font-size: 9pt;
+}
+
+
+.btn-default:hover {
+    border: 1px solid white;
+    color: white;
+}
+.btn-default:active {
+    border: 1px solid gray;
+    color: gray;
+}
+
+
+.btn-primary {
+    background-color: darken(@brand-primary, 10%);
+    border: 1px solid darken(@brand-primary, 10%);
+    color: white;
+}
+
+.btn-primary:hover {
+    background-color: lighten(@brand-primary, 3%);
+    border: 1px solid  lighten(@brand-primary, 3%);
+}
+
+.btn-primary:active {
+    background-color: darken(@brand-primary, 13%);
+    border: 1px solid  darken(@brand-primary, 13%);
+}
+
+.btn-danger {
+    background-color: @brand-danger;
+    border: 1px solid  @brand-danger;
+    color: white;
+}
+.btn-danger:active {
+    background-color: darken(@brand-danger, 13%);
+    border: 1px solid  darken(@brand-danger, 13%);
+    color: white;
+}
+.menu, .menu li {
+    list-style-type: none;
+    list-style-position:inside;
+    margin:0;
+    padding:0;
+    width: 100%;
+    font-size: 10pt;
+
+}
+.menu li i {
+    margin-left: 5pt;
+    margin-right: 8pt;
+    min-width: 15pt;
+}
+.menu li {
+    width: 100%;
+    cursor: default;
+    padding: 5pt;
+    border-left: 4px solid transparent;
+}
+.menu li:hover {
+    color: white;
+}
+.menu li.active {
+    background-color: #2e2f33;
+    border-left: 4px solid @brand-primary;
+}
+.bungalow-header p {
+    font-size: 8pt;
+    color: #888;
+}
+.bungalow-header h1 {
+    font-size: 30pt;
+    line-height: 10pt;
+    font-weight: 100;
+}
+.bungalow-header small {
+    text-transform: uppercase;
+    line-height: 1pt;
+    font-size: 8pt;
+    color: #aaa;
+}
+h1 {
+                font-size: 50px;
+                line-height: 5pt;
+            }
+            small {
+                text-transform: uppercase;
+                font-size: 8pt;
+            }
+bungalow-profile-header h1 {
+}
+.table {
+    border-collapse: collapse;
+}
+.table thead tr th, .table tr td {
+    border-bottom: 1px solid #333;
+}
+
+.table thead tr td {
+
+    text-transform: uppercase;
+    color: #666;
+    border-bottom: 1px solid #333;
+}
+.table td {
+    padding: 4pt;
+}
+
+.profile-image {
+    background-color: #444;
+    width: 128px;
+    height: 128px;
+    border-radius: 1000px;
+    overflow: hidden;
+    background-size: cover;
+}
+h1, h2, h3, h4 {
+    font-family: "Source Sans Pro";
+    font-weight: 200;
+    color: #fafafa;
+}
+.bungalow-tab-bar {
+    border-bottom: 1px solid #444;
+    height: 16pt;
+}
+.bungalow-tab {
+    cursor: pointer;
+    height: 15pt;
+    border-bottom: 1px solid transparent;
+}
+.bungalow-tab:hover * {
+    color: white;
+}
+.bungalow-tab-active {
+    color: white;
+    border-bottom: 1px solid @brand-primary;
+}

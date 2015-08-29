@@ -1,0 +1,10 @@
+{
+    "settings":
+    {
+        "less2css":
+        {
+            "autoCompile": false,
+            "minify": false
+        }
+    }
+}

@@ -1,0 +1,37 @@
+<!doctype html>
+<html>
+	<head>
+		<title>Search</title>
+		<base href="http://appfinder.bungalow.qi/search/">
+		<link rel="stylesheet" href="http://localhost:9261/themes/main.css">
+		<link rel="stylesheet" href="http://localhost:9261/bower_components/font-awesome/css/font-awesome.css">
+		<script src="http://play.bungalow.qi/bower_components/vendor/jquery.js"></script>
+		<script src="http://appfinder.bungalow.qi/api/scripts/require.js"></script>
+	</head>
+	<body style="width: 100%; padding-top:1px">
+		<div class="sp-tabbar">
+			<div class="sp-tabbar-tab sp-tabbar-tab-active">Search</div>
+		</div>
+		<div style="height:23px"></div>
+		<table width="100%">
+			<tr>
+				<td valign="top" style="padding: 5pt">
+					<h3>Artists</h3>
+					<ul class="sf" id="artists"></ul>
+				</td>
+				<td valign="top" style="padding: 5pt">
+					<h3>Albums</h3>
+					<ul class="sf" id="albums"></ul>
+				</td>
+			</tr>
+		</table>
+
+		<div class="sp-container">
+			<div id="search"></div>
+		</div>
+		<div id="throbber">
+			<img src="http://localhost:9261/images/throbber.gif">
+		</div>
+		<script src="scripts/main.js"></script>
+	</body>
+</html>

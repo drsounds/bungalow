@@ -1,0 +1,21 @@
+{
+    "model": "threat",
+    "icon": "bug",
+    "fields": [
+        {
+            "id": "name",
+            "type": "string",
+            "name": "Name"
+        },
+        {
+            "id": "time",
+            "type": "date",
+            "name": "Time"
+        },
+        {
+            "id": "magnitude",
+            "type": "number",
+            "name": "Magnitude"
+        }
+    ]
+}

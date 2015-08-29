@@ -1,0 +1,5 @@
+window.onargumentschanged = function (event) {
+    var artist = event.data[0];
+    $('#header').attr('name', artist);
+
+}   

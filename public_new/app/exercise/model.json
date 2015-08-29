@@ -1,0 +1,25 @@
+{
+    "model": "exercise",
+    "icon": "heartbeat",
+    "fields": [
+        {
+            "type": "datetime",
+            "name": "Time",
+            "id": "time"
+
+        },
+        {
+            "type": "object",
+            "name": "Bungalow",
+            "id": "bungalow",
+            "model": "bungalow"
+
+        },
+        {
+            "type": "number",
+            "id": "distance",
+            "name": "Distance"
+
+        }
+    ]
+}

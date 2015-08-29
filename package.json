@@ -19,11 +19,15 @@
   },
   "node-remote": "*",
   "dependencies": {
+    "hostile": "*",
+    "vhost": "*",
     "node-spotify": "*",
     "less": "*",
     "express": "*",
     "express-async": "*",
-    "swig": "*"
+    "swig": "*",
+    "bluebird": "*",
+    "request": "*"
   },
   "author": "",
   "license": "ISC",

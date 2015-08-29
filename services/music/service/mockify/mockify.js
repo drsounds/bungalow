@@ -1,6 +1,7 @@
 var fs = require('fs');
 var request = require('request');
 var Promise = require('promise');
+var sqlite3 = require('sqlite3');
 var MockifyPlayer = function () {
     var self = this;
     this.cache = {};
@@ -136,6 +137,41 @@ MockifyPlayer.prototype.request = function (method, url, payload) {
                         }
                     }
                 );
+            }
+            if (parts[0] == 'countries') {
+                if (parts.length > 1) {
+                    var code = parts[1];
+                    if (parts.length > 2) {
+
+                        if (parts[2] == 'charts') {
+                            var chart = parts[3];
+                            var type = parts[4];
+                            if (type === 'tracks') {
+                                resolve({'objects': []});
+                            }
+                        }
+                        if (parts[2] == 'labels') {
+                            var labels = [
+                                {
+                                    'id': 'substream',
+                                    'name': 'Substream Music Group',
+                                    'uri': 'bungalow:label:substream'
+                                }
+                            ];
+                            resolve({objects: labels});
+                        }
+                    } else {
+
+                        resolve({
+                            'id': code,
+                            'name': code,
+                            'followers': {
+                                'count': 5000000,
+                                'href': 'bungalow:country:' + code + ':followers'
+                            }
+                        })
+                    }
+                }
             }
             if (parts[0] == 'users') {
                 var userid = parts[1];

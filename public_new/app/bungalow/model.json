@@ -1,0 +1,21 @@
+{
+    "model": "bungalow",
+    "icon": "home",
+    "fields": [
+        {
+            "type": "string",
+            "name": "Name",
+            "id": "name"
+
+        }
+    ],
+    "relations": [
+        {
+            "model": "exercise",
+            "field": "bungalow",
+            "titleField": "name",
+            "name": "Exercise",
+            "foreignKey": "id"
+        }
+    ]
+}

@@ -1,7 +1,7 @@
 @import url("http://fonts.googleapis.com/css?family=Source+Sans+Pro");
 @import url("http://fonts.googleapis.com/css?family=Montserrat");
 @import url(http://fonts.googleapis.com/css?family=Open+Sans:300);
-$primary-color: #FF9800;
+$primary-color: #1db954; //#FF9800;
 $bg-color: #181818;
 $sidebar-color: lighten($bg-color, 2%);
 $header-bg-color: lighten($bg-color, 3%);
@@ -78,21 +78,24 @@ html {
     background-color: transparent;
     color: white;
     padding: 5pt;
+    border-style: solid;
 }
 .btn-default {
 
-    border: 2pt solid rgba(255, 255, 255, .75);
+    border-style: solid;
+    border-width: 1pt;
+    border-color: rgba(255, 255, 255, .75);
 }
 
 .btn-default:hover {
 
-    border: 2pt solid rgba(255, 255, 255, 1);
+    border-color: rgba(255, 255, 255, 1);
 }
 .btn:focus {
     outline: none;
 }
 .btn-default:active {
-    border: 2pt solid rgba(255, 255, 255, .5);
+    border-color: rgba(255, 255, 255, .5);
 }
 .btn-black {
     border: none;
@@ -104,13 +107,14 @@ html {
     text-transform: uppercase;
 }
 .btn-primary {
+    border-style: solid;
     background-color: $primary-color;
-    border: 2pt solid $primary-color;
+    border-color: $primary-color;
     color: white;
 }
 .btn-primary:active {
     background-color: darken($primary-color, 2%);
-    border: 2pt solid darken($primary-color, 2%);
+    border-color: darken($primary-color, 2%);
     color: white;
 }
 body, input {
@@ -224,6 +228,7 @@ $sp-cover-image-size: 128px;
     -moz-box-sizing: border-box;
     box-sizing: border-box;
 }
+
 .sp-header-background-image {
     width: 100%;
     height: 100%;
@@ -537,14 +542,14 @@ input {
 input, .btn {
     border-radius: 22pt;
     padding: 3pt;
-    font-size: 10pt;
+    font-size: 8pt;
 }
 .h1 {
     font-size:30pt;
 }
 .btn {
-    padding: 6pt;
-    font-size: 13pt;
+    padding: 3pt;
+    font-size: 10pt;
     padding-left: 22pt;
     padding-right: 22pt;
     margin-right: 5pt;

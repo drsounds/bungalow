@@ -1,0 +1,25 @@
+{
+    "model": "sport",
+    "icon": "futbol-o",
+    "fields": [
+        {
+            "id": "name",
+            "name": "Name",
+            "type": "string"
+        },
+        {
+            "id": "aquatic",
+            "name": "Aquatic",
+            "type": "bool"
+        }
+    ],
+    "relations": [
+        {
+            "model": "exercise",
+            "field": "sport",
+            "titleField": "name",
+            "name": "Exercise",
+            "foreignKey": "id"
+        }
+    ]
+}

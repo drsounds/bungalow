@@ -572,8 +572,8 @@ Shell.prototype.createApp = function (appId, callback) {
 
 
 	var appFrame = document.createElement('iframe');
-	appFrame.setAttribute('src', 'http://localhost:9261/app/' + appId + '/index.html?t=' + new Date().getTime());
-	console.log('/app/' + appId + '/index.html');
+	appFrame.setAttribute('src', 'http://appfinder.bungalow.qi/' + appId + '/index.html?t=' + new Date().getTime());
+	console.log('/apps/' + appId + '/index.html');
 	appFrame.setAttribute('id', 'app_' + appId + '');
 	appFrame.classList.add('sp-app');
 	appFrame.setAttribute('nwdisable', 'nwdisable');

@@ -1,8 +1,0 @@
-{
-    "BundleType": "Bungalow",
-    "BundleName": {
-        "en": "Mashcast"
-    },
-    "VendorIdentifier": "com.artistconnector",
-    "BundleIdentifier": "mashcast"
-}

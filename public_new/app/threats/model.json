@@ -1,0 +1,12 @@
+{
+    "name": "Threat",
+    "model": "threat",
+    "icon": "bug",
+    "fields":[
+        {
+            "name":"Code",
+            "id": "code",
+            "type": "string"
+        }
+    ]
+}

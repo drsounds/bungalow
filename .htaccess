@@ -4,5 +4,6 @@
     RewriteCond %{REQUEST_FILENAME} !-f
     RewriteCond %{REQUEST_FILENAME} !-d
     RewriteCond %{REQUEST_URI} !index
+    RewriteRule ([a-zA-Z0-9]+) index.html [L]
     RewriteRule (.*) index.html [L]
 </ifModule>

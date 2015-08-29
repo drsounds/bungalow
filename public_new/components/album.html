@@ -1,0 +1,40 @@
+
+<link rel="import" href="../bower_components/polymer/polymer.html">
+
+<link rel="import" href="">
+<link rel="import" href="tml">
+<polymer-element name="bungalow-album" attributes="uri">
+
+    <template>
+        <style>
+            @import url("https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css");
+            @import url("../themes/main.css");
+
+            
+            h1 {
+                font-size: 35pt;
+            }
+        </style>
+        <script src="../scripts/cosmos.js"></script>
+        <bungalow-header name="{{name}}"></bungalow-header>
+        <bungalow-playlist uri="{{uri}}"></bungalow-playlist>                
+    </template>
+    <script>
+    Polymer({
+        icon: 'cube',
+        followers: '0',
+        theme: 'light',
+        'name': '',
+        ready: function () {
+            var self = this;
+            var parts = this.uri.split(/\:/);
+            var id = parts[2];
+            cosmos.request('get', 'cosmos://v1/album/' + id, {}).then(function (data) {
+
+                self.name = data.name;
+            });
+
+        }
+    });
+    </script>
+</polymer-element>

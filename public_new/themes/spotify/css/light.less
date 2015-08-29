@@ -1,0 +1,189 @@
+@brand-primary: #84bd00;
+@import url("http://fonts.googleapis.com/css?family=Source+Sans+Pro:200,400,200italic");
+header, aside, footer {
+    background-color: #f0f0f0;
+}
+
+body {
+    background-color: #fafafa;
+    color: rgba(4, 4, 4, 1); 
+    font-family: "Arial";
+}
+aside {
+    width: 350px;
+}
+
+header {
+    border-bottom: 1px solid #ddd;
+    height: 52px;
+}
+
+footer {
+    border-top: 1px solid #ddd;
+    height: 60px;
+}
+
+::-webkit-scrollbar, ::-webkit-scrollbar-track-piece, ::-webkit-scrollbar-corner {
+    background: transparent;
+}
+
+.menu {
+
+}
+hr {
+    border: none;
+    border-top: 1px solid #ddd;
+}
+
+.popover {
+    position: absolute;
+    box-shadow: 0px 3px 15px black;
+    background-color: rgba(51, 51, 51, 1);
+    padding: 15pt;
+
+}
+
+.bungalow-header .toolbar {
+    vertical-align: bottom;
+}
+.bungalow-header p {
+    font-size: 10pt;
+}
+
+.btn {
+    display: inline-block;
+
+    border-radius: 150pt;
+    padding: 5pt;
+    padding-left: 15pt;
+    padding-right: 15pt;
+}
+.cover {
+    width: 180pt;
+    height: 180pt;
+    background-color: #eee;
+}
+.cover .fa {
+    -webkit-transform: translate(-50%, -50%);
+    position: relative;
+    left: 50%;
+    top: 50%;
+    font-size: 50pt;
+    color: rgba(62, 62, 62, 1);
+}
+.btn-default {
+    border: 1px solid rgba(173, 173, 173, 1);
+}
+
+.btn-default:hover {
+    border: 1px solid white;
+    color: white;
+}
+.btn-default:active {
+    border: 1px solid gray;
+    color: gray;
+}
+
+.btn-primary {
+    background-color: @brand-primary;
+    border: 1px solid @brand-primary;
+    color: white;
+}
+
+.btn-primary:hover {
+    background-color: lighten(@brand-primary, 3%);
+    border: 1px solid  lighten(@brand-primary, 3%);
+}
+
+.btn-primary:active {
+    background-color: darken(@brand-primary, 13%);
+    border: 1px solid  darken(@brand-primary, 13%);
+}
+
+.menu li {
+    width: 100%;
+    display: block;
+    cursor: default;
+    padding: 5pt;
+    color: #888;
+}
+.menu li:hover {
+    color: black;
+}
+.menu li.active {
+    background-color: #2e2f33;
+    border-left: 4px solid @brand-primary;
+}
+.bungalow-header h1 {
+    font-size: 20pt;
+    line-height: 10pt;
+    font-weight: 100;
+}
+.bungalow-header small {
+    text-transform: uppercase;
+    line-height: 1pt;
+    font-size: 6pt;
+    color: #666;
+}
+h1 {
+    font-size: 20px;
+    line-height: 5pt;
+}
+small {
+    text-transform: uppercase;
+    font-size: 8pt;
+}
+bungalow-profile-header h1 {
+}
+.header {
+    height: 200px;
+    background-color: #eee;
+}
+.table {
+    border-collapse: collapse;
+}
+.table thead tr th, .table tr td {
+    border-bottom: 1px solid #ddd;
+}
+
+.table thead tr td {
+
+    text-transform: uppercase;
+    color: #ddd;
+    border-bottom: 1px solid #ddd;
+}
+.table td {
+    padding: 4pt;
+}
+
+.profile-image {
+    background-color: #eee;
+    width: 128px;
+    height: 128px;
+    border-radius: 1000px;
+    overflow: hidden;
+    background-size: cover;
+}
+h1 {
+    font-family: "Source Sans Pro";
+    font-weight: 200;
+    color: black;
+}
+.bungalow-tab-bar {
+    border-bottom: 1px solid #eee;
+    height: 16pt;
+}
+.bungalow-tab {
+    cursor: pointer;
+    height: 15pt;
+    color: #aaa;
+    border-bottom: 1px solid transparent;
+}
+.bungalow-tab:hover * {
+    color: white;
+}
+.bungalow-tab-active {
+    color: black;
+    font-weight: bold;
+    border-bottom: 1px solid @brand-primary;
+}

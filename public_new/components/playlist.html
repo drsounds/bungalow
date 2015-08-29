@@ -1,0 +1,73 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<polymer-element name="bungalow-playlist" attributes="uri">
+
+    <template>
+        <style>
+            @import url("https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css");
+            @import url('../themes/main.css');
+              
+        </style>
+        <table class="table" width="100%" data-uri="{{uri}}">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Track</th>
+                    <th>Artist</th>
+                    <th>Duration</th>
+                    <th>Album</th>
+                </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+    </template>
+    <script src="../scripts/cosmos.js"></script>
+    <script>
+    console.log(cosmos);
+    Polymer({
+        uri: '',
+        ready: function () {
+            var uri = this.uri;
+            var self = this;
+            console.log("URI", this.uri);
+            if (uri.match(/^spotify\:search\:/)) {
+                var query = uri.substr('spotify:search:'.length);
+                cosmos.request('get', 'cosmos://v1/search/  ', {q: query, type: 'track' }).then(function (tracks) {
+                    console.log("Tracks", tracks);
+                    console.log(self);
+                    var tbody = self.shadowRoot.querySelector('table');
+                    for (var i = 0; i < tracks.length; i++) {
+                        var track = tracks[i];
+                        var tr = document.createElement('tr');
+                        console.log(track);
+                        tr.innerHTML = '<td>' + (i + 1) + '</td><td>' + track.name + '</td><td>' + track.artists[0].name + '</td><td>' + track.duration + '</td><td></td>';
+                        console.log(tbody);
+                        tbody.appendChild(tr);
+                    }
+                });
+            } else if (uri.match(/^spotify\:album\:/)) {
+                console.log("TGIF");
+                var parts = uri.split(/\:/);
+                var albumId = parts[2];
+                console.log(cosmos);
+                cosmos.request('get', 'cosmos://v1/album/' + albumId + '/tracks', {}).then(function (tracks) {
+
+                    console.log("Tracks", tracks);
+                    console.log(self);
+                    var tbody = self.shadowRoot.querySelector('table');
+                    for (var i = 0; i < tracks.length; i++) {
+                        var track = tracks[i];
+                        var tr = document.createElement('tr');
+                        console.log(track);
+                        tr.innerHTML = '<td>' + (i + 1) + '</td><td>' + track.name + '</td><td>' + track.artists[0].name + '</td><td>' + track.duration + '</td><td></td>';
+                        console.log(tbody);
+                        tbody.appendChild(tr);
+                    }
+                });
+
+            }
+
+        }
+    });
+    </script>
+</polymer-element>

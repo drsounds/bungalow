@@ -1,0 +1,47 @@
+@brand-primary: #84bd00;
+body,html {
+    padding: 0px;
+    margin: 0px;
+    height: 100%;
+    min-height: 100%;
+}
+body {
+    flex-direction: column;
+}
+header,footer, main { 
+     flex-direction: column;
+}
+header {
+    flex-direction: row;
+    padding: 10pt;
+    box-sizing: border-box;
+}
+body, header, footer, aside, main {
+    padding: 0pt;
+    display: flex;
+}
+
+.menu {
+    flex-grow: 3;
+}
+main {
+     flex-direction: row;
+     flex-grow: 2;
+}
+.viewstack {
+    flex-grow: 2;
+}
+aside {
+    overflow: scroll;
+}
+
+
+
+
+.container {
+    padding-left: 15%;
+    padding-right: 15%;
+}
+.tab-pane {
+    display: none;
+}

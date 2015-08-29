@@ -1,0 +1,56 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<polymer-element name="bungalow-header" attributes="icon,type,constructor,followers,action">
+
+    <template>
+        <style>
+            @import url("https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css");
+            @import url('../themes/main.css');  
+            h1 {
+                font-size: 150px;
+            }
+        </style>
+        <table class="bungalow-header" width="100%" height="250px">
+            <tr>
+                <td width="{{imagesize}}px" style="padding: 3pt">
+                    <div class="cover" style="">
+                        <i id="cicon" class="fa fa-{{icon}}"></i>
+                    </div>
+                </td>
+                <td valign="top">
+                    <table width="100%" height="100%">
+                        <tr>
+                            <td valign="top">
+                                <small>{{type}}</small>
+                                <h1><content select="name"></content></h1>
+                                <p><content select="description"></content></p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td valign="bottom">
+                                <div class="toolbar">
+                                    <a class="btn btn-default btn-primary"><i class="fa fa-play"></i> {{action}}</a> 
+                                    <a class="btn btn-default"><i class="fa fa-plus"></i> Follow</a> <a class="btn btn-default" style="padding-left: 7pt; padding-right: 7pt">...</a>
+                                    <div style="float: right; text-align: right">
+                                        Followers<br>0
+                                    </div>
+                                </div>
+                                
+                            </td>
+                        </tr>
+                    </table>
+
+                </td>
+            </tr>
+        </table>
+        
+                
+    </template>
+    <script>
+    Polymer({
+        icon: 'cube',
+        followers: '0',
+        'action': 'play',
+        'imagesize': 210
+    });
+    </script>
+</polymer-element>
