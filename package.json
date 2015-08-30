@@ -19,6 +19,7 @@
   },
   "node-remote": "*",
   "dependencies": {
+    "object-assign": "*",
     "es6-promise": "*",
     "hostile": "*",
     "vhost": "*",

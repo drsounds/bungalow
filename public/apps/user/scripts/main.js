@@ -11,8 +11,7 @@ require(['$api/models', '$api/views'], function (models, views) {
 
             var tabBar = new views.TabBar({
                 'views':[
-                    {id: 'overview', title: 'Overview'},
-                    {id: 'public_playlists', title: 'Public playlists'}
+                    {id: 'overview', title: 'Overview'}
                 ]
             });
 
@@ -21,6 +20,7 @@ require(['$api/models', '$api/views'], function (models, views) {
 
             models.User.fromId(id).load().then(function (user) {
                 console.log(user);
+                user.name = user.display_name;
                 var header = new views.Header(user, { type: "user" }, 128);
                 $('#header').html("");
                 $('#header').append(header.node);

@@ -105,6 +105,13 @@ require(['$api/cosmos'], function (Cosmos) {
                 for (var i = 0; i < result.objects.length; i++) {
                     self.objects = result.objects;
                 }
+                self.objects = self.objects.map(function (object) {
+                    if ('track' in object) {
+                        return Object.assign(object, object.track);
+                    }
+
+                    return object;
+                });
                 if (self.objects.length < 1) {
                     self.complete = true;
                 }
@@ -126,20 +133,7 @@ require(['$api/cosmos'], function (Cosmos) {
     }
 
 
-    /**
-     * Represents a playlist
-     * @class
-     */
-    var Playlist = function (data) {
-        Loadable.prototype.constructor.call(this, data);
-        this.tracks = new Collection('/music/users/' + this.user.id + '/playlists/' + this.id + '/tracks?', 'bungalow:user:' + this.user.id + ':playlist:' + this.id, 'track');
-        this.type = 'playlist';
-    }
-
-    Playlist.prototype = Object.create(Playlist.prototype);
-    Playlist.prototype.constructor = Loadable;
-
-    exports.Playlist = Playlist;
+    
 
 
     /**
@@ -174,49 +168,6 @@ require(['$api/cosmos'], function (Cosmos) {
 
     exports.Album = Album;
 
-    window.addEventListener('message', function (event) {
-        if (event.data.action == 'gotPlaylist') {
-            // console.log("Received playlist from shell");
-            var playlist = (event.data.data);
-            Playlist.lists[playlist.uri] = playlist;
-        }
-        if (event.data.action == 'gotAlbum') {
-            // console.log("Received album from shell");
-            var album = (event.data.data);
-            Album.lists[album.uri] = album;
-            // console.log(album.uri);
-        }
-        if (event.data.action == 'gotTopList') {
-            // console.log("Received top list from shell");
-            var toplist = (event.data.data);
-            TopList.lists[toplist.uri] = toplist;
-            // console.log(toplist.uri);
-        }
-        if (event.data.action == 'gotArtist') {
-            // console.log("Received artist from shell");
-            var artist = (event.data.data);
-            Artist.lists[artist.uri] = artist;
-            // console.log(artisturi);
-        }
-        if (event.data.action == 'gotSearch') {
-            // console.log("Received search result from shell");
-            var search = (event.data.data);
-            Search.lists[event.data.type + ':' + event.data.query] = search;
-            // console.log(event.data.query);
-        }
-        if (event.data.action == 'gotAlbumTracks') {
-            // console.log("Received search result from shell");
-            albumTracks[event.data.uri] = event.data.tracks;
-        }
-        if (event.data.action === 'trackstarted') {
-            var uri = event.data.uri;
-
-            $('.sp-track').removeClass('sp-now-playing');
-            $('.sp-table[data-uri="' + uri + '"] .sp-track[data-track-index="' + event.data.index + '"]').addClass('sp-now-playing');
-
-        }
-    });
-
     /**
      * Represents an artist
      */
@@ -239,27 +190,46 @@ require(['$api/cosmos'], function (Cosmos) {
 
     exports.Artist = Artist;
 
-    Playlist.lists = {};
-    Album.lists = {};
-    Artist.lists = {};
+
+/**
+     * Represents a playlist
+     * @class
+     */
+    var Playlist = function (data) {
+        Loadable.prototype.constructor.call(this, data);
+        console.log("DATA", data);
+        Object.assign(this, data);
+        console.log("OWNER", this.owner);
+        this.tracks = new Collection('/music/users/' + this.owner.id + '/playlists/' + this.id + '/tracks?', 'bungalow:user:' + this.owner.id + ':playlist:' + this.id, 'track');
+        console.log(this.tracks);
+        this.type = 'playlist';
+    }
+
+    Playlist.prototype = Object.create(Playlist.prototype);
+    Playlist.prototype.constructor = Loadable;
+
+    
 
     /**
      * Creates a playlist from URI
      * @param  {String}   uri      [description]
      * @return {Promise}            [description]
      */
-    Playlist.fromUserId = function (user, id) {
-        return new Playlist({user: user, id: id, type: 'playlist'});
+    Playlist.fromUserId = function (username, id) {
+        console.log(username);
+        return new Playlist({owner: {id: username}, id: id, type: 'playlist'});
     };
 
     Playlist.prototype.load = function () {
         var self = this;
         return new Promise(function (resolve, fail) {
-            Cosmos.request('GET', '/music/users/' + self.username + '/playlists/' + self.id).then(function (result) {
+            Cosmos.request('GET', '/music/users/' + self.owner.id + '/playlists/' + self.id).then(function (result) {
                 resolve(new Playlist(result));
             });
         });
     }
+
+    exports.Playlist = Playlist;
 
 
     var User = function (data) {

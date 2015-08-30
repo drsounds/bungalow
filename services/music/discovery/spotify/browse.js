@@ -1,27 +1,27 @@
 var fs = require('fs');
-var SpotifyNodeApi = require('spotify-web-api-node');
-var SpotifyWebApi = require('spotify-web-api');
+var SpotifyBrowseNodeApi = require('SpotifyBrowse-web-api-node');
+var SpotifyBrowseWebApi = require('SpotifyBrowse-web-api');
 var request = require('request');
 var assign = require('object-assign');
 var Promise = require("es6-promise").Promise;
-var SpotifyPlayer = function () {
+var SPOTIFY_DIR = '/../../service/spotify/';
+var SpotifyBrowseAPI = function () {
     var self = this;
     this.cache = {};
     this.isPlaying = false;
     
     this.resources = {};
-    
     this.callbacks = {};
-    this.apikeys = JSON.parse(fs.readFileSync(__dirname + '/spotify.key.json'));
+    this.apikeys = JSON.parse(fs.readFileSync(__dirname +  SPOTIFY_DIR + 'spotify.key.json'));
     this.accessToken = null;
 
-    this.nodeSpotifyApi = new SpotifyNodeApi(this.apikeys);
-    this.spotifyAPI = new SpotifyWebApi();
+    this.nodeSpotifyBrowseApi = new SpotifyBrowseNodeApi(this.apikeys);
+    this.SpotifyBrowseAPI = new SpotifyBrowseWebApi();
     this.me = null;
 
 };
 
-SpotifyPlayer.prototype.authenticate = function (code) {
+SpotifyBrowseAPI.prototype.authenticate = function (code) {
     var self = this;
     console.log(this.apikeys);
     return new Promise(function (resolve, fail) {
@@ -49,28 +49,28 @@ SpotifyPlayer.prototype.authenticate = function (code) {
     
 }
 
-SpotifyPlayer.prototype.getAccessToken = function () {
+SpotifyBrowseAPI.prototype.getAccessToken = function () {
     try {
-        return JSON.parse(fs.readFileSync(__dirname + '/access_token.json'));
+        return JSON.parse(fs.readFileSync(__dirname + SPOTIFY_DIR + '/access_token.json'));
     } catch (e) {
         return null;
     }
 }
 
-SpotifyPlayer.prototype.setAccessToken = function (accessToken) {
+SpotifyBrowseAPI.prototype.setAccessToken = function (accessToken) {
 
     accessToken.time = new Date().getTime();
     console.log(accessToken);
-    fs.writeFileSync(__dirname + '/access_token.json', JSON.stringify(accessToken));
+    fs.writeFileSync(__dirname + SPOTIFY_DIR + '/access_token.json', JSON.stringify(accessToken));
 
 }
 
-SpotifyPlayer.prototype.isAccessTokenValid = function () {
+SpotifyBrowseAPI.prototype.isAccessTokenValid = function () {
     var access_token = this.getAccessToken();
     return new Date() < new Date(access_token.time) + access_token.expires_in;
 }
 
-SpotifyPlayer.prototype.refreshAccessToken = function () {
+SpotifyBrowseAPI.prototype.refreshAccessToken = function () {
     var self = this;
     return new Promise(function (resolve, fail) {
         var accessToken = self.getAccessToken();
@@ -100,11 +100,11 @@ SpotifyPlayer.prototype.refreshAccessToken = function () {
         });
     });
 }
-SpotifyPlayer.prototype.getMe = function () {
+SpotifyBrowseAPI.prototype.getMe = function () {
     return JSON.parse(localStorage.getItem("me"));
 }
 
-SpotifyPlayer.prototype.request = function (method, url, payload) {
+SpotifyBrowseAPI.prototype.request = function (method, url, payload) {
     var self = this;
     var promise = new Promise(function (resolve, fail) {
 
@@ -162,7 +162,7 @@ SpotifyPlayer.prototype.request = function (method, url, payload) {
                             url: 'https://api.spotify.com/v1/artists/' + parts[1]
                         },
                         function (error, response, body) {
-                            body = body.replace('spotify:', 'bungalow:');
+                            body = body.replace('SpotifyBrowse:', 'bungalow:');
                             var data = JSON.parse(body);
                             resolve(data);
                         }
@@ -177,7 +177,7 @@ SpotifyPlayer.prototype.request = function (method, url, payload) {
                             url: 'https://api.spotify.com/v1/albums/' + parts[1] + '/tracks?limit=' + payload.limit + '&offset=' + payload.offset
                         },
                         function (error, response, body) {
-                            body = body.replace('spotify:', 'bungalow:');
+                            body = body.replace('SpotifyBrowse:', 'bungalow:');
                             var data = JSON.parse(body);
                             try {
                                 resolve({
@@ -195,7 +195,7 @@ SpotifyPlayer.prototype.request = function (method, url, payload) {
                             url: 'https://api.spotify.com/v1/albums/' + parts[1] + ''
                         },
                         function (error, response, body) {
-                            body = body.replace(/spotify\:/, 'bungalow:');
+                            body = body.replace(/SpotifyBrowse\:/, 'bungalow:');
                             var data = JSON.parse(body);
                             try {
                                 resolve(data);
@@ -250,7 +250,7 @@ SpotifyPlayer.prototype.request = function (method, url, payload) {
                                 {
                                     'id': 'substream',
                                     'name': 'Substream Music Group',
-                                    'uri': 'spotify:label:substream'
+                                    'uri': 'SpotifyBrowse:label:substream'
                                 }
                             ];
                             resolve({objects: labels});
@@ -263,7 +263,7 @@ SpotifyPlayer.prototype.request = function (method, url, payload) {
                             'name': code,
                             'followers': {
                                 'count': 5000000,
-                                'href': 'spotify:country:' + code + ':followers'
+                                'href': 'SpotifyBrowse:country:' + code + ':followers'
                             }
                         })
                     }
@@ -285,7 +285,7 @@ SpotifyPlayer.prototype.request = function (method, url, payload) {
                                 var result = JSON.parse(body);
                                 resolve({
                                     'objects': result.items,
-                                    'source': 'spotify'
+                                    'source': 'SpotifyBrowse'
                                 });
                             });
                         } else {
@@ -295,7 +295,7 @@ SpotifyPlayer.prototype.request = function (method, url, payload) {
                                     uesrs.push({
                                         'id': 'follower' + i,
                                         'name': 'Track ' + i,
-                                        'uri': 'spotify:user:follower' + i
+                                        'uri': 'SpotifyBrowse:user:follower' + i
                                     });
                                 }
                                 resolve({
@@ -343,7 +343,7 @@ SpotifyPlayer.prototype.request = function (method, url, payload) {
                                     'url': user.image
                                 }
                             ];
-                            resolve(user);
+                            resolve(body);
                         }
                     );
 
@@ -361,7 +361,7 @@ SpotifyPlayer.prototype.request = function (method, url, payload) {
 }
 
 
-SpotifyPlayer.prototype.requestAccessToken = function (code) {
+SpotifyBrowseAPI.prototype.requestAccessToken = function (code) {
     var self = this;
     var promise = new Promise(function (resolve, fail) {
         var headers = {};
@@ -379,8 +379,8 @@ SpotifyPlayer.prototype.requestAccessToken = function (code) {
                     fail({'error': 'Request problem'});
                     return;
                 }
-                self.nodeSpotifyAPI.setAccessToken(data);
-                self.nodeSpotifyAPI.getMe().then(function (data) {
+                self.nodeSpotifyBrowseAPI.setAccessToken(data);
+                self.nodeSpotifyBrowseAPI.getMe().then(function (data) {
                     localStorage.setItem("me", JSON.stringify(data.body));
 
 
@@ -394,51 +394,51 @@ SpotifyPlayer.prototype.requestAccessToken = function (code) {
 }
 
 
-SpotifyPlayer.prototype.addToCache = function (resource) {
+SpotifyBrowseAPI.prototype.addToCache = function (resource) {
 }
 
-SpotifyPlayer.prototype.events = {};
+SpotifyBrowseAPI.prototype.events = {};
 
-SpotifyPlayer.prototype.notify = function (event) {
+SpotifyBrowseAPI.prototype.notify = function (event) {
     var type = event.type;
     if (type in this.events) {
         this.events[type].call(this, event);
     }
 }
 
-SpotifyPlayer.prototype.addEventListener = function (event, callback) {
+SpotifyBrowseAPI.prototype.addEventListener = function (event, callback) {
     this.events[event] = callback;
 }
 
-SpotifyPlayer.prototype.ready = function () {
+SpotifyBrowseAPI.prototype.ready = function () {
 
 }
 
-SpotifyPlayer.prototype.getPosition = function () {
-    return this.spotify.player.currentSecond;
+SpotifyBrowseAPI.prototype.getPosition = function () {
+    return this.SpotifyBrowse.player.currentSecond;
 }
 
-SpotifyPlayer.prototype.logout = function () {
-    this.spotify.logout();
+SpotifyBrowseAPI.prototype.logout = function () {
+    this.SpotifyBrowse.logout();
 }
 
-SpotifyPlayer.prototype.playTrack = function (uri) {
+SpotifyBrowseAPI.prototype.playTrack = function (uri) {
     return track;
 }
 
-SpotifyPlayer.prototype.stop = function () {
+SpotifyBrowseAPI.prototype.stop = function () {
 }
 
-SpotifyPlayer.prototype.getImageForTrack = function (id, callback) {
+SpotifyBrowseAPI.prototype.getImageForTrack = function (id, callback) {
     this.request('GET', 'https://api.spotify.com/v1/tracks/' + id).then(function (track) {
         callback(track.album.images[0].url);
     });
 }
 
-SpotifyPlayer.prototype.seek = function (position) {
+SpotifyBrowseAPI.prototype.seek = function (position) {
 }
 
-SpotifyPlayer.prototype.login = function () {
+SpotifyBrowseAPI.prototype.login = function () {
     console.log("Log in");
     var self = this;
     var promise = new Promise(function (resolve, fail) {
@@ -468,7 +468,7 @@ SpotifyPlayer.prototype.login = function () {
     return promise;
 }
 
-SpotifyPlayer.followPlaylist = function (playlist) {
+SpotifyBrowseAPI.followPlaylist = function (playlist) {
     
 }
 
@@ -482,7 +482,7 @@ var Uri = function (uri) {
 /**
  * Adds songs to a playlist
  **/
-SpotifyPlayer.prototype.addTracksToPlaylist = function (user, playlist_id, uris, position) {
+SpotifyBrowseAPI.prototype.addTracksToPlaylist = function (user, playlist_id, uris, position) {
     var self = this;
     var promise = new Promise(function (resolve, fail) {
         self.request("POST", "/users/" + user + "/playlists/" + playlist_id + "/tracks", {
@@ -496,7 +496,7 @@ SpotifyPlayer.prototype.addTracksToPlaylist = function (user, playlist_id, uris,
 
 }
 
-SpotifyPlayer.prototype.getAlbumTracks = function (id, callback) {
+SpotifyBrowseAPI.prototype.getAlbumTracks = function (id, callback) {
 
     var self = this;
     var promise = new Promies(function (resolve, fail) {
@@ -509,7 +509,7 @@ SpotifyPlayer.prototype.getAlbumTracks = function (id, callback) {
 };
 
 
-SpotifyPlayer.prototype.search = function (query, limit, offset, type, callback) {
+SpotifyBrowseAPI.prototype.search = function (query, limit, offset, type, callback) {
     var self = this;
     var promise = new Promise(function (resolve, fail) {
         self.request('GET', 'https://api.spotify.com/v1/search?q=' + encodeURI(query) + '&type=' + type + '&limit=' + limit + '&offset=' + offset).then(function (data) {
@@ -526,7 +526,7 @@ SpotifyPlayer.prototype.search = function (query, limit, offset, type, callback)
     });
     return promise;
 };
-SpotifyPlayer.prototype.loadPlaylist = function (user, id, callback) {
+SpotifyBrowseAPI.prototype.loadPlaylist = function (user, id, callback) {
     var self = this;
     var promise = new Promies(function (resolve, fail) {
         self.request("GET", "/users/" + user + "/playlists/" + id + "/tracks").then(function (tracklist) {
@@ -539,7 +539,7 @@ SpotifyPlayer.prototype.loadPlaylist = function (user, id, callback) {
     return promise;
 }
 
-SpotifyPlayer.prototype.createPlaylist = function (title) {
+SpotifyBrowseAPI.prototype.createPlaylist = function (title) {
     var self = this;
 
     var promise = new Promise(function (resolve, fail) {
@@ -551,11 +551,11 @@ SpotifyPlayer.prototype.createPlaylist = function (title) {
     return promise;
 };
 
-SpotifyPlayer.prototype.getTopList = function (uri, callback) {
+SpotifyBrowseAPI.prototype.getTopList = function (uri, callback) {
 
 }
 
-SpotifyPlayer.prototype.getUserPlaylists = function () {
+SpotifyBrowseAPI.prototype.getUserPlaylists = function () {
     var self = this;
     var promise = new Promise(function (resolve, fail) {
         var user = self.getMe();
@@ -569,7 +569,7 @@ SpotifyPlayer.prototype.getUserPlaylists = function () {
 }
 
 
-SpotifyPlayer.prototype.getPlaylistsForUser = function (id) {
+SpotifyBrowseAPI.prototype.getPlaylistsForUser = function (id) {
     var self = this;
     var promise = new Promise(function (resolve, fail) {
 
@@ -582,7 +582,7 @@ SpotifyPlayer.prototype.getPlaylistsForUser = function (id) {
     return promise;
 }
 
-SpotifyPlayer.prototype.getArtistById = function (id, callback) {
+SpotifyBrowseAPI.prototype.getArtistById = function (id, callback) {
     var self = this;
 
     var promise = new Promies(function (resolve, fail) {
@@ -593,7 +593,7 @@ SpotifyPlayer.prototype.getArtistById = function (id, callback) {
     return promise;
 }
 
-SpotifyPlayer.prototype.getAlbum = function (id) {
+SpotifyBrowseAPI.prototype.getAlbum = function (id) {
     var self = this;
     var promise = new Promise(function (resolve, fail) {
         self.request('https://api.spotify.com/v1/albums/' + id).then(function (album) {
@@ -609,11 +609,11 @@ SpotifyPlayer.prototype.getAlbum = function (id) {
     return promise;
 }
 
-SpotifyPlayer.prototype.resolveTracks = function (uris, callback) {
+SpotifyBrowseAPI.prototype.resolveTracks = function (uris, callback) {
 
 }
 
-SpotifyPlayer.prototype.getPlaylistTracks = function (user, playlist_id, page, callback) {
+SpotifyBrowseAPI.prototype.getPlaylistTracks = function (user, playlist_id, page, callback) {
     var self = this;
     var promise = new Promise(function (resolve, fail) {
          self.request('GET', '/users/' + user + '/playlists/' + playlist_id).then(function (data) {
@@ -625,30 +625,30 @@ SpotifyPlayer.prototype.getPlaylistTracks = function (user, playlist_id, page, c
     return promise;
 }
 
-SpotifyPlayer.prototype.playPause = function () {
+SpotifyBrowseAPI.prototype.playPause = function () {
     if (this.isPlaying) {
         this.pause();
     } else {
         this.resume();
     }
 }
-SpotifyPlayer.prototype.pause = function () {
+SpotifyBrowseAPI.prototype.pause = function () {
     this.isPlaying = false;
 }
-SpotifyPlayer.prototype.resume = function () {
+SpotifyBrowseAPI.prototype.resume = function () {
     this.isPlaying = true;
 }
-SpotifyPlayer.prototype.reorderTracks = function (playlistUri, indices, newPosition) {
-    console.log("Spotify is now reordering tracks");
+SpotifyBrowseAPI.prototype.reorderTracks = function (playlistUri, indices, newPosition) {
+    console.log("SpotifyBrowse is now reordering tracks");
     console.log("Done successfully");
 }
 
-SpotifyPlayer.prototype.removeTracks = function (playlist, indices) {
+SpotifyBrowseAPI.prototype.removeTracks = function (playlist, indices) {
     playlist.reorderTracks(indices, newPosition);
 }
 
-SpotifyPlayer.prototype.addTracks = function (playlist, tracks, position) {
+SpotifyBrowseAPI.prototype.addTracks = function (playlist, tracks, position) {
     playlist.addTracks(tracks, position);
 }
 
-module.exports = SpotifyPlayer;
+module.exports = SpotifyBrowseAPI;

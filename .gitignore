@@ -10,3 +10,5 @@ settings
 public/apps/mashcast
 access_token.json
 spotify.key.json
+.ntvs_analysis.dat
+obj

@@ -1,43 +1,43 @@
-var playlists = {};
+require(['$api/views', '$api/models'], function (views, models) {
+	var playlists = {};
 
-window.addEventListener('message', function (event) {
-	console.log("Event data", event.data);
-	if (event.data.action === 'tracksadded') {
-		var playlistURI = event.data.uri;
-		var position = event.data.position;
-		var tracks = event.data.tracks;
-	}
-	if (event.data.action === 'navigate') {
-		showThrobber();
-		console.log(event.data.arguments);
-		var user = event.data.arguments[0];
-		var id = event.data.arguments[2];
-		var uri = 'spotify:user:' + user + ':playlist:' + id;
-		$('.sp-playlist').hide();
-		if (uri in playlists) {
-			playlists[uri].show();
-			hideThrobber();
-		} else {
-			Playlist.fromUserId(user, id).then(function (playlist) {
-				$('.sp-playlist').hide();
-				var contextView = new TrackContextView(playlist, {headers:true, reorder:true, fields: ['title', 'artist', 'album', 'user']});
-				contextView.node.classList.add('sp-playlist');
-				playlists[uri] = contextView;
-
-				$('#list').append(contextView.node);
-				contextView.show();
-				$('#title').html(playlist.name);
-				//$('#author').html(playlist.user.displayName);
-				$('#description').html(playlist.description);
-				hideThrobber();
-			});
+	window.addEventListener('message', function (event) {
+		console.log("Event data", event.data);
+		if (event.data.action === 'tracksadded') {
+			var playlistURI = event.data.uri;
+			var position = event.data.position;
+			var tracks = event.data.tracks;
 		}
-	}
+		if (event.data.action === 'navigate') {
+			views.showThrobber();
+			console.log(event.data.arguments);
+			var username = event.data.arguments[0];
+			console.log("USER", username);
+			var id = event.data.arguments[2];
+			var uri = 'bungalow:user:' + username + ':playlist:' + id;
+			models.Playlist.fromUserId(username, id).load().then(function (playlist) {
+				console.log(playlist);
 
-})
+				var header = new views.SimpleHeader(playlist);
 
-function followPlaylist () {
-	Playlist.fromURI(uri, function (playlist) {
-		Playlist.follow(uri);
+
+
+				var playlistView = document.createElement('div');
+
+				playlistView.appendChild(header.node);
+
+				var contextView = new views.TrackContextView(playlist, {headers:true, reorder:true, fields: ['title', 'artist', 'album', 'user']});
+				contextView.node.classList.add('sp-playlist');
+				playlistView.appendChild(contextView.node);
+
+				contextView.show();
+				
+				$('#sp-playlist').html("");
+				$('#sp-playlist').append(playlistView);
+				views.hideThrobber();
+			});
+		
+		}
+
 	});
-}
+});
