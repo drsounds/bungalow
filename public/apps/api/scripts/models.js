@@ -358,6 +358,21 @@ require(['$api/cosmos'], function (Cosmos) {
         });
     }
 
+    var Hashtag = function (data) {
+        Object.assign(this, data);
+        this.tracks = new Collection('/social/hashtag/' + this.id + '/tracks?', 'bungalow:hashtag:' + this.id + ':tracks');
+        this.albums = new Collection('/social/hashtag/' + this.id + '/albums?', 'bungalow:hashtag:' + this.id + ':albums');
+        this.posts = new Collection('/social/hashtag/' + this.id + '/posts?', 'bungalow:hashtag:' + this.id + ':posts');
+        
+
+    }
+
+    Hashtag.fromHashtag = function (id) {
+        return new Hashtag({id: id, type: 'hashtag'});
+    }
+
+    exports.Hashtag = Hashtag;
+
     App.fromId = function (appId) {
 
     }

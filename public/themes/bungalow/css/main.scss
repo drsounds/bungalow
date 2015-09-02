@@ -124,7 +124,7 @@ body, input {
 body {
     background-color: $bg-color;
     -webkit-user-select: none;
-    font-family: "Open Sans";
+    font-family: "Montserrat";
     font-weight: 100;
     color: #aaa;
     display: flex;
@@ -202,15 +202,7 @@ $sp-cover-image-size: 128px;
     font-size: 10pt;
     word-wrap: break-word;
 }
-.sp-header .sp-header-content {
-    position: absolute;
-    left: 0pt;
-    top: 0pt;
-    padding: 0pt;
-    width: 100%;
-    color: white;
-    line-height: 0pt;
-}
+
 .sp-table thead th {
 
 }
@@ -220,6 +212,15 @@ $sp-cover-image-size: 128px;
     padding: 8pt 10pt;
     height: 16px;
     border-bottom: 1px solid lighten($bg-color, 12%);
+}
+.sp-header .sp-header-content {
+    position: absolute;
+    left: 0pt;
+    top: 0pt;
+    padding: 0pt;
+    width: 100%;
+    color: white;
+    line-height: 0pt;
 }
 .sp-header .content {
     padding: 10pt;
@@ -515,7 +516,7 @@ meter::-webkit-meter-optimum-value {
     border-radius: 0pt 5pt 5pt 0pt;
 }
 .sp-tabbar {
-    background-color: rgba(0, 0, 0, .8);
+    background-color: $bg-color;
     top: 0px;
     width: 100%;
     text-align: center;
@@ -531,7 +532,7 @@ meter::-webkit-meter-optimum-value {
     box-sizing: border-box;
 }
 .sp-tabbar-tab-active {
-    border-bottom: 1pt solid lighten($primary-color, 25%);
+    border-bottom: 3pt solid lighten($primary-color, 25%);
 
     list-style: none;
     color: white;
@@ -627,12 +628,8 @@ input {
 }
 
 .sp-card {
-  box-shadow: 0px 2px 25pt black;
-  border: 1px solid rgba(255, 255, 255, .1);
-  border-radius: 3pt;
 }
 body {
-  text-shadow: 0px 1px 1px rgba(0, 0, 0, .5);
 }
 .divider {
   background-color: rgba(255, 255, 255, .05);

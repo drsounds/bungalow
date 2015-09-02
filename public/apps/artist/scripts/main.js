@@ -23,7 +23,7 @@ require(['$api/models', '$api/views'], function (models, views) {
 				$('#singles').html("");
 				$('#artistLink').html(artist.name);
 				$('#artistLink').attr('data-uri', 'bungalow:artist:' + id);
-				var albumCollection = new views.CardCollectionView(artist.albums, {}, 'album');
+				var albumCollection = new views.AlbumCollectionView(artist, {}, 192);
 				console.log("Appending album collection");
 				$('#albums').append(albumCollection.node);
 				views.hideThrobber();

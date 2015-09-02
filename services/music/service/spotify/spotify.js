@@ -67,7 +67,7 @@ SpotifyPlayer.prototype.setAccessToken = function (accessToken) {
 
 SpotifyPlayer.prototype.isAccessTokenValid = function () {
     var access_token = this.getAccessToken();
-    return new Date() < new Date(access_token.time) + access_token.expires_in;
+    return new Date() < new Date(access_token.time + access_token.expires_in);
 }
 
 SpotifyPlayer.prototype.refreshAccessToken = function () {
@@ -284,7 +284,10 @@ SpotifyPlayer.prototype.request = function (method, url, payload) {
                             }, function (error, response, body) {
                                 var result = JSON.parse(body);
                                 resolve({
-                                    'objects': result.items,
+                                    'objects': result.items.map(function (playlist) {
+                                        playlist.user = playlist.owner;
+                                        return playlist;
+                                    }),
                                     'source': 'spotify'
                                 });
                             });

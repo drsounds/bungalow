@@ -604,6 +604,11 @@ require(['$api/models'], function (models) {
         var self = this;
         var table = document.createElement('table');
         self.node = table;
+        if (album instanceof models.Album) {
+
+        } else {
+            album = new models.Album(album);
+        }
         album.load('name', 'artists', 'images', 'albums').then(function (album) {
           
             var tbody = document.createElement('tbody');
@@ -811,7 +816,7 @@ require(['$api/models'], function (models) {
         td2.appendChild(image.node);
         console.log(resource);
         td2.innerHTML = 
-        '<small>' + resource.type.toUpperCase() + '</small>' +
+        '<small class="sp-type">' + resource.type.toUpperCase() + '</small>' +
         '<h1>' + resource.name + '</h1>' +
         '<p>Created by <a data-uri="bungalow:user:' + resource.owner.id + '">' + resource.owner.display_name + '</a></p>' +
         '<p>' + resource.description + '</p>';
@@ -827,6 +832,8 @@ require(['$api/models'], function (models) {
 
         var td3 = document.createElement('td');
         tr2.appendChild(td3);
+        var toolbar = document.createElement('div');
+        toolbar.classList.add('sp-toolbar');
         var playButton = document.createElement('button');
         playButton.innerHTML = 'Play';
         playButton.classList.add('btn');
@@ -836,8 +843,9 @@ require(['$api/models'], function (models) {
         followButton.innerHTML = 'Follow';
         followButton.classList.add('btn');
 
-        td3.appendChild(playButton);
-        td3.appendChild(followButton);
+        toolbar.appendChild(playButton);
+        toolbar.appendChild(followButton);
+        td3.appendChild(toolbar);
     }
 
     exports.SimpleHeader = SimpleHeader;
@@ -914,7 +922,7 @@ require(['$api/models'], function (models) {
 
         var td2 = document.createElement('td');
         td2.style.verticalAlign = 'top';
-        td2.innerHTML = '<small>' + type.toUpperCase() + '</small><p class="h1">' + resource.name + '</p>';
+        td2.innerHTML = '<small class="sp-type">' + type.toUpperCase() + '</small><h2>' + resource.name + '</h2>';
 
         var toolbar = document.createElement('div');
         toolbar.classList.add('sp-toolbar');
@@ -974,6 +982,9 @@ require(['$api/models'], function (models) {
         for (var i = 0; i < this.views.length; i++) {
             var tabItem = new TabBarTab(this.views[i]);
             this.node.appendChild(tabItem.node);
+            if (i == 0) {
+                tabItem.node.classList.add('sp-tabbar-tab-active');
+            }
         }
         var tabbarY = 0;
         this.slicky = false;

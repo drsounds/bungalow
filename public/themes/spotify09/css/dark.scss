@@ -4,7 +4,7 @@ header, footer, aside, main {
 
 }
 .container {
-margin: 1pt 15%;
+margin: 0px;
 }
 h1 {
 	font-size: 10pt;
@@ -102,13 +102,25 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#dfdfdf', end
 	background-color: #111;
 	color: white;
 	padding: 5px;
+} 
+.sp-type {
+	display: none;
 }
-body {
+h2 {
+	line-height: 30px;
+}
+* {
+
+	font-smooth: never;
+-webkit-font-smoothing : subpix
+}
+body { 
 	background-color: #373737;
 	-webkit-user-select: none;
-	font-family: "Tahoma";
+	font-family: "Verdana";
 	font-size: 11px;
 	color: #aaa;
+	font-weight: thin;
 	display: flex;
 	min-height: 100%;
 	flex-direction: column;
@@ -117,6 +129,8 @@ body {
 	background-color: #222;
 	width: 100%;
 	height: 18pt;
+	padding: 3pt;
+	border-radius: 5pt
 }
 .sp-container {
 	margin-top: 23px;
@@ -459,8 +473,7 @@ meter {
 	border-bottom: 1px solid #292929;
 	border-top: 1px solid #414141;
 	height: 23px;
-	top: 0px;
-	position: fixed;
+	top: 0px;	
 	width: 100%;
 }
 .sp-tabbar-tab {
@@ -498,4 +511,49 @@ input {
 	border-radius: 12pt;
 	border: 1px solid #eee;
 	padding: 3pt;
+}
+
+.sp-header {
+    min-height: 220px;
+    width: 100%;
+    overflow: hidden;
+
+}
+
+.sp-header .sp-header-content {
+    position: absolute;
+    left: 0pt;
+    top: 0pt;
+    padding: 0pt;
+    width: 100%;
+    color: white;
+    line-height: 0pt;
+}
+.sp-header .content {
+    padding: 10pt;
+    position: relative;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+}
+
+.sp-header-background-image {
+    width: 100%;
+    height: 100%;
+    background-size: cover;
+    min-height: 320px;
+    -webkit-filter: blur(25px);
+    background-attachment: fixed;
+    opacity: 0.5;
+}
+
+.sp-card-image, .sp-cover-image  {
+	height: 128px;
+	width: 128px;
+	background-size: cover;
+	box-shadow: 0px 2px 2pt rgba(0, 0, 0, .25);
+}
+.sp-cover-imge > div {
+	width: 100%;
+	height: 100%;
 }
