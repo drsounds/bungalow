@@ -1,6 +1,9 @@
 header, footer, aside, main {
   box-sizing: border-box; }
 
+* {
+  cursor: default !important; }
+
 .container {
   margin: 0px; }
 
@@ -56,52 +59,19 @@ html {
   padding: 10pt; }
 
 .btn {
-  padding: 3pt;
-  box-sizing: border-box;
-  background-color: #eee;
-  color: black;
-  border-radius: 1pt;
-  border-radius: 50pt;
+  background: #222;
+  color: #888;
   border: none;
-  background: #dfdfdf;
-  /* Old browsers */
-  background: -moz-linear-gradient(top, #dfdfdf 0%, #b6b6b6 100%);
-  /* FF3.6+ */
-  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #dfdfdf), color-stop(100%, #b6b6b6));
-  /* Chrome,Safari4+ */
-  background: -webkit-linear-gradient(top, #dfdfdf 0%, #b6b6b6 100%);
-  /* Chrome10+,Safari5.1+ */
-  background: -o-linear-gradient(top, #dfdfdf 0%, #b6b6b6 100%);
-  /* Opera 11.10+ */
-  background: -ms-linear-gradient(top, #dfdfdf 0%, #b6b6b6 100%);
-  /* IE10+ */
-  background: linear-gradient(to bottom, #dfdfdf 0%, #b6b6b6 100%);
-  /* W3C */
-  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#dfdfdf', endColorstr='#b6b6b6',GradientType=0 );
-  /* IE6-9 */
-  box-shadow: inset 0px 0.5px 0px #f5f5f5, inset 0px -0.5px 0px #555, inset 0px 0px 1px #b8b8b8, inset 0px 1px 1px #e0e0e0, 0px 1px 1px rgba(0, 0, 0, 0.5);
-  text-shadow: 0px 1px 0px rgba(255, 255, 255, 0.25); }
+  border-radius: 5pt; }
 
 .btn:focus {
   outline: none; }
 
+.sp-cover-image > * {
+  background-size: cover; }
+
 .btn:active {
-  background: #bababa;
-  /* Old browsers */
-  background: -moz-linear-gradient(top, #bababa 0%, #7c7c7c 100%);
-  /* FF3.6+ */
-  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #bababa), color-stop(100%, #7c7c7c));
-  /* Chrome,Safari4+ */
-  background: -webkit-linear-gradient(top, #bababa 0%, #7c7c7c 100%);
-  /* Chrome10+,Safari5.1+ */
-  background: -o-linear-gradient(top, #bababa 0%, #7c7c7c 100%);
-  /* Opera 11.10+ */
-  background: -ms-linear-gradient(top, #bababa 0%, #7c7c7c 100%);
-  /* IE10+ */
-  background: linear-gradient(to bottom, #bababa 0%, #7c7c7c 100%);
-  /* W3C */
-  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#bababa', endColorstr='#7c7c7c',GradientType=0 );
-  /* IE6-9 */ }
+  background: #222; }
 
 .btn-black {
   border: none;
@@ -122,8 +92,8 @@ h2 {
 body {
   background-color: #373737;
   -webkit-user-select: none;
-  font-family: "Verdana";
-  font-size: 11px;
+  font-family: "MS Sans Serif";
+  font-size: 12px;
   color: #aaa;
   font-weight: thin;
   display: flex;
@@ -143,7 +113,7 @@ body {
 
 hr {
   border: none;
-  border-top: 1px solid #222; }
+  border-top: 1px solid #333; }
 
 .playlist {
   min-height: 100%;
@@ -333,7 +303,7 @@ img.shadow {
   padding: 3pt;
   padding-left: 5px;
   vertical-align: middle;
-  text-shadow: 0px 1px 0px rgba(0, 0, 0, 0.5); }
+  color: #ccc; }
 
 .menu tr a {
   color: white;

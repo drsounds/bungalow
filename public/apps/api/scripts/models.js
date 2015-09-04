@@ -87,37 +87,52 @@ require(['$api/cosmos'], function (Cosmos) {
         this.offset = 0;
         this.type = type;
         this.complete = false;
+        this.fetching = false;
     };
 
     Collection.prototype.next = function () {
         var self = this;
+        if (self.fetching || self.complete) {
+            return new Promise(function (resolve, fail) {
+
+            });
+        }
         return new Promise(function (resolve, fail) {
-            if (self.complete) {
-                return;
-            }
+            console.log(self.complete);
+            
+
             var url = self.endpoint + '&offset=' + self.offset + '&limit=' + self.limit + '&type=' + self.type;
 
+            self.offset += self.limit;
 
-            Cosmos.request('GET', url).then(function (result) {
-                console.log("GOT REPLY FROM " + url);
-                // console.log(result);
-                console.log(result);
-                for (var i = 0; i < result.objects.length; i++) {
-                    self.objects = result.objects;
+                if (self.fetching ) {
+                    return;
                 }
-                self.objects = self.objects.map(function (object) {
-                    if ('track' in object) {
-                        return Object.assign(object, object.track);
+                console.log("Requesting tracks");
+                self.fetching = true;
+                Cosmos.request('GET', url).then(function (result) {
+                    console.log("SELF", self);
+                    console.log("GOT REPLY FROM " + url);
+                    // console.log(result);
+                    console.log(result);
+                    console.log(result.objects);
+                    if (result.objects.length < 1) {
+                        self.complete = true;
                     }
+                    for (var i = 0; i < result.objects.length; i++) {
+                        self.objects = result.objects;
+                    }
+                    self.objects = self.objects.map(function (object) {
+                        if ('track' in object) {
+                            return Object.assign(object, object.track);
+                        }
 
-                    return object;
+                        return object;
+                    });
+                    
+                    resolve(self);
+                    self.fetching = false;
                 });
-                if (self.objects.length < 1) {
-                    self.complete = true;
-                }
-                resolve(self);
-                self.offset = self.offset + self.limit;
-            });
         });
     };
 

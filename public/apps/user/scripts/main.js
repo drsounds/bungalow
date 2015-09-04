@@ -24,8 +24,7 @@ require(['$api/models', '$api/views'], function (models, views) {
                 var header = new views.Header(user, { type: "user" }, 128);
                 $('#header').html("");
                 $('#header').append(header.node);
-
-                var playlistCollection = new views.CardCollectionView(user.playlists, {}, 'playlist');
+                var playlistCollection = new views.CardCollectionView(user.playlists, {}, 128, 'playlist');
 
                 $('#playlists').append(playlistCollection.node);
 

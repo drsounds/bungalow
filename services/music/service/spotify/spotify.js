@@ -173,15 +173,24 @@ SpotifyPlayer.prototype.request = function (method, url, payload) {
 
             if (parts[0] == 'albums') {
                 if (parts.length > 2) {
+                    console.log("Payload", payload);
+                
+                    var limit =  payload.limit;
+                    var offset = payload.offset;
+                    
+                    
                     request({
-                            url: 'https://api.spotify.com/v1/albums/' + parts[1] + '/tracks?limit=' + payload.limit + '&offset=' + payload.offset
+                            url: 'https://api.spotify.com/v1/albums/' + parts[1] + '/tracks?limit=' + limit + '&offset=' + offset
                         },
                         function (error, response, body) {
                             body = body.replace('spotify:', 'bungalow:');
                             var data = JSON.parse(body);
                             try {
                                 resolve({
-                                    'objects': data.items
+                                    'objects': data.items.map(function (track) {
+                                        track.popularity = 0.0;
+                                        return track;
+                                    })
                                 });
                             } catch (e) {
                                 resolve({

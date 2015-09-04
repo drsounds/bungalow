@@ -13,6 +13,7 @@ var hostile = require('hostile');
 
 function AppFinder () {
     this.apps = {};
+    this.installedApps = {};
 
     
     
@@ -21,7 +22,10 @@ function AppFinder () {
     var evh = require('express-vhost');
     var server = utils.createApp();
     this.server = server;
+    this.api = utils.createApp();
     this.evh = evh;
+
+
     
 }
 
@@ -80,7 +84,7 @@ AppFinder.prototype.registerDirectory = function (appDir) {
 }
 
 AppFinder.prototype.listen = function () {
-    
+    var self = this;
     this.server.get('/*', function (req, res) {
         console.log("A");
         var host = req.host;
@@ -97,7 +101,7 @@ AppFinder.prototype.listen = function () {
             var manifestFilePath = appDir + path.sep + 'manifest.json';
             // check if app is already existing
             // check if directory exists
-            var self = this;
+            
             var appURL = '';
                 
             if (fs.existsSync(appDir) && fs.existsSync(manifestFilePath)) {
@@ -106,7 +110,7 @@ AppFinder.prototype.listen = function () {
                 appURL = __dirname + path.sep + 'public/apps/' + appName + '/';
                 var file = appDir + app_path.slice(1).join('/');
 
-
+                self.apps[appName] = manifest;
 
                 var data = fs.readFileSync(file);
 
@@ -145,6 +149,9 @@ AppFinder.prototype.listen = function () {
             })
         }
     });
+    this.server.get('/api/v1/apps', function (res, req) {
+        res.json(self.apps);
+    });
 }
 
 var appFinder = new AppFinder();
@@ -152,4 +159,4 @@ var appFinder = new AppFinder();
 appFinder.registerApps();
 appFinder.listen();
 
-module.exports = appFinder.server;
+module.exports = appFinder;

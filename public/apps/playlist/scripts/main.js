@@ -4,7 +4,7 @@ require(['$api/views', '$api/models'], function (views, models) {
 	window.addEventListener('message', function (event) {
 		console.log("Event data", event.data);
 		if (event.data.action === 'tracksadded') {
-			var playlistURI = event.data.uri;
+			var playlistURI = Event.data.uri;
 			var position = event.data.position;
 			var tracks = event.data.tracks;
 		}
@@ -26,7 +26,7 @@ require(['$api/views', '$api/models'], function (views, models) {
 
 				playlistView.appendChild(header.node);
 
-				var contextView = new views.TrackContextView(playlist, {headers:true, reorder:true, fields: ['title', 'artist', 'album', 'user']});
+				var contextView = new views.TrackContextView(playlist, {headers:true, sticky: true, reorder:true, fields: ['title', 'artist' , 'duration', 'album']});
 				contextView.node.classList.add('sp-playlist');
 				playlistView.appendChild(contextView.node);
 
