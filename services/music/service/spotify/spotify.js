@@ -350,6 +350,7 @@ SpotifyPlayer.prototype.request = function (method, url, payload) {
                                 fail({'error': ''});
                             }
                             var user = JSON.parse(body);
+                            user.name = user.canonicalName;
                             user.images = [
                                 {
                                     'url': user.image

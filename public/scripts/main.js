@@ -6,6 +6,9 @@ var XHR = function () {
 
 }
 
+
+
+
 XHR.prototype.request = function (method, url, params, data) {
 	return new Promise(function (resolve, fail) {
 		var xhr = new XMLHttpRequest();
@@ -21,6 +24,30 @@ XHR.prototype.request = function (method, url, params, data) {
 		xhr.send(data);
 	});
 };
+
+(function ( $ ) {
+	$.fn.resolveLi = function () {
+		var node = this;
+		console.log(this);
+		var uri = node.attr('data-load-uri');
+		var appId = uri.split(/\:/g)[1];
+		if (uri.match(/bungalow\:user\:(.+)\:playlist\:(.+)/g)) {
+			appId = 'playlist';
+		}
+		setTimeout(function () {
+			require(['$' + appId + '/resolver'], function (resolve) {
+				if (resolve) {
+					resolve(node.attr('data-load-uri')).then(function (resource) {
+						node.html('<span class="fa fa-' + resource.icon + '"></span>' + resource.name);
+						node.attr('data-uri', node.attr('data-load-uri'));
+					}); 
+				} else {
+					$(node).html('<span class="fa fa-globe"></span>' + node.attr('data-load-uri'));
+				}
+			});
+		}, 1000);
+	};
+}(jQuery));
 
 Music.prototype.request = function (method, url) {
 	return new Promise(function (resolve, fail) {
@@ -54,6 +81,13 @@ Music.prototype.login = function () {
 
 			}
 		}); */
+		var playlists = document.querySelector('#playlists');
+		var li = document.createElement('li');
+		li.setAttribute('data-load-uri', 'bungalow:user:drsounds:playlist:782AlbjY7wiTvocWhN5xuk');
+		li.innerHTML = '<span class="fa fa-music"></span> Loading</li>';
+		playlists.appendChild(li);
+		$(li).resolveLi();
+
 	});
 }
 

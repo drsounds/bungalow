@@ -13,7 +13,7 @@ var hostile = require('hostile');
 
 function AppFinder () {
     this.apps = {};
-    this.installedApps = {};
+    this.installedApps = [];
 
     
     
@@ -43,6 +43,8 @@ AppFinder.prototype.registerApp = function (appDir) {
         var manifest = JSON.parse(fs.readFileSync(manifestFilePath));
         appName = manifest.BundleIdentifier;
         appURL = __dirname + path.sep + 'public/apps/' + appName + '/';
+        console.log(manifest);
+        this.installedApps.push(manifest);
         /*hostile.remove('127.0.0.1', appName + '.bungalowapp.com', function (err) {
           if (err) {
             console.error(err)
@@ -85,6 +87,12 @@ AppFinder.prototype.registerDirectory = function (appDir) {
 
 AppFinder.prototype.listen = function () {
     var self = this;
+    this.server.get('/api/v1/apps', function (req, res) {
+        console.log(self.installedApps);
+        res.json(self.installedApps);
+        res.end();
+    });
+
     this.server.get('/*', function (req, res) {
         console.log("A");
         var host = req.host;
@@ -148,9 +156,6 @@ AppFinder.prototype.listen = function () {
                 res.end();
             })
         }
-    });
-    this.server.get('/api/v1/apps', function (res, req) {
-        res.json(self.apps);
     });
 }
 

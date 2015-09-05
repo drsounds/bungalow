@@ -8,7 +8,6 @@ require(['$api/models', '$api/views'], function (models, views) {
 			$('#albums').html("");
 			views.showThrobber();
 			console.log("A");
-			alert("A");
 
 			var query = event.data.arguments.join(':');
 			var uri = 'bungalow:search:' + query;
@@ -27,7 +26,6 @@ require(['$api/models', '$api/views'], function (models, views) {
 			playlists['bungalow:search:' + query] = contextView;
 			$('#search').append(contextView.node);
 			contextView.show();	
-			alert("A");
 
 
 			views.hideThrobber();

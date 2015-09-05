@@ -283,11 +283,15 @@ require(['$api/models'], function (models) {
         this.type = 'track';
         this.ViewClass = ViewClass;
         this.end = false;
+        this.extend = options.extend || true;
     }
 
     CollectionView.prototype.next = function () {
         var tbody = this.tbody;
         var fields = this.fields;
+        if (this.end) {
+            return;
+        }
         if (!$(this.node).is(':visible')) {
             return;
         }
@@ -308,8 +312,12 @@ require(['$api/models'], function (models) {
                 for (var i = 0; i < collection.objects.length; i++) {
                     var trackView = new self.ViewClass(collection.objects[i], i, collection.uri, {'fields': fields});
                     $(tbody).append(trackView.node);
-                    self.loading = false;
-                    sync_contexts();
+                }
+                self.loading = false;
+                $('div.sp-collection-next[data-uri="' + collection.uri + '"]').removeAttr('data-using');
+                sync_contexts();
+                if (!self.extend) {
+                    self.end = true;
                 }
             });
         }
@@ -325,7 +333,6 @@ require(['$api/models'], function (models) {
         this.colorDark = 'rgba(255, 255, 255, 0.215)'; // 'rgba(89, 89, 89)';
         this.colorLight = 'rgba(255, 255, 255, .882)'; //'rgba(225, 255, 255)';
         this.node.height = 7;
-        this.node.width = 35;
 
     }
 
@@ -469,6 +476,7 @@ require(['$api/models'], function (models) {
         }
         $(this.node).spotifize();
         collection_contexts[resource.uri] = this; // Register context here
+        this.node.appendChild(createCollectionNext(resource.uri));
         setTimeout(function () {
             sync_contexts();
         }, 100);
@@ -595,6 +603,7 @@ require(['$api/models'], function (models) {
         setTimeout(function () {
             sync_contexts();
         }, 100);
+        $(this.node).append('<div class="sp-collection-next" data-uri="' + this.resource.uri + ':albuns">');
 
     };
 
@@ -613,6 +622,7 @@ require(['$api/models'], function (models) {
         setTimeout(function () {
             sync_contexts();
         }, 100);
+        $(this.node).append('<div class="sp-collection-next">');
     };
 
     CardCollectionView.prototype = Object.create(CollectionView.prototype);
@@ -630,20 +640,34 @@ require(['$api/models'], function (models) {
         this.ViewClass = AlbumView;
         this.resource = resource;
         this.node = document.createElement('div');
+
         this.type = type || 'album';
         this.collection = resource[this.type + 's'];
         this.node.setAttribute('data-uri', resource.uri + ':' + this.type + 's');
         this.tbody = this.node;
         this.node.classList.add('sp-collection');
         collection_contexts[resource.uri + ':' + this.type + 's'] = this; // Register context here
+        this.node.appendChild(createCollectionNext(resource.uri + ':' + this.type + 's'));
         setTimeout(function () {
             sync_contexts();
         }, 100);
 
     };
 
+    function createCollectionNext(uri, type) {
+        type = type ? type : 'div';
+        var collectionNext = document.createElement(type);
+        collectionNext.setAttribute('data-uri', uri);
+        collectionNext.classList.add('sp-collection-next');
+        return collectionNext;
+    }
+
     AlbumCollectionView.prototype.next = function () {
         CollectionView.prototype.next.call(this, arguments);
+    }
+
+    String.prototype.capitalizeFirstLetter = function() {
+        return this.charAt(0).toUpperCase() + this.slice(1);
     }
 
     /**
@@ -660,7 +684,7 @@ require(['$api/models'], function (models) {
         if (album instanceof models.Album) {
 
         } else {
-            album = new models.Album(album);
+            album = new models[album.type.capitalizeFirstLetter()](album);
         }
         album.load('name', 'artists', 'images', 'albums').then(function (album) {
           
@@ -841,19 +865,23 @@ require(['$api/models'], function (models) {
     }
 
     function sync_contexts() {
-        $('.sp-collection').each(function (i) {
+
+        $('.sp-collection-next').each(function (i) {
             var endofpage = this.getBoundingClientRect().bottom;
             var bottom = ($(window).height() );
 
 
-            if (endofpage <= bottom) {
+            if (endofpage <= bottom && !this.hasAttribute('data-using')) {
+                $(this).remove();
                 console.log("New " + this.getAttribute('data-uri') + " reached");
                 var collectionView = collection_contexts[this.getAttribute('data-uri')];
                 console.log(collectionView);
+                $(this).attr('data-using', 'true');
                 collectionView.next();
 
 
             }
+
         })
     }
 

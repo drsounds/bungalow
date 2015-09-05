@@ -1,3 +1,7 @@
+*, img {
+  -webkit-user-select: none;
+  user-select: none; }
+
 header, footer, aside, main {
   box-sizing: border-box; }
 
@@ -90,7 +94,7 @@ h2 {
   -webkit-font-smoothing: subpix; }
 
 body {
-  background-color: #373737;
+  background-color: #363636;
   -webkit-user-select: none;
   font-family: "MS Sans Serif";
   font-size: 12px;
@@ -162,6 +166,91 @@ hr {
   background-color: #2a2a2a;
   display: none;
   z-index: 200; }
+
+*::-webkit-scrollbar {
+  width: 16px; }
+
+*::-webkit-scrollbar-thumb:horizontal {
+  /* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#e5e5e5+0,afafaf+100 */
+  background: #e5e5e5;
+  /* Old browsers */
+  background: -moz-linear-gradient(top, #e5e5e5 0%, #afafaf 100%);
+  /* FF3.6+ */
+  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #e5e5e5), color-stop(100%, #afafaf));
+  /* Chrome,Safari4+ */
+  background: -webkit-linear-gradient(top, #e5e5e5 0%, #afafaf 100%);
+  /* Chrome10+,Safari5.1+ */
+  background: -o-linear-gradient(top, #e5e5e5 0%, #afafaf 100%);
+  /* Opera 11.10+ */
+  background: -ms-linear-gradient(top, #e5e5e5 0%, #afafaf 100%);
+  /* IE10+ */
+  background: linear-gradient(to bottom, #e5e5e5 0%, #afafaf 100%);
+  /* W3C */
+  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#e5e5e5', endColorstr='#afafaf',GradientType=0 );
+  /* IE6-9 */
+  box-shadow: inset 1px 1px 1px rgba(255, 255, 255, 0.1); }
+
+*::-webkit-scrollbar-thumb:vertical {
+  border-radius: 15pt;
+  /* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#e5e5e5+0,afafaf+100 */
+  background: #e5e5e5;
+  /* Old browsers */
+  background: -moz-linear-gradient(left, #e5e5e5 0%, #afafaf 100%);
+  /* FF3.6+ */
+  background: -webkit-gradient(linear, left top, right top, color-stop(0%, #e5e5e5), color-stop(100%, #afafaf));
+  /* Chrome,Safari4+ */
+  background: -webkit-linear-gradient(left, #e5e5e5 0%, #afafaf 100%);
+  /* Chrome10+,Safari5.1+ */
+  background: -o-linear-gradient(left, #e5e5e5 0%, #afafaf 100%);
+  /* Opera 11.10+ */
+  background: -ms-linear-gradient(left, #e5e5e5 0%, #afafaf 100%);
+  /* IE10+ */
+  background: linear-gradient(to right, #e5e5e5 0%, #afafaf 100%);
+  /* W3C */
+  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#e5e5e5', endColorstr='#afafaf',GradientType=1 );
+  /* IE6-9 */ }
+
+::-webkit-scrollbar-corner {
+  background-color: #333; }
+
+*::-webkit-scrollbar-track:horizontal {
+  /* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#111111+0,5b5b5b+100 */
+  background: #111111;
+  /* Old browsers */
+  background: -moz-linear-gradient(top, #111111 0%, #5b5b5b 100%);
+  /* FF3.6+ */
+  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #111111), color-stop(100%, #5b5b5b));
+  /* Chrome,Safari4+ */
+  background: -webkit-linear-gradient(top, #111111 0%, #5b5b5b 100%);
+  /* Chrome10+,Safari5.1+ */
+  background: -o-linear-gradient(top, #111111 0%, #5b5b5b 100%);
+  /* Opera 11.10+ */
+  background: -ms-linear-gradient(top, #111111 0%, #5b5b5b 100%);
+  /* IE10+ */
+  background: linear-gradient(to bottom, #111111 0%, #5b5b5b 100%);
+  /* W3C */
+  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#111111', endColorstr='#5b5b5b',GradientType=0 );
+  /* IE6-9 */ }
+
+*::-webkit-scrollbar-track:vertical {
+  /* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#111111+0,8c8c8c+100 */
+  /* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#111111+0,5b5b5b+100 */
+  background: #111111;
+  /* Old browsers */
+  background: -moz-linear-gradient(left, #111111 0%, #5b5b5b 100%);
+  /* FF3.6+ */
+  background: -webkit-gradient(linear, left top, right top, color-stop(0%, #111111), color-stop(100%, #5b5b5b));
+  /* Chrome,Safari4+ */
+  background: -webkit-linear-gradient(left, #111111 0%, #5b5b5b 100%);
+  /* Chrome10+,Safari5.1+ */
+  background: -o-linear-gradient(left, #111111 0%, #5b5b5b 100%);
+  /* Opera 11.10+ */
+  background: -ms-linear-gradient(left, #111111 0%, #5b5b5b 100%);
+  /* IE10+ */
+  background: linear-gradient(to right, #111111 0%, #5b5b5b 100%);
+  /* W3C */
+  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#111111', endColorstr='#5b5b5b',GradientType=1 );
+  /* IE6-9 */ }
 
 #throbber img {
   left: 50%;
@@ -341,7 +430,8 @@ h1, h2, h3, h4 {
 
 .menu li .fa {
   color: #fff;
-  font-size: 10pt; }
+  font-size: 10pt;
+  min-width: 15pt; }
 
 a[data-uri] {
   cursor: pointer; }

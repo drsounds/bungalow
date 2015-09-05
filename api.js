@@ -195,6 +195,17 @@ app.get('/music/*', function (req, res) {
     });
 });
 
+app.get('/music/*', function (req, res) {
+    console.log("A");
+    console.log(music);
+    music.request("GET", req.params[0], req.query).then(function (result) {
+
+        res.json(result);
+    }, function (reject) {
+        res.json(reject);
+    });
+});
+
 app.get('/player/play', function (req, res) {
     var id = req.params.id;
     music.getAlbumTracks(id).then(function (artist) {

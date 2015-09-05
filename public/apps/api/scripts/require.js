@@ -33,8 +33,12 @@ var requirejs = function (exports) {
             if (xmlHttp.readyState == 4 && xmlHttp.status == 200) {
                 __level--;
                 var code = ("(function () { var exports = {}; " + xmlHttp.responseText + "; return exports;  })();");
-
-                var mod = eval(code);
+                mod = null;
+                try {
+                    var mod = eval(code);
+                } catch (e) {
+                    mod = null;
+                }
                 __level++;
                 if (_class != null) {
                     mod = mod[_class];
