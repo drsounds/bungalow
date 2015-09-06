@@ -2,6 +2,8 @@ var path = require('path');
 var fs = require('fs');
 var async = require('async');
 var MusicService = require('./services/music/service/spotify/spotify.js');
+var SocialService = require('./services/social/service/mock.js');
+var social = new SocialService();   
 var music = new MusicService();
 var less = require('less');
 var request = require('request');
@@ -184,10 +186,12 @@ app.get('/chrome/*', function (req, res) {
     res.write(file);
     res.end();
 });*/
-app.get('/music/*', function (req, res) {
+
+
+app.get('/social/*', function (req, res) {
     console.log("A");
-    console.log(music);
-    music.request("GET", req.params[0], req.query).then(function (result) {
+    console.log(social);
+    social.request("GET", req.params[0], req.query).then(function (result) {
 
         res.json(result);
     }, function (reject) {

@@ -1,0 +1,33 @@
+
+<dom-module id="bungalow-playlistview" name="bungalow-playlist-view" attributes="uri">
+    <link rel="import" href="http://appfinder.bungalow.qi/views/components/playlist.html">
+    <link rel="import" href="http://appfinder.bungalow.qi/views/components/header.html">
+
+
+    <template is="dom-bind">
+        <style>
+            @import url("https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css");
+            @import url("http://play.bungalowq.qi/themes/main.css");
+
+            
+            h1 {
+                font-size: 35pt;
+            }
+        </style>
+        <script src="http://appfinder.bungalow.qi/views/scripts/cosmos.js"></script>
+        <bungalow-header data-uri="spotify:user:mjecker:playlist:5b5nCA9Uz5cU4nqkITls3O" type="playlist" />
+        <bungalow-playlist uri="bungalow:user:mjecker:playlist:5b5nCA9Uz5cU4nqkITls3O:tracks" type="playlist" />
+        {{uri}}
+    </template>
+    <script>
+       Polymer({
+            is: 'bungalow-playlistview',
+            properties: {
+                uri: String
+            },
+            ready: function () {
+                alert(this);
+            }
+        })
+    </script>
+</dom-module>

@@ -192,6 +192,13 @@ require(['$api/models'], function (models) {
                 this.node.appendChild(td3);
                 td3.style.width = '10px';
             }
+            if (field === 'no') {
+                var td3 = document.createElement('td');
+                td3.innerHTML = '';
+                td3.style.textAlign = 'right';
+                this.node.appendChild(td3);
+                td3.style.width = '10px';
+            }
             if (field === 'title') {
                 var td1 = document.createElement('td');
                 td1.innerHTML = track.name;
@@ -264,6 +271,7 @@ require(['$api/models'], function (models) {
     exports.Image = Image;
 
     var fieldTypes = {
+        'no': 'No.',
         'title': 'Title',
         'album': 'Album',
         'artist': 'Artist',
@@ -333,12 +341,12 @@ require(['$api/models'], function (models) {
         this.colorDark = 'rgba(255, 255, 255, 0.215)'; // 'rgba(89, 89, 89)';
         this.colorLight = 'rgba(255, 255, 255, .882)'; //'rgba(225, 255, 255)';
         this.node.height = 7;
+        this.node.width = 35;
 
     }
 
     PopularityBar.prototype.render = function () {
         this.backColor = 'transparent';
-        this.node.style.width = 35;
         var ctx = this.node.getContext('2d');
         // draw dark bars
         ctx.fillStyle = this.backColor;
@@ -592,7 +600,7 @@ require(['$api/models'], function (models) {
     var AlbumCardCollectionView = function (resource, options, coverSize) {
         CollectionView.call(this, resource, options, CardView);
         this.coverSize = coverSize ? coverSize : 128;
-        this.ViewClass = AlbumView;
+        this.ViewClass = views.Album;
         this.resource = resource;
         this.node = document.createElement('div');
         this.type = 'album';
@@ -634,10 +642,10 @@ require(['$api/models'], function (models) {
 
 
     var AlbumCollectionView = function (resource, options, coverSize, type) {
-        CollectionView.call(this, resource, options, AlbumView);
+        CollectionView.call(this, resource, options, views.Album);
 
         this.coverSize = coverSize ? coverSize : 128;
-        this.ViewClass = AlbumView;
+        this.ViewClass = views.Album;
         this.resource = resource;
         this.node = document.createElement('div');
 
@@ -653,6 +661,49 @@ require(['$api/models'], function (models) {
         }, 100);
 
     };
+
+    var PostCollectionView = function (resource, options, coverSize, type) {
+        CollectionView.call(this, resource, options, Post);
+
+        this.coverSize = coverSize ? coverSize : 128;
+        this.ViewClass = views.Album;
+        this.resource = resource;
+        this.node = document.createElement('div');
+
+        this.type = type || 'album';
+        this.collection = resource[this.type + 's'];
+        this.node.setAttribute('data-uri', resource.uri + ':' + this.type + 's');
+        this.tbody = this.node;
+        this.node.classList.add('sp-collection');
+        collection_contexts[resource.uri + ':' + this.type + 's'] = this; // Register context here
+        this.node.appendChild(createCollectionNext(resource.uri + ':' + this.type + 's'));
+        setTimeout(function () {
+            sync_contexts();
+        }, 100);
+
+    };
+
+
+    var Post = function (post, options) {
+        this.node = document.createElement('tr');
+        this.node.classList.add('sp-card');
+
+        var td1 = document.createElement('td');
+        td1.classList.add('sp-card-content');
+        td.innerHTML = '<h3>' + post.user.name + '</h3>';
+        td.innerHTML = '<p>' + post.message + '</p>';
+
+        var resourceType = post.resource.type;
+        var ResourceView = views[resourceType.capitalizeFirstLetter()];
+
+        var Resource = models[resourceType.capitalizeFirstLetter()];
+
+        var resource = Resource.fromUri(post.resource.uri);
+        
+
+
+
+    }
 
     function createCollectionNext(uri, type) {
         type = type ? type : 'div';
@@ -677,7 +728,7 @@ require(['$api/models'], function (models) {
      * @class
      * @constructor
      */
-    var AlbumView = function (album, options) {
+    var Album = function (album, options) {
         var self = this;
         var table = document.createElement('table');
         self.node = table;
@@ -702,7 +753,7 @@ require(['$api/models'], function (models) {
             if ('images' in album && album.images.length > 0) {
                 image = album.images[0].url;
             }
-            td1.innerHTML = '<img class="shadow" data-uri="' + (album.uri) + '" src="' + image + '" width="256px">';
+            td1.innerHTML = '<img class="shadow" data-uri="' + (album.uri) + '" src="' + image + '" width="192px">';
             td1.setAttribute('valign', 'top');
             td1.setAttribute('width', '170px');
             td1.style.paddingRight = '13pt';
@@ -710,12 +761,20 @@ require(['$api/models'], function (models) {
             var td2 = document.createElement('td');
             td2.setAttribute('valign', 'top');
             album.release_date = '1970-01-01';
-            td2.innerHTML = '<small>' + album.release_date + '</small><h3 style="margin-bottom: 10px"><a data-uri="' + album.uri + '">' + album.name + '</a></h3>';
+            td2.innerHTML = '<small>' + album.release_date + '</small><h3 style="margin-bottom: 10px"><a data-uri="' + album.uri + '">' + album.name + '</a> %s </h3>';
+            
+            if ('owner' in album) {
+                td2.innerHTML = td2.innerHTML.replace('%2', '   by <a data-uri="bungalow:user:' + album.owner.id + '">' + album.owner.id + '</a>');
+
+            } else {
+                td2.innerHTML = td2.innerHTML.replace('%2', '');
+            }
+
             // // console.log(td2.innerHTML);
             //alert(album.tracks);
            
 
-            var contextView = new TrackContextView(album, {headers: false, 'fields': ['title', 'duration', 'popularity']});
+            var contextView = new TrackContextView(album, {headers: false, 'fields': ['image', 'title', 'duration', 'popularity', 'artist']});
             var tr2 = document.createElement('tr');
             var tdtracks = document.createElement('td');
             tdtracks.setAttribute('colspan', 2);
@@ -734,7 +793,7 @@ require(['$api/models'], function (models) {
 
     }
 
-    exports.AlbumView = AlbumView;
+    exports.Album = Album;
 
     exports.AlbumCollectionView = AlbumCollectionView;
 

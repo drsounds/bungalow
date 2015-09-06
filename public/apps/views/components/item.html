@@ -1,0 +1,43 @@
+<dom-module id="bungalow-item" attributes="uri,name,author,type,author-uri,image">
+
+    <template>
+        <style>
+            @import url("https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css");
+            @import url("http://play.bungalowq.qi/themes/main.css");
+
+            
+            h1 {
+                font-size: 35pt;
+            }
+        </style>
+        <script src="http://appfinder.bungalow.qi/views/scripts/cosmos.js"></script>
+        <script>
+            function link(event) {
+                console.log(event);
+                var uri = event.target.dataset.uri;
+
+                window.parent.postMessage({'action': 'navigate', 'uri': event.target.dataset['uri']}, '*');
+            }
+        </script>
+        <div class="item-header" style="background-image: url('{{image}}')" style="min-height: 300pt"></div>
+        <div class="item-content">
+            <h3><a onclick="link(event)" data-uri="{{uri}}">{{name}}<content select="name"></content></a></h3>
+            <p><a data-uri="author-uri">{{author}}<content select="author"></content></a></p>
+            <p><content select="p"></content></p>
+            <small>{{type}}</small>
+        </div>
+          
+    </template>
+    <script>
+    Polymer({
+        is: 'bungalow-item',
+        'image': '',
+        'name': 'item',
+        'type': 'object',
+        ready: function () {
+            
+
+        }
+    });
+    </script>
+</dom-module>

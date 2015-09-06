@@ -24,7 +24,7 @@ require(['$api/models', '$api/views'], function (models, views) {
                 var header = new views.Header(user, { type: "user" }, 128);
                 $('#header').html("");
                 $('#header').append(header.node);
-                var playlistCollection = new views.AlbumCollectionView(user, {extend: false}, 128, 'playlist');
+                var playlistCollection = new views.AlbumCollectionView(user, {extend: false}, 80, 'playlist');
 
                 $('#playlists').append(playlistCollection.node);
 

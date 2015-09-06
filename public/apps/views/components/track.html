@@ -1,0 +1,30 @@
+<dom-module id="bungalow-track" extends="tr">
+    <template>
+        <td>{{track.name}}</td>
+        <td><a href="{{track.artist.uri}}">{{track.arts}}
+    </template>
+    <script>
+        Polymer({
+            is: 'bungalow-track',
+            track: {
+                name: '',
+                artists: [{
+                    id: '',
+                    uri: 'bungalow:artist',
+                    name: ''
+                }],
+                album: {
+                    id: '',
+                    uri: 'bungalow:album',
+                    name: ''
+                },
+                duration: 0,
+                added_by: {
+                    id: '',
+                    uri: 'bungalow:user',
+                    name: ''
+                }
+            }
+        });
+    </script>
+</dom-module>

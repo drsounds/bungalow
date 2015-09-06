@@ -1,0 +1,35 @@
+<dom-module name="bungalow-tab-item" attributes="tabid,name">
+
+    <template>
+        <style>
+            @import url("https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css");
+            @import url('http://play.bungalow.qi/themes/main.css');
+            :host {
+                display: list-item;
+                float: left;
+                margin-right: 13pt;
+                min-width: 15pt;
+            }
+        </style>
+        <li class="bungalow-tab" data-id="{{tabid}}">
+            {{name}}
+        </li>
+                
+    </template>
+    <script>
+    Polymer({
+        eventDelegates: {
+            down: 'onTap',
+            mousedown: 'onTap'
+        },
+        onTap: function (event, detail, sender) {
+
+            this.fire('tabselected', {tab: sender, tabid: sender.id});
+        },
+        activate: function () {
+            this.fire('tabselected', {tab: sender, tabid: sender.id});
+
+        }
+    });
+    </script>
+</dom-module>

@@ -1,0 +1,39 @@
+
+<dom-element id="bungalow-popularity-bar" extends="canvas">
+    <script>
+        Polymer({
+            is: 'bungalow-popularity-bar',
+            extends: 'canvas',
+            properties: {
+                BAR_WIDTH: 2,
+                BAR_HEIGHT: 7,
+                SPACE: 1,
+                popularity: 0.0,
+                height: 7,
+                width: 35
+            },
+            ready: function () {
+                this.style.backgroundColor = 'transparent';
+                var ctx = this.getContext('2d');
+                // draw dark bars
+                ctx.fillStyle = this.backColor;
+                ctx.fillRect(0, 0, this.node.width, this.node.height);
+                ctx.fillStyle = this.colorDark;
+
+                var totalPigs = 0
+                for (var i = 0; i < this.node.width; i+= this.BAR_WIDTH + this.SPACE) {
+                    ctx.fillRect(i, 0, this.BAR_WIDTH, this.BAR_HEIGHT);
+                    totalPigs++;
+                }
+                ctx.fillStyle = this.colorLight;
+
+                var lightPigs = this.popularity * totalPigs;
+                var left = 0;
+                for (var i = 0; i < lightPigs; i++) {
+                    ctx.fillRect(left, 0, this.BAR_WIDTH, this.BAR_HEIGHT);
+                    left += this.BAR_WIDTH + this.SPACE;
+                }
+            }
+        });
+    </script>
+</dom-element>

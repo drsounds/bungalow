@@ -1,0 +1,90 @@
+<dom-module id="bungalow-tab-bar" attributes="">
+
+    <template>
+        <style>
+            @import url("https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css");
+            @import url('http://play.bungalow.qi/themes/main.css');
+            :host.capsule {
+                background-color: rgba(0, 0, 0, .5);
+
+            }
+            h1 {
+                font-size: 35pt;
+            }
+            .tabbar {
+                list-style: none;
+            }
+
+            .tabbar-tab {
+                float: left;
+                padding-left: 10pt;
+                padding-right: 10pt;
+            }
+            .tab-content {
+                display: none;
+            }
+        </style>
+        <div class="bungalow-tab-bar" style="width: 100%">
+            <ul class="tabbar">
+                <content select="bungalow-tab-item"></content>
+            </ul>
+        </div>
+        <div class="bungalow-tabbar-content" style="width: 100%">
+            <content select="div.tab-pane"></content>
+        </div>
+                
+    </template>
+    <script>
+    Polymer({
+        is: 'bungalow-tab-bar',
+        icon: 'cube',
+        followers: '0',
+        setTab: function (tabid) {
+            console.log(tabid);
+            var tabcontents = document.querySelectorAll('div.tab-pane');
+            console.log(self);
+            console.log(tabcontents);
+            for (var j = 0; j < tabcontents.length; j++) {
+                var tabcontent = tabcontents[j];
+
+                var tab = document.body.querySelector('bungalow-tab-item[tabid="' + tabcontent.dataset['id'] + '"]');
+                console.log("tab", tab);
+                if (tabcontent.dataset['id'] == tabid) {
+                    tabcontent.style.display = 'block';
+                    
+                    tab.classList.add('bungalow-tab-active');
+                } else {
+                    tabcontent.style.display = 'none';
+                    tab.classList.remove('bungalow-tab-active');
+                }
+            }
+        },
+        ready: function () {    
+           var self = this;
+            window.parent.addEventListener('hashchange', function (event) {
+                var tabid = window.parent.location.hash.substr(1);
+
+                self.setTab(tabid);
+            }); 
+            var self = this;
+            var tabs = document.body.querySelectorAll('bungalow-tab-item');
+
+           console.log(tabs);
+            for (var i = 0; i < tabs.length; i++) {
+                var tab = tabs[i];
+
+                console.log(tab);
+                if (window.location.hash === '' || window.location.hash == null)
+                window.location.hash = 'overview';
+                this.setTab(window.location.hash.replace('#', ''));
+                tab.addEventListener('tabselected', function (event) {
+                    window.parent.postMessage({
+                        'action': 'navigate',
+                        'uri': '#' + event.target.tabid
+                    }, '*');
+                });
+            }
+        }
+    });
+    </script>
+</dom-module>
