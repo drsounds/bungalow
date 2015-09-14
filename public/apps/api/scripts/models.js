@@ -194,6 +194,16 @@ require(['$api/cosmos'], function (Cosmos) {
         this.tracks = new Collection('/music/artists/' + this.id + '/tracks?', 'bungalow:artist:' + this.id + ':tracks', 'track');
     }
 
+    Artist.fromURI = function (uri) {
+        return new Artist({id: uri.split(/\:/g)[2], type: 'artist'});
+    }
+
+    Album.fromURI = function (uri) {
+        return new Album({id: uri.split(/\:/g)[2], type: 'artist'});
+    }
+
+
+
     Artist.prototype = Object.create(Loadable.prototype);
     Artist.prototype.constructor = Loadable;
 
@@ -205,8 +215,28 @@ require(['$api/cosmos'], function (Cosmos) {
 
     exports.Artist = Artist;
 
+    var Track = function (data) {
+        MdL.call(this, data);
+    }
 
-/**
+    Track.prototype = new MdL();
+    Track.prototype.constructor = MdL;
+
+    Track.fromURI = function (uri) {
+        return new Track({id: uri.split(/\:/g)[2], type: 'track'});
+    }
+
+    Track.load = function () {
+        return new Promise(function (resolve, fail) {
+            Cosmos.request('GET', '/music/tracks/' + self.id).then(function (result) {
+                resolve(new Track(result));
+            });
+        });
+    }
+
+    exports.Track = Track;
+
+    /**
      * Represents a playlist
      * @class
      */
@@ -235,6 +265,10 @@ require(['$api/cosmos'], function (Cosmos) {
         return new Playlist({owner: {id: username}, id: id, type: 'playlist'});
     };
 
+    Playlist.fromURI = function (uri) {
+        var parts = uri.split(/\:/g);
+        return new Playlist({'id': parts[4], owner: {id: parts[2]},  type: 'playlist'});
+    }
     Playlist.prototype.load = function () {
         var self = this;
         return new Promise(function (resolve, fail) {
@@ -259,6 +293,11 @@ require(['$api/cosmos'], function (Cosmos) {
     User.prototype.constructor = Loadable;
 
     User.fromId = function (id) {
+        return new User({'id': id, type: 'user'});
+    }
+
+    User.fromURI = function (uri) {
+        var id = uri.split(/\:/g)[2];
         return new User({'id': id, type: 'user'});
     }
 
@@ -375,10 +414,11 @@ require(['$api/cosmos'], function (Cosmos) {
 
     var Hashtag = function (data) {
         Object.assign(this, data);
-        this.posts = new Collection('/social/hashtag/' + this.id + '/posts?', 'bungalow:hashtag:' + this.id + ':posts');
+        this.uri = 'bungalow:hashtag:' + this.id;
+        this.posts = new Collection('/social/hashtag/' + this.id + '/posts?', 'bungalow:hashtag:' + this.id + ':posts', 'post');
     }
 
-    Hashtag.fromHashtag = function (id) {
+    Hashtag.fromTag = function (id) {
         return new Hashtag({id: id, type: 'hashtag'});
     }
 

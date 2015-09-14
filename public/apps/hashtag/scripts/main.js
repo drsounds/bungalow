@@ -26,6 +26,14 @@ require(['$api/models', '$api/views'], function (models, views) {
             $('#header').html("");
             $('#header').append(header.node);
 
+            // Get hashtag
+            var hashtag = models.Hashtag.fromTag(event.data.arguments[0]);
+
+            var feed = new views.Feed(hashtag);
+
+            $('#feed').html("");
+            $('#feed').append(feed.node);
+			$('#hashtag').html(id);
 
         }
 

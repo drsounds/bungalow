@@ -9,7 +9,7 @@ require(['$api/models', '$api/views'], function (models, views) {
 			$('.sp-album').hide();
 			models.Album.fromId(id).load().then(function (album) {
 				$('#album').html("");
-				var albumView = new views.AlbumView(album);
+				var albumView = new views.Album(album);
 				$('#album').append(albumView.node);
 				views.hideThrobber();
 			});

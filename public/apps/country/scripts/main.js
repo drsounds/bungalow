@@ -9,16 +9,12 @@ require(['$api/models', '$api/views'], function (models, views) {
 
 
             models.Country.fromCode(id).then(function (country) {
-
-                var header = new views.Header(country, "User");
+				console.log("Country", country);
+                var header = new views.Header(country, "Country");
                 $('#header').html("");
                 $('#header').append(header.node);
 
-                var playlistCollection = new views.CardCollectionView(user.playlists, {}, 'playlist');
-
-                $('#playlists').append(playlistCollection.node);
-
-                views.hideThrobber();
+              
 
             });
 

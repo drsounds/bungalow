@@ -19,24 +19,26 @@ Social.prototype.request = function (method, url, params) {
             objects.push({
                 uri:'bungalow:post:2AdFgV',
                 user: {
-                    id: 'testuser',
+                    id: 'drsounds',
                     name: 'Alecca Krikelin'
                 },
                 message: '#NowPlaying Music for Yoga',
                 resource: {
-                    uri: 'bungalow:user:drsounds:playlist:6BkqlkVfg1kqoYREmN7yeD'
+                    uri: 'bungalow:user:drsounds:playlist:6BkqlkVfg1kqoYREmN7yeD',
+                    type: 'playlist'
                 }
             });
 
             objects.push({
                 uri:'bungalow:post:2AdFgV',
                 user: {
-                    id: 'testuser',
+                    id: 'drsounds',
                     name: 'Alecca Krikelin'
                 },
                 message: '#NowPlaying music for Yoga',
                 resource: {
-                    uri: 'spotify:album:7i3AkrIAqqHlEdiB2dai7z'
+                    uri: 'spotify:album:7i3AkrIAqqHlEdiB2dai7z',
+                    type: 'album'
                 }
             });
             objects = objects.slice(params.offset);

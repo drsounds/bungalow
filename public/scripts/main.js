@@ -2,6 +2,10 @@ var Music = function () {
 
 };
 
+Music.prototype.play = function (uri) {
+	
+}
+
 var XHR = function () {
 
 }
@@ -198,6 +202,13 @@ var Shell = function () {
 
 		event.dataTransfer.setData('text/uri-list', uris);
 	});
+	
+	$(document).on('dragstart', '*[data-uri]', function (event) {
+		$.event.props.push('dataTransfer');
+		console.log("Begin drag");
+		var uris = "";
+		event.dataTransfer.setData('text/uri-list', uris);
+	});
 	var self = this;
 	music.addEventListener('trackstarted', function () {
 		$('#btnPlay').removeClass('fa-play');
@@ -222,7 +233,7 @@ var Shell = function () {
 		self.context.currentIndex++;
 		if (self.context.currentIndex < self.context.tracks.length) {
 			var track = self.context.tracks[self.context.currentIndex];
-			music.playTrack(track.uri);
+			music.play(track.uri);
 			self.apps[self.currentApp].contentWindow.postMessage({'action': 'trackstarted', 'index': self.context.currentIndex, 'uri': self.context.uri}, '*');
 			console.log(track.duration);
 
@@ -276,7 +287,7 @@ var Shell = function () {
 			console.log("Context", context);
 			//alert(context.uri);
 			event.source.postMessage({'action': 'trackstarted', 'index': context.currentIndex, 'uri': context.uri}, '*');
-			self.playTrack(context.tracks[context.currentIndex]);
+			self.play(context.tracks[context.currentIndex]);
 		}
 		if (event.data.action === 'hashchange') {
 			window.location.hash = event.data.hash;
@@ -426,7 +437,7 @@ Shell.prototype.startCreatePlaylist = function () {
 }
 
 Shell.prototype.playTrack = function (track) {
-	var track = music.playTrack(track.uri);
+	var track = music.play(track.uri);
 	$('#track_position').attr('max', track.duration);
 	console.log("Duration", track.duration);
 	$('#song_title').html(track.name);

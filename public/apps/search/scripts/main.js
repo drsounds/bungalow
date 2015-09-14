@@ -19,7 +19,7 @@ require(['$api/models', '$api/views'], function (models, views) {
 
 			var search = models.Search.search(query, 50, 0);
 			console.log("Query ", query);
-			var contextView = new views.TrackContextView(search, {
+			var contextView = new views.TrackContext(search, {
 				headers: true,
 				fields: ['title', 'artist', 'duration', 'popularity', 'album']
 			});

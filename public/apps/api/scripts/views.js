@@ -14,7 +14,11 @@
 //# sourceMappingURL=underscore-min.map
 //
 
-require(['$api/models'], function (models) {
+String.prototype.capitalizeFirstLetter = function() {
+    return this.charAt(0).toUpperCase() + this.slice(1);
+}
+
+require(['$api/models', '$api/moment'], function (models, moment) {
     /**
      * A context
      * @class
@@ -38,7 +42,7 @@ require(['$api/models'], function (models) {
 
     var collection_contexts = {};
 
-    var activeViews = {};
+    var actives = {};
 
 
     // // console.log(window.location.href.split(/\//g)[4]);
@@ -171,7 +175,7 @@ require(['$api/models'], function (models) {
      * @constructor
      * @class
      */
-    var TrackView = function (track, index, contextUri, options) {
+    var Track = function (track, index, contextUri, options) {
         if ('track' in track) {
             track = Object.assign(track, track.track);
         }
@@ -188,8 +192,10 @@ require(['$api/models'], function (models) {
             var field = options.fields[i];
             if (field === 'image') {
                 var td3 = document.createElement('td');
+                if ('album' in track) {
                 td3.innerHTML = '<img src="' + track.album.images[0].url +'" height="100%">';
                 this.node.appendChild(td3);
+                }
                 td3.style.width = '10px';
             }
             if (field === 'no') {
@@ -213,7 +219,7 @@ require(['$api/models'], function (models) {
             
             if (field === 'duration') {
                 var td3 = document.createElement('td');
-                td3.innerHTML = '<span class="fade" style="float: right">' + toMS(track.duration) + '</span>';
+                td3.innerHTML = '<span class="fade" style="float: right">' + moment.utc(parseInt(track.duration) * 1000).format('mm:ss') + '</span>';
                 this.node.appendChild(td3);
             }
             if (field === 'popularity') {
@@ -226,7 +232,7 @@ require(['$api/models'], function (models) {
             }
             if (field === 'album') {
                 var td4 = document.createElement('td');
-                td4.innerHTML = '<a href="javascript:void()" data-uri="' + track.album.link + '">' + track.album.name + '</a>';
+                td4.innerHTML = '<a href="javascript:void()" data-uri="' + track.album.uri + '">' + track.album.name + '</a>';
                 this.node.appendChild(td4);
             }
             if (field === 'user') {
@@ -246,7 +252,7 @@ require(['$api/models'], function (models) {
 
     }
 
-    exports.TrackView = TrackView;
+    exports.Track = Track;
 
     /**
      * Image view
@@ -282,30 +288,32 @@ require(['$api/models'], function (models) {
         'creted': 'fa-clock'
     };
 
-    var CollectionView = function (collection, options, ViewClass) {
+    var Collection = function (collection, options, Class) {
         this.collection = collection;
         this.options = options;
-        this.node = document.createElement('div');
-        this.tbody = this.node;
+        this.node = document.createElement('table');
+        this.node.style.cellSpacing = '10pt';
         this.loading = false;
         this.type = 'track';
-        this.ViewClass = ViewClass;
+        this.ViewClass = Class;
         this.end = false;
-        this.extend = options.extend || true;
+        this.extend = (options ? options.extend : true) || true;
     }
 
-    CollectionView.prototype.next = function () {
-        var tbody = this.tbody;
+    Collection.prototype.next = function () {
         var fields = this.fields;
+        console.log("next");
         if (this.end) {
             return;
         }
+        /*
         if (!$(this.node).is(':visible')) {
             return;
-        }
-
+        }*/
+        console.log("A");
         var collection = this.collection;
         var self = this;
+        console.log("Next");
         if (!collection)
             return;
         if (!this.loading && !this.end) {
@@ -316,10 +324,14 @@ require(['$api/models'], function (models) {
                     return;
                 }
                 console.log("New page fetched at collection");
-
+                console.log(collection.objects);
                 for (var i = 0; i < collection.objects.length; i++) {
-                    var trackView = new self.ViewClass(collection.objects[i], i, collection.uri, {'fields': fields});
-                    $(tbody).append(trackView.node);
+                    console.log('self.node ' + self.node);
+
+                    var track = new self.ViewClass(collection.objects[i], i, collection.uri, {'fields': fields});
+                    console.log(track);
+                    $(self.node).append(track.node);
+                    console.log('self.node ' + self.node);
                 }
                 self.loading = false;
                 $('div.sp-collection-next[data-uri="' + collection.uri + '"]').removeAttr('data-using');
@@ -337,7 +349,7 @@ require(['$api/models'], function (models) {
         this.BAR_WIDTH = 2
         this.BAR_HEIGHT = 7;
         this.SPACE = 1;
-        this.popularity = resource.popularity || 0.0;
+        this.popularity = resource.popularity || 0.1;
         this.colorDark = 'rgba(255, 255, 255, 0.215)'; // 'rgba(89, 89, 89)';
         this.colorLight = 'rgba(255, 255, 255, .882)'; //'rgba(225, 255, 255)';
         this.node.height = 7;
@@ -370,7 +382,7 @@ require(['$api/models'], function (models) {
 
     exports.PopularityBar = PopularityBar;
 
-    exports.CollectionView = CollectionView;
+    exports.Collection = Collection;
     var header_types = {
         'number': '#',
         'track': 'Track',
@@ -384,8 +396,8 @@ require(['$api/models'], function (models) {
      * @constructor
      * @class
      */
-    var TrackContextView = function (resource, options) {
-        CollectionView.call(this, resource, options, TrackView);
+    var TrackContext = function (resource, options) {
+        Collection.call(this, resource, options, Track);
         this.stickyHeader = (options || options.sticky) || false;
         var table = document.createElement('table');
         this.node = table;
@@ -490,11 +502,11 @@ require(['$api/models'], function (models) {
         }, 100);
     }
 
-    TrackContextView.prototype = Object.create(CollectionView.prototype);
-    TrackContextView.prototype.constructor = CollectionView;
+    TrackContext.prototype = Object.create(Collection.prototype);
+    TrackContext.prototype.constructor = Collection;
 
 
-    TrackContextView.prototype.show = function () {
+    TrackContext.prototype.show = function () {
         $(this.node).show();
 
         /*  try {
@@ -508,12 +520,12 @@ require(['$api/models'], function (models) {
          $(this.background).css({'position': 'absolute', 'left': this.node.style.left, 'top': listTop + 'px', 'height': (window.innerHeight - listTop) + 'px'});
          */
     }
-    TrackContextView.prototype.hide = function () {
+    TrackContext.prototype.hide = function () {
         $(this).hide();
         $(this.background).hide();
     }
 
-    exports.TrackContextView = TrackContextView;
+    exports.TrackContext = TrackContext;
 
     var context = new Context();
     /**
@@ -522,10 +534,10 @@ require(['$api/models'], function (models) {
      * @param  {Integer} position Position of tracks
      * @return {void}
      */
-    TrackContextView.prototype.insertTracks = function (tracks, position) {
+    TrackContext.prototype.insertTracks = function (tracks, position) {
         for (var i = 0; i < tracks.length; i++) {
-            var trackView = new TrackView(tracks, i, this.fields);
-            $(this.tbody).eq(position + i).after(trackView.node);
+            var track = new Track(tracks, i, this.fields);
+            $(this.tbody).eq(position + i).after(track.node);
 
 
         }
@@ -570,7 +582,7 @@ require(['$api/models'], function (models) {
      * @param options
      * @constructor
      */
-    var CardView = function (resource, options, type) {
+    var Card = function (resource, options, type) {
         this.node = document.createElement('div');
         this.node.classList.add('sp-card-holder');
         var card = document.createElement('div');
@@ -597,10 +609,10 @@ require(['$api/models'], function (models) {
 
     }
 
-    var AlbumCardCollectionView = function (resource, options, coverSize) {
-        CollectionView.call(this, resource, options, CardView);
+    var AlbumCardCollection = function (resource, options, coverSize) {
+        Collection.call(this, resource, options, Card);
         this.coverSize = coverSize ? coverSize : 128;
-        this.ViewClass = views.Album;
+        this.Class = Album;
         this.resource = resource;
         this.node = document.createElement('div');
         this.type = 'album';
@@ -615,9 +627,9 @@ require(['$api/models'], function (models) {
 
     };
 
-    var CardCollectionView = function (collection, options, type) {
-        CollectionView.call(this, collection, options, CardView);
-        this.ViewClass = CardView;
+    var CardCollection = function (collection, options, type) {
+        Collection.call(this, collection, options, Card);
+        this.Class = Card;
         this.resource = {};
         this.collection = collection;
         this.node = document.createElement('div');
@@ -633,93 +645,116 @@ require(['$api/models'], function (models) {
         $(this.node).append('<div class="sp-collection-next">');
     };
 
-    CardCollectionView.prototype = Object.create(CollectionView.prototype);
-    CardCollectionView.prototype.constructor = CollectionView;
+    CardCollection.prototype = Object.create(Collection.prototype);
+    CardCollection.prototype.constructor = Collection;
 
-    exports.CardView = CardView;
-    exports.AlbumCardCollectionView = AlbumCardCollectionView;
-    exports.CardCollectionView = CardCollectionView;
+    exports.Card = Card;
+    exports.AlbumCardCollection = AlbumCardCollection;
+    exports.CardCollection = CardCollection;
 
 
-    var AlbumCollectionView = function (resource, options, coverSize, type) {
-        CollectionView.call(this, resource, options, views.Album);
+    var AlbumCollection = function (resource, options, coverSize, type) {
+        Collection.call(this, resource, options, Album);
 
         this.coverSize = coverSize ? coverSize : 128;
-        this.ViewClass = views.Album;
+        this.Class = Album;
         this.resource = resource;
-        this.node = document.createElement('div');
-
+        this.node = document.createElement('table');
         this.type = type || 'album';
+        this.node.style.borderSpacing = '10pt';
+        this.node.style.borderSpacing = '10pt';
         this.collection = resource[this.type + 's'];
         this.node.setAttribute('data-uri', resource.uri + ':' + this.type + 's');
         this.tbody = this.node;
         this.node.classList.add('sp-collection');
         collection_contexts[resource.uri + ':' + this.type + 's'] = this; // Register context here
         this.node.appendChild(createCollectionNext(resource.uri + ':' + this.type + 's'));
+        console.log(this.node);
+        this.next();
         setTimeout(function () {
             sync_contexts();
         }, 100);
 
     };
 
-    var PostCollectionView = function (resource, options, coverSize, type) {
-        CollectionView.call(this, resource, options, Post);
-
+    var Feed = function (resource, options, coverSize) {
+        Collection.call(this, resource, options, Post);
+        this.node = document.createElement('table');
         this.coverSize = coverSize ? coverSize : 128;
-        this.ViewClass = views.Album;
+        this.Class = Post;
         this.resource = resource;
-        this.node = document.createElement('div');
 
-        this.type = type || 'album';
+        this.type = 'post';
         this.collection = resource[this.type + 's'];
+        console.log("Hashtag", this.collection);
+
         this.node.setAttribute('data-uri', resource.uri + ':' + this.type + 's');
-        this.tbody = this.node;
+       
         this.node.classList.add('sp-collection');
-        collection_contexts[resource.uri + ':' + this.type + 's'] = this; // Register context here
-        this.node.appendChild(createCollectionNext(resource.uri + ':' + this.type + 's'));
+        console.log("Hashtag uri", resource.uri);   
+        collection_contexts[this.resource.uri + ':posts'] = this; // Register context here
+        console.log("context", collection_contexts);
+        this.node.appendChild(createCollectionNext(this.resource.uri + ':posts'));
+        this.node.style.cellSpacing = '10pt';
+        console.log("CF");
         setTimeout(function () {
             sync_contexts();
         }, 100);
 
+        this.node.style.cellSpacing = '10pt';
     };
 
+    Feed.prototype = new Collection();
+    Feed.prototype.constructor = Collection;
 
+    exports.Feed = Feed;
+    var views = exports;
     var Post = function (post, options) {
-        this.node = document.createElement('tr');
+        this.node = document.createElement('tbody');
+        this.node.style.paddingTop = 20;
+        var tr1 = document.createElement('tr');
+        var tr2 = document.createElement('tr');
         this.node.classList.add('sp-card');
 
         var td1 = document.createElement('td');
-        td1.classList.add('sp-card-content');
-        td.innerHTML = '<h3>' + post.user.name + '</h3>';
-        td.innerHTML = '<p>' + post.message + '</p>';
-
+        post.user.images = [{ url: 'http://simpleicon.com/wp-content/uploads/user-3.padding'}]
+        var image = new CoverImage(post.user, 64);
+        image.node.style.cssFloat = 'left';
+        image.node.style.marginRight = '13pt';
+        td1.appendChild(image.node);
+        td1.innerHTML += '<div><h3><a href="" data-uri="bungalow:user:' + post.user.id + '">' + post.user.name + '</a></h3>' + '<p>' + post.message.bungalowize() + '</p></div>';
+        console.log("Fag");
         var resourceType = post.resource.type;
-        var ResourceView = views[resourceType.capitalizeFirstLetter()];
+        console.log(resourceType.capitalizeFirstLetter());
+        var ViewResource = views[resourceType.capitalizeFirstLetter()];
+        console.log(views);
 
         var Resource = models[resourceType.capitalizeFirstLetter()];
 
-        var resource = Resource.fromUri(post.resource.uri);
-        
-
-
+        this.resource = Resource.fromURI(post.resource.uri);
+        console.log(ViewResource);
+        var resource = new ViewResource(this.resource);
+        tr1.appendChild(td1);
+        this.node.appendChild(tr1);
+        this.node.appendChild(resource.node);
+        td1.style.paddingBottom = '10pt';
 
     }
 
+    exports.Post = Post;
+
     function createCollectionNext(uri, type) {
-        type = type ? type : 'div';
+        type = type ? type : 'tbody';
         var collectionNext = document.createElement(type);
         collectionNext.setAttribute('data-uri', uri);
         collectionNext.classList.add('sp-collection-next');
         return collectionNext;
     }
 
-    AlbumCollectionView.prototype.next = function () {
-        CollectionView.prototype.next.call(this, arguments);
+    AlbumCollection.prototype.next = function () {
+        Collection.prototype.next.call(this, arguments);
     }
 
-    String.prototype.capitalizeFirstLetter = function() {
-        return this.charAt(0).toUpperCase() + this.slice(1);
-    }
 
     /**
      * Represents an album view
@@ -730,30 +765,33 @@ require(['$api/models'], function (models) {
      */
     var Album = function (album, options) {
         var self = this;
-        var table = document.createElement('table');
-        self.node = table;
+        this.node = document.createElement('tbody');
+        self.node.setAttribute('width', '100%');
+        self.node.classList.add('sp-album');
+        self.node.classList.add('sp-context');
+        var tr = document.createElement('tr');
         if (album instanceof models.Album) {
 
         } else {
             album = new models[album.type.capitalizeFirstLetter()](album);
         }
         album.load('name', 'artists', 'images', 'albums').then(function (album) {
-          
+            
             var tbody = document.createElement('tbody');
-            table.setAttribute('width', '100%');
-            table.classList.add('sp-album');
-            table.classList.add('sp-context');
             var tr1 = document.createElement('tr');
             self.loading = false;
             // // console.log("ALBUM", album);
-            table.setAttribute('data-uri', album.uri);
+            self.node.setAttribute('data-uri', album.uri);
             var td1 = document.createElement('td');
             console.log(album);
             var image = '';
             if ('images' in album && album.images.length > 0) {
                 image = album.images[0].url;
             }
-            td1.innerHTML = '<img class="shadow" data-uri="' + (album.uri) + '" src="' + image + '" width="192px">';
+            td1.innerHTML = '<a data-uri="' + album.uri + '"><img class="shadow" data-uri="' + (album.uri) + '" src="' + image + '" width="192px"></a>';
+			if ('description' in album) {
+				td1.innerHTML += '<p>' + album.description.bungalowize() + '</p>';
+			}
             td1.setAttribute('valign', 'top');
             td1.setAttribute('width', '170px');
             td1.style.paddingRight = '13pt';
@@ -761,44 +799,112 @@ require(['$api/models'], function (models) {
             var td2 = document.createElement('td');
             td2.setAttribute('valign', 'top');
             album.release_date = '1970-01-01';
-            td2.innerHTML = '<small>' + album.release_date + '</small><h3 style="margin-bottom: 10px"><a data-uri="' + album.uri + '">' + album.name + '</a> %s </h3>';
+            td2.innerHTML = '<h2 style="margin-bottom: 10px"><a data-uri="' + album.uri + '">' + album.name + '</a> %s </h2>';
             
             if ('owner' in album) {
-                td2.innerHTML = td2.innerHTML.replace('%2', '   by <a data-uri="bungalow:user:' + album.owner.id + '">' + album.owner.id + '</a>');
+                td2.innerHTML = td2.innerHTML.replace('%s', '   by <a data-uri="bungalow:user:' + album.owner.id + '">' + album.owner.id + '</a>');
 
             } else {
-                td2.innerHTML = td2.innerHTML.replace('%2', '');
+                td2.innerHTML = td2.innerHTML.replace('%s', '');
             }
 
             // // console.log(td2.innerHTML);
             //alert(album.tracks);
            
 
-            var contextView = new TrackContextView(album, {headers: false, 'fields': ['image', 'title', 'duration', 'popularity', 'artist']});
+            var context = new TrackContext(album, {headers: false, 'fields': ['image', 'title', 'duration', 'popularity', 'artist']});
             var tr2 = document.createElement('tr');
             var tdtracks = document.createElement('td');
             tdtracks.setAttribute('colspan', 2);
-            tr1.appendChild(td1);
-            tr1.appendChild(td2);
-            tbody.appendChild(tr1);
-            tbody.appendChild(tr2);
-            table.appendChild(tbody);
+            tr.appendChild(td1);
+            tr.appendChild(td2);
+            self.node.appendChild(tr);
             // // console.log(table);
             self.node.style.marginBottom = '26pt';
             self.node.style.marginTop = '26pt';
             self.node.style.paddingLeft = '26pt';
-            td2.appendChild(contextView.node);
+            td2.appendChild(context.node);
         });
 
 
     }
 
+    /**
+     * Represents an album view
+     * @param {Album} album Album instance
+     * @param {Object} options options
+     * @class
+     * @constructor
+     */
+    var Playlist = function (playlist, options) {
+        var self = this;
+        this.node = document.createElement('tr');
+        
+        if (playlist instanceof models.Playlist) {
+
+        } else {
+            playlist = new models[playlist.type.capitalizeFirstLetter()](playlist);
+        }
+        playlist.load('name', 'artists', 'images', 'tracks').then(function (playlist) {
+            self.node.setAttribute('width', '100%');
+            self.node.classList.add('sp-playlist');
+            self.node.classList.add('sp-context');
+            var tbody = document.createElement('tbody');
+            var tr1 = document.createElement('tr');
+            self.loading = false;
+            // // console.log("ALBUM", playlist);
+            self.node.setAttribute('data-uri', playlist.uri);
+            var td1 = document.createElement('td');
+            console.log(playlist);
+            var image = '';
+            if ('images' in playlist && playlist.images.length > 0) {
+                image = playlist.images[0].url;
+            }
+            td1.innerHTML = '<a data-uri="' + playlist.uri + '"><img class="shadow" data-uri="' + (playlist.uri) + '" src="' + image + '" width="192px"></a>';
+            td1.setAttribute('valign', 'top');
+            td1.setAttribute('width', '170px');
+            td1.style.paddingRight = '13pt';
+            var tr2 = document.createElement('tr');
+            var td2 = document.createElement('td');
+            td2.setAttribute('valign', 'top');
+            playlist.release_date = '1970-01-01';
+            td2.innerHTML = '<small>' + playlist.release_date + '</small><h3 style="margin-bottom: 10px"><a data-uri="' + playlist.uri + '">' + playlist.name + '</a> - by <a data-uri="bungalow:user:' + playlist.owner.id + '">' + playlist.owner.name + '</a> </h3>';
+            
+            if ('owner' in playlist) {
+                td2.innerHTML = td2.innerHTML.replace('%2', '   by <a data-uri="bungalow:user:' + playlist.owner.id + '">' + playlist.owner.id + '</a>');
+
+            } else {
+                td2.innerHTML = td2.innerHTML.replace('%2', '');
+            }
+
+            // // console.log(td2.innerHTML);
+            //alert(playlist.tracks);
+           
+
+            var context = new TrackContext(playlist, {headers: false, 'fields': ['image', 'title', 'duration', 'popularity', 'artist']});
+            var tr2 = document.createElement('tr');
+            var tdtracks = document.createElement('td');
+            tdtracks.setAttribute('colspan', 2);
+            self.node.appendChild(td1);
+            self.node.appendChild(td2);
+            // // console.log(table);
+            self.node.style.marginBottom = '26pt';
+            self.node.style.marginTop = '26pt';
+            self.node.style.paddingLeft = '26pt';
+            td2.appendChild(context.node);
+        });
+
+
+    }
+
+    exports.Playlist = Playlist;
+
     exports.Album = Album;
 
-    exports.AlbumCollectionView = AlbumCollectionView;
+    exports.AlbumCollection = AlbumCollection;
 
-    AlbumCollectionView.prototype = Object.create(CollectionView.prototype);
-    AlbumCollectionView.prototype.constructor = CollectionView;
+    AlbumCollection.prototype = Object.create(Collection.prototype);
+    AlbumCollection.prototype.constructor = Collection;
 
     $(document).on('dragstart', '.sp-track', function (event) {
         $.event.props.push('dataTransfer');
@@ -843,18 +949,18 @@ require(['$api/models'], function (models) {
 
     });
     // from http://stackoverflow.com/questions/487073/check-if-element-is-visible-after-scrolling
-    function isScrolledIntoView(elem)
+    function isScrolledInto(elem)
     {
         var $elem = $(elem);
         var $window = $(window);
 
-        var docViewTop = $window.scrollTop();
-        var docViewBottom = docViewTop + $window.height();
+        var docTop = $window.scrollTop();
+        var docBottom = docTop + $window.height();
 
         var elemTop = $elem.offset().top;
         var elemBottom = elemTop + $elem.height();
 
-        return ((elemBottom <= docViewBottom) && (elemTop >= docViewTop));
+        return ((elemBottom <= docBottom) && (elemTop >= docTop));
     }
 
     $(document).on('drop', '.sp-track', function (event) {
@@ -929,14 +1035,13 @@ require(['$api/models'], function (models) {
             var endofpage = this.getBoundingClientRect().bottom;
             var bottom = ($(window).height() );
 
-
             if (endofpage <= bottom && !this.hasAttribute('data-using')) {
                 $(this).remove();
                 console.log("New " + this.getAttribute('data-uri') + " reached");
-                var collectionView = collection_contexts[this.getAttribute('data-uri')];
-                console.log(collectionView);
+                var collection = collection_contexts[this.getAttribute('data-uri')];
+                console.log(collection);
                 $(this).attr('data-using', 'true');
-                collectionView.next();
+                collection.next();
 
 
             }
@@ -1002,14 +1107,12 @@ require(['$api/models'], function (models) {
 
     exports.SimpleHeader = SimpleHeader;
 
-    var Post = function (resource) {
-        this.node = document.createElement('div');
-
-    }
-
     var CoverImage = function (resource, size) {
         this.node = document.createElement('div');
         this.node.classList.add('sp-cover-image');
+        this.node.style.width = size + 'px';
+        this.node.style.height = size + 'px';
+        console.log("Width", this.node.style.width);
         if ('icon' in resource) {
             var coverdefault = document.createElement('sp-cover-default');
             var iconDiv = document.createElement('span');
@@ -1189,11 +1292,11 @@ require(['$api/models'], function (models) {
     window.addEventListener('message', function (event) {
         var data = event.data;
         if (data.action == 'hashchange') {
-            setView(data.hash);
+            set(data.hash);
         }
     });
 
-    function setView (viewId) {
+    function set (viewId) {
         $('.sp-tabbar-tab').removeClass('sp-tabbar-tab-active');
         $('.sp-tabbar-tab[data-id="' + viewId + '"]').addClass('sp-tabbar-tab-active');
         $('.sp-section').hide();

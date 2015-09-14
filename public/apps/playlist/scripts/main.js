@@ -26,7 +26,7 @@ require(['$api/views', '$api/models'], function (views, models) {
 
 				playlistView.appendChild(header.node);
 
-				var contextView = new views.TrackContextView(playlist, {headers:true, sticky: true, reorder:true, fields: ['title', 'artist' , 'duration', 'album']});
+				var contextView = new views.TrackContext(playlist, {headers:true, sticky: true, reorder:true, fields: [ 'title', 'artist' , 'duration', 'album']});
 				contextView.node.classList.add('sp-playlist');
 				playlistView.appendChild(contextView.node);
 
