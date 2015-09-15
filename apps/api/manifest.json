@@ -1,0 +1,7 @@
+{
+	"BundleType": "Library",
+	"BundleName": {
+		"en": "Album"
+	},
+	"uri": "bungalow:internal:views"
+}

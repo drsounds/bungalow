@@ -42,7 +42,7 @@ AppFinder.prototype.registerApp = function (appDir) {
         console.log(manifestFilePath);
         var manifest = JSON.parse(fs.readFileSync(manifestFilePath));
         appName = manifest.BundleIdentifier;
-        appURL = __dirname + path.sep + 'public/apps/' + appName + '/';
+        appURL = __dirname + path.sep + 'apps/' + appName + '/';
         console.log(manifest);
         this.installedApps.push(manifest);
         /*hostile.remove('127.0.0.1', appName + '.bungalowapp.com', function (err) {
@@ -67,7 +67,7 @@ AppFinder.prototype.registerApp = function (appDir) {
 
 AppFinder.prototype.registerApps = function () {
 
-    var appDir = __dirname + path.sep + 'public' + path.sep + 'apps';
+    var appDir = __dirname + path.sep + 'apps';
     this.registerDirectory(appDir);
     var ownApps = '~' + path.sep + 'Bungalow';
     if (fs.existsSync(ownApps)) {
@@ -101,7 +101,7 @@ AppFinder.prototype.listen = function () {
         console.log("A");
         if (!(appId in external_apps)) {
             var address = app_path.slice(1).join('/');
-            var appDir = __dirname + path.sep + 'public' + path.sep + 'apps' + path.sep + appId + path.sep;
+            var appDir = __dirname + path.sep + path.sep + 'apps' + path.sep + appId + path.sep;
             if (!fs.existsSync(appDir)) {
                 appDir = '~/Bungalow' + path.sep + appId + path.sep;
             }
@@ -115,7 +115,7 @@ AppFinder.prototype.listen = function () {
             if (fs.existsSync(appDir) && fs.existsSync(manifestFilePath)) {
                 var manifest = JSON.parse(fs.readFileSync(manifestFilePath));
                 appName = appId;
-                appURL = __dirname + path.sep + 'public/apps/' + appName + '/';
+                appURL = __dirname + path.sep + 'apps/' + appName + '/';
                 var file = appDir + app_path.slice(1).join('/');
 
                 self.apps[appName] = manifest;
@@ -138,7 +138,7 @@ AppFinder.prototype.listen = function () {
                     })
 
                 });
-                var notfound = fs.readFileSync(__dirname + path.sep + 'public/apps/notfound/index.html');
+                var notfound = fs.readFileSync(__dirname + path.sep + 'apps/notfound/index.html');
                 res.write(notfound);
                 res.end();
                 res.write(body);
@@ -147,7 +147,7 @@ AppFinder.prototype.listen = function () {
         } else {
             request(external_apps[appId] + '/' + app_path.slice(1).join('/'), function (error, response, body) {
                 if (error) {
-                    var notfound = fs.readFileSync(__dirname + path.sep + 'public/apps/notfound/index.html');
+                    var notfound = fs.readFileSync(__dirname + path.sep + 'apps/notfound/index.html');
                     res.write(notfound);
                     res.end();
                     return;

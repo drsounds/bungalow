@@ -1,0 +1,7 @@
+{
+	"BundleName": {
+		"en": "Year"
+	},
+	"BundleIdentifier": "year",
+	"uri": "bungalow:year:([0-9]+)"
+}

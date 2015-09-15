@@ -1,0 +1,7 @@
+{
+    "BundleName": {
+        "en": "Doctrine"
+    },
+    "BundleIdentifier": "doctrine",
+	"uri": "bungalow:doctrine:([a-zA-Z0-9]+)"
+}

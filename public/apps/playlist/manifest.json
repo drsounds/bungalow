@@ -1,7 +1,0 @@
-{
-	"BundleType": "Application",
-	"BundleName": {
-		"en": "Playlist"
-	},
-	"uri": "bungalow:user:(.*):playlist:(.*)"
-}

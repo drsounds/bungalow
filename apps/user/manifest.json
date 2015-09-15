@@ -1,0 +1,7 @@
+{
+  "BundleName": "User",
+  "BundleType": "Application",
+  "UserInstallable": false,
+  "BundleIdentifier": "user",
+  "uri": "bungalow:user:(.*)"
+}

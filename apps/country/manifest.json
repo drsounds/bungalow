@@ -1,0 +1,7 @@
+{
+	"BundleIdentifier": "country",
+	"AppName": {
+		"en": "Country"
+	},
+	"uri": "bungalow:country:(.*)"
+}

@@ -1,0 +1,8 @@
+{
+  "BundleType": "Application",
+  "BundleName": {
+    "en": "Album"
+  },
+  "BundleIdentifier": "hashtag",
+  "uri": "bungalow:hashtag:([a-zA-Z0-9]+)"
+}

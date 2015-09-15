@@ -1,0 +1,8 @@
+{
+	"BundleType": "Application",
+	"BundleName": {
+		"en": "Album"
+	},
+	"BundleIdentifier": "album",
+	"uri": "bungalow:album:(.*)"
+}

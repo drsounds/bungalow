@@ -1,0 +1,8 @@
+{
+	"BundleType": "Application",
+	"BundleName": {
+		"en": "Album"
+	},
+	"uri": "bungalow:artist:([a-zA-Z0-9]+)",
+	"BundleIdentifier": "artist"
+}
