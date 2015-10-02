@@ -1,0 +1,34 @@
+{
+    "name": "@bungalow/ui",
+    "version": "1.0.0",
+    "description": "",
+    "main": "ui.js",
+    "dependencies": {
+        "react": "*",
+        "@bungalow/cosmos": "*",
+        "@bungalow/models": "*",
+        "babel-jest": "*",
+        "jest": "*",
+        "jest-cli": "*",
+        "react-canvas": "*",
+        "babel-jest": "*"
+    },
+    "scripts": {
+        "test": "jest"
+    },
+    "jest": {
+        "scriptPreprocessor": "./node_modules/babel-jest",
+        "unmockedModulePathPatterns": ["./node_modules/react"]
+    },
+    "devDependencies": {
+        "gulp": "*",
+        "babelify": "*",
+        "vinyl-source-stream": "*",
+        "browserify": "*"
+    },
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "author": "",
+    "license": "ISC"
+}

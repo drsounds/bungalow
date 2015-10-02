@@ -7,7 +7,7 @@ window.addEventListener('message', function (event) {
         views.showThrobber();
         console.log(event.data.arguments);
         var id = event.data.arguments[0];
-
+        alert(id);
         $('.sp-artist').hide(); 
         $('#playlists').html("");
 

@@ -130,17 +130,11 @@ var Shell = function () {
 			var uri = node.attr('data-load-uri');
 			var appId = self.getMatchingApp(uri);
 			setTimeout(function () {
-				models.App.resolveUri(uri).then(function (resolve) {
-					if (resolve) {
-						resolve(node.attr('data-load-uri')).then(function (resource) {
-							console.log("RESOURCE", resource);
-							node.html('<span class="fa fa-' + resource.icon + '"></span>' + resource.name);
-							node.attr('data-uri', node.attr('data-load-uri'));
-						}); 
-					} else {
-						$(node).html('<span class="fa fa-globe"></span>' + node.attr('data-load-uri'));
-					}
-				});
+				models.App.resolveUri(uri).then(function (resource) {
+					console.log("RESOURCE", resource);
+					node.html('<span class="fa fa-' + resource.icon + '"></span>' + resource.name);
+					node.attr('data-uri', node.attr('data-load-uri'));
+				}); 
 			}, 1000);
 		};
 	}(jQuery));
@@ -688,7 +682,8 @@ Shell.prototype.createApp = function (appId, callback) {
 	appFrame.setAttribute('nwdisable', 'nwdisable');
 	appFrame.setAttribute('frameborder', '0');
 	appFrame.setAttribute('width', "100%");
-	appFrame.style = 'width:100%; height: 100%';
+	appFrame.style.width = '100%';
+	appFrame.style.height = '100%';
 	$('#viewstack').append(appFrame);
 	$(appFrame).css({'height': $('#viewstack').height()});
 	self.apps[appId] = appFrame;

@@ -4,8 +4,7 @@
 var models = require('@bungalow/models');
 exports2.resolveUri = function (uri) {
     return new Promise(function (resolve, fail) {
-        var parts = uri.split(/\:/g);
-        var id = parts[2];
+        var id = uri.parameters[0];
 
         resolve({
             id: id,
@@ -464,10 +463,10 @@ App.resolveUri = function (url) {
     var promise = new Promise(function (resolve, fail) {
         var uri = new Uri(url);
         var xmlHttp = new XMLHttpRequest();
-        xmlHttp.open('GET', '/apps/' + uri.app + '/bundle.js', false);
+        xmlHttp.open('GET', '/apps/' + uri.app + '/resolver.js', false);
         xmlHttp.send(null);
         if (xmlHttp.readyState == 4 && xmlHttp.status == 200) {
-            var code = "(function () { var module = {}; " + xmlHttp.responseText + "; return module;  })();";
+            var code = "(function () { var exports2 = {}; " + xmlHttp.responseText + "; return exports2;  })();";
             var app = eval(code);
             app.resolveUri(uri).then(resolve);
         }
