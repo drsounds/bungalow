@@ -1,307 +1,4 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-// Copyright Joyent, Inc. and other Node contributors.
-//
-// Permission is hereby granted, free of charge, to any person obtaining a
-// copy of this software and associated documentation files (the
-// "Software"), to deal in the Software without restriction, including
-// without limitation the rights to use, copy, modify, merge, publish,
-// distribute, sublicense, and/or sell copies of the Software, and to permit
-// persons to whom the Software is furnished to do so, subject to the
-// following conditions:
-//
-// The above copyright notice and this permission notice shall be included
-// in all copies or substantial portions of the Software.
-//
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
-// OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN
-// NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
-// DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
-// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
-// USE OR OTHER DEALINGS IN THE SOFTWARE.
-
-function EventEmitter() {
-  this._events = this._events || {};
-  this._maxListeners = this._maxListeners || undefined;
-}
-module.exports = EventEmitter;
-
-// Backwards-compat with node 0.10.x
-EventEmitter.EventEmitter = EventEmitter;
-
-EventEmitter.prototype._events = undefined;
-EventEmitter.prototype._maxListeners = undefined;
-
-// By default EventEmitters will print a warning if more than 10 listeners are
-// added to it. This is a useful default which helps finding memory leaks.
-EventEmitter.defaultMaxListeners = 10;
-
-// Obviously not all Emitters should be limited to 10. This function allows
-// that to be increased. Set to zero for unlimited.
-EventEmitter.prototype.setMaxListeners = function(n) {
-  if (!isNumber(n) || n < 0 || isNaN(n))
-    throw TypeError('n must be a positive number');
-  this._maxListeners = n;
-  return this;
-};
-
-EventEmitter.prototype.emit = function(type) {
-  var er, handler, len, args, i, listeners;
-
-  if (!this._events)
-    this._events = {};
-
-  // If there is no 'error' event listener then throw.
-  if (type === 'error') {
-    if (!this._events.error ||
-        (isObject(this._events.error) && !this._events.error.length)) {
-      er = arguments[1];
-      if (er instanceof Error) {
-        throw er; // Unhandled 'error' event
-      }
-      throw TypeError('Uncaught, unspecified "error" event.');
-    }
-  }
-
-  handler = this._events[type];
-
-  if (isUndefined(handler))
-    return false;
-
-  if (isFunction(handler)) {
-    switch (arguments.length) {
-      // fast cases
-      case 1:
-        handler.call(this);
-        break;
-      case 2:
-        handler.call(this, arguments[1]);
-        break;
-      case 3:
-        handler.call(this, arguments[1], arguments[2]);
-        break;
-      // slower
-      default:
-        len = arguments.length;
-        args = new Array(len - 1);
-        for (i = 1; i < len; i++)
-          args[i - 1] = arguments[i];
-        handler.apply(this, args);
-    }
-  } else if (isObject(handler)) {
-    len = arguments.length;
-    args = new Array(len - 1);
-    for (i = 1; i < len; i++)
-      args[i - 1] = arguments[i];
-
-    listeners = handler.slice();
-    len = listeners.length;
-    for (i = 0; i < len; i++)
-      listeners[i].apply(this, args);
-  }
-
-  return true;
-};
-
-EventEmitter.prototype.addListener = function(type, listener) {
-  var m;
-
-  if (!isFunction(listener))
-    throw TypeError('listener must be a function');
-
-  if (!this._events)
-    this._events = {};
-
-  // To avoid recursion in the case that type === "newListener"! Before
-  // adding it to the listeners, first emit "newListener".
-  if (this._events.newListener)
-    this.emit('newListener', type,
-              isFunction(listener.listener) ?
-              listener.listener : listener);
-
-  if (!this._events[type])
-    // Optimize the case of one listener. Don't need the extra array object.
-    this._events[type] = listener;
-  else if (isObject(this._events[type]))
-    // If we've already got an array, just append.
-    this._events[type].push(listener);
-  else
-    // Adding the second element, need to change to array.
-    this._events[type] = [this._events[type], listener];
-
-  // Check for listener leak
-  if (isObject(this._events[type]) && !this._events[type].warned) {
-    var m;
-    if (!isUndefined(this._maxListeners)) {
-      m = this._maxListeners;
-    } else {
-      m = EventEmitter.defaultMaxListeners;
-    }
-
-    if (m && m > 0 && this._events[type].length > m) {
-      this._events[type].warned = true;
-      console.error('(node) warning: possible EventEmitter memory ' +
-                    'leak detected. %d listeners added. ' +
-                    'Use emitter.setMaxListeners() to increase limit.',
-                    this._events[type].length);
-      if (typeof console.trace === 'function') {
-        // not supported in IE 10
-        console.trace();
-      }
-    }
-  }
-
-  return this;
-};
-
-EventEmitter.prototype.on = EventEmitter.prototype.addListener;
-
-EventEmitter.prototype.once = function(type, listener) {
-  if (!isFunction(listener))
-    throw TypeError('listener must be a function');
-
-  var fired = false;
-
-  function g() {
-    this.removeListener(type, g);
-
-    if (!fired) {
-      fired = true;
-      listener.apply(this, arguments);
-    }
-  }
-
-  g.listener = listener;
-  this.on(type, g);
-
-  return this;
-};
-
-// emits a 'removeListener' event iff the listener was removed
-EventEmitter.prototype.removeListener = function(type, listener) {
-  var list, position, length, i;
-
-  if (!isFunction(listener))
-    throw TypeError('listener must be a function');
-
-  if (!this._events || !this._events[type])
-    return this;
-
-  list = this._events[type];
-  length = list.length;
-  position = -1;
-
-  if (list === listener ||
-      (isFunction(list.listener) && list.listener === listener)) {
-    delete this._events[type];
-    if (this._events.removeListener)
-      this.emit('removeListener', type, listener);
-
-  } else if (isObject(list)) {
-    for (i = length; i-- > 0;) {
-      if (list[i] === listener ||
-          (list[i].listener && list[i].listener === listener)) {
-        position = i;
-        break;
-      }
-    }
-
-    if (position < 0)
-      return this;
-
-    if (list.length === 1) {
-      list.length = 0;
-      delete this._events[type];
-    } else {
-      list.splice(position, 1);
-    }
-
-    if (this._events.removeListener)
-      this.emit('removeListener', type, listener);
-  }
-
-  return this;
-};
-
-EventEmitter.prototype.removeAllListeners = function(type) {
-  var key, listeners;
-
-  if (!this._events)
-    return this;
-
-  // not listening for removeListener, no need to emit
-  if (!this._events.removeListener) {
-    if (arguments.length === 0)
-      this._events = {};
-    else if (this._events[type])
-      delete this._events[type];
-    return this;
-  }
-
-  // emit removeListener for all listeners on all events
-  if (arguments.length === 0) {
-    for (key in this._events) {
-      if (key === 'removeListener') continue;
-      this.removeAllListeners(key);
-    }
-    this.removeAllListeners('removeListener');
-    this._events = {};
-    return this;
-  }
-
-  listeners = this._events[type];
-
-  if (isFunction(listeners)) {
-    this.removeListener(type, listeners);
-  } else {
-    // LIFO order
-    while (listeners.length)
-      this.removeListener(type, listeners[listeners.length - 1]);
-  }
-  delete this._events[type];
-
-  return this;
-};
-
-EventEmitter.prototype.listeners = function(type) {
-  var ret;
-  if (!this._events || !this._events[type])
-    ret = [];
-  else if (isFunction(this._events[type]))
-    ret = [this._events[type]];
-  else
-    ret = this._events[type].slice();
-  return ret;
-};
-
-EventEmitter.listenerCount = function(emitter, type) {
-  var ret;
-  if (!emitter._events || !emitter._events[type])
-    ret = 0;
-  else if (isFunction(emitter._events[type]))
-    ret = 1;
-  else
-    ret = emitter._events[type].length;
-  return ret;
-};
-
-function isFunction(arg) {
-  return typeof arg === 'function';
-}
-
-function isNumber(arg) {
-  return typeof arg === 'number';
-}
-
-function isObject(arg) {
-  return typeof arg === 'object' && arg !== null;
-}
-
-function isUndefined(arg) {
-  return arg === void 0;
-}
-
-},{}],2:[function(require,module,exports){
 // shim for using process in browser
 
 var process = module.exports = {};
@@ -394,4846 +91,7 @@ process.chdir = function (dir) {
 };
 process.umask = function() { return 0; };
 
-},{}],3:[function(require,module,exports){
-'use strict';
-
-var assign = require('react/lib/Object.assign');
-
-// Note that this class intentionally does not use PooledClass.
-// DrawingUtils manages <canvas> pooling for more fine-grained control.
-
-function Canvas (width, height, scale) {
-  // Re-purposing an existing canvas element.
-  if (!this._canvas) {
-    this._canvas = document.createElement('canvas');
-  }
-
-  this.width = width;
-  this.height = height;
-  this.scale = scale || window.devicePixelRatio;
-
-  this._canvas.width = this.width * this.scale;
-  this._canvas.height = this.height * this.scale;
-  this._canvas.getContext('2d').scale(this.scale, this.scale);
-}
-
-assign(Canvas.prototype, {
-
-  getRawCanvas: function () {
-    return this._canvas;
-  },
-
-  getContext: function () {
-    return this._canvas.getContext('2d');
-  }
-
-});
-
-// PooledClass:
-
-// Be fairly conserative - we are potentially drawing a large number of medium
-// to large size images.
-Canvas.poolSize = 30;
-
-module.exports = Canvas;
-
-},{"react/lib/Object.assign":56}],4:[function(require,module,exports){
-'use strict';
-
-var FontFace = require('./FontFace');
-var clamp = require('./clamp');
-var measureText = require('./measureText');
-
-/**
- * Draw an image into a <canvas>. This operation requires that the image
- * already be loaded.
- *
- * @param {CanvasContext} ctx
- * @param {Image} image The source image (from ImageCache.get())
- * @param {Number} x The x-coordinate to begin drawing
- * @param {Number} y The y-coordinate to begin drawing
- * @param {Number} width The desired width
- * @param {Number} height The desired height
- * @param {Object} options Available options are:
- *   {Number} originalWidth
- *   {Number} originalHeight
- *   {Object} focusPoint {x,y}
- *   {String} backgroundColor
- */
-function drawImage (ctx, image, x, y, width, height, options) {
-  options = options || {};
-
-  if (options.backgroundColor) {
-    ctx.save();
-    ctx.fillStyle = options.backgroundColor;
-    ctx.fillRect(x, y, width, height);
-    ctx.restore();
-  }
-
-  var dx = 0;
-  var dy = 0;
-  var dw = 0;
-  var dh = 0;
-  var sx = 0;
-  var sy = 0;
-  var sw = 0;
-  var sh = 0;
-  var scale;
-  var scaledSize;
-  var actualSize;
-  var focusPoint = options.focusPoint;
-
-  actualSize = {
-    width: image.getWidth(),
-    height: image.getHeight()
-  };
-
-  scale = Math.max(
-    width / actualSize.width,
-    height / actualSize.height
-  ) || 1;
-  scale = parseFloat(scale.toFixed(4), 10);
-
-  scaledSize = {
-    width: actualSize.width * scale,
-    height: actualSize.height * scale
-  };
-
-  if (focusPoint) {
-    // Since image hints are relative to image "original" dimensions (original != actual),
-    // use the original size for focal point cropping.
-    if (options.originalHeight) {
-      focusPoint.x *= (actualSize.height / options.originalHeight);
-      focusPoint.y *= (actualSize.height / options.originalHeight);
-    }
-  } else {
-    // Default focal point to [0.5, 0.5]
-    focusPoint = {
-      x: actualSize.width * 0.5,
-      y: actualSize.height * 0.5
-    };
-  }
-
-  // Clip the image to rectangle (sx, sy, sw, sh).
-  sx = Math.round(clamp(width * 0.5 - focusPoint.x * scale, width - scaledSize.width, 0)) * (-1 / scale);
-  sy = Math.round(clamp(height * 0.5 - focusPoint.y * scale, height - scaledSize.height, 0)) * (-1 / scale);
-  sw = Math.round(actualSize.width - (sx * 2));
-  sh = Math.round(actualSize.height - (sy * 2));
-
-  // Scale the image to dimensions (dw, dh).
-  dw = Math.round(width);
-  dh = Math.round(height);
-
-  // Draw the image on the canvas at coordinates (dx, dy).
-  dx = Math.round(x);
-  dy = Math.round(y);
-
-  ctx.drawImage(image.getRawImage(), sx, sy, sw, sh, dx, dy, dw, dh);
-}
-
-/**
- * @param {CanvasContext} ctx
- * @param {String} text The text string to render
- * @param {Number} x The x-coordinate to begin drawing
- * @param {Number} y The y-coordinate to begin drawing
- * @param {Number} width The maximum allowed width
- * @param {Number} height The maximum allowed height
- * @param {FontFace} fontFace The FontFace to to use
- * @param {Object} options Available options are:
- *   {Number} fontSize
- *   {Number} lineHeight
- *   {String} textAlign
- *   {String} color
- *   {String} backgroundColor
- */
-function drawText (ctx, text, x, y, width, height, fontFace, options) {
-  var textMetrics;
-  var currX = x;
-  var currY = y;
-  var currText;
-  var options = options || {};
-
-  options.fontSize = options.fontSize || 16;
-  options.lineHeight = options.lineHeight || 18;
-  options.textAlign = options.textAlign || 'left';
-  options.backgroundColor = options.backgroundColor || 'transparent';
-  options.color = options.color || '#000';
-
-  textMetrics = measureText(
-    text,
-    width,
-    fontFace,
-    options.fontSize,
-    options.lineHeight
-  );
-
-  ctx.save();
-
-  // Draw the background
-  if (options.backgroundColor !== 'transparent') {
-    ctx.fillStyle = options.backgroundColor;
-    ctx.fillRect(0, 0, width, height);
-  }
-
-  ctx.fillStyle = options.color;
-  ctx.font = fontFace.attributes.style + ' normal ' + fontFace.attributes.weight + ' ' + options.fontSize + 'pt ' + fontFace.family;
-
-  textMetrics.lines.forEach(function (line, index) {
-    currText = line.text;
-    currY = (index === 0) ? y + options.fontSize :
-      (y + options.fontSize + options.lineHeight * index);
-
-    // Account for text-align: left|right|center
-    switch (options.textAlign) {
-      case 'center':
-        currX = x + (width / 2) - (line.width / 2);
-        break;
-      case 'right':
-        currX = x + width - line.width;
-        break;
-      default:
-        currX = x;
-    }
-
-    if ((index < textMetrics.lines.length - 1) &&
-      ((options.fontSize + options.lineHeight * (index + 1)) > height)) {
-      currText = currText.replace(/\,?\s?\w+$/, '…');
-    }
-
-    if (currY <= (height + y)) {
-      ctx.fillText(currText, currX, currY);
-    }
-  });
-
-  ctx.restore();
-}
-
-/**
- * Draw a linear gradient
- *
- * @param {CanvasContext} ctx
- * @param {Number} x1 gradient start-x coordinate
- * @param {Number} y1 gradient start-y coordinate
- * @param {Number} x2 gradient end-x coordinate
- * @param {Number} y2 gradient end-y coordinate
- * @param {Array} colorStops Array of {(String)color, (Number)position} values
- * @param {Number} x x-coordinate to begin fill
- * @param {Number} y y-coordinate to begin fill
- * @param {Number} width how wide to fill
- * @param {Number} height how tall to fill
- */
-function drawGradient(ctx, x1, y1, x2, y2, colorStops, x, y, width, height) {
-  var grad;
-
-  ctx.save();
-  grad = ctx.createLinearGradient(x1, y1, x2, y2);
-
-  colorStops.forEach(function (colorStop) {
-    grad.addColorStop(colorStop.position, colorStop.color);
-  });
-
-  ctx.fillStyle = grad;
-  ctx.fillRect(x, y, width, height);
-  ctx.restore();
-}
-
-module.exports = {
-  drawImage: drawImage,
-  drawText: drawText,
-  drawGradient: drawGradient,
-};
-
-
-},{"./FontFace":9,"./clamp":23,"./measureText":27}],5:[function(require,module,exports){
-'use strict';
-
-// Adapted from ReactART:
-// https://github.com/reactjs/react-art
-
-var React = require('react');
-var ReactMultiChild = require('react/lib/ReactMultiChild');
-var assign = require('react/lib/Object.assign');
-var emptyObject = require('react/lib/emptyObject');
-
-var ContainerMixin = assign({}, ReactMultiChild.Mixin, {
-
-  /**
-   * Moves a child component to the supplied index.
-   *
-   * @param {ReactComponent} child Component to move.
-   * @param {number} toIndex Destination index of the element.
-   * @protected
-   */
-  moveChild: function(child, toIndex) {
-    var childNode = child._mountImage;
-    var mostRecentlyPlacedChild = this._mostRecentlyPlacedChild;
-    if (mostRecentlyPlacedChild == null) {
-      // I'm supposed to be first.
-      if (childNode.previousSibling) {
-        if (this.node.firstChild) {
-          childNode.injectBefore(this.node.firstChild);
-        } else {
-          childNode.inject(this.node);
-        }
-      }
-    } else {
-      // I'm supposed to be after the previous one.
-      if (mostRecentlyPlacedChild.nextSibling !== childNode) {
-        if (mostRecentlyPlacedChild.nextSibling) {
-          childNode.injectBefore(mostRecentlyPlacedChild.nextSibling);
-        } else {
-          childNode.inject(this.node);
-        }
-      }
-    }
-    this._mostRecentlyPlacedChild = childNode;
-  },
-
-  /**
-   * Creates a child component.
-   *
-   * @param {ReactComponent} child Component to create.
-   * @param {object} childNode ART node to insert.
-   * @protected
-   */
-  createChild: function(child, childNode) {
-    child._mountImage = childNode;
-    var mostRecentlyPlacedChild = this._mostRecentlyPlacedChild;
-    if (mostRecentlyPlacedChild == null) {
-      // I'm supposed to be first.
-      if (this.node.firstChild) {
-        childNode.injectBefore(this.node.firstChild);
-      } else {
-        childNode.inject(this.node);
-      }
-    } else {
-      // I'm supposed to be after the previous one.
-      if (mostRecentlyPlacedChild.nextSibling) {
-        childNode.injectBefore(mostRecentlyPlacedChild.nextSibling);
-      } else {
-        childNode.inject(this.node);
-      }
-    }
-    this._mostRecentlyPlacedChild = childNode;
-  },
-
-  /**
-   * Removes a child component.
-   *
-   * @param {ReactComponent} child Child to remove.
-   * @protected
-   */
-  removeChild: function(child) {
-    child._mountImage.remove();
-    child._mountImage = null;
-    this.node.invalidateLayout();
-  },
-
-  updateChildrenAtRoot: function(nextChildren, transaction) {
-    this.updateChildren(nextChildren, transaction, emptyObject);
-  },
-
-  mountAndInjectChildrenAtRoot: function(children, transaction) {
-    this.mountAndInjectChildren(children, transaction, emptyObject);
-  },
-
-  /**
-   * Override to bypass batch updating because it is not necessary.
-   *
-   * @param {?object} nextChildren.
-   * @param {ReactReconcileTransaction} transaction
-   * @internal
-   * @override {ReactMultiChild.Mixin.updateChildren}
-   */
-  updateChildren: function(nextChildren, transaction, context) {
-    this._mostRecentlyPlacedChild = null;
-    this._updateChildren(nextChildren, transaction, context);
-  },
-
-  // Shorthands
-
-  mountAndInjectChildren: function(children, transaction, context) {
-    var mountedImages = this.mountChildren(
-      children,
-      transaction,
-      context
-    );
-
-    // Each mount image corresponds to one of the flattened children
-    var i = 0;
-    for (var key in this._renderedChildren) {
-      if (this._renderedChildren.hasOwnProperty(key)) {
-        var child = this._renderedChildren[key];
-        child._mountImage = mountedImages[i];
-        mountedImages[i].inject(this.node);
-        i++;
-      }
-    }
-  }
-
-});
-
-module.exports = ContainerMixin;
-
-},{"react":185,"react/lib/Object.assign":56,"react/lib/ReactMultiChild":101,"react/lib/emptyObject":145}],6:[function(require,module,exports){
-'use strict';
-
-var ImageCache = require('./ImageCache');
-var FontUtils = require('./FontUtils');
-var FontFace = require('./FontFace');
-var FrameUtils = require('./FrameUtils');
-var CanvasUtils = require('./CanvasUtils');
-var Canvas = require('./Canvas');
-
-// Global backing store <canvas> cache
-var _backingStores = [];
-
-/**
- * Maintain a cache of backing <canvas> for RenderLayer's which are accessible
- * through the RenderLayer's `backingStoreId` property.
- *
- * @param {String} id The unique `backingStoreId` for a RenderLayer
- * @return {HTMLCanvasElement}
- */
-function getBackingStore (id) {
-  for (var i=0, len=_backingStores.length; i < len; i++) {
-    if (_backingStores[i].id === id) {
-      return _backingStores[i].canvas;
-    }
-  }
-  return null;
-}
-
-/**
- * Purge a layer's backing store from the cache.
- *
- * @param {String} id The layer's backingStoreId
- */
-function invalidateBackingStore (id) {
-  for (var i=0, len=_backingStores.length; i < len; i++) {
-    if (_backingStores[i].id === id) {
-      _backingStores.splice(i, 1);
-      break;
-    }
-  }
-}
-
-/**
- * Purge the entire backing store cache.
- */
-function invalidateAllBackingStores () {
-  _backingStores = [];
-}
-
-/**
- * Find the nearest backing store ancestor for a given layer.
- *
- * @param {RenderLayer} layer
- */
-function getBackingStoreAncestor (layer) {
-  while (layer) {
-    if (layer.backingStoreId) {
-      return layer;
-    }
-    layer = layer.parentLayer;
-  }
-  return null;
-}
-
-/**
- * Check if a layer is using a given image URL.
- *
- * @param {RenderLayer} layer
- * @param {String} imageUrl
- * @return {Boolean}
- */
-function layerContainsImage (layer, imageUrl) {
-  // Check the layer itself.
-  if (layer.type === 'image' && layer.imageUrl === imageUrl) {
-    return layer;
-  }
-
-  // Check the layer's children.
-  if (layer.children) {
-    for (var i=0, len=layer.children.length; i < len; i++) {
-      if (layerContainsImage(layer.children[i], imageUrl)) {
-        return layer.children[i];
-      }
-    }
-  }
-
-  return false;
-}
-
-/**
- * Check if a layer is using a given FontFace.
- *
- * @param {RenderLayer} layer
- * @param {FontFace} fontFace
- * @return {Boolean}
- */
-function layerContainsFontFace (layer, fontFace) {
-  // Check the layer itself.
-  if (layer.type === 'text' && layer.fontFace && layer.fontFace.id === fontFace.id) {
-    return layer;
-  }
-
-  // Check the layer's children.
-  if (layer.children) {
-    for (var i=0, len=layer.children.length; i < len; i++) {
-      if (layerContainsFontFace(layer.children[i], fontFace)) {
-        return layer.children[i];
-      }
-    }
-  }
-
-  return false;
-}
-
-/**
- * Invalidates the backing stores for layers which contain an image layer
- * associated with the given imageUrl.
- *
- * @param {String} imageUrl
- */
-function handleImageLoad (imageUrl) {
-  _backingStores.forEach(function (backingStore) {
-    if (layerContainsImage(backingStore.layer, imageUrl)) {
-      invalidateBackingStore(backingStore.id);
-    }
-  });
-}
-
-/**
- * Invalidates the backing stores for layers which contain a text layer
- * associated with the given font face.
- *
- * @param {FontFace} fontFace
- */
-function handleFontLoad (fontFace) {
-  _backingStores.forEach(function (backingStore) {
-    if (layerContainsFontFace(backingStore.layer, fontFace)) {
-      invalidateBackingStore(backingStore.id);
-    }
-  });
-}
-
-/**
- * Draw a RenderLayer instance to a <canvas> context.
- *
- * @param {CanvasRenderingContext2d} ctx
- * @param {RenderLayer} layer
- */
-function drawRenderLayer (ctx, layer) {
-  var customDrawFunc;
-
-  // Performance: avoid drawing hidden layers.
-  if (typeof layer.alpha === 'number' && layer.alpha <= 0) {
-    return;
-  }
-
-  switch (layer.type) {
-    case 'image':
-      customDrawFunc = drawImageRenderLayer;
-      break;
-
-    case 'text':
-      customDrawFunc = drawTextRenderLayer;
-      break;
-
-    case 'gradient':
-      customDrawFunc = drawGradientRenderLayer;
-      break;
-  }
-
-  // Establish drawing context for certain properties:
-  // - alpha
-  // - translate
-  var saveContext = (layer.alpha !== null && layer.alpha < 1) ||
-                    (layer.translateX || layer.translateY);
-
-  if (saveContext) {
-    ctx.save();
-
-    // Alpha:
-    if (layer.alpha !== null && layer.alpha < 1) {
-      ctx.globalAlpha = layer.alpha;
-    }
-
-    // Translation:
-    if (layer.translateX || layer.translateY) {
-      ctx.translate(layer.translateX || 0, layer.translateY || 0);
-    }
-  }
-
-  // If the layer is bitmap-cacheable, draw in a pooled off-screen canvas.
-  // We disable backing stores on pad since we flip there.
-  if (layer.backingStoreId) {
-    drawCacheableRenderLayer(ctx, layer, customDrawFunc);
-  } else {
-    // Draw default properties, such as background color.
-    ctx.save();
-    drawBaseRenderLayer(ctx, layer);
-
-    // Draw custom properties if needed.
-    customDrawFunc && customDrawFunc(ctx, layer);
-    ctx.restore();
-
-    // Draw child layers, sorted by their z-index.
-    if (layer.children) {
-      layer.children.slice().sort(sortByZIndexAscending).forEach(function (childLayer) {
-        drawRenderLayer(ctx, childLayer);
-      });
-    }
-  }
-
-  // Pop the context state if we established a new drawing context.
-  if (saveContext) {
-    ctx.restore();
-  }
-}
-
-/**
- * Draw base layer properties into a rendering context.
- * NOTE: The caller is responsible for calling save() and restore() as needed.
- *
- * @param {CanvasRenderingContext2d} ctx
- * @param {RenderLayer} layer
- */
-function drawBaseRenderLayer (ctx, layer) {
-  var frame = layer.frame;
-
-  // Border radius:
-  if (layer.borderRadius) {
-    ctx.beginPath();
-    ctx.moveTo(frame.x + layer.borderRadius, frame.y);
-    ctx.arcTo(frame.x + frame.width, frame.y, frame.x + frame.width, frame.y + frame.height, layer.borderRadius);
-    ctx.arcTo(frame.x + frame.width, frame.y + frame.height, frame.x, frame.y + frame.height, layer.borderRadius);
-    ctx.arcTo(frame.x, frame.y + frame.height, frame.x, frame.y, layer.borderRadius);
-    ctx.arcTo(frame.x, frame.y, frame.x + frame.width, frame.y, layer.borderRadius);
-    ctx.closePath();
-
-    // Create a clipping path when drawing an image or using border radius.
-    if (layer.type === 'image') {
-      ctx.clip();
-    }
-
-    // Border with border radius:
-    if (layer.borderColor) {
-      ctx.lineWidth = layer.borderWidth || 1;
-      ctx.strokeStyle = layer.borderColor;
-      ctx.stroke();
-    }
-  }
-
-  // Border color (no border radius):
-  if (layer.borderColor && !layer.borderRadius) {
-    ctx.lineWidth = layer.borderWidth || 1;
-    ctx.strokeStyle = layer.borderColor;
-    ctx.strokeRect(frame.x, frame.y, frame.width, frame.height);
-  }
-
-  // Background color:
-  if (layer.backgroundColor) {
-    ctx.fillStyle = layer.backgroundColor;
-    if (layer.borderRadius) {
-      // Fill the current path when there is a borderRadius set.
-      ctx.fill();
-    } else {
-      ctx.fillRect(frame.x, frame.y, frame.width, frame.height);
-    }
-  }
-}
-
-/**
- * Draw a bitmap-cacheable layer into a pooled <canvas>. The result will be
- * drawn into the given context. This will populate the layer backing store
- * cache with the result.
- *
- * @param {CanvasRenderingContext2d} ctx
- * @param {RenderLayer} layer
- * @param {Function} customDrawFunc
- * @private
- */
-function drawCacheableRenderLayer (ctx, layer, customDrawFunc) {
-  // See if there is a pre-drawn canvas in the pool.
-  var backingStore = getBackingStore(layer.backingStoreId);
-  var backingStoreScale = layer.scale || window.devicePixelRatio;
-  var frameOffsetY = layer.frame.y;
-  var frameOffsetX = layer.frame.x;
-  var backingContext;
-
-  if (!backingStore) {
-    if (_backingStores.length >= Canvas.poolSize) {
-      // Re-use the oldest backing store once we reach the pooling limit.
-      backingStore = _backingStores[0].canvas;
-      Canvas.call(backingStore, layer.frame.width, layer.frame.height, backingStoreScale);
-
-      // Move the re-use canvas to the front of the queue.
-      _backingStores[0].id = layer.backingStoreId;
-      _backingStores[0].canvas = backingStore;
-      _backingStores.push(_backingStores.shift());
-    } else {
-      // Create a new backing store, we haven't yet reached the pooling limit
-      backingStore = new Canvas(layer.frame.width, layer.frame.height, backingStoreScale);
-      _backingStores.push({
-        id: layer.backingStoreId,
-        layer: layer,
-        canvas: backingStore
-      });
-    }
-
-    // Draw into the backing <canvas> at (0, 0) - we will later use the
-    // <canvas> to draw the layer as an image at the proper coordinates.
-    backingContext = backingStore.getContext('2d');
-    layer.translate(-frameOffsetX, -frameOffsetY);
-
-    // Draw default properties, such as background color.
-    backingContext.save();
-    drawBaseRenderLayer(backingContext, layer);
-
-    // Custom drawing operations
-    customDrawFunc && customDrawFunc(backingContext, layer);
-    backingContext.restore();
-
-    // Draw child layers, sorted by their z-index.
-    if (layer.children) {
-      layer.children.slice().sort(sortByZIndexAscending).forEach(function (childLayer) {
-        drawRenderLayer(backingContext, childLayer);
-      });
-    }
-
-    // Restore layer's original frame.
-    layer.translate(frameOffsetX, frameOffsetY);
-  }
-
-  // We have the pre-rendered canvas ready, draw it into the destination canvas.
-  if (layer.clipRect) {
-    // Fill the clipping rect in the destination canvas.
-    var sx = (layer.clipRect.x - layer.frame.x) * backingStoreScale;
-    var sy = (layer.clipRect.y - layer.frame.y) * backingStoreScale;
-    var sw = layer.clipRect.width * backingStoreScale;
-    var sh = layer.clipRect.height * backingStoreScale;
-    var dx = layer.clipRect.x;
-    var dy = layer.clipRect.y;
-    var dw = layer.clipRect.width;
-    var dh = layer.clipRect.height;
-
-    // No-op for zero size rects. iOS / Safari will throw an exception.
-    if (sw > 0 && sh > 0) {
-      ctx.drawImage(backingStore.getRawCanvas(), sx, sy, sw, sh, dx, dy, dw, dh);
-    }
-  } else {
-    // Fill the entire canvas
-    ctx.drawImage(backingStore.getRawCanvas(), layer.frame.x, layer.frame.y, layer.frame.width, layer.frame.height);
-  }
-}
-
-/**
- * @private
- */
-function sortByZIndexAscending (layerA, layerB) {
-  return (layerA.zIndex || 0) - (layerB.zIndex || 0);
-}
-
-/**
- * @private
- */
-function drawImageRenderLayer (ctx, layer) {
-  if (!layer.imageUrl) {
-    return;
-  }
-
-  // Don't draw until loaded
-  var image = ImageCache.get(layer.imageUrl);
-  if (!image.isLoaded()) {
-    return;
-  }
-
-  CanvasUtils.drawImage(ctx, image, layer.frame.x, layer.frame.y, layer.frame.width, layer.frame.height);
-}
-
-/**
- * @private
- */
-function drawTextRenderLayer (ctx, layer) {
-  // Fallback to standard font.
-  var fontFace = layer.fontFace || FontFace.Default();
-
-  // Don't draw text until loaded
-  if (!FontUtils.isFontLoaded(fontFace)) {
-    return;
-  }
-
-  CanvasUtils.drawText(ctx, layer.text, layer.frame.x, layer.frame.y, layer.frame.width, layer.frame.height, fontFace, {
-    fontSize: layer.fontSize,
-    lineHeight: layer.lineHeight,
-    textAlign: layer.textAlign,
-    color: layer.color
-  });
-}
-
-/**
- * @private
- */
-function drawGradientRenderLayer (ctx, layer) {
-  // Default to linear gradient from top to bottom.
-  var x1 = layer.x1 || layer.frame.x;
-  var y1 = layer.y1 || layer.frame.y;
-  var x2 = layer.x2 || layer.frame.x;
-  var y2 = layer.y2 || layer.frame.y + layer.frame.height;
-  CanvasUtils.drawGradient(ctx, x1, y1, x2, y2, layer.colorStops, layer.frame.x, layer.frame.y, layer.frame.width, layer.frame.height);
-}
-
-module.exports = {
-  drawRenderLayer: drawRenderLayer,
-  invalidateBackingStore: invalidateBackingStore,
-  invalidateAllBackingStores: invalidateAllBackingStores,
-  handleImageLoad: handleImageLoad,
-  handleFontLoad: handleFontLoad,
-  layerContainsImage: layerContainsImage,
-  layerContainsFontFace: layerContainsFontFace
-};
-
-},{"./Canvas":3,"./CanvasUtils":4,"./FontFace":9,"./FontUtils":10,"./FrameUtils":11,"./ImageCache":14}],7:[function(require,module,exports){
-// Penner easing equations
-// https://gist.github.com/gre/1650294
-
-var Easing = {
-
-  linear: function (t) {
-    return t;
-  },
-
-  easeInQuad: function (t) {
-    return Math.pow(t, 2);
-  },
-
-  easeOutQuad: function (t) {
-    return t * (2-t);
-  },
-
-  easeInOutQuad: function (t) {
-    return t < .5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
-  },
-
-  easeInCubic: function (t) {
-    return t * t * t;
-  },
-
-  easeOutCubic: function (t) {
-    return (--t) * t * t + 1;
-  },
-
-  easeInOutCubic: function (t) {
-    return t < .5 ? 4 * t * t * t : (t-1) * (2*t - 2) * (2*t - 2) + 1;
-  }
-
-};
-
-module.exports = Easing;
-
-},{}],8:[function(require,module,exports){
-'use strict';
-
-// Supported events that RenderLayer's can subscribe to.
-
-module.exports = {
-  onTouchStart: 'touchstart',
-  onTouchMove: 'touchmove',
-  onTouchEnd: 'touchend',
-  onTouchCancel: 'touchcancel',
-  onClick: 'click'
-};
-
-},{}],9:[function(require,module,exports){
-'use strict';
-
-var _fontFaces = {};
-
-/**
- * @param {String} family The CSS font-family value
- * @param {String} url The remote URL for the font file
- * @param {Object} attributes Font attributes supported: style, weight
- * @return {Object}
- */
-function FontFace (family, url, attributes) {
-  var fontFace;
-  var fontId;
-
-  attributes = attributes || {};
-  attributes.style = attributes.style || 'normal';
-  attributes.weight = attributes.weight || 400;
-
-  fontId = getCacheKey(family, url, attributes);
-  fontFace = _fontFaces[fontId];
-
-  if (!fontFace) {
-    fontFace = {};
-    fontFace.id = fontId;
-    fontFace.family = family;
-    fontFace.url = url;
-    fontFace.attributes = attributes;
-    _fontFaces[fontId] = fontFace;
-  }
-
-  return fontFace;
-}
-
-/**
- * Helper for retrieving the default family by weight.
- *
- * @param {Number} fontWeight
- * @return {FontFace}
- */
-FontFace.Default = function (fontWeight) {
-  return FontFace('sans-serif', null, {weight: fontWeight});
-};
-
-/**
- * @internal
- */
-function getCacheKey (family, url, attributes) {
-  return family + url + Object.keys(attributes).sort().map(function (key) {
-    return attributes[key];
-  });
-}
-
-module.exports = FontFace;
-
-},{}],10:[function(require,module,exports){
-'use strict';
-
-var FontFace = require('./FontFace');
-
-var _useNativeImpl = (typeof window.FontFace !== 'undefined');
-var _pendingFonts = {};
-var _loadedFonts = {};
-var _failedFonts = {};
-
-var kFontLoadTimeout = 3000;
-
-/**
- * Check if a font face has loaded
- * @param {FontFace} fontFace
- * @return {Boolean}
- */
-function isFontLoaded (fontFace) {
-  // For remote URLs, check the cache. System fonts (sans url) assume loaded.
-  return _loadedFonts[fontFace.id] !== undefined || !fontFace.url;
-}
-
-/**
- * Load a remote font and execute a callback.
- * @param {FontFace} fontFace The font to Load
- * @param {Function} callback Function executed upon font Load
- */
-function loadFont (fontFace, callback) {
-  var defaultNode;
-  var testNode;
-  var checkFont;
-
-  // See if we've previously loaded it.
-  if (_loadedFonts[fontFace.id]) {
-    return callback(null);
-  }
-
-  // See if we've previously failed to load it.
-  if (_failedFonts[fontFace.id]) {
-    return callback(_failedFonts[fontFace.id]);
-  }
-
-  // System font: assume already loaded.
-  if (!fontFace.url) {
-    return callback(null);
-  }
-
-  // Font load is already in progress:
-  if (_pendingFonts[fontFace.id]) {
-    _pendingFonts[fontFace.id].callbacks.push(callback);
-    return;
-  }
-
-  // Create the test <span>'s for measuring.
-  defaultNode = createTestNode('Helvetica', fontFace.attributes);
-  testNode = createTestNode(fontFace.family, fontFace.attributes);
-  document.body.appendChild(testNode);
-  document.body.appendChild(defaultNode);
-
-  _pendingFonts[fontFace.id] = {
-    startTime: Date.now(),
-    defaultNode: defaultNode,
-    testNode: testNode,
-    callbacks: [callback]
-  };
-
-  // Font watcher
-  checkFont = function () {
-    var currWidth = testNode.getBoundingClientRect().width;
-    var defaultWidth = defaultNode.getBoundingClientRect().width;
-    var loaded = currWidth !== defaultWidth;
-
-    if (loaded) {
-      handleFontLoad(fontFace, null);
-    } else {
-      // Timeout?
-      if (Date.now() - _pendingFonts[fontFace.id].startTime >= kFontLoadTimeout) {
-        handleFontLoad(fontFace, true);
-      } else {
-        requestAnimationFrame(checkFont);
-      }
-    }
-  };
-
-  // Start watching
-  checkFont();
-}
-
-// Internal
-// ========
-
-/**
- * Native FontFace loader implementation
- * @internal
- */
-function loadFontNative (fontFace, callback) {
-  var theFontFace;
-
-  // See if we've previously loaded it.
-  if (_loadedFonts[fontFace.id]) {
-    return callback(null);
-  }
-
-  // See if we've previously failed to load it.
-  if (_failedFonts[fontFace.id]) {
-    return callback(_failedFonts[fontFace.id]);
-  }
-
-  // System font: assume it's installed.
-  if (!fontFace.url) {
-    return callback(null);
-  }
-
-  // Font load is already in progress:
-  if (_pendingFonts[fontFace.id]) {
-    _pendingFonts[fontFace.id].callbacks.push(callback);
-    return;
-  }
-
-  _pendingFonts[fontFace.id] = {
-    startTime: Date.now(),
-    callbacks: [callback]
-  };
-
-  // Use font loader API
-  theFontFace = new window.FontFace(fontFace.family,
-    'url(' + fontFace.url + ')', fontFace.attributes);
-
-  theFontFace.load().then(function () {
-    _loadedFonts[fontFace.id] = true;
-    callback(null);
-  }, function (err) {
-    _failedFonts[fontFace.id] = err;
-    callback(err);
-  });
-}
-
-/**
- * Helper method for created a hidden <span> with a given font.
- * Uses TypeKit's default test string, which is said to result
- * in highly varied measured widths when compared to the default font.
- * @internal
- */
-function createTestNode (family, attributes) {
-  var span = document.createElement('span');
-  span.setAttribute('data-fontfamily', family);
-  span.style.cssText = 'position:absolute; left:-5000px; top:-5000px; visibility:hidden;' +
-    'font-size:100px; font-family:"' + family + '", Helvetica;font-weight: ' + attributes.weight + ';' +
-    'font-style:' + attributes.style + ';';
-  span.innerHTML = 'BESs';
-  return span;
-}
-
-/**
- * @internal
- */
-function handleFontLoad (fontFace, timeout) {
-  var error = timeout ? 'Exceeded load timeout of ' + kFontLoadTimeout + 'ms' : null;
-
-  if (!error) {
-    _loadedFonts[fontFace.id] = true;
-  } else {
-    _failedFonts[fontFace.id] = error;
-  }
-
-  // Execute pending callbacks.
-  _pendingFonts[fontFace.id].callbacks.forEach(function (callback) {
-    callback(error);
-  });
-
-  // Clean up DOM
-  if (_pendingFonts[fontFace.id].defaultNode) {
-    document.body.removeChild(_pendingFonts[fontFace.id].defaultNode);
-  }
-  if (_pendingFonts[fontFace.id].testNode) {
-    document.body.removeChild(_pendingFonts[fontFace.id].testNode);
-  }
-
-  // Clean up waiting queue
-  delete _pendingFonts[fontFace.id];
-}
-
-module.exports = {
-  isFontLoaded: isFontLoaded,
-  loadFont: _useNativeImpl ? loadFontNative : loadFont
-};
-
-},{"./FontFace":9}],11:[function(require,module,exports){
-'use strict';
-
-function Frame (x, y, width, height) {
-  this.x = x;
-  this.y = y;
-  this.width = width;
-  this.height = height;
-}
-
-/**
- * Get a frame object
- *
- * @param {Number} x
- * @param {Number} y
- * @param {Number} width
- * @param {Number} height
- * @return {Frame}
- */
-function make (x, y, width, height) {
-  return new Frame(x, y, width, height);
-}
-
-/**
- * Return a zero size anchored at (0, 0).
- *
- * @return {Frame}
- */
-function zero () {
-  return make(0, 0, 0, 0);
-}
-
-/**
- * Return a cloned frame
- *
- * @param {Frame} frame
- * @return {Frame}
- */
-function clone (frame) {
-  return make(frame.x, frame.y, frame.width, frame.height);
-}
-
-/**
- * Creates a new frame by a applying edge insets. This method accepts CSS
- * shorthand notation e.g. inset(myFrame, 10, 0);
- *
- * @param {Frame} frame
- * @param {Number} top
- * @param {Number} right
- * @param {?Number} bottom
- * @param {?Number} left
- * @return {Frame}
- */
-function inset (frame, top, right, bottom, left) {
-  var frameCopy = clone(frame);
-
-  // inset(myFrame, 10, 0) => inset(myFrame, 10, 0, 10, 0)
-  if (typeof bottom === 'undefined') {
-    bottom = top;
-    left = right;
-  }
-
-  // inset(myFrame, 10) => inset(myFrame, 10, 10, 10, 10)
-  if (typeof right === 'undefined') {
-    right = bottom = left = top;
-  }
-
-  frameCopy.x += left;
-  frameCopy.y += top;
-  frameCopy.height -= (top + bottom);
-  frameCopy.width -= (left + right);
-
-  return frameCopy;
-}
-
-/**
- * Compute the intersection region between 2 frames.
- *
- * @param {Frame} frame
- * @param {Frame} otherFrame
- * @return {Frame}
- */
-function intersection (frame, otherFrame) {
-  var x = Math.max(frame.x, otherFrame.x);
-  var width = Math.min(frame.x + frame.width, otherFrame.x + otherFrame.width);
-  var y = Math.max(frame.y, otherFrame.y);
-  var height = Math.min(frame.y + frame.height, otherFrame.y + otherFrame.height);
-  if (width >= x && height >= y) {
-    return make(x, y, width - x, height - y);
-  }
-  return null;
-}
-
-/**
- * Compute the union of two frames
- *
- * @param {Frame} frame
- * @param {Frame} otherFrame
- * @return {Frame}
- */
-function union (frame, otherFrame) {
-  var x1 = Math.min(frame.x, otherFrame.x);
-  var x2 = Math.max(frame.x + frame.width, otherFrame.x + otherFrame.width);
-  var y1 = Math.min(frame.y, otherFrame.y);
-  var y2 = Math.max(frame.y + frame.height, otherFrame.y + otherFrame.height);
-  return make(x1, y1, x2 - x1, y2 - y1);
-}
-
-/**
- * Determine if 2 frames intersect each other
- *
- * @param {Frame} frame
- * @param {Frame} otherFrame
- * @return {Boolean}
- */
-function intersects (frame, otherFrame) {
-  return !(otherFrame.x > frame.x + frame.width ||
-           otherFrame.x + otherFrame.width < frame.x ||
-           otherFrame.y > frame.y + frame.height ||
-           otherFrame.y + otherFrame.height < frame.y);
-}
-
-module.exports = {
-  make: make,
-  zero: zero,
-  clone: clone,
-  inset: inset,
-  intersection: intersection,
-  intersects: intersects,
-  union: union
-};
-
-
-},{}],12:[function(require,module,exports){
-'use strict';
-
-var createComponent = require('./createComponent');
-var ContainerMixin = require('./ContainerMixin');
-var LayerMixin = require('./LayerMixin');
-var RenderLayer = require('./RenderLayer');
-
-var Group = createComponent('Group', LayerMixin, ContainerMixin, {
-
-  mountComponent: function (rootID, transaction, context) {
-    var props = this._currentElement.props;
-    var layer = this.node;
-
-    this.applyLayerProps({}, props);
-    this.mountAndInjectChildren(props.children, transaction, context);
-
-    return layer;
-  },
-
-  receiveComponent: function (nextComponent, transaction, context) {
-    var props = nextComponent.props;
-    var prevProps = this._currentElement.props;
-    this.applyLayerProps(prevProps, props);
-    this.updateChildren(props.children, transaction, context);
-    this._currentElement = nextComponent;
-  },
-
-  unmountComponent: function () {
-    LayerMixin.unmountComponent.call(this);
-    this.unmountChildren();
-  }
-
-});
-
-module.exports = Group;
-
-},{"./ContainerMixin":5,"./LayerMixin":16,"./RenderLayer":20,"./createComponent":24}],13:[function(require,module,exports){
-'use strict';
-
-var React = require('react');
-var assign = require('react/lib/Object.assign');
-var createComponent = require('./createComponent');
-var LayerMixin = require('./LayerMixin');
-var Layer = require('./Layer');
-var Group = require('./Group');
-var ImageCache = require('./ImageCache');
-var Easing = require('./Easing');
-var clamp = require('./clamp');
-
-var FADE_DURATION = 200;
-
-var RawImage = createComponent('Image', LayerMixin, {
-
-  applyImageProps: function (prevProps, props) {
-    var layer = this.node;
-
-    layer.type = 'image';
-    layer.imageUrl = props.src;
-  },
-
-  mountComponent: function (rootID, transaction, context) {
-    var props = this._currentElement.props;
-    var layer = this.node;
-    this.applyLayerProps({}, props);
-    this.applyImageProps({}, props);
-    return layer;
-  },
-
-  receiveComponent: function (nextComponent, transaction, context) {
-    var prevProps = this._currentElement.props;
-    var props = nextComponent.props;
-    this.applyLayerProps(prevProps, props);
-    this._currentElement = nextComponent;
-  },
-
-});
-
-var Image = React.createClass({
-
-  propTypes: {
-    src: React.PropTypes.string.isRequired,
-    style: React.PropTypes.object,
-    useBackingStore: React.PropTypes.bool,
-    fadeIn: React.PropTypes.bool,
-    fadeInDuration: React.PropTypes.number
-  },
-
-  getInitialState: function () {
-    var loaded = ImageCache.get(this.props.src).isLoaded();
-    return {
-      loaded: loaded,
-      imageAlpha: loaded ? 1 : 0
-    };
-  },
-
-  componentDidMount: function () {
-    ImageCache.get(this.props.src).on('load', this.handleImageLoad);
-  },
-
-  componentWillUnmount: function () {
-    if (this._pendingAnimationFrame) {
-      cancelAnimationFrame(this._pendingAnimationFrame);
-    }
-    ImageCache.get(this.props.src).removeListener('load', this.handleImageLoad);
-  },
-
-  componentDidUpdate: function (prevProps, prevState) {
-    if (this.refs.image) {
-      this.refs.image.invalidateLayout();
-    }
-  },
-
-  render: function () {
-    var rawImage;
-    var imageStyle = assign({}, this.props.style);
-    var useBackingStore = this.state.loaded ? this.props.useBackingStore : false;
-
-    // Hide the image until loaded.
-    imageStyle.alpha = this.state.imageAlpha;
-
-    return (
-      React.createElement(Group, {ref: 'main', style: this.props.style},
-        React.createElement(RawImage, {ref: 'image', src: this.props.src, style: imageStyle, useBackingStore: useBackingStore})
-      )
-    );
-  },
-
-  handleImageLoad: function () {
-    var imageAlpha = 1;
-    if (this.props.fadeIn) {
-      imageAlpha = 0;
-      this._animationStartTime = Date.now();
-      this._pendingAnimationFrame = requestAnimationFrame(this.stepThroughAnimation);
-    }
-    this.setState({ loaded: true, imageAlpha: imageAlpha });
-  },
-
-  stepThroughAnimation: function () {
-    var fadeInDuration = this.props.fadeInDuration || FADE_DURATION;
-    var alpha = Easing.easeInCubic((Date.now() - this._animationStartTime) / fadeInDuration);
-    alpha = clamp(alpha, 0, 1);
-    this.setState({ imageAlpha: alpha });
-    if (alpha < 1) {
-      this._pendingAnimationFrame = requestAnimationFrame(this.stepThroughAnimation);
-    }
-  }
-
-});
-
-module.exports = Image;
-
-},{"./Easing":7,"./Group":12,"./ImageCache":14,"./Layer":15,"./LayerMixin":16,"./clamp":23,"./createComponent":24,"react":185,"react/lib/Object.assign":56}],14:[function(require,module,exports){
-'use strict';
-
-var EventEmitter = require('events');
-var assign = require('react/lib/Object.assign');
-
-var NOOP = function () {};
-
-function Img (src) {
-  this._originalSrc = src;
-  this._img = new Image();
-  this._img.onload = this.emit.bind(this, 'load');
-  this._img.onerror = this.emit.bind(this, 'error');
-  this._img.src = src;
-
-  // The default impl of events emitter will throw on any 'error' event unless
-  // there is at least 1 handler. Logging anything in this case is unnecessary
-  // since the browser console will log it too.
-  this.on('error', NOOP);
-
-  // Default is just 10.
-  this.setMaxListeners(100);
-}
-
-assign(Img.prototype, EventEmitter.prototype, {
-
-  /**
-   * Pooling owner looks for this
-   */
-  destructor: function () {
-    // Make sure we aren't leaking callbacks.
-    this.removeAllListeners();
-  },
-
-  /**
-   * Retrieve the original image URL before browser normalization
-   *
-   * @return {String}
-   */
-  getOriginalSrc: function () {
-    return this._originalSrc;
-  },
-
-  /**
-   * Retrieve a reference to the underyling <img> node.
-   *
-   * @return {HTMLImageElement}
-   */
-  getRawImage: function () {
-    return this._img;
-  },
-
-  /**
-   * Retrieve the loaded image width
-   *
-   * @return {Number}
-   */
-  getWidth: function () {
-    return this._img.naturalWidth;
-  },
-
-  /**
-   * Retrieve the loaded image height
-   *
-   * @return {Number}
-   */
-  getHeight: function () {
-    return this._img.naturalHeight;
-  },
-
-  /**
-   * @return {Bool}
-   */
-  isLoaded: function () {
-    return this._img.naturalHeight > 0;
-  }
-
-});
-
-var kInstancePoolLength = 300;
-var _instancePool = [];
-
-function getPooledImage (src) {
-  for (var i=0, len=_instancePool.length; i < len; i++) {
-    if (_instancePool[i].getOriginalSrc() === src) {
-      return _instancePool[i];
-    }
-  }
-  return null;
-}
-
-var ImageCache = {
-
-  /**
-   * Retrieve an image from the cache
-   *
-   * @return {Img}
-   */
-  get: function (src) {
-    var image = getPooledImage(src);
-    if (!image) {
-      // Simple FIFO queue
-      image = new Img(src);
-      if (_instancePool.length >= kInstancePoolLength) {
-        _instancePool.shift().destructor();
-      }
-    _instancePool.push(image);
-    }
-    return image;
-  }
-
-};
-
-module.exports = ImageCache;
-
-},{"events":1,"react/lib/Object.assign":56}],15:[function(require,module,exports){
-'use strict';
-
-var createComponent = require('./createComponent');
-var LayerMixin = require('./LayerMixin');
-
-var Layer = createComponent('Layer', LayerMixin, {
-
-  mountComponent: function (rootID, transaction, context) {
-    var props = this._currentElement.props;
-    var layer = this.node;
-    this.applyLayerProps({}, props);
-    return layer;
-  },
-
-  receiveComponent: function (nextComponent, transaction, context) {
-    var prevProps = this._currentElement.props;
-    var props = nextComponent.props;
-    this.applyLayerProps(prevProps, props);
-    this._currentElement = nextComponent;
-  }
-
-});
-
-module.exports = Layer;
-
-},{"./LayerMixin":16,"./createComponent":24}],16:[function(require,module,exports){
-'use strict';
-
-// Adapted from ReactART:
-// https://github.com/reactjs/react-art
-
-var FrameUtils = require('./FrameUtils');
-var DrawingUtils = require('./DrawingUtils');
-var EventTypes = require('./EventTypes');
-
-var LAYER_GUID = 0;
-
-var LayerMixin = {
-
-  construct: function(element) {
-    this._currentElement = element;
-    this._layerId = LAYER_GUID++;
-  },
-
-  getPublicInstance: function() {
-    return this.node;
-  },
-
-  putEventListener: function(type, listener) {
-    var subscriptions = this.subscriptions || (this.subscriptions = {});
-    var listeners = this.listeners || (this.listeners = {});
-    listeners[type] = listener;
-    if (listener) {
-      if (!subscriptions[type]) {
-        subscriptions[type] = this.node.subscribe(type, listener, this);
-      }
-    } else {
-      if (subscriptions[type]) {
-        subscriptions[type]();
-        delete subscriptions[type];
-      }
-    }
-  },
-
-  handleEvent: function(event) {
-    // TODO
-  },
-
-  destroyEventListeners: function() {
-    // TODO
-  },
-
-  applyLayerProps: function (prevProps, props) {
-    var layer = this.node;
-    var style = (props && props.style) ? props.style : {};
-    layer._originalStyle = style;
-
-    // Common layer properties
-    layer.alpha = style.alpha;
-    layer.backgroundColor = style.backgroundColor;
-    layer.borderColor = style.borderColor;
-    layer.borderRadius = style.borderRadius;
-    layer.clipRect = style.clipRect;
-    layer.frame = FrameUtils.make(style.left || 0, style.top || 0, style.width || 0, style.height || 0);
-    layer.scale = style.scale;
-    layer.translateX = style.translateX;
-    layer.translateY = style.translateY;
-    layer.zIndex = style.zIndex;
-
-    // Generate backing store ID as needed.
-    if (props.useBackingStore) {
-      layer.backingStoreId = this._layerId;
-    }
-
-    // Register events
-    for (var type in EventTypes) {
-      this.putEventListener(EventTypes[type], props[type]);
-    }
-  },
-
-  mountComponentIntoNode: function(rootID, container) {
-    throw new Error(
-      'You cannot render a Canvas component standalone. ' +
-      'You need to wrap it in a Surface.'
-    );
-  },
-
-  unmountComponent: function() {
-    // Purge backing stores on unmount.
-    var layer = this.node;
-    if (layer.backingStoreId) {
-      DrawingUtils.invalidateBackingStore(layer.backingStoreId);
-    }
-    this.destroyEventListeners();
-  }
-
-};
-
-module.exports = LayerMixin;
-
-},{"./DrawingUtils":6,"./EventTypes":8,"./FrameUtils":11}],17:[function(require,module,exports){
-// https://github.com/facebook/css-layout
-
-/**
- * Copyright (c) 2014, Facebook, Inc.
- * All rights reserved.
- *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
- */
-
-var computeLayout = (function() {
-
-  function capitalizeFirst(str) {
-    return str.charAt(0).toUpperCase() + str.slice(1);
-  }
-
-  function getSpacing(node, type, suffix, location) {
-    var key = type + capitalizeFirst(location) + suffix;
-    if (key in node.style) {
-      return node.style[key];
-    }
-
-    key = type + suffix;
-    if (key in node.style) {
-      return node.style[key];
-    }
-
-    return 0;
-  }
-
-  function getPositiveSpacing(node, type, suffix, location) {
-    var key = type + capitalizeFirst(location) + suffix;
-    if (key in node.style && node.style[key] >= 0) {
-      return node.style[key];
-    }
-
-    key = type + suffix;
-    if (key in node.style && node.style[key] >= 0) {
-      return node.style[key];
-    }
-
-    return 0;
-  }
-
-  function isUndefined(value) {
-    return value === undefined;
-  }
-
-  function getMargin(node, location) {
-    return getSpacing(node, 'margin', '', location);
-  }
-
-  function getPadding(node, location) {
-    return getPositiveSpacing(node, 'padding', '', location);
-  }
-
-  function getBorder(node, location) {
-    return getPositiveSpacing(node, 'border', 'Width', location);
-  }
-
-  function getPaddingAndBorder(node, location) {
-    return getPadding(node, location) + getBorder(node, location);
-  }
-
-  function getMarginAxis(node, axis) {
-    return getMargin(node, leading[axis]) + getMargin(node, trailing[axis]);
-  }
-
-  function getPaddingAndBorderAxis(node, axis) {
-    return getPaddingAndBorder(node, leading[axis]) + getPaddingAndBorder(node, trailing[axis]);
-  }
-
-  function getJustifyContent(node) {
-    if ('justifyContent' in node.style) {
-      return node.style.justifyContent;
-    }
-    return 'flex-start';
-  }
-
-  function getAlignItem(node, child) {
-    if ('alignSelf' in child.style) {
-      return child.style.alignSelf;
-    }
-    if ('alignItems' in node.style) {
-      return node.style.alignItems;
-    }
-    return 'stretch';
-  }
-
-  function getFlexDirection(node) {
-    if ('flexDirection' in node.style) {
-      return node.style.flexDirection;
-    }
-    return 'column';
-  }
-
-  function getPositionType(node) {
-    if ('position' in node.style) {
-      return node.style.position;
-    }
-    return 'relative';
-  }
-
-  function getFlex(node) {
-    return node.style.flex;
-  }
-
-  function isFlex(node) {
-    return (
-      getPositionType(node) === CSS_POSITION_RELATIVE &&
-      getFlex(node) > 0
-    );
-  }
-
-  function isFlexWrap(node) {
-    return node.style.flexWrap === 'wrap';
-  }
-
-  function getDimWithMargin(node, axis) {
-    return node.layout[dim[axis]] + getMarginAxis(node, axis);
-  }
-
-  function isDimDefined(node, axis) {
-    return !isUndefined(node.style[dim[axis]]) && node.style[dim[axis]] >= 0;
-  }
-
-  function isPosDefined(node, pos) {
-    return !isUndefined(node.style[pos]);
-  }
-
-  function isMeasureDefined(node) {
-    return 'measure' in node.style;
-  }
-
-  function getPosition(node, pos) {
-    if (pos in node.style) {
-      return node.style[pos];
-    }
-    return 0;
-  }
-
-  // When the user specifically sets a value for width or height
-  function setDimensionFromStyle(node, axis) {
-    // The parent already computed us a width or height. We just skip it
-    if (!isUndefined(node.layout[dim[axis]])) {
-      return;
-    }
-    // We only run if there's a width or height defined
-    if (!isDimDefined(node, axis)) {
-      return;
-    }
-
-    // The dimensions can never be smaller than the padding and border
-    node.layout[dim[axis]] = fmaxf(
-      node.style[dim[axis]],
-      getPaddingAndBorderAxis(node, axis)
-    );
-  }
-
-  // If both left and right are defined, then use left. Otherwise return
-  // +left or -right depending on which is defined.
-  function getRelativePosition(node, axis) {
-    if (leading[axis] in node.style) {
-      return getPosition(node, leading[axis]);
-    }
-    return -getPosition(node, trailing[axis]);
-  }
-
-  var leading = {
-    row: 'left',
-    column: 'top'
-  };
-  var trailing = {
-    row: 'right',
-    column: 'bottom'
-  };
-  var pos = {
-    row: 'left',
-    column: 'top'
-  };
-  var dim = {
-    row: 'width',
-    column: 'height'
-  };
-
-  function fmaxf(a, b) {
-    if (a > b) {
-      return a;
-    }
-    return b;
-  }
-
-  var CSS_UNDEFINED = undefined;
-
-  var CSS_FLEX_DIRECTION_ROW = 'row';
-  var CSS_FLEX_DIRECTION_COLUMN = 'column';
-
-  var CSS_JUSTIFY_FLEX_START = 'flex-start';
-  var CSS_JUSTIFY_CENTER = 'center';
-  var CSS_JUSTIFY_FLEX_END = 'flex-end';
-  var CSS_JUSTIFY_SPACE_BETWEEN = 'space-between';
-  var CSS_JUSTIFY_SPACE_AROUND = 'space-around';
-
-  var CSS_ALIGN_FLEX_START = 'flex-start';
-  var CSS_ALIGN_CENTER = 'center';
-  var CSS_ALIGN_FLEX_END = 'flex-end';
-  var CSS_ALIGN_STRETCH = 'stretch';
-
-  var CSS_POSITION_RELATIVE = 'relative';
-  var CSS_POSITION_ABSOLUTE = 'absolute';
-
-  return function layoutNode(node, parentMaxWidth) {
-    var/*css_flex_direction_t*/ mainAxis = getFlexDirection(node);
-    var/*css_flex_direction_t*/ crossAxis = mainAxis === CSS_FLEX_DIRECTION_ROW ?
-      CSS_FLEX_DIRECTION_COLUMN :
-      CSS_FLEX_DIRECTION_ROW;
-
-    // Handle width and height style attributes
-    setDimensionFromStyle(node, mainAxis);
-    setDimensionFromStyle(node, crossAxis);
-
-    // The position is set by the parent, but we need to complete it with a
-    // delta composed of the margin and left/top/right/bottom
-    node.layout[leading[mainAxis]] += getMargin(node, leading[mainAxis]) +
-      getRelativePosition(node, mainAxis);
-    node.layout[leading[crossAxis]] += getMargin(node, leading[crossAxis]) +
-      getRelativePosition(node, crossAxis);
-
-    if (isMeasureDefined(node)) {
-      var/*float*/ width = CSS_UNDEFINED;
-      if (isDimDefined(node, CSS_FLEX_DIRECTION_ROW)) {
-        width = node.style.width;
-      } else if (!isUndefined(node.layout[dim[CSS_FLEX_DIRECTION_ROW]])) {
-        width = node.layout[dim[CSS_FLEX_DIRECTION_ROW]];
-      } else {
-        width = parentMaxWidth -
-          getMarginAxis(node, CSS_FLEX_DIRECTION_ROW);
-      }
-      width -= getPaddingAndBorderAxis(node, CSS_FLEX_DIRECTION_ROW);
-
-      // We only need to give a dimension for the text if we haven't got any
-      // for it computed yet. It can either be from the style attribute or because
-      // the element is flexible.
-      var/*bool*/ isRowUndefined = !isDimDefined(node, CSS_FLEX_DIRECTION_ROW) &&
-        isUndefined(node.layout[dim[CSS_FLEX_DIRECTION_ROW]]);
-      var/*bool*/ isColumnUndefined = !isDimDefined(node, CSS_FLEX_DIRECTION_COLUMN) &&
-        isUndefined(node.layout[dim[CSS_FLEX_DIRECTION_COLUMN]]);
-
-      // Let's not measure the text if we already know both dimensions
-      if (isRowUndefined || isColumnUndefined) {
-        var/*css_dim_t*/ measure_dim = node.style.measure(
-          /*(c)!node->context,*/
-          width
-        );
-        if (isRowUndefined) {
-          node.layout.width = measure_dim.width +
-            getPaddingAndBorderAxis(node, CSS_FLEX_DIRECTION_ROW);
-        }
-        if (isColumnUndefined) {
-          node.layout.height = measure_dim.height +
-            getPaddingAndBorderAxis(node, CSS_FLEX_DIRECTION_COLUMN);
-        }
-      }
-      return;
-    }
-
-    // Pre-fill some dimensions straight from the parent
-    for (var/*int*/ i = 0; i < node.children.length; ++i) {
-      var/*css_node_t**/ child = node.children[i];
-      // Pre-fill cross axis dimensions when the child is using stretch before
-      // we call the recursive layout pass
-      if (getAlignItem(node, child) === CSS_ALIGN_STRETCH &&
-          getPositionType(child) === CSS_POSITION_RELATIVE &&
-          !isUndefined(node.layout[dim[crossAxis]]) &&
-          !isDimDefined(child, crossAxis)) {
-        child.layout[dim[crossAxis]] = fmaxf(
-          node.layout[dim[crossAxis]] -
-            getPaddingAndBorderAxis(node, crossAxis) -
-            getMarginAxis(child, crossAxis),
-          // You never want to go smaller than padding
-          getPaddingAndBorderAxis(child, crossAxis)
-        );
-      } else if (getPositionType(child) == CSS_POSITION_ABSOLUTE) {
-        // Pre-fill dimensions when using absolute position and both offsets for the axis are defined (either both
-        // left and right or top and bottom).
-        for (var/*int*/ ii = 0; ii < 2; ii++) {
-          var/*css_flex_direction_t*/ axis = (ii != 0) ? CSS_FLEX_DIRECTION_ROW : CSS_FLEX_DIRECTION_COLUMN;
-          if (!isUndefined(node.layout[dim[axis]]) &&
-              !isDimDefined(child, axis) &&
-              isPosDefined(child, leading[axis]) &&
-              isPosDefined(child, trailing[axis])) {
-            child.layout[dim[axis]] = fmaxf(
-              node.layout[dim[axis]] -
-              getPaddingAndBorderAxis(node, axis) -
-              getMarginAxis(child, axis) -
-              getPosition(child, leading[axis]) -
-              getPosition(child, trailing[axis]),
-              // You never want to go smaller than padding
-              getPaddingAndBorderAxis(child, axis)
-            );
-          }
-        }
-      }
-    }
-
-    var/*float*/ definedMainDim = CSS_UNDEFINED;
-    if (!isUndefined(node.layout[dim[mainAxis]])) {
-      definedMainDim = node.layout[dim[mainAxis]] -
-          getPaddingAndBorderAxis(node, mainAxis);
-    }
-
-    // We want to execute the next two loops one per line with flex-wrap
-    var/*int*/ startLine = 0;
-    var/*int*/ endLine = 0;
-    var/*int*/ nextOffset = 0;
-    var/*int*/ alreadyComputedNextLayout = 0;
-    // We aggregate the total dimensions of the container in those two variables
-    var/*float*/ linesCrossDim = 0;
-    var/*float*/ linesMainDim = 0;
-    while (endLine < node.children.length) {
-      // <Loop A> Layout non flexible children and count children by type
-
-      // mainContentDim is accumulation of the dimensions and margin of all the
-      // non flexible children. This will be used in order to either set the
-      // dimensions of the node if none already exist, or to compute the
-      // remaining space left for the flexible children.
-      var/*float*/ mainContentDim = 0;
-
-      // There are three kind of children, non flexible, flexible and absolute.
-      // We need to know how many there are in order to distribute the space.
-      var/*int*/ flexibleChildrenCount = 0;
-      var/*float*/ totalFlexible = 0;
-      var/*int*/ nonFlexibleChildrenCount = 0;
-      for (var/*int*/ i = startLine; i < node.children.length; ++i) {
-        var/*css_node_t**/ child = node.children[i];
-        var/*float*/ nextContentDim = 0;
-
-        // It only makes sense to consider a child flexible if we have a computed
-        // dimension for the node.
-        if (!isUndefined(node.layout[dim[mainAxis]]) && isFlex(child)) {
-          flexibleChildrenCount++;
-          totalFlexible += getFlex(child);
-
-          // Even if we don't know its exact size yet, we already know the padding,
-          // border and margin. We'll use this partial information to compute the
-          // remaining space.
-          nextContentDim = getPaddingAndBorderAxis(child, mainAxis) +
-            getMarginAxis(child, mainAxis);
-
-        } else {
-          var/*float*/ maxWidth = CSS_UNDEFINED;
-          if (mainAxis === CSS_FLEX_DIRECTION_ROW) {
-            // do nothing
-          } else if (isDimDefined(node, CSS_FLEX_DIRECTION_ROW)) {
-            maxWidth = node.layout[dim[CSS_FLEX_DIRECTION_ROW]] -
-              getPaddingAndBorderAxis(node, CSS_FLEX_DIRECTION_ROW);
-          } else {
-            maxWidth = parentMaxWidth -
-              getMarginAxis(node, CSS_FLEX_DIRECTION_ROW) -
-              getPaddingAndBorderAxis(node, CSS_FLEX_DIRECTION_ROW);
-          }
-
-          // This is the main recursive call. We layout non flexible children.
-          if (alreadyComputedNextLayout === 0) {
-            layoutNode(child, maxWidth);
-          }
-
-          // Absolute positioned elements do not take part of the layout, so we
-          // don't use them to compute mainContentDim
-          if (getPositionType(child) === CSS_POSITION_RELATIVE) {
-            nonFlexibleChildrenCount++;
-            // At this point we know the final size and margin of the element.
-            nextContentDim = getDimWithMargin(child, mainAxis);
-          }
-        }
-
-        // The element we are about to add would make us go to the next line
-        if (isFlexWrap(node) &&
-            !isUndefined(node.layout[dim[mainAxis]]) &&
-            mainContentDim + nextContentDim > definedMainDim &&
-            // If there's only one element, then it's bigger than the content
-            // and needs its own line
-            i !== startLine) {
-          alreadyComputedNextLayout = 1;
-          break;
-        }
-        alreadyComputedNextLayout = 0;
-        mainContentDim += nextContentDim;
-        endLine = i + 1;
-      }
-
-      // <Loop B> Layout flexible children and allocate empty space
-
-      // In order to position the elements in the main axis, we have two
-      // controls. The space between the beginning and the first element
-      // and the space between each two elements.
-      var/*float*/ leadingMainDim = 0;
-      var/*float*/ betweenMainDim = 0;
-
-      // The remaining available space that needs to be allocated
-      var/*float*/ remainingMainDim = 0;
-      if (!isUndefined(node.layout[dim[mainAxis]])) {
-        remainingMainDim = definedMainDim - mainContentDim;
-      } else {
-        remainingMainDim = fmaxf(mainContentDim, 0) - mainContentDim;
-      }
-
-      // If there are flexible children in the mix, they are going to fill the
-      // remaining space
-      if (flexibleChildrenCount !== 0) {
-        var/*float*/ flexibleMainDim = remainingMainDim / totalFlexible;
-
-        // The non flexible children can overflow the container, in this case
-        // we should just assume that there is no space available.
-        if (flexibleMainDim < 0) {
-          flexibleMainDim = 0;
-        }
-        // We iterate over the full array and only apply the action on flexible
-        // children. This is faster than actually allocating a new array that
-        // contains only flexible children.
-        for (var/*int*/ i = startLine; i < endLine; ++i) {
-          var/*css_node_t**/ child = node.children[i];
-          if (isFlex(child)) {
-            // At this point we know the final size of the element in the main
-            // dimension
-            child.layout[dim[mainAxis]] = flexibleMainDim * getFlex(child) +
-              getPaddingAndBorderAxis(child, mainAxis);
-
-            var/*float*/ maxWidth = CSS_UNDEFINED;
-            if (mainAxis === CSS_FLEX_DIRECTION_ROW) {
-              // do nothing
-            } else if (isDimDefined(node, CSS_FLEX_DIRECTION_ROW)) {
-              maxWidth = node.layout[dim[CSS_FLEX_DIRECTION_ROW]] -
-                getPaddingAndBorderAxis(node, CSS_FLEX_DIRECTION_ROW);
-            } else {
-              maxWidth = parentMaxWidth -
-                getMarginAxis(node, CSS_FLEX_DIRECTION_ROW) -
-                getPaddingAndBorderAxis(node, CSS_FLEX_DIRECTION_ROW);
-            }
-
-            // And we recursively call the layout algorithm for this child
-            layoutNode(child, maxWidth);
-          }
-        }
-
-      // We use justifyContent to figure out how to allocate the remaining
-      // space available
-      } else {
-        var/*css_justify_t*/ justifyContent = getJustifyContent(node);
-        if (justifyContent === CSS_JUSTIFY_FLEX_START) {
-          // Do nothing
-        } else if (justifyContent === CSS_JUSTIFY_CENTER) {
-          leadingMainDim = remainingMainDim / 2;
-        } else if (justifyContent === CSS_JUSTIFY_FLEX_END) {
-          leadingMainDim = remainingMainDim;
-        } else if (justifyContent === CSS_JUSTIFY_SPACE_BETWEEN) {
-          remainingMainDim = fmaxf(remainingMainDim, 0);
-          if (flexibleChildrenCount + nonFlexibleChildrenCount - 1 !== 0) {
-            betweenMainDim = remainingMainDim /
-              (flexibleChildrenCount + nonFlexibleChildrenCount - 1);
-          } else {
-            betweenMainDim = 0;
-          }
-        } else if (justifyContent === CSS_JUSTIFY_SPACE_AROUND) {
-          // Space on the edges is half of the space between elements
-          betweenMainDim = remainingMainDim /
-            (flexibleChildrenCount + nonFlexibleChildrenCount);
-          leadingMainDim = betweenMainDim / 2;
-        }
-      }
-
-      // <Loop C> Position elements in the main axis and compute dimensions
-
-      // At this point, all the children have their dimensions set. We need to
-      // find their position. In order to do that, we accumulate data in
-      // variables that are also useful to compute the total dimensions of the
-      // container!
-      var/*float*/ crossDim = 0;
-      var/*float*/ mainDim = leadingMainDim +
-        getPaddingAndBorder(node, leading[mainAxis]);
-
-      for (var/*int*/ i = startLine; i < endLine; ++i) {
-        var/*css_node_t**/ child = node.children[i];
-
-        if (getPositionType(child) === CSS_POSITION_ABSOLUTE &&
-            isPosDefined(child, leading[mainAxis])) {
-          // In case the child is position absolute and has left/top being
-          // defined, we override the position to whatever the user said
-          // (and margin/border).
-          child.layout[pos[mainAxis]] = getPosition(child, leading[mainAxis]) +
-            getBorder(node, leading[mainAxis]) +
-            getMargin(child, leading[mainAxis]);
-        } else {
-          // If the child is position absolute (without top/left) or relative,
-          // we put it at the current accumulated offset.
-          child.layout[pos[mainAxis]] += mainDim;
-        }
-
-        // Now that we placed the element, we need to update the variables
-        // We only need to do that for relative elements. Absolute elements
-        // do not take part in that phase.
-        if (getPositionType(child) === CSS_POSITION_RELATIVE) {
-          // The main dimension is the sum of all the elements dimension plus
-          // the spacing.
-          mainDim += betweenMainDim + getDimWithMargin(child, mainAxis);
-          // The cross dimension is the max of the elements dimension since there
-          // can only be one element in that cross dimension.
-          crossDim = fmaxf(crossDim, getDimWithMargin(child, crossAxis));
-        }
-      }
-
-      var/*float*/ containerMainAxis = node.layout[dim[mainAxis]];
-      // If the user didn't specify a width or height, and it has not been set
-      // by the container, then we set it via the children.
-      if (isUndefined(node.layout[dim[mainAxis]])) {
-        containerMainAxis = fmaxf(
-          // We're missing the last padding at this point to get the final
-          // dimension
-          mainDim + getPaddingAndBorder(node, trailing[mainAxis]),
-          // We can never assign a width smaller than the padding and borders
-          getPaddingAndBorderAxis(node, mainAxis)
-        );
-      }
-
-      var/*float*/ containerCrossAxis = node.layout[dim[crossAxis]];
-      if (isUndefined(node.layout[dim[crossAxis]])) {
-        containerCrossAxis = fmaxf(
-          // For the cross dim, we add both sides at the end because the value
-          // is aggregate via a max function. Intermediate negative values
-          // can mess this computation otherwise
-          crossDim + getPaddingAndBorderAxis(node, crossAxis),
-          getPaddingAndBorderAxis(node, crossAxis)
-        );
-      }
-
-      // <Loop D> Position elements in the cross axis
-
-      for (var/*int*/ i = startLine; i < endLine; ++i) {
-        var/*css_node_t**/ child = node.children[i];
-
-        if (getPositionType(child) === CSS_POSITION_ABSOLUTE &&
-            isPosDefined(child, leading[crossAxis])) {
-          // In case the child is absolutely positionned and has a
-          // top/left/bottom/right being set, we override all the previously
-          // computed positions to set it correctly.
-          child.layout[pos[crossAxis]] = getPosition(child, leading[crossAxis]) +
-            getBorder(node, leading[crossAxis]) +
-            getMargin(child, leading[crossAxis]);
-
-        } else {
-          var/*float*/ leadingCrossDim = getPaddingAndBorder(node, leading[crossAxis]);
-
-          // For a relative children, we're either using alignItems (parent) or
-          // alignSelf (child) in order to determine the position in the cross axis
-          if (getPositionType(child) === CSS_POSITION_RELATIVE) {
-            var/*css_align_t*/ alignItem = getAlignItem(node, child);
-            if (alignItem === CSS_ALIGN_FLEX_START) {
-              // Do nothing
-            } else if (alignItem === CSS_ALIGN_STRETCH) {
-              // You can only stretch if the dimension has not already been set
-              // previously.
-              if (!isDimDefined(child, crossAxis)) {
-                child.layout[dim[crossAxis]] = fmaxf(
-                  containerCrossAxis -
-                    getPaddingAndBorderAxis(node, crossAxis) -
-                    getMarginAxis(child, crossAxis),
-                  // You never want to go smaller than padding
-                  getPaddingAndBorderAxis(child, crossAxis)
-                );
-              }
-            } else {
-              // The remaining space between the parent dimensions+padding and child
-              // dimensions+margin.
-              var/*float*/ remainingCrossDim = containerCrossAxis -
-                getPaddingAndBorderAxis(node, crossAxis) -
-                getDimWithMargin(child, crossAxis);
-
-              if (alignItem === CSS_ALIGN_CENTER) {
-                leadingCrossDim += remainingCrossDim / 2;
-              } else { // CSS_ALIGN_FLEX_END
-                leadingCrossDim += remainingCrossDim;
-              }
-            }
-          }
-
-          // And we apply the position
-          child.layout[pos[crossAxis]] += linesCrossDim + leadingCrossDim;
-        }
-      }
-
-      linesCrossDim += crossDim;
-      linesMainDim = fmaxf(linesMainDim, mainDim);
-      startLine = endLine;
-    }
-
-    // If the user didn't specify a width or height, and it has not been set
-    // by the container, then we set it via the children.
-    if (isUndefined(node.layout[dim[mainAxis]])) {
-      node.layout[dim[mainAxis]] = fmaxf(
-        // We're missing the last padding at this point to get the final
-        // dimension
-        linesMainDim + getPaddingAndBorder(node, trailing[mainAxis]),
-        // We can never assign a width smaller than the padding and borders
-        getPaddingAndBorderAxis(node, mainAxis)
-      );
-    }
-
-    if (isUndefined(node.layout[dim[crossAxis]])) {
-      node.layout[dim[crossAxis]] = fmaxf(
-        // For the cross dim, we add both sides at the end because the value
-        // is aggregate via a max function. Intermediate negative values
-        // can mess this computation otherwise
-        linesCrossDim + getPaddingAndBorderAxis(node, crossAxis),
-        getPaddingAndBorderAxis(node, crossAxis)
-      );
-    }
-
-    // <Loop E> Calculate dimensions for absolutely positioned elements
-
-    for (var/*int*/ i = 0; i < node.children.length; ++i) {
-      var/*css_node_t**/ child = node.children[i];
-      if (getPositionType(child) == CSS_POSITION_ABSOLUTE) {
-        // Pre-fill dimensions when using absolute position and both offsets for the axis are defined (either both
-        // left and right or top and bottom).
-        for (var/*int*/ ii = 0; ii < 2; ii++) {
-          var/*css_flex_direction_t*/ axis = (ii !== 0) ? CSS_FLEX_DIRECTION_ROW : CSS_FLEX_DIRECTION_COLUMN;
-          if (!isUndefined(node.layout[dim[axis]]) &&
-              !isDimDefined(child, axis) &&
-              isPosDefined(child, leading[axis]) &&
-              isPosDefined(child, trailing[axis])) {
-            child.layout[dim[axis]] = fmaxf(
-              node.layout[dim[axis]] -
-              getPaddingAndBorderAxis(node, axis) -
-              getMarginAxis(child, axis) -
-              getPosition(child, leading[axis]) -
-              getPosition(child, trailing[axis]),
-              // You never want to go smaller than padding
-              getPaddingAndBorderAxis(child, axis)
-            );
-          }
-        }
-        for (var/*int*/ ii = 0; ii < 2; ii++) {
-          var/*css_flex_direction_t*/ axis = (ii !== 0) ? CSS_FLEX_DIRECTION_ROW : CSS_FLEX_DIRECTION_COLUMN;
-          if (isPosDefined(child, trailing[axis]) &&
-              !isPosDefined(child, leading[axis])) {
-            child.layout[leading[axis]] =
-              node.layout[dim[axis]] -
-              child.layout[dim[axis]] -
-              getPosition(child, trailing[axis]);
-          }
-        }
-      }
-    }
-  };
-})();
-
-if (typeof module === 'object') {
-  module.exports = computeLayout;
-}
-
-},{}],18:[function(require,module,exports){
-'use strict';
-
-var React = require('react');
-var assign = require('react/lib/Object.assign');
-var Scroller = require('scroller');
-var Group = require('./Group');
-var clamp = require('./clamp');
-
-var ListView = React.createClass({
-
-  propTypes: {
-    style: React.PropTypes.object,
-    numberOfItemsGetter: React.PropTypes.func.isRequired,
-    itemHeightGetter: React.PropTypes.func.isRequired,
-    itemGetter: React.PropTypes.func.isRequired,
-    snapping: React.PropTypes.bool,
-    scrollingDeceleration: React.PropTypes.number,
-    scrollingPenetrationAcceleration: React.PropTypes.number,
-    onScroll: React.PropTypes.func
-  },
-
-  getDefaultProps: function () {
-    return {
-      style: { left: 0, top: 0, width: 0, height: 0 },
-      snapping: false,
-      scrollingDeceleration: 0.95,
-      scrollingPenetrationAcceleration: 0.08
-    };
-  },
-
-  getInitialState: function () {
-    return {
-      scrollTop: 0
-    };
-  },
-
-  componentDidMount: function () {
-    this.createScroller();
-    this.updateScrollingDimensions();
-  },
-
-  render: function () {
-    var items = this.getVisibleItemIndexes().map(this.renderItem);
-    return (
-      React.createElement(Group, {
-        style: this.props.style,
-        onTouchStart: this.handleTouchStart,
-        onTouchMove: this.handleTouchMove,
-        onTouchEnd: this.handleTouchEnd,
-        onTouchCancel: this.handleTouchEnd},
-        items
-      )
-    );
-  },
-
-  renderItem: function (itemIndex) {
-    var item = this.props.itemGetter(itemIndex, this.state.scrollTop);
-    var itemHeight = this.props.itemHeightGetter();
-    var style = {
-      top: 0,
-      left: 0,
-      width: this.props.style.width,
-      height: itemHeight,
-      translateY: (itemIndex * itemHeight) - this.state.scrollTop,
-      zIndex: itemIndex
-    };
-
-    return (
-      React.createElement(Group, {style: style, key: itemIndex},
-        item
-      )
-    );
-  },
-
-  // Events
-  // ======
-
-  handleTouchStart: function (e) {
-    if (this.scroller) {
-      this.scroller.doTouchStart(e.touches, e.timeStamp);
-    }
-  },
-
-  handleTouchMove: function (e) {
-    if (this.scroller) {
-      e.preventDefault();
-      this.scroller.doTouchMove(e.touches, e.timeStamp, e.scale);
-    }
-  },
-
-  handleTouchEnd: function (e) {
-    if (this.scroller) {
-      this.scroller.doTouchEnd(e.timeStamp);
-      if (this.props.snapping) {
-        this.updateScrollingDeceleration();
-      }
-    }
-  },
-
-  handleScroll: function (left, top) {
-    this.setState({ scrollTop: top });
-    if (this.props.onScroll) {
-      this.props.onScroll(top);
-    }
-  },
-
-  // Scrolling
-  // =========
-
-  createScroller: function () {
-    var options = {
-      scrollingX: false,
-      scrollingY: true,
-      decelerationRate: this.props.scrollingDeceleration,
-      penetrationAcceleration: this.props.scrollingPenetrationAcceleration,
-    };
-    this.scroller = new Scroller(this.handleScroll, options);
-  },
-
-  updateScrollingDimensions: function () {
-    var width = this.props.style.width;
-    var height = this.props.style.height;
-    var scrollWidth = width;
-    var scrollHeight = this.props.numberOfItemsGetter() * this.props.itemHeightGetter();
-    this.scroller.setDimensions(width, height, scrollWidth, scrollHeight);
-  },
-
-  getVisibleItemIndexes: function () {
-    var itemIndexes = [];
-    var itemHeight = this.props.itemHeightGetter();
-    var itemCount = this.props.numberOfItemsGetter();
-    var scrollTop = this.state.scrollTop;
-    var itemScrollTop = 0;
-
-    for (var index=0; index < itemCount; index++) {
-      itemScrollTop = (index * itemHeight) - scrollTop;
-
-      // Item is completely off-screen bottom
-      if (itemScrollTop >= this.props.style.height) {
-        continue;
-      }
-
-      // Item is completely off-screen top
-      if (itemScrollTop <= -this.props.style.height) {
-        continue;
-      }
-
-      // Part of item is on-screen.
-      itemIndexes.push(index);
-    }
-
-    return itemIndexes;
-  },
-
-  updateScrollingDeceleration: function () {
-    var currVelocity = this.scroller.__decelerationVelocityY;
-    var currScrollTop = this.state.scrollTop;
-    var targetScrollTop = 0;
-    var estimatedEndScrollTop = currScrollTop;
-
-    while (Math.abs(currVelocity).toFixed(6) > 0) {
-      estimatedEndScrollTop += currVelocity;
-      currVelocity *= this.props.scrollingDeceleration;
-    }
-
-    // Find the page whose estimated end scrollTop is closest to 0.
-    var closestZeroDelta = Infinity;
-    var pageHeight = this.props.itemHeightGetter();
-    var pageCount = this.props.numberOfItemsGetter();
-    var pageScrollTop;
-
-    for (var pageIndex=0, len=pageCount; pageIndex < len; pageIndex++) {
-      pageScrollTop = (pageHeight * pageIndex) - estimatedEndScrollTop;
-      if (Math.abs(pageScrollTop) < closestZeroDelta) {
-        closestZeroDelta = Math.abs(pageScrollTop);
-        targetScrollTop = pageHeight * pageIndex;
-      }
-    }
-
-    this.scroller.__minDecelerationScrollTop = targetScrollTop;
-    this.scroller.__maxDecelerationScrollTop = targetScrollTop;
-  }
-
-});
-
-module.exports = ListView;
-
-},{"./Group":12,"./clamp":23,"react":185,"react/lib/Object.assign":56,"scroller":28}],19:[function(require,module,exports){
-'use strict';
-
-var ReactCanvas = {
-  Surface: require('./Surface'),
-
-  Layer: require('./Layer'),
-  Group: require('./Group'),
-  Image: require('./Image'),
-  Text: require('./Text'),
-  ListView: require('./ListView'),
-
-  FontFace: require('./FontFace'),
-  measureText: require('./measureText')
-};
-
-module.exports = ReactCanvas;
-
-},{"./FontFace":9,"./Group":12,"./Image":13,"./Layer":15,"./ListView":18,"./Surface":21,"./Text":22,"./measureText":27}],20:[function(require,module,exports){
-'use strict';
-
-var FrameUtils = require('./FrameUtils');
-var DrawingUtils = require('./DrawingUtils');
-var EventTypes = require('./EventTypes');
-
-function RenderLayer () {
-  this.children = [];
-  this.frame = FrameUtils.zero();
-}
-
-RenderLayer.prototype = {
-
-  /**
-   * Retrieve the root injection layer
-   *
-   * @return {RenderLayer}
-   */
-  getRootLayer: function () {
-    var root = this;
-    while (root.parentLayer) {
-      root = root.parentLayer;
-    }
-    return root;
-  },
-
-  /**
-   * RenderLayers are injected into a root owner layer whenever a Surface is
-   * mounted. This is the integration point with React internals.
-   *
-   * @param {RenderLayer} parentLayer
-   */
-  inject: function (parentLayer) {
-    if (this.parentLayer && this.parentLayer !== parentLayer) {
-      this.remove();
-    }
-    if (!this.parentLayer) {
-      parentLayer.addChild(this);
-    }
-  },
-
-  /**
-   * Inject a layer before a reference layer
-   *
-   * @param {RenderLayer} parentLayer
-   * @param {RenderLayer} referenceLayer
-   */
-  injectBefore: function (parentLayer, referenceLayer) {
-    // FIXME
-    this.inject(parentLayer);
-  },
-
-  /**
-   * Add a child to the render layer
-   *
-   * @param {RenderLayer} child
-   */
-  addChild: function (child) {
-    child.parentLayer = this;
-    this.children.push(child);
-  },
-
-  /**
-   * Remove a layer from it's parent layer
-   */
-  remove: function () {
-    if (this.parentLayer) {
-      this.parentLayer.children.splice(this.parentLayer.children.indexOf(this), 1);
-    }
-  },
-
-  /**
-   * Attach an event listener to a layer. Supported events are defined in
-   * lib/EventTypes.js
-   *
-   * @param {String} type
-   * @param {Function} callback
-   * @param {?Object} callbackScope
-   * @return {Function} invoke to unsubscribe the listener
-   */
-  subscribe: function (type, callback, callbackScope) {
-    // This is the integration point with React, called from LayerMixin.putEventListener().
-    // Enforce that only a single callbcak can be assigned per event type.
-    for (var eventType in EventTypes) {
-      if (EventTypes[eventType] === type) {
-        this[eventType] = callback;
-      }
-    }
-
-    // Return a function that can be called to unsubscribe from the event.
-    return this.removeEventListener.bind(this, type, callback, callbackScope);
-  },
-
-  /**
-   * @param {String} type
-   * @param {Function} callback
-   * @param {?Object} callbackScope
-   */
-  addEventListener: function (type, callback, callbackScope) {
-    for (var eventType in EventTypes) {
-      if (EventTypes[eventType] === type) {
-        delete this[eventType];
-      }
-    }
-  },
-
-  /**
-   * @param {String} type
-   * @param {Function} callback
-   * @param {?Object} callbackScope
-   */
-  removeEventListener: function (type, callback, callbackScope) {
-    var listeners = this.eventListeners[type];
-    var listener;
-    if (listeners) {
-      for (var index=0, len=listeners.length; index < len; index++) {
-        listener = listeners[index];
-        if (listener.callback === callback &&
-            listener.callbackScope === callbackScope) {
-          listeners.splice(index, 1);
-          break;
-        }
-      }
-    }
-  },
-
-  /**
-   * Translate a layer's frame
-   *
-   * @param {Number} x
-   * @param {Number} y
-   */
-  translate: function (x, y) {
-    if (this.frame) {
-      this.frame.x += x;
-      this.frame.y += y;
-    }
-
-    if (this.clipRect) {
-      this.clipRect.x += x;
-      this.clipRect.y += y;
-    }
-
-    if (this.children) {
-      this.children.forEach(function (child) {
-        child.translate(x, y);
-      });
-    }
-  },
-
-  /**
-   * Layers should call this method when they need to be redrawn. Note the
-   * difference here between `invalidateBackingStore`: updates that don't
-   * trigger layout should prefer `invalidateLayout`. For instance, an image
-   * component that is animating alpha level after the image loads would
-   * call `invalidateBackingStore` once after the image loads, and at each
-   * step in the animation would then call `invalidateRect`.
-   *
-   * @param {?Frame} frame Optional, if not passed the entire layer's frame
-   *   will be invalidated.
-   */
-  invalidateLayout: function () {
-    // Bubble all the way to the root layer.
-    this.getRootLayer().draw();
-  },
-
-  /**
-   * Layers should call this method when their backing <canvas> needs to be
-   * redrawn. For instance, an image component would call this once after the
-   * image loads.
-   */
-  invalidateBackingStore: function () {
-    if (this.backingStoreId) {
-      DrawingUtils.invalidateBackingStore(this.backingStoreId);
-    }
-    this.invalidateLayout();
-  },
-
-  /**
-   * Only the root owning layer should implement this function.
-   */
-  draw: function () {
-    // Placeholer
-  }
-
-};
-
-module.exports = RenderLayer;
-
-},{"./DrawingUtils":6,"./EventTypes":8,"./FrameUtils":11}],21:[function(require,module,exports){
-(function (process){
-'use strict';
-
-var React = require('react');
-var ReactUpdates = require('react/lib/ReactUpdates');
-var invariant = require('react/lib/invariant');
-var ContainerMixin = require('./ContainerMixin');
-var RenderLayer = require('./RenderLayer');
-var FrameUtils = require('./FrameUtils');
-var DrawingUtils = require('./DrawingUtils');
-var hitTest = require('./hitTest');
-var layoutNode = require('./layoutNode');
-
-/**
- * Surface is a standard React component and acts as the main drawing canvas.
- * ReactCanvas components cannot be rendered outside a Surface.
- */
-
-var Surface = React.createClass({
-
-  mixins: [ContainerMixin],
-
-  propTypes: {
-    top: React.PropTypes.number.isRequired,
-    left: React.PropTypes.number.isRequired,
-    width: React.PropTypes.number.isRequired,
-    height: React.PropTypes.number.isRequired,
-    scale: React.PropTypes.number.isRequired,
-    enableCSSLayout: React.PropTypes.bool
-  },
-
-  getDefaultProps: function () {
-    return {
-      scale: window.devicePixelRatio || 1
-    };
-  },
-
-  componentDidMount: function () {
-    // Prepare the <canvas> for drawing.
-    this.scale();
-
-    // ContainerMixin expects `this.node` to be set prior to mounting children.
-    // `this.node` is injected into child components and represents the current
-    // render tree.
-    this.node = new RenderLayer();
-    this.node.frame = FrameUtils.make(this.props.left, this.props.top, this.props.width, this.props.height);
-    this.node.draw = this.batchedTick;
-
-    // This is the integration point between custom canvas components and React
-    var transaction = ReactUpdates.ReactReconcileTransaction.getPooled();
-    transaction.perform(
-      this.mountAndInjectChildrenAtRoot,
-      this,
-      this.props.children,
-      transaction
-    );
-    ReactUpdates.ReactReconcileTransaction.release(transaction);
-
-    // Execute initial draw on mount.
-    this.node.draw();
-  },
-
-  componentWillUnmount: function () {
-    // Implemented in ReactMultiChild.Mixin
-    this.unmountChildren();
-  },
-
-  componentDidUpdate: function (prevProps, prevState) {
-    // We have to manually apply child reconciliation since child are not
-    // declared in render().
-    var transaction = ReactUpdates.ReactReconcileTransaction.getPooled();
-    transaction.perform(
-      this.updateChildrenAtRoot,
-      this,
-      this.props.children,
-      transaction
-    );
-    ReactUpdates.ReactReconcileTransaction.release(transaction);
-
-    // Re-scale the <canvas> when changing size.
-    if (prevProps.width !== this.props.width || prevProps.height !== this.props.height) {
-      this.scale();
-    }
-
-    // Redraw updated render tree to <canvas>.
-    if (this.node) {
-      this.node.draw();
-    }
-  },
-
-  render: function () {
-    // Scale the drawing area to match DPI.
-    var width = this.props.width * this.props.scale;
-    var height = this.props.height * this.props.scale;
-    var style = {
-      width: this.props.width,
-      height: this.props.height
-    };
-
-    return (
-      React.createElement('canvas', {
-        ref: 'canvas',
-        width: width,
-        height: height,
-        style: style,
-        onTouchStart: this.handleTouchStart,
-        onTouchMove: this.handleTouchMove,
-        onTouchEnd: this.handleTouchEnd,
-        onTouchCancel: this.handleTouchEnd,
-        onClick: this.handleClick})
-    );
-  },
-
-  // Drawing
-  // =======
-
-  getContext: function () {
-    ('production' !== process.env.NODE_ENV ? invariant(
-      this.isMounted(),
-      'Tried to access drawing context on an unmounted Surface.'
-    ) : invariant(this.isMounted()));
-    console.log('context', this.refs.canvas.getDOMNode().getContext('2d'));
-    return this.refs.canvas.getDOMNode().getContext('2d');
-  },
-
-  scale: function () {
-    this.getContext().scale(this.props.scale, this.props.scale);
-  },
-
-  batchedTick: function () {
-    if (this._frameReady === false) {
-      this._pendingTick = true;
-      return;
-    }
-    this.tick();
-  },
-
-  tick: function () {
-    // Block updates until next animation frame.
-    this._frameReady = false;
-    this.clear();
-    this.draw();
-    requestAnimationFrame(this.afterTick);
-  },
-
-  afterTick: function () {
-    // Execute pending draw that may have been scheduled during previous frame
-    this._frameReady = true;
-    if (this._pendingTick) {
-      this.tick();
-      this._pendingTick = false;
-    }
-  },
-
-  clear: function () {
-    this.getContext().clearRect(0, 0, this.props.width, this.props.height);
-  },
-
-  draw: function () {
-    var layout;
-    if (this.node) {
-      if (this.props.enableCSSLayout) {
-        layout = layoutNode(this.node);
-      }
-      DrawingUtils.drawRenderLayer(this.getContext(), this.node);
-    }
-  },
-
-  // Events
-  // ======
-
-  hitTest: function (e) {
-    var hitTarget = hitTest(e, this.node, this.getDOMNode());
-    if (hitTarget) {
-      hitTarget[hitTest.getHitHandle(e.type)](e);
-    }
-  },
-
-  handleTouchStart: function (e) {
-    var hitTarget = hitTest(e, this.node, this.getDOMNode());
-    var touch;
-    if (hitTarget) {
-      // On touchstart: capture the current hit target for the given touch.
-      this._touches = this._touches || {};
-      for (var i=0, len=e.touches.length; i < len; i++) {
-        touch = e.touches[i];
-        this._touches[touch.identifier] = hitTarget;
-      }
-      hitTarget[hitTest.getHitHandle(e.type)](e);
-    }
-  },
-
-  handleTouchMove: function (e) {
-    this.hitTest(e);
-  },
-
-  handleTouchEnd: function (e) {
-    // touchend events do not generate a pageX/pageY so we rely
-    // on the currently captured touch targets.
-    if (!this._touches) {
-      return;
-    }
-
-    var hitTarget;
-    var hitHandle = hitTest.getHitHandle(e.type);
-    for (var i=0, len=e.changedTouches.length; i < len; i++) {
-      hitTarget = this._touches[e.changedTouches[i].identifier];
-      if (hitTarget && hitTarget[hitHandle]) {
-        hitTarget[hitHandle](e);
-      }
-      delete this._touches[e.changedTouches[i].identifier];
-    }
-  },
-
-  handleClick: function (e) {
-    this.hitTest(e);
-  }
-
-});
-
-module.exports = Surface;
-
-}).call(this,require('_process'))
-},{"./ContainerMixin":5,"./DrawingUtils":6,"./FrameUtils":11,"./RenderLayer":20,"./hitTest":25,"./layoutNode":26,"_process":2,"react":185,"react/lib/ReactUpdates":117,"react/lib/invariant":165}],22:[function(require,module,exports){
-'use strict';
-
-var createComponent = require('./createComponent');
-var LayerMixin = require('./LayerMixin');
-
-var Text = createComponent('Text', LayerMixin, {
-
-  applyTextProps: function (prevProps, props) {
-    var style = (props && props.style) ? props.style : {};
-    var layer = this.node;
-
-    layer.type = 'text';
-    layer.text = childrenAsString(props.children);
-
-    layer.color = style.color;
-    layer.fontFace = style.fontFace;
-    layer.fontSize = style.fontSize;
-    layer.lineHeight = style.lineHeight;
-    layer.textAlign = style.textAlign;
-  },
-
-  mountComponent: function (rootID, transaction, context) {
-    var props = this._currentElement.props;
-    var layer = this.node;
-    this.applyLayerProps({}, props);
-    this.applyTextProps({}, props);
-    return layer;
-  },
-
-  receiveComponent: function (nextComponent, transaction, context) {
-    var props = nextComponent.props;
-    var prevProps = this._currentElement.props;
-    this.applyLayerProps(prevProps, props);
-    this.applyTextProps(prevProps, props);
-    this._currentElement = nextComponent;
-  }
-
-});
-
-function childrenAsString(children) {
-  if (!children) {
-    return '';
-  }
-  if (typeof children === 'string') {
-    return children;
-  }
-  if (children.length) {
-    return children.join('\n');
-  }
-  return '';
-}
-
-module.exports = Text;
-},{"./LayerMixin":16,"./createComponent":24}],23:[function(require,module,exports){
-'use strict';
-
-/**
- * Clamp a number between a minimum and maximum value.
- * @param {Number} number
- * @param {Number} min
- * @param {Number} max
- * @return {Number}
-*/
-module.exports = function (number, min, max) {
-  return Math.min(Math.max(number, min), max);
-};
-
-
-},{}],24:[function(require,module,exports){
-'use strict';
-
-// Adapted from ReactART:
-// https://github.com/reactjs/react-art
-
-var assign = require('react/lib/Object.assign');
-var RenderLayer = require('./RenderLayer');
-
-function createComponent (name) {
-  var ReactCanvasComponent = function (props) {
-    this.node = null;
-    this.subscriptions = null;
-    this.listeners = null;
-    this.node = new RenderLayer();
-    this._mountImage = null;
-    this._renderedChildren = null;
-    this._mostRecentlyPlacedChild = null;
-  };
-  ReactCanvasComponent.displayName = name;
-  for (var i = 1, l = arguments.length; i < l; i++) {
-    assign(ReactCanvasComponent.prototype, arguments[i]);
-  }
-
-  return ReactCanvasComponent;
-}
-
-module.exports = createComponent;
-
-},{"./RenderLayer":20,"react/lib/Object.assign":56}],25:[function(require,module,exports){
-'use strict';
-
-var FrameUtils = require('./FrameUtils');
-var EventTypes = require('./EventTypes');
-
-/**
- * RenderLayer hit testing
- *
- * @param {Event} e
- * @param {RenderLayer} rootLayer
- * @param {?HTMLElement} rootNode
- * @return {RenderLayer}
- */
-function hitTest (e, rootLayer, rootNode) {
-  var touch = e.touches ? e.touches[0] : e;
-  var touchX = touch.pageX;
-  var touchY = touch.pageY;
-  var rootNodeBox;
-  if (rootNode) {
-    rootNodeBox = rootNode.getBoundingClientRect();
-    touchX -= rootNodeBox.left;
-    touchY -= rootNodeBox.top;
-  }
-  return getLayerAtPoint(rootLayer, e.type, FrameUtils.make(touchX, touchY, 1, 1));
-}
-
-/**
- * @private
- */
-function sortByZIndexDescending (layer, otherLayer) {
-  return (otherLayer.zIndex || 0) - (layer.zIndex || 0);
-}
-
-/**
- * @private
- */
-function getHitHandle (type) {
-  var hitHandle;
-  for (var tryHandle in EventTypes) {
-    if (EventTypes[tryHandle] === type) {
-      hitHandle = tryHandle;
-      break;
-    }
-  }
-  return hitHandle;
-}
-
-/**
- * @private
- */
-function getLayerAtPoint (root, type, point) {
-  var layer = null;
-  var hitHandle = getHitHandle(type);
-  var sortedChildren;
-  var hitFrame = root.frame;
-
-  // Early bail for non-visible layers
-  if (typeof root.alpha === 'number' && root.alpha < 0.01) {
-    return null;
-  }
-
-  // Child-first search
-  if (root.children) {
-    sortedChildren = root.children.slice().reverse().sort(sortByZIndexDescending);
-    for (var i=0, len=sortedChildren.length; i < len; i++) {
-      layer = getLayerAtPoint(sortedChildren[i], type, point);
-      if (layer) {
-        break;
-      }
-    }
-  }
-
-  // Check for hit outsets
-  if (root.hitOutsets) {
-    hitFrame = FrameUtils.inset(FrameUtils.clone(hitFrame),
-      -root.hitOutsets[0], -root.hitOutsets[1],
-      -root.hitOutsets[2], -root.hitOutsets[3]
-    );
-  }
-
-  // No child layer at the given point. Try the parent layer.
-  if (!layer && root[hitHandle] && FrameUtils.intersects(hitFrame, point)) {
-    layer = root;
-  }
-
-  return layer;
-}
-
-module.exports = hitTest;
-module.exports.getHitHandle = getHitHandle;
-
-
-},{"./EventTypes":8,"./FrameUtils":11}],26:[function(require,module,exports){
-'use strict';
-
-var computeLayout = require('./Layout');
-
-/**
- * This computes the CSS layout for a RenderLayer tree and mutates the frame
- * objects at each node.
- *
- * @param {Renderlayer} root
- * @return {Object}
- */
-function layoutNode (root) {
-  var rootNode = createNode(root);
-  computeLayout(rootNode);
-  walkNode(rootNode);
-  return rootNode;
-}
-
-function createNode (layer) {
-  return {
-    layer: layer,
-    layout: {
-      width: undefined, // computeLayout will mutate
-      height: undefined, // computeLayout will mutate
-      top: 0,
-      left: 0,
-    },
-    style: layer._originalStyle || {},
-    children: (layer.children || []).map(createNode)
-  };
-}
-
-function walkNode (node, parentLeft, parentTop) {
-  node.layer.frame.x = node.layout.left + (parentLeft || 0);
-  node.layer.frame.y = node.layout.top + (parentTop || 0);
-  node.layer.frame.width = node.layout.width;
-  node.layer.frame.height = node.layout.height;
-  if (node.children && node.children.length > 0) {
-    node.children.forEach(function (child) {
-      walkNode(child, node.layout.left, node.layout.top);
-    });
-  }
-}
-
-module.exports = layoutNode;
-
-},{"./Layout":17}],27:[function(require,module,exports){
-'use strict';
-
-var FontFace = require('./FontFace');
-var FontUtils = require('./FontUtils');
-
-var canvas = document.createElement('canvas');
-var ctx = canvas.getContext('2d');
-
-var _cache = {};
-var _zeroMetrics = {
-  width: 0,
-  height: 0,
-  lines: []
-};
-
-function splitText (text) {
-  return text.split(' ');
-}
-
-function getCacheKey (text, width, fontFace, fontSize, lineHeight) {
-  return text + width + fontFace.id + fontSize + lineHeight;
-}
-
-/**
- * Given a string of text, available width, and font return the measured width
- * and height.
- * @param {String} text The input string
- * @param {Number} width The available width
- * @param {FontFace} fontFace The FontFace to use
- * @param {Number} fontSize The font size in CSS pixels
- * @param {Number} lineHeight The line height in CSS pixels
- * @return {Object} Measured text size with `width` and `height` members.
- */
-module.exports = function measureText (text, width, fontFace, fontSize, lineHeight) {
-  var cacheKey = getCacheKey(text, width, fontFace, fontSize, lineHeight);
-  var cached = _cache[cacheKey];
-  if (cached) {
-    return cached;
-  }
-
-  // Bail and return zero unless we're sure the font is ready.
-  if (!FontUtils.isFontLoaded(fontFace)) {
-    return _zeroMetrics;
-  }
-
-  var measuredSize = {};
-  var textMetrics;
-  var lastMeasuredWidth;
-  var words;
-  var tryLine;
-  var currentLine;
-
-  ctx.font = fontFace.attributes.style + ' normal ' + fontFace.attributes.weight + ' ' + fontSize + 'pt ' + fontFace.family;
-  textMetrics = ctx.measureText(text);
-
-  measuredSize.width = textMetrics.width;
-  measuredSize.height = lineHeight;
-  measuredSize.lines = [];
-
-  if (measuredSize.width <= width) {
-    // The entire text string fits.
-    measuredSize.lines.push({width: measuredSize.width, text: text});
-  } else {
-    // Break into multiple lines.
-    measuredSize.width = width;
-    words = splitText(text);
-    currentLine = '';
-
-    // This needs to be optimized!
-    while (words.length) {
-      tryLine = currentLine + words[0] + ' ';
-      textMetrics = ctx.measureText(tryLine);
-      if (textMetrics.width > width) {
-        measuredSize.height += lineHeight;
-        measuredSize.lines.push({width: lastMeasuredWidth, text: currentLine.trim()});
-        currentLine = words[0] + ' ';
-        lastMeasuredWidth = ctx.measureText(currentLine.trim()).width;
-      } else {
-        currentLine = tryLine;
-        lastMeasuredWidth = textMetrics.width;
-      }
-      if (words.length === 1) {
-        textMetrics = ctx.measureText(currentLine.trim());
-        measuredSize.lines.push({width: textMetrics.width, text: currentLine.trim()});
-      }
-      words.shift();
-    }
-  }
-
-  _cache[cacheKey] = measuredSize;
-
-  return measuredSize;
-};
-
-},{"./FontFace":9,"./FontUtils":10}],28:[function(require,module,exports){
-module.exports = require('./src/Scroller');
-},{"./src/Scroller":30}],29:[function(require,module,exports){
-/*
- * Scroller
- * http://github.com/zynga/scroller
- *
- * Copyright 2011, Zynga Inc.
- * Licensed under the MIT License.
- * https://raw.github.com/zynga/scroller/master/MIT-LICENSE.txt
- *
- * Based on the work of: Unify Project (unify-project.org)
- * http://unify-project.org
- * Copyright 2011, Deutsche Telekom AG
- * License: MIT + Apache (V2)
- */
-
-/**
- * Generic animation class with support for dropped frames both optional easing and duration.
- *
- * Optional duration is useful when the lifetime is defined by another condition than time
- * e.g. speed of an animating object, etc.
- *
- * Dropped frame logic allows to keep using the same updater logic independent from the actual
- * rendering. This eases a lot of cases where it might be pretty complex to break down a state
- * based on the pure time difference.
- */
-(function(global) {
-	var time = Date.now || function() {
-		return +new Date();
-	};
-	var desiredFrames = 60;
-	var millisecondsPerSecond = 1000;
-	var running = {};
-	var counter = 1;
-
-	// Create namespaces
-	var core = {
-		effect: {}
-	};
-
-	core.effect.Animate = {
-
-		/**
-		 * A requestAnimationFrame wrapper / polyfill.
-		 *
-		 * @param callback {Function} The callback to be invoked before the next repaint.
-		 * @param root {HTMLElement} The root element for the repaint
-		 */
-		requestAnimationFrame: (function() {
-
-			// Check for request animation Frame support
-			var requestFrame = global.requestAnimationFrame || global.webkitRequestAnimationFrame || global.mozRequestAnimationFrame || global.oRequestAnimationFrame;
-			var isNative = !!requestFrame;
-
-			if (requestFrame && !/requestAnimationFrame\(\)\s*\{\s*\[native code\]\s*\}/i.test(requestFrame.toString())) {
-				isNative = false;
-			}
-
-			if (isNative) {
-				return function(callback, root) {
-					requestFrame(callback, root)
-				};
-			}
-
-			var TARGET_FPS = 60;
-			var requests = {};
-			var requestCount = 0;
-			var rafHandle = 1;
-			var intervalHandle = null;
-			var lastActive = +new Date();
-
-			return function(callback, root) {
-				var callbackHandle = rafHandle++;
-
-				// Store callback
-				requests[callbackHandle] = callback;
-				requestCount++;
-
-				// Create timeout at first request
-				if (intervalHandle === null) {
-
-					intervalHandle = setInterval(function() {
-
-						var time = +new Date();
-						var currentRequests = requests;
-
-						// Reset data structure before executing callbacks
-						requests = {};
-						requestCount = 0;
-
-						for(var key in currentRequests) {
-							if (currentRequests.hasOwnProperty(key)) {
-								currentRequests[key](time);
-								lastActive = time;
-							}
-						}
-
-						// Disable the timeout when nothing happens for a certain
-						// period of time
-						if (time - lastActive > 2500) {
-							clearInterval(intervalHandle);
-							intervalHandle = null;
-						}
-
-					}, 1000 / TARGET_FPS);
-				}
-
-				return callbackHandle;
-			};
-
-		})(),
-
-
-		/**
-		 * Stops the given animation.
-		 *
-		 * @param id {Integer} Unique animation ID
-		 * @return {Boolean} Whether the animation was stopped (aka, was running before)
-		 */
-		stop: function(id) {
-			var cleared = running[id] != null;
-			if (cleared) {
-				running[id] = null;
-			}
-
-			return cleared;
-		},
-
-
-		/**
-		 * Whether the given animation is still running.
-		 *
-		 * @param id {Integer} Unique animation ID
-		 * @return {Boolean} Whether the animation is still running
-		 */
-		isRunning: function(id) {
-			return running[id] != null;
-		},
-
-
-		/**
-		 * Start the animation.
-		 *
-		 * @param stepCallback {Function} Pointer to function which is executed on every step.
-		 *   Signature of the method should be `function(percent, now, virtual) { return continueWithAnimation; }`
-		 * @param verifyCallback {Function} Executed before every animation step.
-		 *   Signature of the method should be `function() { return continueWithAnimation; }`
-		 * @param completedCallback {Function}
-		 *   Signature of the method should be `function(droppedFrames, finishedAnimation) {}`
-		 * @param duration {Integer} Milliseconds to run the animation
-		 * @param easingMethod {Function} Pointer to easing function
-		 *   Signature of the method should be `function(percent) { return modifiedValue; }`
-		 * @param root {Element ? document.body} Render root, when available. Used for internal
-		 *   usage of requestAnimationFrame.
-		 * @return {Integer} Identifier of animation. Can be used to stop it any time.
-		 */
-		start: function(stepCallback, verifyCallback, completedCallback, duration, easingMethod, root) {
-
-			var start = time();
-			var lastFrame = start;
-			var percent = 0;
-			var dropCounter = 0;
-			var id = counter++;
-
-			if (!root) {
-				root = document.body;
-			}
-
-			// Compacting running db automatically every few new animations
-			if (id % 20 === 0) {
-				var newRunning = {};
-				for (var usedId in running) {
-					newRunning[usedId] = true;
-				}
-				running = newRunning;
-			}
-
-			// This is the internal step method which is called every few milliseconds
-			var step = function(virtual) {
-
-				// Normalize virtual value
-				var render = virtual !== true;
-
-				// Get current time
-				var now = time();
-
-				// Verification is executed before next animation step
-				if (!running[id] || (verifyCallback && !verifyCallback(id))) {
-
-					running[id] = null;
-					completedCallback && completedCallback(desiredFrames - (dropCounter / ((now - start) / millisecondsPerSecond)), id, false);
-					return;
-
-				}
-
-				// For the current rendering to apply let's update omitted steps in memory.
-				// This is important to bring internal state variables up-to-date with progress in time.
-				if (render) {
-
-					var droppedFrames = Math.round((now - lastFrame) / (millisecondsPerSecond / desiredFrames)) - 1;
-					for (var j = 0; j < Math.min(droppedFrames, 4); j++) {
-						step(true);
-						dropCounter++;
-					}
-
-				}
-
-				// Compute percent value
-				if (duration) {
-					percent = (now - start) / duration;
-					if (percent > 1) {
-						percent = 1;
-					}
-				}
-
-				// Execute step callback, then...
-				var value = easingMethod ? easingMethod(percent) : percent;
-				if ((stepCallback(value, now, render) === false || percent === 1) && render) {
-					running[id] = null;
-					completedCallback && completedCallback(desiredFrames - (dropCounter / ((now - start) / millisecondsPerSecond)), id, percent === 1 || duration == null);
-				} else if (render) {
-					lastFrame = now;
-					core.effect.Animate.requestAnimationFrame(step, root);
-				}
-			};
-
-			// Mark as running
-			running[id] = true;
-
-			// Init first step
-			core.effect.Animate.requestAnimationFrame(step, root);
-
-			// Return unique animation ID
-			return id;
-		}
-	};
-
-	module.exports = core;
-
-})(typeof window !== 'undefined' ? window : this);
-
-
-},{}],30:[function(require,module,exports){
-/*
- * Scroller
- * http://github.com/zynga/scroller
- *
- * Copyright 2011, Zynga Inc.
- * Licensed under the MIT License.
- * https://raw.github.com/zynga/scroller/master/MIT-LICENSE.txt
- *
- * Based on the work of: Unify Project (unify-project.org)
- * http://unify-project.org
- * Copyright 2011, Deutsche Telekom AG
- * License: MIT + Apache (V2)
- */
-
-var core = require('./Animate');
-var Scroller;
-
-(function() {
-	var NOOP = function(){};
-
-	/**
-	 * A pure logic 'component' for 'virtual' scrolling/zooming.
-	 */
-	Scroller = function(callback, options) {
-
-		this.__callback = callback;
-
-		this.options = {
-
-			/** Enable scrolling on x-axis */
-			scrollingX: true,
-
-			/** Enable scrolling on y-axis */
-			scrollingY: true,
-
-			/** Enable animations for deceleration, snap back, zooming and scrolling */
-			animating: true,
-
-			/** duration for animations triggered by scrollTo/zoomTo */
-			animationDuration: 250,
-
-			/** Enable bouncing (content can be slowly moved outside and jumps back after releasing) */
-			bouncing: true,
-
-			/** Enable locking to the main axis if user moves only slightly on one of them at start */
-			locking: true,
-
-			/** Enable pagination mode (switching between full page content panes) */
-			paging: false,
-
-			/** Enable snapping of content to a configured pixel grid */
-			snapping: false,
-
-			/** Enable zooming of content via API, fingers and mouse wheel */
-			zooming: false,
-
-			/** Minimum zoom level */
-			minZoom: 0.5,
-
-			/** Maximum zoom level */
-			maxZoom: 3,
-
-			/** Multiply or decrease scrolling speed **/
-			speedMultiplier: 1,
-
-			/** Callback that is fired on the later of touch end or deceleration end,
-				provided that another scrolling action has not begun. Used to know
-				when to fade out a scrollbar. */
-			scrollingComplete: NOOP,
-
-			/** Increase or decrease the amount of friction applied to deceleration **/
-			decelerationRate: 0.95,
-			
-			/** This configures the amount of change applied to deceleration when reaching boundaries  **/
-            penetrationDeceleration : 0.03,
-
-            /** This configures the amount of change applied to acceleration when reaching boundaries  **/
-            penetrationAcceleration : 0.08
-
-		};
-
-		for (var key in options) {
-			this.options[key] = options[key];
-		}
-
-	};
-
-
-	// Easing Equations (c) 2003 Robert Penner, all rights reserved.
-	// Open source under the BSD License.
-
-	/**
-	 * @param pos {Number} position between 0 (start of effect) and 1 (end of effect)
-	**/
-	var easeOutCubic = function(pos) {
-		return (Math.pow((pos - 1), 3) + 1);
-	};
-
-	/**
-	 * @param pos {Number} position between 0 (start of effect) and 1 (end of effect)
-	**/
-	var easeInOutCubic = function(pos) {
-		if ((pos /= 0.5) < 1) {
-			return 0.5 * Math.pow(pos, 3);
-		}
-
-		return 0.5 * (Math.pow((pos - 2), 3) + 2);
-	};
-
-
-	var members = {
-
-		/*
-		---------------------------------------------------------------------------
-			INTERNAL FIELDS :: STATUS
-		---------------------------------------------------------------------------
-		*/
-
-		/** {Boolean} Whether only a single finger is used in touch handling */
-		__isSingleTouch: false,
-
-		/** {Boolean} Whether a touch event sequence is in progress */
-		__isTracking: false,
-
-		/** {Boolean} Whether a deceleration animation went to completion. */
-		__didDecelerationComplete: false,
-
-		/**
-		 * {Boolean} Whether a gesture zoom/rotate event is in progress. Activates when
-		 * a gesturestart event happens. This has higher priority than dragging.
-		 */
-		__isGesturing: false,
-
-		/**
-		 * {Boolean} Whether the user has moved by such a distance that we have enabled
-		 * dragging mode. Hint: It's only enabled after some pixels of movement to
-		 * not interrupt with clicks etc.
-		 */
-		__isDragging: false,
-
-		/**
-		 * {Boolean} Not touching and dragging anymore, and smoothly animating the
-		 * touch sequence using deceleration.
-		 */
-		__isDecelerating: false,
-
-		/**
-		 * {Boolean} Smoothly animating the currently configured change
-		 */
-		__isAnimating: false,
-
-
-
-		/*
-		---------------------------------------------------------------------------
-			INTERNAL FIELDS :: DIMENSIONS
-		---------------------------------------------------------------------------
-		*/
-
-		/** {Integer} Available outer left position (from document perspective) */
-		__clientLeft: 0,
-
-		/** {Integer} Available outer top position (from document perspective) */
-		__clientTop: 0,
-
-		/** {Integer} Available outer width */
-		__clientWidth: 0,
-
-		/** {Integer} Available outer height */
-		__clientHeight: 0,
-
-		/** {Integer} Outer width of content */
-		__contentWidth: 0,
-
-		/** {Integer} Outer height of content */
-		__contentHeight: 0,
-
-		/** {Integer} Snapping width for content */
-		__snapWidth: 100,
-
-		/** {Integer} Snapping height for content */
-		__snapHeight: 100,
-
-		/** {Integer} Height to assign to refresh area */
-		__refreshHeight: null,
-
-		/** {Boolean} Whether the refresh process is enabled when the event is released now */
-		__refreshActive: false,
-
-		/** {Function} Callback to execute on activation. This is for signalling the user about a refresh is about to happen when he release */
-		__refreshActivate: null,
-
-		/** {Function} Callback to execute on deactivation. This is for signalling the user about the refresh being cancelled */
-		__refreshDeactivate: null,
-
-		/** {Function} Callback to execute to start the actual refresh. Call {@link #refreshFinish} when done */
-		__refreshStart: null,
-
-		/** {Number} Zoom level */
-		__zoomLevel: 1,
-
-		/** {Number} Scroll position on x-axis */
-		__scrollLeft: 0,
-
-		/** {Number} Scroll position on y-axis */
-		__scrollTop: 0,
-
-		/** {Integer} Maximum allowed scroll position on x-axis */
-		__maxScrollLeft: 0,
-
-		/** {Integer} Maximum allowed scroll position on y-axis */
-		__maxScrollTop: 0,
-
-		/* {Number} Scheduled left position (final position when animating) */
-		__scheduledLeft: 0,
-
-		/* {Number} Scheduled top position (final position when animating) */
-		__scheduledTop: 0,
-
-		/* {Number} Scheduled zoom level (final scale when animating) */
-		__scheduledZoom: 0,
-
-
-
-		/*
-		---------------------------------------------------------------------------
-			INTERNAL FIELDS :: LAST POSITIONS
-		---------------------------------------------------------------------------
-		*/
-
-		/** {Number} Left position of finger at start */
-		__lastTouchLeft: null,
-
-		/** {Number} Top position of finger at start */
-		__lastTouchTop: null,
-
-		/** {Date} Timestamp of last move of finger. Used to limit tracking range for deceleration speed. */
-		__lastTouchMove: null,
-
-		/** {Array} List of positions, uses three indexes for each state: left, top, timestamp */
-		__positions: null,
-
-
-
-		/*
-		---------------------------------------------------------------------------
-			INTERNAL FIELDS :: DECELERATION SUPPORT
-		---------------------------------------------------------------------------
-		*/
-
-		/** {Integer} Minimum left scroll position during deceleration */
-		__minDecelerationScrollLeft: null,
-
-		/** {Integer} Minimum top scroll position during deceleration */
-		__minDecelerationScrollTop: null,
-
-		/** {Integer} Maximum left scroll position during deceleration */
-		__maxDecelerationScrollLeft: null,
-
-		/** {Integer} Maximum top scroll position during deceleration */
-		__maxDecelerationScrollTop: null,
-
-		/** {Number} Current factor to modify horizontal scroll position with on every step */
-		__decelerationVelocityX: null,
-
-		/** {Number} Current factor to modify vertical scroll position with on every step */
-		__decelerationVelocityY: null,
-
-
-
-		/*
-		---------------------------------------------------------------------------
-			PUBLIC API
-		---------------------------------------------------------------------------
-		*/
-
-		/**
-		 * Configures the dimensions of the client (outer) and content (inner) elements.
-		 * Requires the available space for the outer element and the outer size of the inner element.
-		 * All values which are falsy (null or zero etc.) are ignored and the old value is kept.
-		 *
-		 * @param clientWidth {Integer ? null} Inner width of outer element
-		 * @param clientHeight {Integer ? null} Inner height of outer element
-		 * @param contentWidth {Integer ? null} Outer width of inner element
-		 * @param contentHeight {Integer ? null} Outer height of inner element
-		 */
-		setDimensions: function(clientWidth, clientHeight, contentWidth, contentHeight) {
-
-			var self = this;
-
-			// Only update values which are defined
-			if (clientWidth === +clientWidth) {
-				self.__clientWidth = clientWidth;
-			}
-
-			if (clientHeight === +clientHeight) {
-				self.__clientHeight = clientHeight;
-			}
-
-			if (contentWidth === +contentWidth) {
-				self.__contentWidth = contentWidth;
-			}
-
-			if (contentHeight === +contentHeight) {
-				self.__contentHeight = contentHeight;
-			}
-
-			// Refresh maximums
-			self.__computeScrollMax();
-
-			// Refresh scroll position
-			self.scrollTo(self.__scrollLeft, self.__scrollTop, true);
-
-		},
-
-
-		/**
-		 * Sets the client coordinates in relation to the document.
-		 *
-		 * @param left {Integer ? 0} Left position of outer element
-		 * @param top {Integer ? 0} Top position of outer element
-		 */
-		setPosition: function(left, top) {
-
-			var self = this;
-
-			self.__clientLeft = left || 0;
-			self.__clientTop = top || 0;
-
-		},
-
-
-		/**
-		 * Configures the snapping (when snapping is active)
-		 *
-		 * @param width {Integer} Snapping width
-		 * @param height {Integer} Snapping height
-		 */
-		setSnapSize: function(width, height) {
-
-			var self = this;
-
-			self.__snapWidth = width;
-			self.__snapHeight = height;
-
-		},
-
-
-		/**
-		 * Activates pull-to-refresh. A special zone on the top of the list to start a list refresh whenever
-		 * the user event is released during visibility of this zone. This was introduced by some apps on iOS like
-		 * the official Twitter client.
-		 *
-		 * @param height {Integer} Height of pull-to-refresh zone on top of rendered list
-		 * @param activateCallback {Function} Callback to execute on activation. This is for signalling the user about a refresh is about to happen when he release.
-		 * @param deactivateCallback {Function} Callback to execute on deactivation. This is for signalling the user about the refresh being cancelled.
-		 * @param startCallback {Function} Callback to execute to start the real async refresh action. Call {@link #finishPullToRefresh} after finish of refresh.
-		 */
-		activatePullToRefresh: function(height, activateCallback, deactivateCallback, startCallback) {
-
-			var self = this;
-
-			self.__refreshHeight = height;
-			self.__refreshActivate = activateCallback;
-			self.__refreshDeactivate = deactivateCallback;
-			self.__refreshStart = startCallback;
-
-		},
-
-
-		/**
-		 * Starts pull-to-refresh manually.
-		 */
-		triggerPullToRefresh: function() {
-			// Use publish instead of scrollTo to allow scrolling to out of boundary position
-			// We don't need to normalize scrollLeft, zoomLevel, etc. here because we only y-scrolling when pull-to-refresh is enabled
-			this.__publish(this.__scrollLeft, -this.__refreshHeight, this.__zoomLevel, true);
-
-			if (this.__refreshStart) {
-				this.__refreshStart();
-			}
-		},
-
-
-		/**
-		 * Signalizes that pull-to-refresh is finished.
-		 */
-		finishPullToRefresh: function() {
-
-			var self = this;
-
-			self.__refreshActive = false;
-			if (self.__refreshDeactivate) {
-				self.__refreshDeactivate();
-			}
-
-			self.scrollTo(self.__scrollLeft, self.__scrollTop, true);
-
-		},
-
-
-		/**
-		 * Returns the scroll position and zooming values
-		 *
-		 * @return {Map} `left` and `top` scroll position and `zoom` level
-		 */
-		getValues: function() {
-
-			var self = this;
-
-			return {
-				left: self.__scrollLeft,
-				top: self.__scrollTop,
-				zoom: self.__zoomLevel
-			};
-
-		},
-
-
-		/**
-		 * Returns the maximum scroll values
-		 *
-		 * @return {Map} `left` and `top` maximum scroll values
-		 */
-		getScrollMax: function() {
-
-			var self = this;
-
-			return {
-				left: self.__maxScrollLeft,
-				top: self.__maxScrollTop
-			};
-
-		},
-
-
-		/**
-		 * Zooms to the given level. Supports optional animation. Zooms
-		 * the center when no coordinates are given.
-		 *
-		 * @param level {Number} Level to zoom to
-		 * @param animate {Boolean ? false} Whether to use animation
-		 * @param originLeft {Number ? null} Zoom in at given left coordinate
-		 * @param originTop {Number ? null} Zoom in at given top coordinate
-		 * @param callback {Function ? null} A callback that gets fired when the zoom is complete.
-		 */
-		zoomTo: function(level, animate, originLeft, originTop, callback) {
-
-			var self = this;
-
-			if (!self.options.zooming) {
-				throw new Error("Zooming is not enabled!");
-			}
-
-			// Add callback if exists
-			if(callback) {
-				self.__zoomComplete = callback;
-			}
-
-			// Stop deceleration
-			if (self.__isDecelerating) {
-				core.effect.Animate.stop(self.__isDecelerating);
-				self.__isDecelerating = false;
-			}
-
-			var oldLevel = self.__zoomLevel;
-
-			// Normalize input origin to center of viewport if not defined
-			if (originLeft == null) {
-				originLeft = self.__clientWidth / 2;
-			}
-
-			if (originTop == null) {
-				originTop = self.__clientHeight / 2;
-			}
-
-			// Limit level according to configuration
-			level = Math.max(Math.min(level, self.options.maxZoom), self.options.minZoom);
-
-			// Recompute maximum values while temporary tweaking maximum scroll ranges
-			self.__computeScrollMax(level);
-
-			// Recompute left and top coordinates based on new zoom level
-			var left = ((originLeft + self.__scrollLeft) * level / oldLevel) - originLeft;
-			var top = ((originTop + self.__scrollTop) * level / oldLevel) - originTop;
-
-			// Limit x-axis
-			if (left > self.__maxScrollLeft) {
-				left = self.__maxScrollLeft;
-			} else if (left < 0) {
-				left = 0;
-			}
-
-			// Limit y-axis
-			if (top > self.__maxScrollTop) {
-				top = self.__maxScrollTop;
-			} else if (top < 0) {
-				top = 0;
-			}
-
-			// Push values out
-			self.__publish(left, top, level, animate);
-
-		},
-
-
-		/**
-		 * Zooms the content by the given factor.
-		 *
-		 * @param factor {Number} Zoom by given factor
-		 * @param animate {Boolean ? false} Whether to use animation
-		 * @param originLeft {Number ? 0} Zoom in at given left coordinate
-		 * @param originTop {Number ? 0} Zoom in at given top coordinate
-		 * @param callback {Function ? null} A callback that gets fired when the zoom is complete.
-		 */
-		zoomBy: function(factor, animate, originLeft, originTop, callback) {
-
-			var self = this;
-
-			self.zoomTo(self.__zoomLevel * factor, animate, originLeft, originTop, callback);
-
-		},
-
-
-		/**
-		 * Scrolls to the given position. Respect limitations and snapping automatically.
-		 *
-		 * @param left {Number?null} Horizontal scroll position, keeps current if value is <code>null</code>
-		 * @param top {Number?null} Vertical scroll position, keeps current if value is <code>null</code>
-		 * @param animate {Boolean?false} Whether the scrolling should happen using an animation
-		 * @param zoom {Number?null} Zoom level to go to
-		 */
-		scrollTo: function(left, top, animate, zoom) {
-
-			var self = this;
-
-			// Stop deceleration
-			if (self.__isDecelerating) {
-				core.effect.Animate.stop(self.__isDecelerating);
-				self.__isDecelerating = false;
-			}
-
-			// Correct coordinates based on new zoom level
-			if (zoom != null && zoom !== self.__zoomLevel) {
-
-				if (!self.options.zooming) {
-					throw new Error("Zooming is not enabled!");
-				}
-
-				left *= zoom;
-				top *= zoom;
-
-				// Recompute maximum values while temporary tweaking maximum scroll ranges
-				self.__computeScrollMax(zoom);
-
-			} else {
-
-				// Keep zoom when not defined
-				zoom = self.__zoomLevel;
-
-			}
-
-			if (!self.options.scrollingX) {
-
-				left = self.__scrollLeft;
-
-			} else {
-
-				if (self.options.paging) {
-					left = Math.round(left / self.__clientWidth) * self.__clientWidth;
-				} else if (self.options.snapping) {
-					left = Math.round(left / self.__snapWidth) * self.__snapWidth;
-				}
-
-			}
-
-			if (!self.options.scrollingY) {
-
-				top = self.__scrollTop;
-
-			} else {
-
-				if (self.options.paging) {
-					top = Math.round(top / self.__clientHeight) * self.__clientHeight;
-				} else if (self.options.snapping) {
-					top = Math.round(top / self.__snapHeight) * self.__snapHeight;
-				}
-
-			}
-
-			// Limit for allowed ranges
-			left = Math.max(Math.min(self.__maxScrollLeft, left), 0);
-			top = Math.max(Math.min(self.__maxScrollTop, top), 0);
-
-			// Don't animate when no change detected, still call publish to make sure
-			// that rendered position is really in-sync with internal data
-			if (left === self.__scrollLeft && top === self.__scrollTop) {
-				animate = false;
-			}
-
-			// Publish new values
-			self.__publish(left, top, zoom, animate);
-
-		},
-
-
-		/**
-		 * Scroll by the given offset
-		 *
-		 * @param left {Number ? 0} Scroll x-axis by given offset
-		 * @param top {Number ? 0} Scroll x-axis by given offset
-		 * @param animate {Boolean ? false} Whether to animate the given change
-		 */
-		scrollBy: function(left, top, animate) {
-
-			var self = this;
-
-			var startLeft = self.__isAnimating ? self.__scheduledLeft : self.__scrollLeft;
-			var startTop = self.__isAnimating ? self.__scheduledTop : self.__scrollTop;
-
-			self.scrollTo(startLeft + (left || 0), startTop + (top || 0), animate);
-
-		},
-
-
-
-		/*
-		---------------------------------------------------------------------------
-			EVENT CALLBACKS
-		---------------------------------------------------------------------------
-		*/
-
-		/**
-		 * Mouse wheel handler for zooming support
-		 */
-		doMouseZoom: function(wheelDelta, timeStamp, pageX, pageY) {
-
-			var self = this;
-			var change = wheelDelta > 0 ? 0.97 : 1.03;
-
-			return self.zoomTo(self.__zoomLevel * change, false, pageX - self.__clientLeft, pageY - self.__clientTop);
-
-		},
-
-
-		/**
-		 * Touch start handler for scrolling support
-		 */
-		doTouchStart: function(touches, timeStamp) {
-
-			// Array-like check is enough here
-			if (touches.length == null) {
-				throw new Error("Invalid touch list: " + touches);
-			}
-
-			if (timeStamp instanceof Date) {
-				timeStamp = timeStamp.valueOf();
-			}
-			if (typeof timeStamp !== "number") {
-				throw new Error("Invalid timestamp value: " + timeStamp);
-			}
-
-			var self = this;
-
-			// Reset interruptedAnimation flag
-			self.__interruptedAnimation = true;
-
-			// Stop deceleration
-			if (self.__isDecelerating) {
-				core.effect.Animate.stop(self.__isDecelerating);
-				self.__isDecelerating = false;
-				self.__interruptedAnimation = true;
-			}
-
-			// Stop animation
-			if (self.__isAnimating) {
-				core.effect.Animate.stop(self.__isAnimating);
-				self.__isAnimating = false;
-				self.__interruptedAnimation = true;
-			}
-
-			// Use center point when dealing with two fingers
-			var currentTouchLeft, currentTouchTop;
-			var isSingleTouch = touches.length === 1;
-			if (isSingleTouch) {
-				currentTouchLeft = touches[0].pageX;
-				currentTouchTop = touches[0].pageY;
-			} else {
-				currentTouchLeft = Math.abs(touches[0].pageX + touches[1].pageX) / 2;
-				currentTouchTop = Math.abs(touches[0].pageY + touches[1].pageY) / 2;
-			}
-
-			// Store initial positions
-			self.__initialTouchLeft = currentTouchLeft;
-			self.__initialTouchTop = currentTouchTop;
-
-			// Store current zoom level
-			self.__zoomLevelStart = self.__zoomLevel;
-
-			// Store initial touch positions
-			self.__lastTouchLeft = currentTouchLeft;
-			self.__lastTouchTop = currentTouchTop;
-
-			// Store initial move time stamp
-			self.__lastTouchMove = timeStamp;
-
-			// Reset initial scale
-			self.__lastScale = 1;
-
-			// Reset locking flags
-			self.__enableScrollX = !isSingleTouch && self.options.scrollingX;
-			self.__enableScrollY = !isSingleTouch && self.options.scrollingY;
-
-			// Reset tracking flag
-			self.__isTracking = true;
-
-			// Reset deceleration complete flag
-			self.__didDecelerationComplete = false;
-
-			// Dragging starts directly with two fingers, otherwise lazy with an offset
-			self.__isDragging = !isSingleTouch;
-
-			// Some features are disabled in multi touch scenarios
-			self.__isSingleTouch = isSingleTouch;
-
-			// Clearing data structure
-			self.__positions = [];
-
-		},
-
-
-		/**
-		 * Touch move handler for scrolling support
-		 */
-		doTouchMove: function(touches, timeStamp, scale) {
-
-			// Array-like check is enough here
-			if (touches.length == null) {
-				throw new Error("Invalid touch list: " + touches);
-			}
-
-			if (timeStamp instanceof Date) {
-				timeStamp = timeStamp.valueOf();
-			}
-			if (typeof timeStamp !== "number") {
-				throw new Error("Invalid timestamp value: " + timeStamp);
-			}
-
-			var self = this;
-
-			// Ignore event when tracking is not enabled (event might be outside of element)
-			if (!self.__isTracking) {
-				return;
-			}
-
-
-			var currentTouchLeft, currentTouchTop;
-
-			// Compute move based around of center of fingers
-			if (touches.length === 2) {
-				currentTouchLeft = Math.abs(touches[0].pageX + touches[1].pageX) / 2;
-				currentTouchTop = Math.abs(touches[0].pageY + touches[1].pageY) / 2;
-			} else {
-				currentTouchLeft = touches[0].pageX;
-				currentTouchTop = touches[0].pageY;
-			}
-
-			var positions = self.__positions;
-
-			// Are we already is dragging mode?
-			if (self.__isDragging) {
-
-				// Compute move distance
-				var moveX = currentTouchLeft - self.__lastTouchLeft;
-				var moveY = currentTouchTop - self.__lastTouchTop;
-
-				// Read previous scroll position and zooming
-				var scrollLeft = self.__scrollLeft;
-				var scrollTop = self.__scrollTop;
-				var level = self.__zoomLevel;
-
-				// Work with scaling
-				if (scale != null && self.options.zooming) {
-
-					var oldLevel = level;
-
-					// Recompute level based on previous scale and new scale
-					level = level / self.__lastScale * scale;
-
-					// Limit level according to configuration
-					level = Math.max(Math.min(level, self.options.maxZoom), self.options.minZoom);
-
-					// Only do further compution when change happened
-					if (oldLevel !== level) {
-
-						// Compute relative event position to container
-						var currentTouchLeftRel = currentTouchLeft - self.__clientLeft;
-						var currentTouchTopRel = currentTouchTop - self.__clientTop;
-
-						// Recompute left and top coordinates based on new zoom level
-						scrollLeft = ((currentTouchLeftRel + scrollLeft) * level / oldLevel) - currentTouchLeftRel;
-						scrollTop = ((currentTouchTopRel + scrollTop) * level / oldLevel) - currentTouchTopRel;
-
-						// Recompute max scroll values
-						self.__computeScrollMax(level);
-
-					}
-				}
-
-				if (self.__enableScrollX) {
-
-					scrollLeft -= moveX * this.options.speedMultiplier;
-					var maxScrollLeft = self.__maxScrollLeft;
-
-					if (scrollLeft > maxScrollLeft || scrollLeft < 0) {
-
-						// Slow down on the edges
-						if (self.options.bouncing) {
-
-							scrollLeft += (moveX / 2  * this.options.speedMultiplier);
-
-						} else if (scrollLeft > maxScrollLeft) {
-
-							scrollLeft = maxScrollLeft;
-
-						} else {
-
-							scrollLeft = 0;
-
-						}
-					}
-				}
-
-				// Compute new vertical scroll position
-				if (self.__enableScrollY) {
-
-					scrollTop -= moveY * this.options.speedMultiplier;
-					var maxScrollTop = self.__maxScrollTop;
-
-					if (scrollTop > maxScrollTop || scrollTop < 0) {
-
-						// Slow down on the edges
-						if (self.options.bouncing) {
-
-							scrollTop += (moveY / 2 * this.options.speedMultiplier);
-
-							// Support pull-to-refresh (only when only y is scrollable)
-							if (!self.__enableScrollX && self.__refreshHeight != null) {
-
-								if (!self.__refreshActive && scrollTop <= -self.__refreshHeight) {
-
-									self.__refreshActive = true;
-									if (self.__refreshActivate) {
-										self.__refreshActivate();
-									}
-
-								} else if (self.__refreshActive && scrollTop > -self.__refreshHeight) {
-
-									self.__refreshActive = false;
-									if (self.__refreshDeactivate) {
-										self.__refreshDeactivate();
-									}
-
-								}
-							}
-
-						} else if (scrollTop > maxScrollTop) {
-
-							scrollTop = maxScrollTop;
-
-						} else {
-
-							scrollTop = 0;
-
-						}
-					}
-				}
-
-				// Keep list from growing infinitely (holding min 10, max 20 measure points)
-				if (positions.length > 60) {
-					positions.splice(0, 30);
-				}
-
-				// Track scroll movement for decleration
-				positions.push(scrollLeft, scrollTop, timeStamp);
-
-				// Sync scroll position
-				self.__publish(scrollLeft, scrollTop, level);
-
-			// Otherwise figure out whether we are switching into dragging mode now.
-			} else {
-
-				var minimumTrackingForScroll = self.options.locking ? 3 : 0;
-				var minimumTrackingForDrag = 5;
-
-				var distanceX = Math.abs(currentTouchLeft - self.__initialTouchLeft);
-				var distanceY = Math.abs(currentTouchTop - self.__initialTouchTop);
-
-				self.__enableScrollX = self.options.scrollingX && distanceX >= minimumTrackingForScroll;
-				self.__enableScrollY = self.options.scrollingY && distanceY >= minimumTrackingForScroll;
-
-				positions.push(self.__scrollLeft, self.__scrollTop, timeStamp);
-
-				self.__isDragging = (self.__enableScrollX || self.__enableScrollY) && (distanceX >= minimumTrackingForDrag || distanceY >= minimumTrackingForDrag);
-				if (self.__isDragging) {
-					self.__interruptedAnimation = false;
-				}
-
-			}
-
-			// Update last touch positions and time stamp for next event
-			self.__lastTouchLeft = currentTouchLeft;
-			self.__lastTouchTop = currentTouchTop;
-			self.__lastTouchMove = timeStamp;
-			self.__lastScale = scale;
-
-		},
-
-
-		/**
-		 * Touch end handler for scrolling support
-		 */
-		doTouchEnd: function(timeStamp) {
-
-			if (timeStamp instanceof Date) {
-				timeStamp = timeStamp.valueOf();
-			}
-			if (typeof timeStamp !== "number") {
-				throw new Error("Invalid timestamp value: " + timeStamp);
-			}
-
-			var self = this;
-
-			// Ignore event when tracking is not enabled (no touchstart event on element)
-			// This is required as this listener ('touchmove') sits on the document and not on the element itself.
-			if (!self.__isTracking) {
-				return;
-			}
-
-			// Not touching anymore (when two finger hit the screen there are two touch end events)
-			self.__isTracking = false;
-
-			// Be sure to reset the dragging flag now. Here we also detect whether
-			// the finger has moved fast enough to switch into a deceleration animation.
-			if (self.__isDragging) {
-
-				// Reset dragging flag
-				self.__isDragging = false;
-
-				// Start deceleration
-				// Verify that the last move detected was in some relevant time frame
-				if (self.__isSingleTouch && self.options.animating && (timeStamp - self.__lastTouchMove) <= 100) {
-
-					// Then figure out what the scroll position was about 100ms ago
-					var positions = self.__positions;
-					var endPos = positions.length - 1;
-					var startPos = endPos;
-
-					// Move pointer to position measured 100ms ago
-					for (var i = endPos; i > 0 && positions[i] > (self.__lastTouchMove - 100); i -= 3) {
-						startPos = i;
-					}
-
-					// If we haven't received consecutive touchmove events within a 100ms
-					// timeframe, attempt a best-effort based on the first position. This
-					// typically happens when an expensive operation occurs on the main
-					// thread during scrolling, such as image decoding.
-					if (startPos === endPos && positions.length > 5) {
-						startPos = 2;
-					}
-
-					// If start and stop position is identical in a 100ms timeframe,
-					// we cannot compute any useful deceleration.
-					if (startPos !== endPos) {
-
-						// Compute relative movement between these two points
-						var timeOffset = positions[endPos] - positions[startPos];
-						var movedLeft = self.__scrollLeft - positions[startPos - 2];
-						var movedTop = self.__scrollTop - positions[startPos - 1];
-
-						// Based on 50ms compute the movement to apply for each render step
-						self.__decelerationVelocityX = movedLeft / timeOffset * (1000 / 60);
-						self.__decelerationVelocityY = movedTop / timeOffset * (1000 / 60);
-
-						// How much velocity is required to start the deceleration
-						var minVelocityToStartDeceleration = self.options.paging || self.options.snapping ? 4 : 1;
-
-						// Verify that we have enough velocity to start deceleration
-						if (Math.abs(self.__decelerationVelocityX) > minVelocityToStartDeceleration || Math.abs(self.__decelerationVelocityY) > minVelocityToStartDeceleration) {
-
-							// Deactivate pull-to-refresh when decelerating
-							if (!self.__refreshActive) {
-								self.__startDeceleration(timeStamp);
-							}
-						}
-					} else {
-						self.options.scrollingComplete();
-					}
-				} else if ((timeStamp - self.__lastTouchMove) > 100) {
-					self.options.scrollingComplete();
-	 			}
-			}
-
-			// If this was a slower move it is per default non decelerated, but this
-			// still means that we want snap back to the bounds which is done here.
-			// This is placed outside the condition above to improve edge case stability
-			// e.g. touchend fired without enabled dragging. This should normally do not
-			// have modified the scroll positions or even showed the scrollbars though.
-			if (!self.__isDecelerating) {
-
-				if (self.__refreshActive && self.__refreshStart) {
-
-					// Use publish instead of scrollTo to allow scrolling to out of boundary position
-					// We don't need to normalize scrollLeft, zoomLevel, etc. here because we only y-scrolling when pull-to-refresh is enabled
-					self.__publish(self.__scrollLeft, -self.__refreshHeight, self.__zoomLevel, true);
-
-					if (self.__refreshStart) {
-						self.__refreshStart();
-					}
-
-				} else {
-
-					if (self.__interruptedAnimation || self.__isDragging) {
-						self.options.scrollingComplete();
-					}
-					self.scrollTo(self.__scrollLeft, self.__scrollTop, true, self.__zoomLevel);
-
-					// Directly signalize deactivation (nothing todo on refresh?)
-					if (self.__refreshActive) {
-
-						self.__refreshActive = false;
-						if (self.__refreshDeactivate) {
-							self.__refreshDeactivate();
-						}
-
-					}
-				}
-			}
-
-			// Fully cleanup list
-			self.__positions.length = 0;
-
-		},
-
-
-
-		/*
-		---------------------------------------------------------------------------
-			PRIVATE API
-		---------------------------------------------------------------------------
-		*/
-
-		/**
-		 * Applies the scroll position to the content element
-		 *
-		 * @param left {Number} Left scroll position
-		 * @param top {Number} Top scroll position
-		 * @param animate {Boolean?false} Whether animation should be used to move to the new coordinates
-		 */
-		__publish: function(left, top, zoom, animate) {
-
-			var self = this;
-
-			// Remember whether we had an animation, then we try to continue based on the current "drive" of the animation
-			var wasAnimating = self.__isAnimating;
-			if (wasAnimating) {
-				core.effect.Animate.stop(wasAnimating);
-				self.__isAnimating = false;
-			}
-
-			if (animate && self.options.animating) {
-
-				// Keep scheduled positions for scrollBy/zoomBy functionality
-				self.__scheduledLeft = left;
-				self.__scheduledTop = top;
-				self.__scheduledZoom = zoom;
-
-				var oldLeft = self.__scrollLeft;
-				var oldTop = self.__scrollTop;
-				var oldZoom = self.__zoomLevel;
-
-				var diffLeft = left - oldLeft;
-				var diffTop = top - oldTop;
-				var diffZoom = zoom - oldZoom;
-
-				var step = function(percent, now, render) {
-
-					if (render) {
-
-						self.__scrollLeft = oldLeft + (diffLeft * percent);
-						self.__scrollTop = oldTop + (diffTop * percent);
-						self.__zoomLevel = oldZoom + (diffZoom * percent);
-
-						// Push values out
-						if (self.__callback) {
-							self.__callback(self.__scrollLeft, self.__scrollTop, self.__zoomLevel);
-						}
-
-					}
-				};
-
-				var verify = function(id) {
-					return self.__isAnimating === id;
-				};
-
-				var completed = function(renderedFramesPerSecond, animationId, wasFinished) {
-					if (animationId === self.__isAnimating) {
-						self.__isAnimating = false;
-					}
-					if (self.__didDecelerationComplete || wasFinished) {
-						self.options.scrollingComplete();
-					}
-
-					if (self.options.zooming) {
-						self.__computeScrollMax();
-						if(self.__zoomComplete) {
-							self.__zoomComplete();
-							self.__zoomComplete = null;
-						}
-					}
-				};
-
-				// When continuing based on previous animation we choose an ease-out animation instead of ease-in-out
-				self.__isAnimating = core.effect.Animate.start(step, verify, completed, self.options.animationDuration, wasAnimating ? easeOutCubic : easeInOutCubic);
-
-			} else {
-
-				self.__scheduledLeft = self.__scrollLeft = left;
-				self.__scheduledTop = self.__scrollTop = top;
-				self.__scheduledZoom = self.__zoomLevel = zoom;
-
-				// Push values out
-				if (self.__callback) {
-					self.__callback(left, top, zoom);
-				}
-
-				// Fix max scroll ranges
-				if (self.options.zooming) {
-					self.__computeScrollMax();
-					if(self.__zoomComplete) {
-						self.__zoomComplete();
-						self.__zoomComplete = null;
-					}
-				}
-			}
-		},
-
-
-		/**
-		 * Recomputes scroll minimum values based on client dimensions and content dimensions.
-		 */
-		__computeScrollMax: function(zoomLevel) {
-
-			var self = this;
-
-			if (zoomLevel == null) {
-				zoomLevel = self.__zoomLevel;
-			}
-
-			self.__maxScrollLeft = Math.max((self.__contentWidth * zoomLevel) - self.__clientWidth, 0);
-			self.__maxScrollTop = Math.max((self.__contentHeight * zoomLevel) - self.__clientHeight, 0);
-
-		},
-
-
-
-		/*
-		---------------------------------------------------------------------------
-			ANIMATION (DECELERATION) SUPPORT
-		---------------------------------------------------------------------------
-		*/
-
-		/**
-		 * Called when a touch sequence end and the speed of the finger was high enough
-		 * to switch into deceleration mode.
-		 */
-		__startDeceleration: function(timeStamp) {
-
-			var self = this;
-
-			if (self.options.paging) {
-
-				var scrollLeft = Math.max(Math.min(self.__scrollLeft, self.__maxScrollLeft), 0);
-				var scrollTop = Math.max(Math.min(self.__scrollTop, self.__maxScrollTop), 0);
-				var clientWidth = self.__clientWidth;
-				var clientHeight = self.__clientHeight;
-
-				// We limit deceleration not to the min/max values of the allowed range, but to the size of the visible client area.
-				// Each page should have exactly the size of the client area.
-				self.__minDecelerationScrollLeft = Math.floor(scrollLeft / clientWidth) * clientWidth;
-				self.__minDecelerationScrollTop = Math.floor(scrollTop / clientHeight) * clientHeight;
-				self.__maxDecelerationScrollLeft = Math.ceil(scrollLeft / clientWidth) * clientWidth;
-				self.__maxDecelerationScrollTop = Math.ceil(scrollTop / clientHeight) * clientHeight;
-
-			} else {
-
-				self.__minDecelerationScrollLeft = 0;
-				self.__minDecelerationScrollTop = 0;
-				self.__maxDecelerationScrollLeft = self.__maxScrollLeft;
-				self.__maxDecelerationScrollTop = self.__maxScrollTop;
-
-			}
-
-			// Wrap class method
-			var step = function(percent, now, render) {
-				self.__stepThroughDeceleration(render);
-			};
-
-			// How much velocity is required to keep the deceleration running
-			var minVelocityToKeepDecelerating = self.options.snapping ? 4 : 0.1;
-
-			// Detect whether it's still worth to continue animating steps
-			// If we are already slow enough to not being user perceivable anymore, we stop the whole process here.
-			var verify = function() {
-				var shouldContinue = Math.abs(self.__decelerationVelocityX) >= minVelocityToKeepDecelerating || Math.abs(self.__decelerationVelocityY) >= minVelocityToKeepDecelerating;
-				if (!shouldContinue) {
-					self.__didDecelerationComplete = true;
-				}
-				return shouldContinue;
-			};
-
-			var completed = function(renderedFramesPerSecond, animationId, wasFinished) {
-				self.__isDecelerating = false;
-				if (self.__didDecelerationComplete) {
-					self.options.scrollingComplete();
-				}
-
-				// Animate to grid when snapping is active, otherwise just fix out-of-boundary positions
-				self.scrollTo(self.__scrollLeft, self.__scrollTop, self.options.snapping);
-			};
-
-			// Start animation and switch on flag
-			self.__isDecelerating = core.effect.Animate.start(step, verify, completed);
-
-		},
-
-
-		/**
-		 * Called on every step of the animation
-		 *
-		 * @param inMemory {Boolean?false} Whether to not render the current step, but keep it in memory only. Used internally only!
-		 */
-		__stepThroughDeceleration: function(render) {
-
-			var self = this;
-
-
-			//
-			// COMPUTE NEXT SCROLL POSITION
-			//
-
-			// Add deceleration to scroll position
-			var scrollLeft = self.__scrollLeft + self.__decelerationVelocityX;
-			var scrollTop = self.__scrollTop + self.__decelerationVelocityY;
-
-
-			//
-			// HARD LIMIT SCROLL POSITION FOR NON BOUNCING MODE
-			//
-
-			if (!self.options.bouncing) {
-
-				var scrollLeftFixed = Math.max(Math.min(self.__maxDecelerationScrollLeft, scrollLeft), self.__minDecelerationScrollLeft);
-				if (scrollLeftFixed !== scrollLeft) {
-					scrollLeft = scrollLeftFixed;
-					self.__decelerationVelocityX = 0;
-				}
-
-				var scrollTopFixed = Math.max(Math.min(self.__maxDecelerationScrollTop, scrollTop), self.__minDecelerationScrollTop);
-				if (scrollTopFixed !== scrollTop) {
-					scrollTop = scrollTopFixed;
-					self.__decelerationVelocityY = 0;
-				}
-
-			}
-
-
-			//
-			// UPDATE SCROLL POSITION
-			//
-
-			if (render) {
-
-				self.__publish(scrollLeft, scrollTop, self.__zoomLevel);
-
-			} else {
-
-				self.__scrollLeft = scrollLeft;
-				self.__scrollTop = scrollTop;
-
-			}
-
-
-			//
-			// SLOW DOWN
-			//
-
-			// Slow down velocity on every iteration
-			if (!self.options.paging) {
-
-				// This is the factor applied to every iteration of the animation
-				// to slow down the process. This should emulate natural behavior where
-				// objects slow down when the initiator of the movement is removed
-				var frictionFactor = self.options.decelerationRate;
-
-				self.__decelerationVelocityX *= frictionFactor;
-				self.__decelerationVelocityY *= frictionFactor;
-
-			}
-
-
-			//
-			// BOUNCING SUPPORT
-			//
-
-			if (self.options.bouncing) {
-
-				var scrollOutsideX = 0;
-				var scrollOutsideY = 0;
-
-				// This configures the amount of change applied to deceleration/acceleration when reaching boundaries
-				var penetrationDeceleration = self.options.penetrationDeceleration; 
-				var penetrationAcceleration = self.options.penetrationAcceleration; 
-
-				// Check limits
-				if (scrollLeft < self.__minDecelerationScrollLeft) {
-					scrollOutsideX = self.__minDecelerationScrollLeft - scrollLeft;
-				} else if (scrollLeft > self.__maxDecelerationScrollLeft) {
-					scrollOutsideX = self.__maxDecelerationScrollLeft - scrollLeft;
-				}
-
-				if (scrollTop < self.__minDecelerationScrollTop) {
-					scrollOutsideY = self.__minDecelerationScrollTop - scrollTop;
-				} else if (scrollTop > self.__maxDecelerationScrollTop) {
-					scrollOutsideY = self.__maxDecelerationScrollTop - scrollTop;
-				}
-
-				// Slow down until slow enough, then flip back to snap position
-				if (scrollOutsideX !== 0) {
-					if (scrollOutsideX * self.__decelerationVelocityX <= 0) {
-						self.__decelerationVelocityX += scrollOutsideX * penetrationDeceleration;
-					} else {
-						self.__decelerationVelocityX = scrollOutsideX * penetrationAcceleration;
-					}
-				}
-
-				if (scrollOutsideY !== 0) {
-					if (scrollOutsideY * self.__decelerationVelocityY <= 0) {
-						self.__decelerationVelocityY += scrollOutsideY * penetrationDeceleration;
-					} else {
-						self.__decelerationVelocityY = scrollOutsideY * penetrationAcceleration;
-					}
-				}
-			}
-		}
-	};
-
-	// Copy over members to prototype
-	for (var key in members) {
-		Scroller.prototype[key] = members[key];
-	}
-
-	module.exports = Scroller;
-})();
-
-},{"./Animate":29}],31:[function(require,module,exports){
+},{}],2:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -5260,7 +118,7 @@ var AutoFocusMixin = {
 
 module.exports = AutoFocusMixin;
 
-},{"./focusNode":149}],32:[function(require,module,exports){
+},{"./focusNode":120}],3:[function(require,module,exports){
 /**
  * Copyright 2013-2015 Facebook, Inc.
  * All rights reserved.
@@ -5755,7 +613,7 @@ var BeforeInputEventPlugin = {
 
 module.exports = BeforeInputEventPlugin;
 
-},{"./EventConstants":44,"./EventPropagators":49,"./ExecutionEnvironment":50,"./FallbackCompositionState":51,"./SyntheticCompositionEvent":123,"./SyntheticInputEvent":127,"./keyOf":171}],33:[function(require,module,exports){
+},{"./EventConstants":15,"./EventPropagators":20,"./ExecutionEnvironment":21,"./FallbackCompositionState":22,"./SyntheticCompositionEvent":94,"./SyntheticInputEvent":98,"./keyOf":142}],4:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -5880,7 +738,7 @@ var CSSProperty = {
 
 module.exports = CSSProperty;
 
-},{}],34:[function(require,module,exports){
+},{}],5:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -6062,7 +920,7 @@ var CSSPropertyOperations = {
 module.exports = CSSPropertyOperations;
 
 }).call(this,require('_process'))
-},{"./CSSProperty":33,"./ExecutionEnvironment":50,"./camelizeStyleName":138,"./dangerousStyleValue":143,"./hyphenateStyleName":163,"./memoizeStringOnly":173,"./warning":184,"_process":2}],35:[function(require,module,exports){
+},{"./CSSProperty":4,"./ExecutionEnvironment":21,"./camelizeStyleName":109,"./dangerousStyleValue":114,"./hyphenateStyleName":134,"./memoizeStringOnly":144,"./warning":155,"_process":1}],6:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -6162,7 +1020,7 @@ PooledClass.addPoolingTo(CallbackQueue);
 module.exports = CallbackQueue;
 
 }).call(this,require('_process'))
-},{"./Object.assign":56,"./PooledClass":57,"./invariant":165,"_process":2}],36:[function(require,module,exports){
+},{"./Object.assign":27,"./PooledClass":28,"./invariant":136,"_process":1}],7:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -6544,7 +1402,7 @@ var ChangeEventPlugin = {
 
 module.exports = ChangeEventPlugin;
 
-},{"./EventConstants":44,"./EventPluginHub":46,"./EventPropagators":49,"./ExecutionEnvironment":50,"./ReactUpdates":117,"./SyntheticEvent":125,"./isEventSupported":166,"./isTextInputElement":168,"./keyOf":171}],37:[function(require,module,exports){
+},{"./EventConstants":15,"./EventPluginHub":17,"./EventPropagators":20,"./ExecutionEnvironment":21,"./ReactUpdates":88,"./SyntheticEvent":96,"./isEventSupported":137,"./isTextInputElement":139,"./keyOf":142}],8:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -6569,7 +1427,7 @@ var ClientReactRootIndex = {
 
 module.exports = ClientReactRootIndex;
 
-},{}],38:[function(require,module,exports){
+},{}],9:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -6707,7 +1565,7 @@ var DOMChildrenOperations = {
 module.exports = DOMChildrenOperations;
 
 }).call(this,require('_process'))
-},{"./Danger":41,"./ReactMultiChildUpdateTypes":102,"./invariant":165,"./setTextContent":179,"_process":2}],39:[function(require,module,exports){
+},{"./Danger":12,"./ReactMultiChildUpdateTypes":73,"./invariant":136,"./setTextContent":150,"_process":1}],10:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -7006,7 +1864,7 @@ var DOMProperty = {
 module.exports = DOMProperty;
 
 }).call(this,require('_process'))
-},{"./invariant":165,"_process":2}],40:[function(require,module,exports){
+},{"./invariant":136,"_process":1}],11:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -7198,7 +2056,7 @@ var DOMPropertyOperations = {
 module.exports = DOMPropertyOperations;
 
 }).call(this,require('_process'))
-},{"./DOMProperty":39,"./quoteAttributeValueForBrowser":177,"./warning":184,"_process":2}],41:[function(require,module,exports){
+},{"./DOMProperty":10,"./quoteAttributeValueForBrowser":148,"./warning":155,"_process":1}],12:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -7385,7 +2243,7 @@ var Danger = {
 module.exports = Danger;
 
 }).call(this,require('_process'))
-},{"./ExecutionEnvironment":50,"./createNodesFromMarkup":142,"./emptyFunction":144,"./getMarkupWrap":157,"./invariant":165,"_process":2}],42:[function(require,module,exports){
+},{"./ExecutionEnvironment":21,"./createNodesFromMarkup":113,"./emptyFunction":115,"./getMarkupWrap":128,"./invariant":136,"_process":1}],13:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -7424,7 +2282,7 @@ var DefaultEventPluginOrder = [
 
 module.exports = DefaultEventPluginOrder;
 
-},{"./keyOf":171}],43:[function(require,module,exports){
+},{"./keyOf":142}],14:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -7564,7 +2422,7 @@ var EnterLeaveEventPlugin = {
 
 module.exports = EnterLeaveEventPlugin;
 
-},{"./EventConstants":44,"./EventPropagators":49,"./ReactMount":100,"./SyntheticMouseEvent":129,"./keyOf":171}],44:[function(require,module,exports){
+},{"./EventConstants":15,"./EventPropagators":20,"./ReactMount":71,"./SyntheticMouseEvent":100,"./keyOf":142}],15:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -7636,7 +2494,7 @@ var EventConstants = {
 
 module.exports = EventConstants;
 
-},{"./keyMirror":170}],45:[function(require,module,exports){
+},{"./keyMirror":141}],16:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -7726,7 +2584,7 @@ var EventListener = {
 module.exports = EventListener;
 
 }).call(this,require('_process'))
-},{"./emptyFunction":144,"_process":2}],46:[function(require,module,exports){
+},{"./emptyFunction":115,"_process":1}],17:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -8004,7 +2862,7 @@ var EventPluginHub = {
 module.exports = EventPluginHub;
 
 }).call(this,require('_process'))
-},{"./EventPluginRegistry":47,"./EventPluginUtils":48,"./accumulateInto":135,"./forEachAccumulated":150,"./invariant":165,"_process":2}],47:[function(require,module,exports){
+},{"./EventPluginRegistry":18,"./EventPluginUtils":19,"./accumulateInto":106,"./forEachAccumulated":121,"./invariant":136,"_process":1}],18:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -8284,7 +3142,7 @@ var EventPluginRegistry = {
 module.exports = EventPluginRegistry;
 
 }).call(this,require('_process'))
-},{"./invariant":165,"_process":2}],48:[function(require,module,exports){
+},{"./invariant":136,"_process":1}],19:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -8505,7 +3363,7 @@ var EventPluginUtils = {
 module.exports = EventPluginUtils;
 
 }).call(this,require('_process'))
-},{"./EventConstants":44,"./invariant":165,"_process":2}],49:[function(require,module,exports){
+},{"./EventConstants":15,"./invariant":136,"_process":1}],20:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -8647,7 +3505,7 @@ var EventPropagators = {
 module.exports = EventPropagators;
 
 }).call(this,require('_process'))
-},{"./EventConstants":44,"./EventPluginHub":46,"./accumulateInto":135,"./forEachAccumulated":150,"_process":2}],50:[function(require,module,exports){
+},{"./EventConstants":15,"./EventPluginHub":17,"./accumulateInto":106,"./forEachAccumulated":121,"_process":1}],21:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -8691,7 +3549,7 @@ var ExecutionEnvironment = {
 
 module.exports = ExecutionEnvironment;
 
-},{}],51:[function(require,module,exports){
+},{}],22:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -8782,7 +3640,7 @@ PooledClass.addPoolingTo(FallbackCompositionState);
 
 module.exports = FallbackCompositionState;
 
-},{"./Object.assign":56,"./PooledClass":57,"./getTextContentAccessor":160}],52:[function(require,module,exports){
+},{"./Object.assign":27,"./PooledClass":28,"./getTextContentAccessor":131}],23:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -8993,7 +3851,7 @@ var HTMLDOMPropertyConfig = {
 
 module.exports = HTMLDOMPropertyConfig;
 
-},{"./DOMProperty":39,"./ExecutionEnvironment":50}],53:[function(require,module,exports){
+},{"./DOMProperty":10,"./ExecutionEnvironment":21}],24:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -9149,7 +4007,7 @@ var LinkedValueUtils = {
 module.exports = LinkedValueUtils;
 
 }).call(this,require('_process'))
-},{"./ReactPropTypes":108,"./invariant":165,"_process":2}],54:[function(require,module,exports){
+},{"./ReactPropTypes":79,"./invariant":136,"_process":1}],25:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2014-2015, Facebook, Inc.
@@ -9206,7 +4064,7 @@ var LocalEventTrapMixin = {
 module.exports = LocalEventTrapMixin;
 
 }).call(this,require('_process'))
-},{"./ReactBrowserEventEmitter":60,"./accumulateInto":135,"./forEachAccumulated":150,"./invariant":165,"_process":2}],55:[function(require,module,exports){
+},{"./ReactBrowserEventEmitter":31,"./accumulateInto":106,"./forEachAccumulated":121,"./invariant":136,"_process":1}],26:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -9264,7 +4122,7 @@ var MobileSafariClickEventPlugin = {
 
 module.exports = MobileSafariClickEventPlugin;
 
-},{"./EventConstants":44,"./emptyFunction":144}],56:[function(require,module,exports){
+},{"./EventConstants":15,"./emptyFunction":115}],27:[function(require,module,exports){
 /**
  * Copyright 2014-2015, Facebook, Inc.
  * All rights reserved.
@@ -9313,7 +4171,7 @@ function assign(target, sources) {
 
 module.exports = assign;
 
-},{}],57:[function(require,module,exports){
+},{}],28:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -9429,7 +4287,7 @@ var PooledClass = {
 module.exports = PooledClass;
 
 }).call(this,require('_process'))
-},{"./invariant":165,"_process":2}],58:[function(require,module,exports){
+},{"./invariant":136,"_process":1}],29:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -9581,7 +4439,7 @@ React.version = '0.13.3';
 module.exports = React;
 
 }).call(this,require('_process'))
-},{"./EventPluginUtils":48,"./ExecutionEnvironment":50,"./Object.assign":56,"./ReactChildren":62,"./ReactClass":63,"./ReactComponent":64,"./ReactContext":68,"./ReactCurrentOwner":69,"./ReactDOM":70,"./ReactDOMTextComponent":81,"./ReactDefaultInjection":84,"./ReactElement":87,"./ReactElementValidator":88,"./ReactInstanceHandles":96,"./ReactMount":100,"./ReactPerf":105,"./ReactPropTypes":108,"./ReactReconciler":111,"./ReactServerRendering":114,"./findDOMNode":147,"./onlyChild":174,"_process":2}],59:[function(require,module,exports){
+},{"./EventPluginUtils":19,"./ExecutionEnvironment":21,"./Object.assign":27,"./ReactChildren":33,"./ReactClass":34,"./ReactComponent":35,"./ReactContext":39,"./ReactCurrentOwner":40,"./ReactDOM":41,"./ReactDOMTextComponent":52,"./ReactDefaultInjection":55,"./ReactElement":58,"./ReactElementValidator":59,"./ReactInstanceHandles":67,"./ReactMount":71,"./ReactPerf":76,"./ReactPropTypes":79,"./ReactReconciler":82,"./ReactServerRendering":85,"./findDOMNode":118,"./onlyChild":145,"_process":1}],30:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -9612,7 +4470,7 @@ var ReactBrowserComponentMixin = {
 
 module.exports = ReactBrowserComponentMixin;
 
-},{"./findDOMNode":147}],60:[function(require,module,exports){
+},{"./findDOMNode":118}],31:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -9965,7 +4823,7 @@ var ReactBrowserEventEmitter = assign({}, ReactEventEmitterMixin, {
 
 module.exports = ReactBrowserEventEmitter;
 
-},{"./EventConstants":44,"./EventPluginHub":46,"./EventPluginRegistry":47,"./Object.assign":56,"./ReactEventEmitterMixin":91,"./ViewportMetrics":134,"./isEventSupported":166}],61:[function(require,module,exports){
+},{"./EventConstants":15,"./EventPluginHub":17,"./EventPluginRegistry":18,"./Object.assign":27,"./ReactEventEmitterMixin":62,"./ViewportMetrics":105,"./isEventSupported":137}],32:[function(require,module,exports){
 /**
  * Copyright 2014-2015, Facebook, Inc.
  * All rights reserved.
@@ -10092,7 +4950,7 @@ var ReactChildReconciler = {
 
 module.exports = ReactChildReconciler;
 
-},{"./ReactReconciler":111,"./flattenChildren":148,"./instantiateReactComponent":164,"./shouldUpdateReactComponent":181}],62:[function(require,module,exports){
+},{"./ReactReconciler":82,"./flattenChildren":119,"./instantiateReactComponent":135,"./shouldUpdateReactComponent":152}],33:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -10245,7 +5103,7 @@ var ReactChildren = {
 module.exports = ReactChildren;
 
 }).call(this,require('_process'))
-},{"./PooledClass":57,"./ReactFragment":93,"./traverseAllChildren":183,"./warning":184,"_process":2}],63:[function(require,module,exports){
+},{"./PooledClass":28,"./ReactFragment":64,"./traverseAllChildren":154,"./warning":155,"_process":1}],34:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -11191,7 +6049,7 @@ var ReactClass = {
 module.exports = ReactClass;
 
 }).call(this,require('_process'))
-},{"./Object.assign":56,"./ReactComponent":64,"./ReactCurrentOwner":69,"./ReactElement":87,"./ReactErrorUtils":90,"./ReactInstanceMap":97,"./ReactLifeCycle":98,"./ReactPropTypeLocationNames":106,"./ReactPropTypeLocations":107,"./ReactUpdateQueue":116,"./invariant":165,"./keyMirror":170,"./keyOf":171,"./warning":184,"_process":2}],64:[function(require,module,exports){
+},{"./Object.assign":27,"./ReactComponent":35,"./ReactCurrentOwner":40,"./ReactElement":58,"./ReactErrorUtils":61,"./ReactInstanceMap":68,"./ReactLifeCycle":69,"./ReactPropTypeLocationNames":77,"./ReactPropTypeLocations":78,"./ReactUpdateQueue":87,"./invariant":136,"./keyMirror":141,"./keyOf":142,"./warning":155,"_process":1}],35:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -11345,7 +6203,7 @@ if ("production" !== process.env.NODE_ENV) {
 module.exports = ReactComponent;
 
 }).call(this,require('_process'))
-},{"./ReactUpdateQueue":116,"./invariant":165,"./warning":184,"_process":2}],65:[function(require,module,exports){
+},{"./ReactUpdateQueue":87,"./invariant":136,"./warning":155,"_process":1}],36:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -11392,7 +6250,7 @@ var ReactComponentBrowserEnvironment = {
 
 module.exports = ReactComponentBrowserEnvironment;
 
-},{"./ReactDOMIDOperations":74,"./ReactMount":100}],66:[function(require,module,exports){
+},{"./ReactDOMIDOperations":45,"./ReactMount":71}],37:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2014-2015, Facebook, Inc.
@@ -11453,7 +6311,7 @@ var ReactComponentEnvironment = {
 module.exports = ReactComponentEnvironment;
 
 }).call(this,require('_process'))
-},{"./invariant":165,"_process":2}],67:[function(require,module,exports){
+},{"./invariant":136,"_process":1}],38:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -12366,7 +7224,7 @@ var ReactCompositeComponent = {
 module.exports = ReactCompositeComponent;
 
 }).call(this,require('_process'))
-},{"./Object.assign":56,"./ReactComponentEnvironment":66,"./ReactContext":68,"./ReactCurrentOwner":69,"./ReactElement":87,"./ReactElementValidator":88,"./ReactInstanceMap":97,"./ReactLifeCycle":98,"./ReactNativeComponent":103,"./ReactPerf":105,"./ReactPropTypeLocationNames":106,"./ReactPropTypeLocations":107,"./ReactReconciler":111,"./ReactUpdates":117,"./emptyObject":145,"./invariant":165,"./shouldUpdateReactComponent":181,"./warning":184,"_process":2}],68:[function(require,module,exports){
+},{"./Object.assign":27,"./ReactComponentEnvironment":37,"./ReactContext":39,"./ReactCurrentOwner":40,"./ReactElement":58,"./ReactElementValidator":59,"./ReactInstanceMap":68,"./ReactLifeCycle":69,"./ReactNativeComponent":74,"./ReactPerf":76,"./ReactPropTypeLocationNames":77,"./ReactPropTypeLocations":78,"./ReactReconciler":82,"./ReactUpdates":88,"./emptyObject":116,"./invariant":136,"./shouldUpdateReactComponent":152,"./warning":155,"_process":1}],39:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -12444,7 +7302,7 @@ var ReactContext = {
 module.exports = ReactContext;
 
 }).call(this,require('_process'))
-},{"./Object.assign":56,"./emptyObject":145,"./warning":184,"_process":2}],69:[function(require,module,exports){
+},{"./Object.assign":27,"./emptyObject":116,"./warning":155,"_process":1}],40:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -12478,7 +7336,7 @@ var ReactCurrentOwner = {
 
 module.exports = ReactCurrentOwner;
 
-},{}],70:[function(require,module,exports){
+},{}],41:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -12657,7 +7515,7 @@ var ReactDOM = mapObject({
 module.exports = ReactDOM;
 
 }).call(this,require('_process'))
-},{"./ReactElement":87,"./ReactElementValidator":88,"./mapObject":172,"_process":2}],71:[function(require,module,exports){
+},{"./ReactElement":58,"./ReactElementValidator":59,"./mapObject":143,"_process":1}],42:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -12721,7 +7579,7 @@ var ReactDOMButton = ReactClass.createClass({
 
 module.exports = ReactDOMButton;
 
-},{"./AutoFocusMixin":31,"./ReactBrowserComponentMixin":59,"./ReactClass":63,"./ReactElement":87,"./keyMirror":170}],72:[function(require,module,exports){
+},{"./AutoFocusMixin":2,"./ReactBrowserComponentMixin":30,"./ReactClass":34,"./ReactElement":58,"./keyMirror":141}],43:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -13231,7 +8089,7 @@ ReactDOMComponent.injection = {
 module.exports = ReactDOMComponent;
 
 }).call(this,require('_process'))
-},{"./CSSPropertyOperations":34,"./DOMProperty":39,"./DOMPropertyOperations":40,"./Object.assign":56,"./ReactBrowserEventEmitter":60,"./ReactComponentBrowserEnvironment":65,"./ReactMount":100,"./ReactMultiChild":101,"./ReactPerf":105,"./escapeTextContentForBrowser":146,"./invariant":165,"./isEventSupported":166,"./keyOf":171,"./warning":184,"_process":2}],73:[function(require,module,exports){
+},{"./CSSPropertyOperations":5,"./DOMProperty":10,"./DOMPropertyOperations":11,"./Object.assign":27,"./ReactBrowserEventEmitter":31,"./ReactComponentBrowserEnvironment":36,"./ReactMount":71,"./ReactMultiChild":72,"./ReactPerf":76,"./escapeTextContentForBrowser":117,"./invariant":136,"./isEventSupported":137,"./keyOf":142,"./warning":155,"_process":1}],44:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -13280,7 +8138,7 @@ var ReactDOMForm = ReactClass.createClass({
 
 module.exports = ReactDOMForm;
 
-},{"./EventConstants":44,"./LocalEventTrapMixin":54,"./ReactBrowserComponentMixin":59,"./ReactClass":63,"./ReactElement":87}],74:[function(require,module,exports){
+},{"./EventConstants":15,"./LocalEventTrapMixin":25,"./ReactBrowserComponentMixin":30,"./ReactClass":34,"./ReactElement":58}],45:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -13448,7 +8306,7 @@ ReactPerf.measureMethods(ReactDOMIDOperations, 'ReactDOMIDOperations', {
 module.exports = ReactDOMIDOperations;
 
 }).call(this,require('_process'))
-},{"./CSSPropertyOperations":34,"./DOMChildrenOperations":38,"./DOMPropertyOperations":40,"./ReactMount":100,"./ReactPerf":105,"./invariant":165,"./setInnerHTML":178,"_process":2}],75:[function(require,module,exports){
+},{"./CSSPropertyOperations":5,"./DOMChildrenOperations":9,"./DOMPropertyOperations":11,"./ReactMount":71,"./ReactPerf":76,"./invariant":136,"./setInnerHTML":149,"_process":1}],46:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -13493,7 +8351,7 @@ var ReactDOMIframe = ReactClass.createClass({
 
 module.exports = ReactDOMIframe;
 
-},{"./EventConstants":44,"./LocalEventTrapMixin":54,"./ReactBrowserComponentMixin":59,"./ReactClass":63,"./ReactElement":87}],76:[function(require,module,exports){
+},{"./EventConstants":15,"./LocalEventTrapMixin":25,"./ReactBrowserComponentMixin":30,"./ReactClass":34,"./ReactElement":58}],47:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -13539,7 +8397,7 @@ var ReactDOMImg = ReactClass.createClass({
 
 module.exports = ReactDOMImg;
 
-},{"./EventConstants":44,"./LocalEventTrapMixin":54,"./ReactBrowserComponentMixin":59,"./ReactClass":63,"./ReactElement":87}],77:[function(require,module,exports){
+},{"./EventConstants":15,"./LocalEventTrapMixin":25,"./ReactBrowserComponentMixin":30,"./ReactClass":34,"./ReactElement":58}],48:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -13716,7 +8574,7 @@ var ReactDOMInput = ReactClass.createClass({
 module.exports = ReactDOMInput;
 
 }).call(this,require('_process'))
-},{"./AutoFocusMixin":31,"./DOMPropertyOperations":40,"./LinkedValueUtils":53,"./Object.assign":56,"./ReactBrowserComponentMixin":59,"./ReactClass":63,"./ReactElement":87,"./ReactMount":100,"./ReactUpdates":117,"./invariant":165,"_process":2}],78:[function(require,module,exports){
+},{"./AutoFocusMixin":2,"./DOMPropertyOperations":11,"./LinkedValueUtils":24,"./Object.assign":27,"./ReactBrowserComponentMixin":30,"./ReactClass":34,"./ReactElement":58,"./ReactMount":71,"./ReactUpdates":88,"./invariant":136,"_process":1}],49:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -13768,7 +8626,7 @@ var ReactDOMOption = ReactClass.createClass({
 module.exports = ReactDOMOption;
 
 }).call(this,require('_process'))
-},{"./ReactBrowserComponentMixin":59,"./ReactClass":63,"./ReactElement":87,"./warning":184,"_process":2}],79:[function(require,module,exports){
+},{"./ReactBrowserComponentMixin":30,"./ReactClass":34,"./ReactElement":58,"./warning":155,"_process":1}],50:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -13946,7 +8804,7 @@ var ReactDOMSelect = ReactClass.createClass({
 
 module.exports = ReactDOMSelect;
 
-},{"./AutoFocusMixin":31,"./LinkedValueUtils":53,"./Object.assign":56,"./ReactBrowserComponentMixin":59,"./ReactClass":63,"./ReactElement":87,"./ReactUpdates":117}],80:[function(require,module,exports){
+},{"./AutoFocusMixin":2,"./LinkedValueUtils":24,"./Object.assign":27,"./ReactBrowserComponentMixin":30,"./ReactClass":34,"./ReactElement":58,"./ReactUpdates":88}],51:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -14159,7 +9017,7 @@ var ReactDOMSelection = {
 
 module.exports = ReactDOMSelection;
 
-},{"./ExecutionEnvironment":50,"./getNodeForCharacterOffset":158,"./getTextContentAccessor":160}],81:[function(require,module,exports){
+},{"./ExecutionEnvironment":21,"./getNodeForCharacterOffset":129,"./getTextContentAccessor":131}],52:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -14276,7 +9134,7 @@ assign(ReactDOMTextComponent.prototype, {
 
 module.exports = ReactDOMTextComponent;
 
-},{"./DOMPropertyOperations":40,"./Object.assign":56,"./ReactComponentBrowserEnvironment":65,"./ReactDOMComponent":72,"./escapeTextContentForBrowser":146}],82:[function(require,module,exports){
+},{"./DOMPropertyOperations":11,"./Object.assign":27,"./ReactComponentBrowserEnvironment":36,"./ReactDOMComponent":43,"./escapeTextContentForBrowser":117}],53:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -14416,7 +9274,7 @@ var ReactDOMTextarea = ReactClass.createClass({
 module.exports = ReactDOMTextarea;
 
 }).call(this,require('_process'))
-},{"./AutoFocusMixin":31,"./DOMPropertyOperations":40,"./LinkedValueUtils":53,"./Object.assign":56,"./ReactBrowserComponentMixin":59,"./ReactClass":63,"./ReactElement":87,"./ReactUpdates":117,"./invariant":165,"./warning":184,"_process":2}],83:[function(require,module,exports){
+},{"./AutoFocusMixin":2,"./DOMPropertyOperations":11,"./LinkedValueUtils":24,"./Object.assign":27,"./ReactBrowserComponentMixin":30,"./ReactClass":34,"./ReactElement":58,"./ReactUpdates":88,"./invariant":136,"./warning":155,"_process":1}],54:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -14489,7 +9347,7 @@ var ReactDefaultBatchingStrategy = {
 
 module.exports = ReactDefaultBatchingStrategy;
 
-},{"./Object.assign":56,"./ReactUpdates":117,"./Transaction":133,"./emptyFunction":144}],84:[function(require,module,exports){
+},{"./Object.assign":27,"./ReactUpdates":88,"./Transaction":104,"./emptyFunction":115}],55:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -14648,7 +9506,7 @@ module.exports = {
 };
 
 }).call(this,require('_process'))
-},{"./BeforeInputEventPlugin":32,"./ChangeEventPlugin":36,"./ClientReactRootIndex":37,"./DefaultEventPluginOrder":42,"./EnterLeaveEventPlugin":43,"./ExecutionEnvironment":50,"./HTMLDOMPropertyConfig":52,"./MobileSafariClickEventPlugin":55,"./ReactBrowserComponentMixin":59,"./ReactClass":63,"./ReactComponentBrowserEnvironment":65,"./ReactDOMButton":71,"./ReactDOMComponent":72,"./ReactDOMForm":73,"./ReactDOMIDOperations":74,"./ReactDOMIframe":75,"./ReactDOMImg":76,"./ReactDOMInput":77,"./ReactDOMOption":78,"./ReactDOMSelect":79,"./ReactDOMTextComponent":81,"./ReactDOMTextarea":82,"./ReactDefaultBatchingStrategy":83,"./ReactDefaultPerf":85,"./ReactElement":87,"./ReactEventListener":92,"./ReactInjection":94,"./ReactInstanceHandles":96,"./ReactMount":100,"./ReactReconcileTransaction":110,"./SVGDOMPropertyConfig":118,"./SelectEventPlugin":119,"./ServerReactRootIndex":120,"./SimpleEventPlugin":121,"./createFullPageComponent":141,"_process":2}],85:[function(require,module,exports){
+},{"./BeforeInputEventPlugin":3,"./ChangeEventPlugin":7,"./ClientReactRootIndex":8,"./DefaultEventPluginOrder":13,"./EnterLeaveEventPlugin":14,"./ExecutionEnvironment":21,"./HTMLDOMPropertyConfig":23,"./MobileSafariClickEventPlugin":26,"./ReactBrowserComponentMixin":30,"./ReactClass":34,"./ReactComponentBrowserEnvironment":36,"./ReactDOMButton":42,"./ReactDOMComponent":43,"./ReactDOMForm":44,"./ReactDOMIDOperations":45,"./ReactDOMIframe":46,"./ReactDOMImg":47,"./ReactDOMInput":48,"./ReactDOMOption":49,"./ReactDOMSelect":50,"./ReactDOMTextComponent":52,"./ReactDOMTextarea":53,"./ReactDefaultBatchingStrategy":54,"./ReactDefaultPerf":56,"./ReactElement":58,"./ReactEventListener":63,"./ReactInjection":65,"./ReactInstanceHandles":67,"./ReactMount":71,"./ReactReconcileTransaction":81,"./SVGDOMPropertyConfig":89,"./SelectEventPlugin":90,"./ServerReactRootIndex":91,"./SimpleEventPlugin":92,"./createFullPageComponent":112,"_process":1}],56:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -14914,7 +9772,7 @@ var ReactDefaultPerf = {
 
 module.exports = ReactDefaultPerf;
 
-},{"./DOMProperty":39,"./ReactDefaultPerfAnalysis":86,"./ReactMount":100,"./ReactPerf":105,"./performanceNow":176}],86:[function(require,module,exports){
+},{"./DOMProperty":10,"./ReactDefaultPerfAnalysis":57,"./ReactMount":71,"./ReactPerf":76,"./performanceNow":147}],57:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -15120,7 +9978,7 @@ var ReactDefaultPerfAnalysis = {
 
 module.exports = ReactDefaultPerfAnalysis;
 
-},{"./Object.assign":56}],87:[function(require,module,exports){
+},{"./Object.assign":27}],58:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2014-2015, Facebook, Inc.
@@ -15428,7 +10286,7 @@ ReactElement.isValidElement = function(object) {
 module.exports = ReactElement;
 
 }).call(this,require('_process'))
-},{"./Object.assign":56,"./ReactContext":68,"./ReactCurrentOwner":69,"./warning":184,"_process":2}],88:[function(require,module,exports){
+},{"./Object.assign":27,"./ReactContext":39,"./ReactCurrentOwner":40,"./warning":155,"_process":1}],59:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2014-2015, Facebook, Inc.
@@ -15893,7 +10751,7 @@ var ReactElementValidator = {
 module.exports = ReactElementValidator;
 
 }).call(this,require('_process'))
-},{"./ReactCurrentOwner":69,"./ReactElement":87,"./ReactFragment":93,"./ReactNativeComponent":103,"./ReactPropTypeLocationNames":106,"./ReactPropTypeLocations":107,"./getIteratorFn":156,"./invariant":165,"./warning":184,"_process":2}],89:[function(require,module,exports){
+},{"./ReactCurrentOwner":40,"./ReactElement":58,"./ReactFragment":64,"./ReactNativeComponent":74,"./ReactPropTypeLocationNames":77,"./ReactPropTypeLocations":78,"./getIteratorFn":127,"./invariant":136,"./warning":155,"_process":1}],60:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2014-2015, Facebook, Inc.
@@ -15988,7 +10846,7 @@ var ReactEmptyComponent = {
 module.exports = ReactEmptyComponent;
 
 }).call(this,require('_process'))
-},{"./ReactElement":87,"./ReactInstanceMap":97,"./invariant":165,"_process":2}],90:[function(require,module,exports){
+},{"./ReactElement":58,"./ReactInstanceMap":68,"./invariant":136,"_process":1}],61:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -16020,7 +10878,7 @@ var ReactErrorUtils = {
 
 module.exports = ReactErrorUtils;
 
-},{}],91:[function(require,module,exports){
+},{}],62:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -16070,7 +10928,7 @@ var ReactEventEmitterMixin = {
 
 module.exports = ReactEventEmitterMixin;
 
-},{"./EventPluginHub":46}],92:[function(require,module,exports){
+},{"./EventPluginHub":17}],63:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -16253,7 +11111,7 @@ var ReactEventListener = {
 
 module.exports = ReactEventListener;
 
-},{"./EventListener":45,"./ExecutionEnvironment":50,"./Object.assign":56,"./PooledClass":57,"./ReactInstanceHandles":96,"./ReactMount":100,"./ReactUpdates":117,"./getEventTarget":155,"./getUnboundedScrollPosition":161}],93:[function(require,module,exports){
+},{"./EventListener":16,"./ExecutionEnvironment":21,"./Object.assign":27,"./PooledClass":28,"./ReactInstanceHandles":67,"./ReactMount":71,"./ReactUpdates":88,"./getEventTarget":126,"./getUnboundedScrollPosition":132}],64:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2015, Facebook, Inc.
@@ -16438,7 +11296,7 @@ var ReactFragment = {
 module.exports = ReactFragment;
 
 }).call(this,require('_process'))
-},{"./ReactElement":87,"./warning":184,"_process":2}],94:[function(require,module,exports){
+},{"./ReactElement":58,"./warning":155,"_process":1}],65:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -16480,7 +11338,7 @@ var ReactInjection = {
 
 module.exports = ReactInjection;
 
-},{"./DOMProperty":39,"./EventPluginHub":46,"./ReactBrowserEventEmitter":60,"./ReactClass":63,"./ReactComponentEnvironment":66,"./ReactDOMComponent":72,"./ReactEmptyComponent":89,"./ReactNativeComponent":103,"./ReactPerf":105,"./ReactRootIndex":113,"./ReactUpdates":117}],95:[function(require,module,exports){
+},{"./DOMProperty":10,"./EventPluginHub":17,"./ReactBrowserEventEmitter":31,"./ReactClass":34,"./ReactComponentEnvironment":37,"./ReactDOMComponent":43,"./ReactEmptyComponent":60,"./ReactNativeComponent":74,"./ReactPerf":76,"./ReactRootIndex":84,"./ReactUpdates":88}],66:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -16615,7 +11473,7 @@ var ReactInputSelection = {
 
 module.exports = ReactInputSelection;
 
-},{"./ReactDOMSelection":80,"./containsNode":139,"./focusNode":149,"./getActiveElement":151}],96:[function(require,module,exports){
+},{"./ReactDOMSelection":51,"./containsNode":110,"./focusNode":120,"./getActiveElement":122}],67:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -16951,7 +11809,7 @@ var ReactInstanceHandles = {
 module.exports = ReactInstanceHandles;
 
 }).call(this,require('_process'))
-},{"./ReactRootIndex":113,"./invariant":165,"_process":2}],97:[function(require,module,exports){
+},{"./ReactRootIndex":84,"./invariant":136,"_process":1}],68:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -17000,7 +11858,7 @@ var ReactInstanceMap = {
 
 module.exports = ReactInstanceMap;
 
-},{}],98:[function(require,module,exports){
+},{}],69:[function(require,module,exports){
 /**
  * Copyright 2015, Facebook, Inc.
  * All rights reserved.
@@ -17037,7 +11895,7 @@ var ReactLifeCycle = {
 
 module.exports = ReactLifeCycle;
 
-},{}],99:[function(require,module,exports){
+},{}],70:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -17085,7 +11943,7 @@ var ReactMarkupChecksum = {
 
 module.exports = ReactMarkupChecksum;
 
-},{"./adler32":136}],100:[function(require,module,exports){
+},{"./adler32":107}],71:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -17976,7 +12834,7 @@ ReactPerf.measureMethods(ReactMount, 'ReactMount', {
 module.exports = ReactMount;
 
 }).call(this,require('_process'))
-},{"./DOMProperty":39,"./ReactBrowserEventEmitter":60,"./ReactCurrentOwner":69,"./ReactElement":87,"./ReactElementValidator":88,"./ReactEmptyComponent":89,"./ReactInstanceHandles":96,"./ReactInstanceMap":97,"./ReactMarkupChecksum":99,"./ReactPerf":105,"./ReactReconciler":111,"./ReactUpdateQueue":116,"./ReactUpdates":117,"./containsNode":139,"./emptyObject":145,"./getReactRootElementInContainer":159,"./instantiateReactComponent":164,"./invariant":165,"./setInnerHTML":178,"./shouldUpdateReactComponent":181,"./warning":184,"_process":2}],101:[function(require,module,exports){
+},{"./DOMProperty":10,"./ReactBrowserEventEmitter":31,"./ReactCurrentOwner":40,"./ReactElement":58,"./ReactElementValidator":59,"./ReactEmptyComponent":60,"./ReactInstanceHandles":67,"./ReactInstanceMap":68,"./ReactMarkupChecksum":70,"./ReactPerf":76,"./ReactReconciler":82,"./ReactUpdateQueue":87,"./ReactUpdates":88,"./containsNode":110,"./emptyObject":116,"./getReactRootElementInContainer":130,"./instantiateReactComponent":135,"./invariant":136,"./setInnerHTML":149,"./shouldUpdateReactComponent":152,"./warning":155,"_process":1}],72:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -18406,7 +13264,7 @@ var ReactMultiChild = {
 
 module.exports = ReactMultiChild;
 
-},{"./ReactChildReconciler":61,"./ReactComponentEnvironment":66,"./ReactMultiChildUpdateTypes":102,"./ReactReconciler":111}],102:[function(require,module,exports){
+},{"./ReactChildReconciler":32,"./ReactComponentEnvironment":37,"./ReactMultiChildUpdateTypes":73,"./ReactReconciler":82}],73:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -18439,7 +13297,7 @@ var ReactMultiChildUpdateTypes = keyMirror({
 
 module.exports = ReactMultiChildUpdateTypes;
 
-},{"./keyMirror":170}],103:[function(require,module,exports){
+},{"./keyMirror":141}],74:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2014-2015, Facebook, Inc.
@@ -18546,7 +13404,7 @@ var ReactNativeComponent = {
 module.exports = ReactNativeComponent;
 
 }).call(this,require('_process'))
-},{"./Object.assign":56,"./invariant":165,"_process":2}],104:[function(require,module,exports){
+},{"./Object.assign":27,"./invariant":136,"_process":1}],75:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -18658,7 +13516,7 @@ var ReactOwner = {
 module.exports = ReactOwner;
 
 }).call(this,require('_process'))
-},{"./invariant":165,"_process":2}],105:[function(require,module,exports){
+},{"./invariant":136,"_process":1}],76:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -18762,7 +13620,7 @@ function _noMeasure(objName, fnName, func) {
 module.exports = ReactPerf;
 
 }).call(this,require('_process'))
-},{"_process":2}],106:[function(require,module,exports){
+},{"_process":1}],77:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -18790,7 +13648,7 @@ if ("production" !== process.env.NODE_ENV) {
 module.exports = ReactPropTypeLocationNames;
 
 }).call(this,require('_process'))
-},{"_process":2}],107:[function(require,module,exports){
+},{"_process":1}],78:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -18814,7 +13672,7 @@ var ReactPropTypeLocations = keyMirror({
 
 module.exports = ReactPropTypeLocations;
 
-},{"./keyMirror":170}],108:[function(require,module,exports){
+},{"./keyMirror":141}],79:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -19163,7 +14021,7 @@ function getPreciseType(propValue) {
 
 module.exports = ReactPropTypes;
 
-},{"./ReactElement":87,"./ReactFragment":93,"./ReactPropTypeLocationNames":106,"./emptyFunction":144}],109:[function(require,module,exports){
+},{"./ReactElement":58,"./ReactFragment":64,"./ReactPropTypeLocationNames":77,"./emptyFunction":115}],80:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -19219,7 +14077,7 @@ PooledClass.addPoolingTo(ReactPutListenerQueue);
 
 module.exports = ReactPutListenerQueue;
 
-},{"./Object.assign":56,"./PooledClass":57,"./ReactBrowserEventEmitter":60}],110:[function(require,module,exports){
+},{"./Object.assign":27,"./PooledClass":28,"./ReactBrowserEventEmitter":31}],81:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -19395,7 +14253,7 @@ PooledClass.addPoolingTo(ReactReconcileTransaction);
 
 module.exports = ReactReconcileTransaction;
 
-},{"./CallbackQueue":35,"./Object.assign":56,"./PooledClass":57,"./ReactBrowserEventEmitter":60,"./ReactInputSelection":95,"./ReactPutListenerQueue":109,"./Transaction":133}],111:[function(require,module,exports){
+},{"./CallbackQueue":6,"./Object.assign":27,"./PooledClass":28,"./ReactBrowserEventEmitter":31,"./ReactInputSelection":66,"./ReactPutListenerQueue":80,"./Transaction":104}],82:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -19519,7 +14377,7 @@ var ReactReconciler = {
 module.exports = ReactReconciler;
 
 }).call(this,require('_process'))
-},{"./ReactElementValidator":88,"./ReactRef":112,"_process":2}],112:[function(require,module,exports){
+},{"./ReactElementValidator":59,"./ReactRef":83,"_process":1}],83:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -19590,7 +14448,7 @@ ReactRef.detachRefs = function(instance, element) {
 
 module.exports = ReactRef;
 
-},{"./ReactOwner":104}],113:[function(require,module,exports){
+},{"./ReactOwner":75}],84:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -19621,7 +14479,7 @@ var ReactRootIndex = {
 
 module.exports = ReactRootIndex;
 
-},{}],114:[function(require,module,exports){
+},{}],85:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -19703,7 +14561,7 @@ module.exports = {
 };
 
 }).call(this,require('_process'))
-},{"./ReactElement":87,"./ReactInstanceHandles":96,"./ReactMarkupChecksum":99,"./ReactServerRenderingTransaction":115,"./emptyObject":145,"./instantiateReactComponent":164,"./invariant":165,"_process":2}],115:[function(require,module,exports){
+},{"./ReactElement":58,"./ReactInstanceHandles":67,"./ReactMarkupChecksum":70,"./ReactServerRenderingTransaction":86,"./emptyObject":116,"./instantiateReactComponent":135,"./invariant":136,"_process":1}],86:[function(require,module,exports){
 /**
  * Copyright 2014-2015, Facebook, Inc.
  * All rights reserved.
@@ -19816,7 +14674,7 @@ PooledClass.addPoolingTo(ReactServerRenderingTransaction);
 
 module.exports = ReactServerRenderingTransaction;
 
-},{"./CallbackQueue":35,"./Object.assign":56,"./PooledClass":57,"./ReactPutListenerQueue":109,"./Transaction":133,"./emptyFunction":144}],116:[function(require,module,exports){
+},{"./CallbackQueue":6,"./Object.assign":27,"./PooledClass":28,"./ReactPutListenerQueue":80,"./Transaction":104,"./emptyFunction":115}],87:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2015, Facebook, Inc.
@@ -20115,7 +14973,7 @@ var ReactUpdateQueue = {
 module.exports = ReactUpdateQueue;
 
 }).call(this,require('_process'))
-},{"./Object.assign":56,"./ReactCurrentOwner":69,"./ReactElement":87,"./ReactInstanceMap":97,"./ReactLifeCycle":98,"./ReactUpdates":117,"./invariant":165,"./warning":184,"_process":2}],117:[function(require,module,exports){
+},{"./Object.assign":27,"./ReactCurrentOwner":40,"./ReactElement":58,"./ReactInstanceMap":68,"./ReactLifeCycle":69,"./ReactUpdates":88,"./invariant":136,"./warning":155,"_process":1}],88:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -20397,7 +15255,7 @@ var ReactUpdates = {
 module.exports = ReactUpdates;
 
 }).call(this,require('_process'))
-},{"./CallbackQueue":35,"./Object.assign":56,"./PooledClass":57,"./ReactCurrentOwner":69,"./ReactPerf":105,"./ReactReconciler":111,"./Transaction":133,"./invariant":165,"./warning":184,"_process":2}],118:[function(require,module,exports){
+},{"./CallbackQueue":6,"./Object.assign":27,"./PooledClass":28,"./ReactCurrentOwner":40,"./ReactPerf":76,"./ReactReconciler":82,"./Transaction":104,"./invariant":136,"./warning":155,"_process":1}],89:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -20491,7 +15349,7 @@ var SVGDOMPropertyConfig = {
 
 module.exports = SVGDOMPropertyConfig;
 
-},{"./DOMProperty":39}],119:[function(require,module,exports){
+},{"./DOMProperty":10}],90:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -20686,7 +15544,7 @@ var SelectEventPlugin = {
 
 module.exports = SelectEventPlugin;
 
-},{"./EventConstants":44,"./EventPropagators":49,"./ReactInputSelection":95,"./SyntheticEvent":125,"./getActiveElement":151,"./isTextInputElement":168,"./keyOf":171,"./shallowEqual":180}],120:[function(require,module,exports){
+},{"./EventConstants":15,"./EventPropagators":20,"./ReactInputSelection":66,"./SyntheticEvent":96,"./getActiveElement":122,"./isTextInputElement":139,"./keyOf":142,"./shallowEqual":151}],91:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -20717,7 +15575,7 @@ var ServerReactRootIndex = {
 
 module.exports = ServerReactRootIndex;
 
-},{}],121:[function(require,module,exports){
+},{}],92:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -21145,7 +16003,7 @@ var SimpleEventPlugin = {
 module.exports = SimpleEventPlugin;
 
 }).call(this,require('_process'))
-},{"./EventConstants":44,"./EventPluginUtils":48,"./EventPropagators":49,"./SyntheticClipboardEvent":122,"./SyntheticDragEvent":124,"./SyntheticEvent":125,"./SyntheticFocusEvent":126,"./SyntheticKeyboardEvent":128,"./SyntheticMouseEvent":129,"./SyntheticTouchEvent":130,"./SyntheticUIEvent":131,"./SyntheticWheelEvent":132,"./getEventCharCode":152,"./invariant":165,"./keyOf":171,"./warning":184,"_process":2}],122:[function(require,module,exports){
+},{"./EventConstants":15,"./EventPluginUtils":19,"./EventPropagators":20,"./SyntheticClipboardEvent":93,"./SyntheticDragEvent":95,"./SyntheticEvent":96,"./SyntheticFocusEvent":97,"./SyntheticKeyboardEvent":99,"./SyntheticMouseEvent":100,"./SyntheticTouchEvent":101,"./SyntheticUIEvent":102,"./SyntheticWheelEvent":103,"./getEventCharCode":123,"./invariant":136,"./keyOf":142,"./warning":155,"_process":1}],93:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -21190,7 +16048,7 @@ SyntheticEvent.augmentClass(SyntheticClipboardEvent, ClipboardEventInterface);
 
 module.exports = SyntheticClipboardEvent;
 
-},{"./SyntheticEvent":125}],123:[function(require,module,exports){
+},{"./SyntheticEvent":96}],94:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -21235,7 +16093,7 @@ SyntheticEvent.augmentClass(
 
 module.exports = SyntheticCompositionEvent;
 
-},{"./SyntheticEvent":125}],124:[function(require,module,exports){
+},{"./SyntheticEvent":96}],95:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -21274,7 +16132,7 @@ SyntheticMouseEvent.augmentClass(SyntheticDragEvent, DragEventInterface);
 
 module.exports = SyntheticDragEvent;
 
-},{"./SyntheticMouseEvent":129}],125:[function(require,module,exports){
+},{"./SyntheticMouseEvent":100}],96:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -21440,7 +16298,7 @@ PooledClass.addPoolingTo(SyntheticEvent, PooledClass.threeArgumentPooler);
 
 module.exports = SyntheticEvent;
 
-},{"./Object.assign":56,"./PooledClass":57,"./emptyFunction":144,"./getEventTarget":155}],126:[function(require,module,exports){
+},{"./Object.assign":27,"./PooledClass":28,"./emptyFunction":115,"./getEventTarget":126}],97:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -21479,7 +16337,7 @@ SyntheticUIEvent.augmentClass(SyntheticFocusEvent, FocusEventInterface);
 
 module.exports = SyntheticFocusEvent;
 
-},{"./SyntheticUIEvent":131}],127:[function(require,module,exports){
+},{"./SyntheticUIEvent":102}],98:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -21525,7 +16383,7 @@ SyntheticEvent.augmentClass(
 
 module.exports = SyntheticInputEvent;
 
-},{"./SyntheticEvent":125}],128:[function(require,module,exports){
+},{"./SyntheticEvent":96}],99:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -21612,7 +16470,7 @@ SyntheticUIEvent.augmentClass(SyntheticKeyboardEvent, KeyboardEventInterface);
 
 module.exports = SyntheticKeyboardEvent;
 
-},{"./SyntheticUIEvent":131,"./getEventCharCode":152,"./getEventKey":153,"./getEventModifierState":154}],129:[function(require,module,exports){
+},{"./SyntheticUIEvent":102,"./getEventCharCode":123,"./getEventKey":124,"./getEventModifierState":125}],100:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -21693,7 +16551,7 @@ SyntheticUIEvent.augmentClass(SyntheticMouseEvent, MouseEventInterface);
 
 module.exports = SyntheticMouseEvent;
 
-},{"./SyntheticUIEvent":131,"./ViewportMetrics":134,"./getEventModifierState":154}],130:[function(require,module,exports){
+},{"./SyntheticUIEvent":102,"./ViewportMetrics":105,"./getEventModifierState":125}],101:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -21741,7 +16599,7 @@ SyntheticUIEvent.augmentClass(SyntheticTouchEvent, TouchEventInterface);
 
 module.exports = SyntheticTouchEvent;
 
-},{"./SyntheticUIEvent":131,"./getEventModifierState":154}],131:[function(require,module,exports){
+},{"./SyntheticUIEvent":102,"./getEventModifierState":125}],102:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -21803,7 +16661,7 @@ SyntheticEvent.augmentClass(SyntheticUIEvent, UIEventInterface);
 
 module.exports = SyntheticUIEvent;
 
-},{"./SyntheticEvent":125,"./getEventTarget":155}],132:[function(require,module,exports){
+},{"./SyntheticEvent":96,"./getEventTarget":126}],103:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -21864,7 +16722,7 @@ SyntheticMouseEvent.augmentClass(SyntheticWheelEvent, WheelEventInterface);
 
 module.exports = SyntheticWheelEvent;
 
-},{"./SyntheticMouseEvent":129}],133:[function(require,module,exports){
+},{"./SyntheticMouseEvent":100}],104:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -22105,7 +16963,7 @@ var Transaction = {
 module.exports = Transaction;
 
 }).call(this,require('_process'))
-},{"./invariant":165,"_process":2}],134:[function(require,module,exports){
+},{"./invariant":136,"_process":1}],105:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -22134,7 +16992,7 @@ var ViewportMetrics = {
 
 module.exports = ViewportMetrics;
 
-},{}],135:[function(require,module,exports){
+},{}],106:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2014-2015, Facebook, Inc.
@@ -22200,7 +17058,7 @@ function accumulateInto(current, next) {
 module.exports = accumulateInto;
 
 }).call(this,require('_process'))
-},{"./invariant":165,"_process":2}],136:[function(require,module,exports){
+},{"./invariant":136,"_process":1}],107:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -22234,7 +17092,7 @@ function adler32(data) {
 
 module.exports = adler32;
 
-},{}],137:[function(require,module,exports){
+},{}],108:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -22266,7 +17124,7 @@ function camelize(string) {
 
 module.exports = camelize;
 
-},{}],138:[function(require,module,exports){
+},{}],109:[function(require,module,exports){
 /**
  * Copyright 2014-2015, Facebook, Inc.
  * All rights reserved.
@@ -22308,7 +17166,7 @@ function camelizeStyleName(string) {
 
 module.exports = camelizeStyleName;
 
-},{"./camelize":137}],139:[function(require,module,exports){
+},{"./camelize":108}],110:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -22352,7 +17210,7 @@ function containsNode(outerNode, innerNode) {
 
 module.exports = containsNode;
 
-},{"./isTextNode":169}],140:[function(require,module,exports){
+},{"./isTextNode":140}],111:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -22438,7 +17296,7 @@ function createArrayFromMixed(obj) {
 
 module.exports = createArrayFromMixed;
 
-},{"./toArray":182}],141:[function(require,module,exports){
+},{"./toArray":153}],112:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -22500,7 +17358,7 @@ function createFullPageComponent(tag) {
 module.exports = createFullPageComponent;
 
 }).call(this,require('_process'))
-},{"./ReactClass":63,"./ReactElement":87,"./invariant":165,"_process":2}],142:[function(require,module,exports){
+},{"./ReactClass":34,"./ReactElement":58,"./invariant":136,"_process":1}],113:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -22590,7 +17448,7 @@ function createNodesFromMarkup(markup, handleScript) {
 module.exports = createNodesFromMarkup;
 
 }).call(this,require('_process'))
-},{"./ExecutionEnvironment":50,"./createArrayFromMixed":140,"./getMarkupWrap":157,"./invariant":165,"_process":2}],143:[function(require,module,exports){
+},{"./ExecutionEnvironment":21,"./createArrayFromMixed":111,"./getMarkupWrap":128,"./invariant":136,"_process":1}],114:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -22648,7 +17506,7 @@ function dangerousStyleValue(name, value) {
 
 module.exports = dangerousStyleValue;
 
-},{"./CSSProperty":33}],144:[function(require,module,exports){
+},{"./CSSProperty":4}],115:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -22682,7 +17540,7 @@ emptyFunction.thatReturnsArgument = function(arg) { return arg; };
 
 module.exports = emptyFunction;
 
-},{}],145:[function(require,module,exports){
+},{}],116:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -22706,7 +17564,7 @@ if ("production" !== process.env.NODE_ENV) {
 module.exports = emptyObject;
 
 }).call(this,require('_process'))
-},{"_process":2}],146:[function(require,module,exports){
+},{"_process":1}],117:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -22746,7 +17604,7 @@ function escapeTextContentForBrowser(text) {
 
 module.exports = escapeTextContentForBrowser;
 
-},{}],147:[function(require,module,exports){
+},{}],118:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -22819,7 +17677,7 @@ function findDOMNode(componentOrElement) {
 module.exports = findDOMNode;
 
 }).call(this,require('_process'))
-},{"./ReactCurrentOwner":69,"./ReactInstanceMap":97,"./ReactMount":100,"./invariant":165,"./isNode":167,"./warning":184,"_process":2}],148:[function(require,module,exports){
+},{"./ReactCurrentOwner":40,"./ReactInstanceMap":68,"./ReactMount":71,"./invariant":136,"./isNode":138,"./warning":155,"_process":1}],119:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -22877,7 +17735,7 @@ function flattenChildren(children) {
 module.exports = flattenChildren;
 
 }).call(this,require('_process'))
-},{"./traverseAllChildren":183,"./warning":184,"_process":2}],149:[function(require,module,exports){
+},{"./traverseAllChildren":154,"./warning":155,"_process":1}],120:[function(require,module,exports){
 /**
  * Copyright 2014-2015, Facebook, Inc.
  * All rights reserved.
@@ -22906,7 +17764,7 @@ function focusNode(node) {
 
 module.exports = focusNode;
 
-},{}],150:[function(require,module,exports){
+},{}],121:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -22937,7 +17795,7 @@ var forEachAccumulated = function(arr, cb, scope) {
 
 module.exports = forEachAccumulated;
 
-},{}],151:[function(require,module,exports){
+},{}],122:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -22966,7 +17824,7 @@ function getActiveElement() /*?DOMElement*/ {
 
 module.exports = getActiveElement;
 
-},{}],152:[function(require,module,exports){
+},{}],123:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -23018,7 +17876,7 @@ function getEventCharCode(nativeEvent) {
 
 module.exports = getEventCharCode;
 
-},{}],153:[function(require,module,exports){
+},{}],124:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -23123,7 +17981,7 @@ function getEventKey(nativeEvent) {
 
 module.exports = getEventKey;
 
-},{"./getEventCharCode":152}],154:[function(require,module,exports){
+},{"./getEventCharCode":123}],125:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -23170,7 +18028,7 @@ function getEventModifierState(nativeEvent) {
 
 module.exports = getEventModifierState;
 
-},{}],155:[function(require,module,exports){
+},{}],126:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -23201,7 +18059,7 @@ function getEventTarget(nativeEvent) {
 
 module.exports = getEventTarget;
 
-},{}],156:[function(require,module,exports){
+},{}],127:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -23245,7 +18103,7 @@ function getIteratorFn(maybeIterable) {
 
 module.exports = getIteratorFn;
 
-},{}],157:[function(require,module,exports){
+},{}],128:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -23364,7 +18222,7 @@ function getMarkupWrap(nodeName) {
 module.exports = getMarkupWrap;
 
 }).call(this,require('_process'))
-},{"./ExecutionEnvironment":50,"./invariant":165,"_process":2}],158:[function(require,module,exports){
+},{"./ExecutionEnvironment":21,"./invariant":136,"_process":1}],129:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -23439,7 +18297,7 @@ function getNodeForCharacterOffset(root, offset) {
 
 module.exports = getNodeForCharacterOffset;
 
-},{}],159:[function(require,module,exports){
+},{}],130:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -23474,7 +18332,7 @@ function getReactRootElementInContainer(container) {
 
 module.exports = getReactRootElementInContainer;
 
-},{}],160:[function(require,module,exports){
+},{}],131:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -23511,7 +18369,7 @@ function getTextContentAccessor() {
 
 module.exports = getTextContentAccessor;
 
-},{"./ExecutionEnvironment":50}],161:[function(require,module,exports){
+},{"./ExecutionEnvironment":21}],132:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -23551,7 +18409,7 @@ function getUnboundedScrollPosition(scrollable) {
 
 module.exports = getUnboundedScrollPosition;
 
-},{}],162:[function(require,module,exports){
+},{}],133:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -23584,7 +18442,7 @@ function hyphenate(string) {
 
 module.exports = hyphenate;
 
-},{}],163:[function(require,module,exports){
+},{}],134:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -23625,7 +18483,7 @@ function hyphenateStyleName(string) {
 
 module.exports = hyphenateStyleName;
 
-},{"./hyphenate":162}],164:[function(require,module,exports){
+},{"./hyphenate":133}],135:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -23763,7 +18621,7 @@ function instantiateReactComponent(node, parentCompositeType) {
 module.exports = instantiateReactComponent;
 
 }).call(this,require('_process'))
-},{"./Object.assign":56,"./ReactCompositeComponent":67,"./ReactEmptyComponent":89,"./ReactNativeComponent":103,"./invariant":165,"./warning":184,"_process":2}],165:[function(require,module,exports){
+},{"./Object.assign":27,"./ReactCompositeComponent":38,"./ReactEmptyComponent":60,"./ReactNativeComponent":74,"./invariant":136,"./warning":155,"_process":1}],136:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -23820,7 +18678,7 @@ var invariant = function(condition, format, a, b, c, d, e, f) {
 module.exports = invariant;
 
 }).call(this,require('_process'))
-},{"_process":2}],166:[function(require,module,exports){
+},{"_process":1}],137:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -23885,7 +18743,7 @@ function isEventSupported(eventNameSuffix, capture) {
 
 module.exports = isEventSupported;
 
-},{"./ExecutionEnvironment":50}],167:[function(require,module,exports){
+},{"./ExecutionEnvironment":21}],138:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -23912,7 +18770,7 @@ function isNode(object) {
 
 module.exports = isNode;
 
-},{}],168:[function(require,module,exports){
+},{}],139:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -23955,7 +18813,7 @@ function isTextInputElement(elem) {
 
 module.exports = isTextInputElement;
 
-},{}],169:[function(require,module,exports){
+},{}],140:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -23980,7 +18838,7 @@ function isTextNode(object) {
 
 module.exports = isTextNode;
 
-},{"./isNode":167}],170:[function(require,module,exports){
+},{"./isNode":138}],141:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -24035,7 +18893,7 @@ var keyMirror = function(obj) {
 module.exports = keyMirror;
 
 }).call(this,require('_process'))
-},{"./invariant":165,"_process":2}],171:[function(require,module,exports){
+},{"./invariant":136,"_process":1}],142:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -24071,7 +18929,7 @@ var keyOf = function(oneKeyObj) {
 
 module.exports = keyOf;
 
-},{}],172:[function(require,module,exports){
+},{}],143:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -24124,7 +18982,7 @@ function mapObject(object, callback, context) {
 
 module.exports = mapObject;
 
-},{}],173:[function(require,module,exports){
+},{}],144:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -24157,7 +19015,7 @@ function memoizeStringOnly(callback) {
 
 module.exports = memoizeStringOnly;
 
-},{}],174:[function(require,module,exports){
+},{}],145:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -24197,7 +19055,7 @@ function onlyChild(children) {
 module.exports = onlyChild;
 
 }).call(this,require('_process'))
-},{"./ReactElement":87,"./invariant":165,"_process":2}],175:[function(require,module,exports){
+},{"./ReactElement":58,"./invariant":136,"_process":1}],146:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -24225,7 +19083,7 @@ if (ExecutionEnvironment.canUseDOM) {
 
 module.exports = performance || {};
 
-},{"./ExecutionEnvironment":50}],176:[function(require,module,exports){
+},{"./ExecutionEnvironment":21}],147:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -24253,7 +19111,7 @@ var performanceNow = performance.now.bind(performance);
 
 module.exports = performanceNow;
 
-},{"./performance":175}],177:[function(require,module,exports){
+},{"./performance":146}],148:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -24281,7 +19139,7 @@ function quoteAttributeValueForBrowser(value) {
 
 module.exports = quoteAttributeValueForBrowser;
 
-},{"./escapeTextContentForBrowser":146}],178:[function(require,module,exports){
+},{"./escapeTextContentForBrowser":117}],149:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -24370,7 +19228,7 @@ if (ExecutionEnvironment.canUseDOM) {
 
 module.exports = setInnerHTML;
 
-},{"./ExecutionEnvironment":50}],179:[function(require,module,exports){
+},{"./ExecutionEnvironment":21}],150:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -24412,7 +19270,7 @@ if (ExecutionEnvironment.canUseDOM) {
 
 module.exports = setTextContent;
 
-},{"./ExecutionEnvironment":50,"./escapeTextContentForBrowser":146,"./setInnerHTML":178}],180:[function(require,module,exports){
+},{"./ExecutionEnvironment":21,"./escapeTextContentForBrowser":117,"./setInnerHTML":149}],151:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -24456,7 +19314,7 @@ function shallowEqual(objA, objB) {
 
 module.exports = shallowEqual;
 
-},{}],181:[function(require,module,exports){
+},{}],152:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -24560,7 +19418,7 @@ function shouldUpdateReactComponent(prevElement, nextElement) {
 module.exports = shouldUpdateReactComponent;
 
 }).call(this,require('_process'))
-},{"./warning":184,"_process":2}],182:[function(require,module,exports){
+},{"./warning":155,"_process":1}],153:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2014-2015, Facebook, Inc.
@@ -24632,7 +19490,7 @@ function toArray(obj) {
 module.exports = toArray;
 
 }).call(this,require('_process'))
-},{"./invariant":165,"_process":2}],183:[function(require,module,exports){
+},{"./invariant":136,"_process":1}],154:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -24885,7 +19743,7 @@ function traverseAllChildren(children, callback, traverseContext) {
 module.exports = traverseAllChildren;
 
 }).call(this,require('_process'))
-},{"./ReactElement":87,"./ReactFragment":93,"./ReactInstanceHandles":96,"./getIteratorFn":156,"./invariant":165,"./warning":184,"_process":2}],184:[function(require,module,exports){
+},{"./ReactElement":58,"./ReactFragment":64,"./ReactInstanceHandles":67,"./getIteratorFn":127,"./invariant":136,"./warning":155,"_process":1}],155:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2014-2015, Facebook, Inc.
@@ -24948,10 +19806,10 @@ if ("production" !== process.env.NODE_ENV) {
 module.exports = warning;
 
 }).call(this,require('_process'))
-},{"./emptyFunction":144,"_process":2}],185:[function(require,module,exports){
+},{"./emptyFunction":115,"_process":1}],156:[function(require,module,exports){
 module.exports = require('./lib/React');
 
-},{"./lib/React":58}],186:[function(require,module,exports){
+},{"./lib/React":29}],157:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -25010,7 +19868,7 @@ Link.PropTypes = {
 };
 module.exports = exports['default'];
 
-},{"react":185}],187:[function(require,module,exports){
+},{"react":156}],158:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -25026,87 +19884,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
 var React = require('react');
-var ReactCanvas = require('react-canvas');
-
-var Surface = ReactCanvas.Surface;
-var Image = ReactCanvas.Image;
-var Text = ReactCanvas.Text;
-var Layer = ReactCanvas.Layer;
-
-var BAR_WIDTH = 2;
-var BAR_HEIGHT = 7;
-var SPACE = 1;
-var colorDark = 'rgba(255, 255, 255, 0.215)'; // 'rgba(89, 89, 89)';
-var colorLight = 'rgba(255, 255, 255, .882)'; //'rgba(225, 255, 255)';
-
-var PopularityBar = (function (_React$Component) {
-    _inherits(PopularityBar, _React$Component);
-
-    function PopularityBar(props) {
-        _classCallCheck(this, PopularityBar);
-
-        _get(Object.getPrototypeOf(PopularityBar.prototype), 'constructor', this).call(this, props);
-        console.log(props);
-        this.renderBars = this.renderBars.bind(this);
-    }
-
-    _createClass(PopularityBar, [{
-        key: 'renderBars',
-        value: function renderBars() {
-            var bars = [];
-            var totalPigs = 0;
-            for (var i = 0; i < 120; i += BAR_WIDTH + SPACE) {
-                bars.push(React.createElement(Layer, { top: 0, left: i, backgroundColor: colorDark, width: BAR_WIDTH, height: BAR_HEIGHT }));
-                totalPigs++;
-            }
-            var fillStyle = colorLight;
-
-            var lightPigs = this.props.popularity * totalPigs;
-            var left = 0;
-            for (var i = 0; i < lightPigs; i++) {
-                bars.push(React.createElement(Layer, { left: left, top: 0, width: BAR_WIDTH, height: BAR_HEIGHT }));
-                left += BAR_WIDTH + SPACE;
-            }
-            return bars;
-        }
-    }, {
-        key: 'render',
-        value: function render() {
-            return React.createElement(
-                Surface,
-                { width: 120, height: 8 },
-                this.renderBars()
-            );
-        }
-    }]);
-
-    return PopularityBar;
-})(React.Component);
-
-exports['default'] = PopularityBar;
-
-PopularityBar.PropTypes = {
-    popularity: React.PropTypes.number.isRequired
-};
-module.exports = exports['default'];
-
-},{"react":185,"react-canvas":19}],188:[function(require,module,exports){
-'use strict';
-
-Object.defineProperty(exports, '__esModule', {
-    value: true
-});
-
-var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
-
-var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; desc = parent = getter = undefined; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-var React = require('react');
-var PopularityBar = require('./popularity_bar.js');
+// var PopularityBar = require('./popularity_bar.js');
 
 var Resource = (function (_React$Component) {
     _inherits(Resource, _React$Component);
@@ -25124,11 +19902,12 @@ var Resource = (function (_React$Component) {
         value: function renderFields() {
             var _this = this;
 
-            return this.props.fields.map(function (field) {
+            return this.props.fields.map(function (field, i) {
+                console.log(field);
                 if (field == 'name') {
                     return React.createElement(
                         'td',
-                        null,
+                        { key: i },
                         _this.props.resource[field]
                     );
                 }
@@ -25136,7 +19915,7 @@ var Resource = (function (_React$Component) {
                     if ('authors' in _this.props.resource) return _this.props.resource.authors.map(function (resource) {
                         return React.createElement(
                             Link,
-                            { uri: _this.props.resource.author.uri },
+                            { key: i, uri: _this.props.resource.author.uri },
                             _this.props.author.name
                         );
                     });
@@ -25149,30 +19928,26 @@ var Resource = (function (_React$Component) {
                     );
                 }
                 if (field == 'popularity') {
-                    return React.createElement(
-                        'td',
-                        null,
-                        React.createElement(PopularityBar, { popularity: _this.props.resource.popularity || 0 })
-                    );
+                    // return <td><PopularityBar popularity={this.props.resource.popularity || 0} /></td>
                 }
                 if (field == 'album') {
                     if ('album' in _this.props.resource) return React.createElement(
                         Link,
-                        { uri: _this.props.resource.album.uri },
+                        { key: i, uri: _this.props.resource.album.uri },
                         _this.props.resource.album.name
                     );
                 }
                 if (field == 'collection') {
                     if ('collection' in _this.props.resource) return React.createElement(
                         Link,
-                        { uri: _this.props.resource.list.uri },
+                        { key: i, uri: _this.props.resource.list.uri },
                         _this.props.resource.list.name
                     );
                 }
                 if (field == 'addedBy') {
                     if ('added_by' in _this.props.resource) return React.createElement(
                         Link,
-                        { uri: _this.props.resource.added_by.uri },
+                        { key: i, uri: _this.props.resource.added_by.uri },
                         _this.props.resource.added_by.name
                     );
                 }
@@ -25188,7 +19963,7 @@ var Resource = (function (_React$Component) {
         value: function render() {
             return React.createElement(
                 'tr',
-                { className: 'sp-resource ' + (this.props.active ? 'sp-resource-active' : ''), onDoubleClick: this._onDoubleClick },
+                { className: 'sp-resource ' + (this.state.active ? 'sp-resource-active' : ''), onDoubleClick: this._onDoubleClick },
                 this.renderFields()
             );
         }
@@ -25200,7 +19975,7 @@ var Resource = (function (_React$Component) {
 exports['default'] = Resource;
 module.exports = exports['default'];
 
-},{"./popularity_bar.js":187,"react":185}],189:[function(require,module,exports){
+},{"react":156}],159:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -25214,4 +19989,4 @@ var Resource = require('./components/resource.js');
 exports.Link = Link;
 exports.Resource = Resource;
 
-},{"./components/link.js":186,"./components/resource.js":188,"react":185}]},{},[189]);
+},{"./components/link.js":157,"./components/resource.js":158,"react":156}]},{},[159]);

@@ -25,6 +25,11 @@ export default class ResourceContext extends React.Component {
     }
 
     render() {
+        var rows = this.props.resources.map((resource) => {
+            var t = <Resource resource={resource} key={resource.uri} fields={this.props.columnHeaders} />;
+            console.log(t);
+            return t;
+        });
         return (
             <table className={'sp-resource-context'}>
                 <thead>
@@ -32,9 +37,7 @@ export default class ResourceContext extends React.Component {
                         {this.renderColumnHeaders()}
                     </tr>
                 </thead>
-                <tbody>
-                    {this.renderChildren()}
-                </tbody>
+                <tbody>{rows}</tbody>
             </table>
         )
     }
