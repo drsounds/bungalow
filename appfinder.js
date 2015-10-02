@@ -99,6 +99,7 @@ AppFinder.prototype.listen = function () {
          var app_path = req.params[0].split('/');
         var appId = app_path[0];
         console.log("A");
+        console.log("APPID", appId);
         if (!(appId in external_apps)) {
             var address = app_path.slice(1).join('/');
             var appDir = __dirname + path.sep + path.sep + 'apps' + path.sep + appId + path.sep;
@@ -141,8 +142,6 @@ AppFinder.prototype.listen = function () {
                 var notfound = fs.readFileSync(__dirname + path.sep + 'apps/notfound/index.html');
                 res.write(notfound);
                 res.end();
-                res.write(body);
-                res.end();
             }
         } else {
             request(external_apps[appId] + '/' + app_path.slice(1).join('/'), function (error, response, body) {
@@ -164,4 +163,4 @@ var appFinder = new AppFinder();
 appFinder.registerApps();
 appFinder.listen();
 
-module.exports = appFinder;
+module.exports = appFinder.server;

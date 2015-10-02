@@ -1,5 +1,5 @@
-require(['$api/models'], function (models) {
-    exports = function (uri) {
+var models = require('@bungalow/models');
+module.exports = function (uri) {
         return new Promise(function (resolve, fail) {
             var parts = uri.split(/\:/g);
             var id = parts[4];
@@ -13,4 +13,4 @@ require(['$api/models'], function (models) {
             });
         });
     }
-})
+};

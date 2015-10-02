@@ -1,3 +1,17 @@
+var $ = require('jquery');
+var jQuery = $;
+var exports = {};
+var models = require('@bungalow/models');
+var views = require('@bungalow/views');
+var BUNGALOW_THEME = 'bungalow';
+
+
+var settings = bungalow_load_settings();
+
+BUNGALOW_THEME = settings.theme;
+
+
+
 var Music = function () {
 
 };
@@ -56,7 +70,7 @@ Music.prototype.getAlbum = function (id) {
 
 Music.prototype.login = function () {
 	return new Promise(function (resolve, fail) {
-		/* var loginWindow = window.open('https://accounts.spotify.com/authorize?client_id=d4dc306c3fe643a6933b35ee18ed4d89&scope=user-read-private&response_type=code&redirect_uri=' + encodeURI('http://play.bungalow.qi/callback.html'));
+		/* var loginWindow = window.open('https://accounts.spotify.com/authorize?client_id=d4dc306c3fe643a6933b35ee18ed4d89&scope=user-read-private&response_type=code&redirect_uri=' + encodeURI('http://127.0.0.1:9261/apps/callback.html'));
 		var t = setInterval(function () {
 			if (!loginWindow) {
 				clearInterval(t);
@@ -116,7 +130,7 @@ var Shell = function () {
 			var uri = node.attr('data-load-uri');
 			var appId = self.getMatchingApp(uri);
 			setTimeout(function () {
-				require(['$' + appId + '/resolver'], function (resolve) {
+				models.App.resolveUri(uri).then(function (resolve) {
 					if (resolve) {
 						resolve(node.attr('data-load-uri')).then(function (resource) {
 							console.log("RESOURCE", resource);
@@ -131,12 +145,8 @@ var Shell = function () {
 		};
 	}(jQuery));
 	var self = this;
-	this.mashcast = new Mashcast();
-
-	this.mashcast.addEventListener('episodestopped', function (event) {
-	});
 	
-	$.getJSON('http://appfinder.bungalow.qi/api/v1/apps', function (data) {
+	$.getJSON('http://127.0.0.1:9261/apps/api/v1/apps', function (data) {
 		self.apps = data;
 	});
 
@@ -519,6 +529,7 @@ Shell.prototype.searchEnter = function (event) {
 }
 
 Shell.prototype.getMatchingApp = function (url) {
+	var appId = null;
 	for(var i = 0; i < this.apps.length; i++) {
 		
 		var app = this.apps[i];
@@ -670,7 +681,7 @@ Shell.prototype.createApp = function (appId, callback) {
 
 
 	var appFrame = document.createElement('iframe');
-	appFrame.setAttribute('src', 'http://appfinder.bungalow.qi/' + appId + '/index.html?t=' + new Date().getTime());
+	appFrame.setAttribute('src', 'http://127.0.0.1:9261/apps/' + appId + '/index.html?t=' + new Date().getTime());
 	console.log('/apps/' + appId + '/index.html');
 	appFrame.setAttribute('id', 'app_' + appId + '');
 	appFrame.classList.add('sp-app');
@@ -733,3 +744,5 @@ function setHash(hash) {
 window.addEventListener('hashchange', function (event) {
 	setHash(window.location.hash.slice(1));
 });
+
+module.exports = exports;

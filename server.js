@@ -9,9 +9,8 @@ var www = require('./www.js');
 var api = require('./api.js');
 var appfinder = require('./appfinder.js');
 var server = express();
-server.use(evh.vhost(server.enable('trust proxy')));
-server.listen(80);
-evh.register('play.bungalow.qi', www);
-evh.register('api.bungalow.qi', api);
-evh.register('appfinder.bungalow.qi', appfinder.server);
+server.use('/apps', appfinder);
+server.use('/api', api);
+server.use('/', www);
+server.listen(9261);
 

@@ -22,10 +22,12 @@
     "object-assign": "*",
     "es6-promise": "*",
     "hostile": "*",
-    "vhost": "*",
-    "node-spotify": "*",
+    "spotify-web-api-node": "*",
     "less": "*",
-    "express": "3.*",
+    "vhost": "*",
+    "express": "*",
+    "async": "*",
+    "express-vhost": "*",
     "express-async": "*",
     "swig": "*",
     "bluebird": "*",
@@ -34,7 +36,9 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "grunt": "^0.4.5",
-    "grunt-node-webkit-builder": "^1.0.0"
+    "gulp": "*",
+    "vinyl-source-stream": "*",
+    "browserify": "*",
+    "babelify": "*"
   }
 }

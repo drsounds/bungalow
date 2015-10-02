@@ -13,104 +13,94 @@
 			}
 		</script>
 		<title>Bungalow</title>
-		<base href="http://play.bungalow.qi/">
+		<base href="http://127.0.0.1:9261/">
 		<link rel="stylesheet" href="/themes/main.css">
-		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
-		<script src="bower_components/crossroads/dist/crossroads.js"></script>
-		<script src="bower_components/jquery/dist/jquery.js"></script>
-		<!-- Mashcast -->
-		<script src="http://appfinder.bungalow.qi/mashcast/scripts/mashcast.js"></script>
-		<script src="http://appfinder.bungalow.qi/api/scripts/require.js"></script>
-		<script src="scripts/main.js"></script>
 
 	</head>
 	<body style="width:100%; height:100%;">
-		
-			<header style="">
-				<div class="btn-group">
-					<button onclick="shell.goBack()">&lt;</button>
-					<button onclick="shell.goForward()">&gt;</button>
-				</div>
-				<form nonvalidate onsubmit="shell.searchEnter(event);">
-					<input type="search" id="search" placeholder="Search">
-				</form>
-			</header>
-			<div class="alert alert-warning" style="display: none" id="alert">
-				<p>Test alert<a style="color: black;margin-right: 10pt;float: right">x</a></p>
+	
+		<header style="">
+			<div class="btn-group">
+				<button onclick="shell.goBack()">&lt;</button>
+				<button onclick="shell.goForward()">&gt;</button>
 			</div>
-			<main style="">
-				<aside style="width: 25%;">
-					<div id="menu" style=" overflow:scroll">
-						<ul cellspacing="0" width="100%" class="menu">
-							<li data-uri="bungalow:start"><span class="fa fa-home"></span> Browse
-							</li>
-                            <li data-uri="bungalow:discover">
-                                <span class="fa fa-clock-o"></span> Discover
-                            </li>
-                            <li data-uri="bungalow:featured">
-                                <span class="fa fa-star"></span> Featured <span class="sub">By Team Bungalow</span>
-                            </li>
-						</ul>
-						<ul id="searchHistory" cellspacing="0" width="100%" class="menu">
-							
-						</ul>
-						<hr>
-						<ul cellspacing="0" width="100%" class="menu">
-							
-							<li data-uri="bungalow:finder"><span class="fa fa-cube"></span> App Finder</li>
-							
-						</ul>
-						<ul id="apps" cellspacing="0" width="100%" class="menu">
-							
-						</ul>
-						<hr><br>
-						</ul>
-						<ul id="favorites" cellspacing="0" width="100%" class="menu">
-							<li data-load-uri="bungalow:year:2009">Loading</li>
-							
-						</ul>
+			<form nonvalidate onsubmit="shell.searchEnter(event);">
+				<input type="search" id="search" placeholder="Search">
+			</form>
+		</header>
+		<div class="alert alert-warning" style="display: none" id="alert">
+			<p>Test alert<a style="color: black;margin-right: 10pt;float: right">x</a></p>
+		</div>
+		<main style="">
+			<aside style="width: 25%;">
+				<div id="menu" style=" overflow:scroll">
+					<ul cellspacing="0" width="100%" class="menu">
+						<li data-uri="bungalow:start"><span class="fa fa-home"></span> Browse
+						</li>
+                        <li data-uri="bungalow:discover">
+                            <span class="fa fa-clock-o"></span> Discover
+                        </li>
+                        <li data-uri="bungalow:featured">
+                            <span class="fa fa-star"></span> Featured <span class="sub">By Team Bungalow</span>
+                        </li>
+					</ul>
+					<ul id="searchHistory" cellspacing="0" width="100%" class="menu">
 						
-						<ul id="playlists" cellspacing="0" width="100%" class="menu">
-							
-							
-						</ul>
-					</div>
-
-					<div id="nowplaying" >
-						<div id="nowplaying_header">
-							<h3 id="song_title"></h3>
-							<p id="song_artist"></p>
-							<small id="song_album"></small>
-						</div>
-						<div id="nowplaying_image" style="background-size: cover;flex: 1"></div>
-					</div>
-				</aside>
-				<script>
-
-				$('.menu').menulize();
-				</script>
-				<div id="viewstack">
-
+					</ul>
+					<hr>
+					<ul cellspacing="0" width="100%" class="menu">
+						
+						<li data-uri="bungalow:finder"><span class="fa fa-cube"></span> App Finder</li>
+						
+					</ul>
+					<ul id="apps" cellspacing="0" width="100%" class="menu">
+						
+					</ul>
+					<hr><br>
+					</ul>
+					<ul id="favorites" cellspacing="0" width="100%" class="menu">
+						<li data-load-uri="bungalow:year:2009">Loading</li>
+						
+					</ul>
+					
+					<ul id="playlists" cellspacing="0" width="100%" class="menu">
+						
+						
+					</ul>
 				</div>
-				<aside style=" width: 15%; position: relative">
-					<div style="position: absolute; left: 50%; top: 50%; -webkit-transform: translate(-50%, -50%);">
-						Friend feed
+
+				<div id="nowplaying" >
+					<div id="nowplaying_header">
+						<h3 id="song_title"></h3>
+						<p id="song_artist"></p>
+						<small id="song_album"></small>
 					</div>
-				</aside>
-			</main>
-			
-			<footer style="">
-				<div class="conliols" style="text-align: center; width:200px">
-					<i id="btnSkipBack" onclick="shell.playPrevious()" class="fa fa-fast-backward btn player-btn"></i>
-					<i id="btnPlay" onclick="shell.playPause()" class="fa fa-play btn player-btn" style="-webkit-liansform: scale(1.5)"></i>
-					<i id="btnSkipNext" onclick="shell.playNext()" class="fa fa-fast-forward btn player-btn"></i>
+					<div id="nowplaying_image" style="background-size: cover;flex: 1"></div>
 				</div>
-				<input type="range" style="width: 100%" min="0" max="1" value="0" id="liack_position">
-				<div class="controls" style="width: 150pt">
-					<a onclick="shell.toggleMashcast()"><i class="fa fa-toggle-off"></i> Podcasts</a>&nbsp;
-					<i class="fa fa-repeat"></i>
+			</aside>
+			<div id="viewstack">
+
+			</div>
+			<aside style=" width: 15%; position: relative">
+				<div style="position: absolute; left: 50%; top: 50%; -webkit-transform: translate(-50%, -50%);">
+					Friend feed
 				</div>
-			</footer>
+			</aside>
+		</main>
+		
+		<footer style="">
+			<div class="conliols" style="text-align: center; width:200px">
+				<i id="btnSkipBack" onclick="shell.playPrevious()" class="fa fa-fast-backward btn player-btn"></i>
+				<i id="btnPlay" onclick="shell.playPause()" class="fa fa-play btn player-btn" style="-webkit-liansform: scale(1.5)"></i>
+				<i id="btnSkipNext" onclick="shell.playNext()" class="fa fa-fast-forward btn player-btn"></i>
+			</div>
+			<input type="range" style="width: 100%" min="0" max="1" value="0" id="liack_position">
+			<div class="controls" style="width: 150pt">
+				<a onclick="shell.toggleMashcast()"><i class="fa fa-toggle-off"></i> Podcasts</a>&nbsp;
+				<i class="fa fa-repeat"></i>
+			</div>
+		</footer>
+		<script src="bundle.js"></script>
 
 	</body>
 </html>

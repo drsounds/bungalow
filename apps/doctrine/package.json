@@ -1,0 +1,21 @@
+{
+  "name": "doctrine",
+  "version": "1.0.0",
+  "description": "",
+  "main": "Gulpfile.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "react": "*",
+    "jquery": "*"
+  },
+  "devDependencies": {
+    "gulp": "*",
+    "babelify": "*",
+    "vinyl-source-stream": "*",
+    "browserify": "*"
+  },
+  "author": "",
+  "license": "ISC"
+}
