@@ -122,6 +122,17 @@ var Shell = function () {
 							console.log("RESOURCE", resource);
 							node.html('<span class="fa fa-' + resource.icon + '"></span>' + resource.name);
 							node.attr('data-uri', node.attr('data-load-uri'));
+							node.attr('draggable', true);
+							node.attr('data-allow-drop', resource.allowDrop ? resource.allowDrop : false);
+							node.on('dragenter', function (event) {
+								alert("A");
+								if ($(this).attr('data-allow-drop')) {
+									event.preventDefault();
+
+								}
+
+								
+							});
 						}); 
 					} else {
 						$(node).html('<span class="fa fa-globe"></span>' + node.attr('data-load-uri'));
@@ -136,7 +147,7 @@ var Shell = function () {
 	this.mashcast.addEventListener('episodestopped', function (event) {
 	});
 	
-	$.getJSON('http://appfinder.bungalow.qi/api/v1/apps', function (data) {
+	$.getJSON('http://play.bungalow.qi/apps/api/v1/apps', function (data) {
 		self.apps = data;
 	});
 
@@ -288,7 +299,7 @@ var Shell = function () {
 		if (event.data.action === 'play') {
 			console.log(event.data.track.availability);
 			if (event.data.track.availability !== 1) {
-				alert("Track is not available");
+				alert("Streaming is not possible until Spotify Web API supports streaming");
 				return;
 			}
 
@@ -533,7 +544,6 @@ Shell.prototype.getMatchingApp = function (url) {
 		}
 		var regExp = new RegExp(app.uri);
 		if (url.match(regExp)) {
-			console.log("APP", appId, app);
 			console.log(regExp, url);
 			appId = app.BundleIdentifier;
 			break;
@@ -591,7 +601,7 @@ Shell.prototype.navigate = function (url, nohistory) {
 	}
 
 	var parts = url.substr('bungalow:'.length).split(/\:/g);
-	var appId = parts[0];
+
 	var args = parts.slice(1);
 	console.log(this.apps);
 	
@@ -670,7 +680,7 @@ Shell.prototype.createApp = function (appId, callback) {
 
 
 	var appFrame = document.createElement('iframe');
-	appFrame.setAttribute('src', 'http://appfinder.bungalow.qi/' + appId + '/index.html?t=' + new Date().getTime());
+	appFrame.setAttribute('src', 'http://play.bungalow.qi/apps/' + appId + '/index.html?t=' + new Date().getTime());
 	console.log('/apps/' + appId + '/index.html');
 	appFrame.setAttribute('id', 'app_' + appId + '');
 	appFrame.classList.add('sp-app');
@@ -690,6 +700,21 @@ Shell.prototype.createApp = function (appId, callback) {
 Shell.prototype.alert = function (message) {
 	$('#alert').show();
 	$('#alert').html('<p>' + message + '</p>');
+	$('#alert').animate({
+		'opacity': 0
+	}, 10, function () {
+		$(this).animate({
+		'opacity': 1
+		}, 10, function () {
+			$(this).animate({
+				opacity: 0 
+			}, 10, function () {
+				$(this).animate({
+					opacity: 1
+				});
+			});
+		});
+	});
 }
 
 window.onresize = function () {

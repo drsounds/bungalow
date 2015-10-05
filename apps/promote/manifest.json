@@ -1,0 +1,7 @@
+{
+	"BundleIdentifier": "promote",
+	"AppName": {
+		"en": "Promote"
+	},
+	"uri": "bungalow:promote:([a-zA-Z0-9]+)"
+}

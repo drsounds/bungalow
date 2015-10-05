@@ -10,13 +10,21 @@ require(['$api/models', '$api/views'], function (models, views) {
 			var uri = 'bungalow:year:' + id;
 			$('.sp-album').hide();
 			var search = models.Search.search('year:' + id, 10, 0, 'tracks');
-			$('#list').html("");
+			$('#playlist').html("");
 			var contextView = new views.TrackContext(search.tracks, {headers: true, 'fields': ['title', 'duration', 'popularity']});
 			contextView.node.classList.add('sp-album');
 			contextView.node.setAttribute('id', 'search_result_' + uri.replace(/\:/g, '__'));
 			$('#playlist').append(contextView.node);
 			views.hideThrobber();
+			$('#header').html('');
 		
+			var header = new views.SimpleHeader({
+				id: id,
+				type: 'year',
+				name: id,
+				uri: 'bungalow:year:' + id
+			});
+			$('#header').append(header.node);
 
 		}
 

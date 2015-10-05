@@ -1,9 +1,9 @@
 <dom-module name="bungalow-playlist" attributes="uri">
-    <link rel="import" href="http://appfinder.bungalow.qi/views/components/track.html">
+    <link rel="import" href="http://play.bungalow.qi/apps/views/components/track.html">
     <template is="dom-bind">
         <style>
             @import url("https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css");
-            @import url('http://play.bungalow.qi/themes/main.css');
+            @import url('http://play.bungalow.qi/apps/chrome/themes/main.css');
               
         </style>
         <table class="sp-table" width="100%" data-uri="{{uri}}">
@@ -24,7 +24,7 @@
             </tbody>
         </table>
     </template>
-    <script src="http://appfinder.bungalow.qi/views/scripts/cosmos.js"></script>
+    <script src="http://play.bungalow.qi/apps/views/scripts/cosmos.js"></script>
     <script>
     Polymer({
         is: 'bungalow-playlist',

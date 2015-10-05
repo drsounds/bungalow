@@ -1,5 +1,7 @@
 {
 	"AppName": {
 		"en": "Search"
-	}
+	},
+	"BundleIdentifier": "search",
+	"uri": "bungalow:search:(.*)"
 }

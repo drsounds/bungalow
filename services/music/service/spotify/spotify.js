@@ -134,7 +134,12 @@ SpotifyPlayer.prototype.request = function (method, url, payload) {
                     
                         var data = JSON.parse(body);
                         try {
-                            resolve({'objects': data[payload.type + 's'].items});
+                            resolve({'objects': data[payload.type + 's'].items.map(function (track) {
+                                if ('artists' in track) {
+                                    track.authors = track.artists;
+                                }
+                                return track;
+                            })});
                         } catch (e) {
                             fail(e);
                         }
@@ -189,6 +194,8 @@ SpotifyPlayer.prototype.request = function (method, url, payload) {
                                 resolve({
                                     'objects': data.items.map(function (track) {
                                         track.popularity = 0.0;
+                                        track.collection = track.album;
+                                        track.authors = track.artists;
                                         return track;
                                     })
                                 });
@@ -206,6 +213,8 @@ SpotifyPlayer.prototype.request = function (method, url, payload) {
                         function (error, response, body) {
                             body = body.replace(/spotify\:/, 'bungalow:');
                             var data = JSON.parse(body);
+                            data.authors = data.artists;
+                            data.collection = data.album;
                             try {
                                 resolve(data);
                             } catch (e) {
@@ -222,6 +231,8 @@ SpotifyPlayer.prototype.request = function (method, url, payload) {
                     function (error, response, body) {
                         var data = JSON.parse(body);
                         try {
+                            data.authors = data.artists;
+                            data.collection = data.album;
                             resolve(data);
                         } catch (e) {
                             fail();
@@ -294,7 +305,7 @@ SpotifyPlayer.prototype.request = function (method, url, payload) {
                                 var result = JSON.parse(body);
                                 resolve({
                                     'objects': result.items.map(function (playlist) {
-                                        playlist.user = playlist.owner;
+                                        playlist.author = playlist.owner;
                                         return playlist;
                                     }),
                                     'source': 'spotify'
@@ -322,6 +333,8 @@ SpotifyPlayer.prototype.request = function (method, url, payload) {
                                     resolve({
                                         'objects': result.items.map(function (track) {
                                             var track = assign(track, track.track);
+                                            track.authors = track.artists;
+                                            track.collection = track.album;
                                             track.user = track.added_by;
                                             return track;
                                         })
@@ -333,6 +346,7 @@ SpotifyPlayer.prototype.request = function (method, url, payload) {
                                     headers: headers
                                 }, function (error, response, body) {
                                     var result = JSON.parse(body);
+                                    result.author = result.owner;
                                     resolve(result);
                                 });
                             }
@@ -350,7 +364,7 @@ SpotifyPlayer.prototype.request = function (method, url, payload) {
                                 fail({'error': ''});
                             }
                             var user = JSON.parse(body);
-                            user.name = user.canonicalName;
+                            user.name = user.id;
                             user.images = [
                                 {
                                     'url': user.image

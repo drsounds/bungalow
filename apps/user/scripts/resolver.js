@@ -1,16 +1,16 @@
- require(['$api/models'], function (models) {
+require(['$api/models'], function (models) {
     exports = function (uri) {
         return new Promise(function (resolve, fail) {
             var parts = uri.split(/\:/g);
-            var id = parts[2];
-		
-			resolve({
-				id: id,
-				icon: 'people',
-				name: id,
-				uri: 'bungalow:user:' + id
-			});
-		
+            var id = parts[4];
+            var username = parts[2];
+            models.User.fromId(username, id).load().then(function (playlist) {
+                console.log(playlist);
+                playlist.icon = 'music';
+				playlist.allowDrop = true;
+				console.log("Playlist resolved", playlist);
+                resolve(playlist);
+            });
         });
     }
 })

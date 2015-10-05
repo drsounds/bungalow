@@ -192,20 +192,40 @@ require(['$api/cosmos'], function (Cosmos) {
 
         this.albums = new Collection('/music/artists/' + this.id + '/albums?', 'bungalow:artist:' + this.id + ':albums', 'album');
         this.tracks = new Collection('/music/artists/' + this.id + '/tracks?', 'bungalow:artist:' + this.id + ':tracks', 'track');
+        this.citys = new Collection('/music/artists/' + this.id + '/citys?', 'bungalow:artist:' + this.id + ':citys', 'city');
+        this.playlists = new Collection('/music/artists/' + this.id + '/playlists?', 'bungalow:artist:' + this.id + ':playlists', 'playlist');
+        this.places = new Collection('/music/artists/' + this.id + '/places?', 'bungalow:artist:' + this.id + ':places', 'place');
+    }
+
+    
+
+    Artist.prototype = Object.create(Loadable.prototype);
+    
+    Artist.prototype.constructor = Loadable;
+
+    Artist.prototype.load = function () {
+        var self = this;
+        var model = this.type;
+        var self = this;
+        return new Promise(function (resolve, fail) {
+            
+            Cosmos.request('GET', '/music/' + model + 's/' + self.id).then(function (result) {
+
+                result.rank = 125000;
+                result.monthlyListeners = 266;
+
+                resolve(new exports[model.capitalize()](result));
+            });            
+        });
+        
+    }
+    Album.fromURI = function (uri) {
+        return new Album({id: uri.split(/\:/g)[2], type: 'artist'});
     }
 
     Artist.fromURI = function (uri) {
         return new Artist({id: uri.split(/\:/g)[2], type: 'artist'});
     }
-
-    Album.fromURI = function (uri) {
-        return new Album({id: uri.split(/\:/g)[2], type: 'artist'});
-    }
-
-
-
-    Artist.prototype = Object.create(Loadable.prototype);
-    Artist.prototype.constructor = Loadable;
 
    
 

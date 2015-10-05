@@ -210,16 +210,16 @@ require(['$api/models', '$api/moment'], function (models, moment) {
                 td1.innerHTML = track.name;
                 this.node.appendChild(td1);
             }
-            if (field === 'artist') {
+            if (field === 'artist' || field == 'author') {
                 var td2 = document.createElement('td');
 
-                td2.innerHTML = '<a data-uri="' + (track.artists[0].uri || track.artists[0].link) + '">' + track.artists[0].name + '</a>';
+                td2.innerHTML = '<a data-uri="' + (track.authors[0].uri || track.authors[0].link) + '">' + track.authors[0].name + '</a>';
                 this.node.appendChild(td2);
             }
             
             if (field === 'duration') {
                 var td3 = document.createElement('td');
-                td3.innerHTML = '<span class="fade" style="float: right">' + moment.utc(parseInt(track.duration) * 1000).format('mm:ss') + '</span>';
+                td3.innerHTML = '<span class="fade" style="float: right">' + moment.utc(parseInt(track.duration || 30) * 1000).format('mm:ss') + '</span>';
                 this.node.appendChild(td3);
             }
             if (field === 'popularity') {
@@ -247,7 +247,9 @@ require(['$api/models', '$api/moment'], function (models, moment) {
         td5.innerHTML = '&nbsp;';
         this.node.appendChild(td5);
         if ('availability' in track && track.availability !== 1) {
-            $(this.node).addClass('sp-track-unavailable');
+           
+        } else {
+        	 $(this.node).addClass('sp-track-unavailable');
         }
 
     }
@@ -786,10 +788,13 @@ require(['$api/models', '$api/moment'], function (models, moment) {
             
             var tbody = document.createElement('tbody');
             var tr1 = document.createElement('tr');
+       		tr1.style.marginBottom = '10pt';
             self.loading = false;
             // // console.log("ALBUM", album);
             self.node.setAttribute('data-uri', album.uri);
             var td1 = document.createElement('td');
+
+        	td1.style.paddingLeft = '30pt';
             console.log(album);
             var image = '';
             if ('images' in album && album.images.length > 0) {
@@ -1076,14 +1081,13 @@ require(['$api/models', '$api/moment'], function (models, moment) {
         var image = new CoverImage(resource, 128);
         var td2 = document.createElement('td');
         td2.appendChild(image.node);
-        console.log(resource);
-        td2.innerHTML = 
-
-        '<small class="sp-type">' + resource.type.toUpperCase() + '</small>' +
-        '<h2><a data-uri="' + resource.uri + '">' + resource.name + '</a> by <a data-uri="' + resource.owner.uri + '">' + resource.owner.id + '</a></h2>' +
+        console.log("Resource", resource);
+        td2.innerHTML = '<small class="sp-type">' + resource.type.toUpperCase() + '</small>' +
+        '<h2><a data-uri="' + resource.uri + '">' + resource.name + '</a> ' + (resource.owner != undefined ? 'by <a data-uri="' + resource.owner.uri + '">' + resource.owner.id + '</a>' : '') + '</h2>';
         //'<p>Created by <a data-uri="bungalow:user:' + resource.owner.id + '">' + resource.owner.display_name + '</a></p>' +
-        '<p>' + resource.description.bungalowize(); + '</p>';
-        
+        if ('description' in resource) {
+        	td2.innerHTML += '<p>' + resource.description.bungalowize(); + '</p>';
+        }
         td2.style.verticalAlign = 'top';
         td1.style.verticalAlign = 'top';
         td1.width = '128px';

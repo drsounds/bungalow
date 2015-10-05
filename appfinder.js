@@ -141,8 +141,7 @@ AppFinder.prototype.listen = function () {
                 var notfound = fs.readFileSync(__dirname + path.sep + 'apps/notfound/index.html');
                 res.write(notfound);
                 res.end();
-                res.write(body);
-                res.end();
+              
             }
         } else {
             request(external_apps[appId] + '/' + app_path.slice(1).join('/'), function (error, response, body) {

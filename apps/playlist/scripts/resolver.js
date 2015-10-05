@@ -7,7 +7,7 @@ require(['$api/models'], function (models) {
             models.Playlist.fromUserId(username, id).load().then(function (playlist) {
                 console.log(playlist);
                 playlist.icon = 'music';
-				
+				playlist.allowDrop = true;
 				console.log("Playlist resolved", playlist);
                 resolve(playlist);
             });

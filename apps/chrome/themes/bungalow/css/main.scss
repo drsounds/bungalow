@@ -1,8 +1,8 @@
 @import url("http://fonts.googleapis.com/css?family=Source+Sans+Pro");
 @import url("http://fonts.googleapis.com/css?family=Montserrat");
 @import url("http://fonts.googleapis.com/css?family=Open+Sans:300");
-$primary-color: #FFA726; //#00BCD4; //#1db954;
-$bg-color: #181818;
+$primary-color: #2ebd59;// #FFA726; //#00BCD4; //#1db954;
+$bg-color: #202020;
 $sidebar-color: lighten($bg-color, 2%);
 $header-bg-color: lighten($bg-color, 3%);
 
@@ -10,7 +10,12 @@ $header-bg-color: lighten($bg-color, 3%);
     margin-left: 10%;
     margin-right: 10%;
 }
-
+.center2 {
+    -webkit-transform: translate(-50%, -50%);
+    position: absolute;
+    left: 50%;
+    top: 50%;
+}
 header,
 footer,
 aside,
@@ -18,7 +23,7 @@ main {
     box-sizing: border-box;
 }
 aside {
-    background-color: #777;
+    background-color: lighten($bg-color, 2);
 }
 .container {
     margin: 1pt 15%;
@@ -335,7 +340,7 @@ aside {
     display: flex;
     flex-direction: column;
     width: 200pt;
-    background-color: #222;
+    background-color: lighten($bg-color, 2);
 }
 main {
     flex-grow: 1;
@@ -532,7 +537,7 @@ meter::-webkit-meter-optimum-value {
     box-sizing: border-box;
 }
 .sp-tabbar-tab-active {
-    border-bottom: 3pt solid lighten($primary-color, 25%);
+    border-bottom: 3pt solid $primary-color;
 
     list-style: none;
     color: white;

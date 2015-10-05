@@ -34,7 +34,7 @@ require(['$api/models', '$api/views'], function (models, views) {
 						tabs: {
 							'views':[
 								{id: 'overview', title: 'Overview'},
-								{id: 'biography', title: 'Biography'}
+								{id: 'about', title: 'About'}
 							],
 							slicky: true
 						}
@@ -42,6 +42,8 @@ require(['$api/models', '$api/views'], function (models, views) {
 				, "Artist");
 				$('#header').html("");
 				$('#header').append(header.node);
+
+
 
 
 			});
