@@ -1,3 +1,7 @@
+I will abandon this project and focus my contributions to Mopdify-Mopify project, which seems to accomplish what I want.
+
+https://github.com/drsounds/mopidy-mopify
+
 #Bungalow
 
 Open Source Spotify client (designed to be the Eclipse of streaming music clients, other service should be easily integrated).
