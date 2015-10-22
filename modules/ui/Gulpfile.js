@@ -5,7 +5,7 @@ var source = require('vinyl-source-stream');
 var babelify = require('babelify');
 var jest = require('jest-cli');
 gulp.task('jest', function(done) {
-  var rootDir = './src';
+  var rootDir = './';
   jest.runCLI({config: {
     'rootDir': rootDir,
     'scriptPreprocessor': '../node_modules/babel-jest',
@@ -19,13 +19,5 @@ gulp.task('jest', function(done) {
   });
 });
 
-gulp.task('js', function () {
-    return browserify('./src/ui.js')
-        .transform(babelify)
-        .bundle()
-        .pipe(source('ui.js'))
-        .pipe(gulp.dest('./'))
-});
 
-
-gulp.task('default', ['jest', 'js']);
+gulp.task('default', ['jest']);

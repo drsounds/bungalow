@@ -1050,6 +1050,7 @@ String.prototype.bungalowize = function () {
 var SimpleHeader = function (resource, options) {
     this.node = document.createElement('table');
     this.node.cellPadding = '10px';
+    this.node.style.position = 'relative';
     this.node.style.width = '100%';
     var tr1 = document.createElement('tr');
     var tr2 = document.createElement('tr');
@@ -1057,16 +1058,18 @@ var SimpleHeader = function (resource, options) {
     this.node.appendChild(tr1);
     var td1 = document.createElement('td');
     td1.setAttribute('rowspan', 3);
-    var image = new CoverImage(resource, 128);
+    var image = new CoverImage(resource, 192);
     var td2 = document.createElement('td');
     td2.appendChild(image.node);
     console.log(resource);
     td2.innerHTML = 
 
     '<small class="sp-type">' + resource.type.toUpperCase() + '</small>' +
-    '<h2><a data-uri="' + resource.uri + '">' + resource.name + '</a> by <a data-uri="' + resource.owner.uri + '">' + resource.owner.id + '</a></h2>' +
+    '<h2><a data-uri="' + resource.uri + '">' + resource.name + '</a>';
+    if ('owner' in resource)
+        td2.innerHTML += 'by <a data-uri="' + resource.owner.uri + '">' + resource.owner.id + '</a></h2>';
     //'<p>Created by <a data-uri="bungalow:user:' + resource.owner.id + '">' + resource.owner.display_name + '</a></p>' +
-    '<p>' + resource.description.bungalowize(); + '</p>';
+    
     
     td2.style.verticalAlign = 'top';
     td1.style.verticalAlign = 'top';
@@ -1081,9 +1084,11 @@ var SimpleHeader = function (resource, options) {
     var td3 = document.createElement('td');
     //tr2.appendChild(td3);
     var toolbar = document.createElement('div');
+    toolbar.style.position = 'absolute';
+    toolbar.style.bottom = '20px';
     toolbar.classList.add('sp-toolbar');
     var playButton = document.createElement('button');
-    playButton.innerHTML = 'Play';
+    playButton.innerHTML = '<i class="fa fa-play"></i> Play';
     playButton.classList.add('btn');
     playButton.classList.add('btn-primary');
 
@@ -1093,7 +1098,9 @@ var SimpleHeader = function (resource, options) {
 
     toolbar.appendChild(playButton);
     toolbar.appendChild(followButton);
-    td3.appendChild(toolbar);
+    td2.appendChild(toolbar);
+    if ('description' in resource)
+        td2.innerHTML += '<p class="description">' + resource.description.bungalowize(); + '</p>';
 }
 
 exports.SimpleHeader = SimpleHeader;
@@ -1168,7 +1175,7 @@ var Header = function (resource, options, coverSize) {
 
     var td2 = document.createElement('td');
     td2.style.verticalAlign = 'top';
-    td2.innerHTML = '<small class="sp-type">' + type.toUpperCase() + '</small><h2>' + resource.name + '</h2>';
+    td2.innerHTML = '<small class="sp-type">' + resource.type.toUpperCase() + '</small><h2>' + resource.name + '</h2>';
 
     var toolbar = document.createElement('div');
     toolbar.classList.add('sp-toolbar');

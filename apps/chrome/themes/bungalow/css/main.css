@@ -40,6 +40,9 @@ html {
 #viewstack {
   width: 100%; }
 
+.sp-type {
+  opacity: 0.5; }
+
 .sp-track-dragover td {
   border-top: 2px solid white; }
 
@@ -112,7 +115,7 @@ body, input {
   font-size: 12pt; }
 
 body {
-  background-color: #181818;
+  background-color: #080808;
   -webkit-user-select: none;
   font-family: "Montserrat";
   font-weight: 100;
@@ -144,15 +147,20 @@ hr {
   table-layout: fixed;
   border-spacing: 0px; }
 
+p.description {
+  color: #444; }
+
 .sp-table tr:hover td {
   background-color: #555; }
 
 .sp-cover-image {
-  background-color: #777;
-  border-radius: 50%;
+  background-color: #222;
   width: 128px;
   height: 128px;
   background-size: cover; }
+
+.sp-cover-image-round {
+  border-radius: 50%; }
 
 .sp-section {
   display: none; }
@@ -173,7 +181,7 @@ hr {
   box-sizing: border-box; }
 
 .sp-card {
-  background-color: #323232;
+  background-color: #222222;
   padding: 0px;
   margin: 0px;
   min-height: 100%; }
@@ -189,6 +197,13 @@ hr {
   font-size: 10pt;
   word-wrap: break-word; }
 
+.sp-table td,
+.sp-table th {
+  box-sizing: border-box;
+  padding: 8pt 10pt;
+  height: 16px;
+  border-bottom: 1px solid #272727; }
+
 .sp-header .sp-header-content {
   position: absolute;
   left: 0pt;
@@ -197,13 +212,6 @@ hr {
   width: 100%;
   color: white;
   line-height: 0pt; }
-
-.sp-table td,
-.sp-table th {
-  box-sizing: border-box;
-  padding: 8pt 10pt;
-  height: 16px;
-  border-bottom: 1px solid #373737; }
 
 .sp-header .content {
   padding: 10pt;
@@ -224,10 +232,10 @@ hr {
 .sp-table th {
   height: 19px;
   color: white;
-  border-bottom: 1px solid #373737; }
+  border-bottom: 1px solid #272727; }
 
 .sp-table tr {
-  border-bottom: 1px solid #373737; }
+  border-bottom: 1px solid #272727; }
 
 .sp-now-playing td {
   color: #84bd00; }
@@ -305,7 +313,7 @@ a:hover {
   -webkit-flex: 1; }
 
 header {
-  background-color: #202020;
+  background-color: #1c1c1c;
   display: flex;
   flex-direction: row;
   box-sizing: border-box;
@@ -332,7 +340,7 @@ main {
 .divider {
   color: white;
   padding: 15pt;
-  border-bottom: 1px solid #323232;
+  border-bottom: 1px solid #222222;
   text-transform: uppercase;
   text-align: center; }
 
@@ -342,7 +350,7 @@ header {
   flex-direction: row; }
 
 footer {
-  background-color: #202020;
+  background-color: #1c1c1c;
   width: 100%; }
 
 .highlight {
@@ -491,7 +499,7 @@ meter::-webkit-meter-optimum-value {
   border-radius: 0pt 5pt 5pt 0pt; }
 
 .sp-tabbar {
-  background-color: #181818;
+  background-color: #080808;
   top: 0px;
   width: 100%;
   text-align: center;

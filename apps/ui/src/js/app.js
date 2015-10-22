@@ -1,4 +1,5 @@
 var ui = require('@bungalow/ui');
+console.log(ui);
 var React = require('react');
 var ResourceContext = ui.ResourceContext;
 class UI extends React.Component {
@@ -29,9 +30,9 @@ class UI extends React.Component {
             }
         ];
 
-        var fields = ['name', 'authors', 'album', 'duration'];
+        var fields = ['name', 'authors', 'duration', 'popularity', 'album'];
         return (
-            <ResourceContext resources={resources} fields={fields} />
+            <ResourceContext uri={'bungalow:context:debug'} columnHeaders={fields} />
         )
     }
 }

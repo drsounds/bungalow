@@ -1,4 +1,5 @@
 var fs = require('fs');
+var SpotifyNodeApi = require('spotify-web-api-node');
 var request = require('request');
 var assign = require('object-assign');
 var Promise = require("es6-promise").Promise;
@@ -13,6 +14,7 @@ var SpotifyPlayer = function () {
     this.apikeys = JSON.parse(fs.readFileSync(__dirname + '/spotify.key.json'));
     this.accessToken = null;
 
+    this.nodeSpotifyApi = new SpotifyNodeApi(this.apikeys);
     this.me = null;
 
 };

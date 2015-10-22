@@ -1,0 +1,115 @@
+0 info it worked if it ends with ok
+1 verbose cli [ '/usr/local/bin/node',
+1 verbose cli   '/usr/local/bin/npm',
+1 verbose cli   'install',
+1 verbose cli   'spotify-web-api',
+1 verbose cli   '--save' ]
+2 info using npm@2.14.4
+3 info using node@v4.1.1
+4 verbose install initial load of /Users/alecca/Documents/bungalow/package.json
+5 warn package.json Bungalow@1.0.0 No repository field.
+6 verbose installManyTop reading scoped package data from /Users/alecca/Documents/bungalow/node_modules/async/package.json
+7 verbose installManyTop reading scoped package data from /Users/alecca/Documents/bungalow/node_modules/babelify/package.json
+8 verbose installManyTop reading scoped package data from /Users/alecca/Documents/bungalow/node_modules/bluebird/package.json
+9 verbose installManyTop reading scoped package data from /Users/alecca/Documents/bungalow/node_modules/browserify/package.json
+10 verbose installManyTop reading scoped package data from /Users/alecca/Documents/bungalow/node_modules/bungalow/package.json
+11 verbose installManyTop reading scoped package data from /Users/alecca/Documents/bungalow/node_modules/es6-promise/package.json
+12 verbose installManyTop reading scoped package data from /Users/alecca/Documents/bungalow/node_modules/express/package.json
+13 verbose installManyTop reading scoped package data from /Users/alecca/Documents/bungalow/node_modules/express-async/package.json
+14 verbose installManyTop reading scoped package data from /Users/alecca/Documents/bungalow/node_modules/express-vhost/package.json
+15 verbose installManyTop reading scoped package data from /Users/alecca/Documents/bungalow/node_modules/gulp/package.json
+16 verbose installManyTop reading scoped package data from /Users/alecca/Documents/bungalow/node_modules/hostile/package.json
+17 verbose installManyTop reading scoped package data from /Users/alecca/Documents/bungalow/node_modules/jquery/package.json
+18 verbose installManyTop reading scoped package data from /Users/alecca/Documents/bungalow/node_modules/less/package.json
+19 verbose installManyTop reading scoped package data from /Users/alecca/Documents/bungalow/node_modules/object-assign/package.json
+20 verbose installManyTop reading scoped package data from /Users/alecca/Documents/bungalow/node_modules/request/package.json
+21 verbose installManyTop reading scoped package data from /Users/alecca/Documents/bungalow/node_modules/spotify-web-api-node/package.json
+22 verbose installManyTop reading scoped package data from /Users/alecca/Documents/bungalow/node_modules/swig/package.json
+23 verbose installManyTop reading scoped package data from /Users/alecca/Documents/bungalow/node_modules/vhost/package.json
+24 verbose installManyTop reading scoped package data from /Users/alecca/Documents/bungalow/node_modules/vinyl-source-stream/package.json
+25 verbose installManyTop reading scoped package data from /Users/alecca/Documents/bungalow/node_modules/@bungalow/models/package.json
+26 verbose installManyTop reading scoped package data from /Users/alecca/Documents/bungalow/node_modules/@bungalow/views/package.json
+27 info package.json @bungalow/models@1.0.0 No description
+28 info package.json @bungalow/models@1.0.0 No repository field.
+29 info package.json @bungalow/models@1.0.0 No README data
+30 info package.json @bungalow/views@1.0.0 No description
+31 info package.json @bungalow/views@1.0.0 No repository field.
+32 info package.json @bungalow/views@1.0.0 No README data
+33 info package.json jquery@2.1.4 No license field.
+34 verbose readDependencies loading dependencies from /Users/alecca/Documents/bungalow/package.json
+35 silly cache add args [ 'spotify-web-api', null ]
+36 verbose cache add spec spotify-web-api
+37 silly cache add parsed spec Result {
+37 silly cache add   raw: 'spotify-web-api',
+37 silly cache add   scope: null,
+37 silly cache add   name: 'spotify-web-api',
+37 silly cache add   rawSpec: '',
+37 silly cache add   spec: '*',
+37 silly cache add   type: 'range' }
+38 silly addNamed spotify-web-api@*
+39 verbose addNamed "*" is a valid semver range for spotify-web-api
+40 silly addNameRange { name: 'spotify-web-api', range: '*', hasData: false }
+41 silly mapToRegistry name spotify-web-api
+42 silly mapToRegistry using default registry
+43 silly mapToRegistry registry https://registry.npmjs.org/
+44 silly mapToRegistry uri https://registry.npmjs.org/spotify-web-api
+45 verbose addNameRange registry:https://registry.npmjs.org/spotify-web-api not in flight; fetching
+46 verbose request uri https://registry.npmjs.org/spotify-web-api
+47 verbose request no auth needed
+48 info attempt registry request try #1 at 21:14:40
+49 verbose request id ea4781758128109a
+50 http request GET https://registry.npmjs.org/spotify-web-api
+51 http 404 https://registry.npmjs.org/spotify-web-api
+52 verbose headers { 'content-type': 'application/json',
+52 verbose headers   'cache-control': 'max-age=0',
+52 verbose headers   'content-length': '2',
+52 verbose headers   'accept-ranges': 'bytes',
+52 verbose headers   date: 'Thu, 22 Oct 2015 19:14:40 GMT',
+52 verbose headers   via: '1.1 varnish',
+52 verbose headers   age: '0',
+52 verbose headers   connection: 'keep-alive',
+52 verbose headers   'x-served-by': 'cache-ams4130-AMS',
+52 verbose headers   'x-cache': 'MISS',
+52 verbose headers   'x-cache-hits': '0',
+52 verbose headers   'x-timer': 'S1445541280.802374,VS0,VE124' }
+53 silly get cb [ 404,
+53 silly get   { 'content-type': 'application/json',
+53 silly get     'cache-control': 'max-age=0',
+53 silly get     'content-length': '2',
+53 silly get     'accept-ranges': 'bytes',
+53 silly get     date: 'Thu, 22 Oct 2015 19:14:40 GMT',
+53 silly get     via: '1.1 varnish',
+53 silly get     age: '0',
+53 silly get     connection: 'keep-alive',
+53 silly get     'x-served-by': 'cache-ams4130-AMS',
+53 silly get     'x-cache': 'MISS',
+53 silly get     'x-cache-hits': '0',
+53 silly get     'x-timer': 'S1445541280.802374,VS0,VE124' } ]
+54 verbose stack Error: Registry returned 404 for GET on https://registry.npmjs.org/spotify-web-api
+54 verbose stack     at makeError (/usr/local/lib/node_modules/npm/node_modules/npm-registry-client/lib/request.js:263:12)
+54 verbose stack     at CachingRegistryClient.<anonymous> (/usr/local/lib/node_modules/npm/node_modules/npm-registry-client/lib/request.js:241:14)
+54 verbose stack     at Request._callback (/usr/local/lib/node_modules/npm/node_modules/npm-registry-client/lib/request.js:171:14)
+54 verbose stack     at Request.self.callback (/usr/local/lib/node_modules/npm/node_modules/request/request.js:198:22)
+54 verbose stack     at emitTwo (events.js:87:13)
+54 verbose stack     at Request.emit (events.js:172:7)
+54 verbose stack     at Request.<anonymous> (/usr/local/lib/node_modules/npm/node_modules/request/request.js:1073:14)
+54 verbose stack     at emitOne (events.js:82:20)
+54 verbose stack     at Request.emit (events.js:169:7)
+54 verbose stack     at IncomingMessage.<anonymous> (/usr/local/lib/node_modules/npm/node_modules/request/request.js:1019:12)
+55 verbose statusCode 404
+56 verbose pkgid spotify-web-api
+57 verbose cwd /Users/alecca/Documents/bungalow
+58 error Darwin 14.5.0
+59 error argv "/usr/local/bin/node" "/usr/local/bin/npm" "install" "spotify-web-api" "--save"
+60 error node v4.1.1
+61 error npm  v2.14.4
+62 error code E404
+63 error 404 Registry returned 404 for GET on https://registry.npmjs.org/spotify-web-api
+63 error 404
+63 error 404 'spotify-web-api' is not in the npm registry.
+63 error 404 You should bug the author to publish it (or use the name yourself!)
+63 error 404 It was specified as a dependency of 'Bungalow'
+63 error 404
+63 error 404 Note that you can also install from a
+63 error 404 tarball, folder, http url, or git url.
+64 verbose exit [ 1, true ]

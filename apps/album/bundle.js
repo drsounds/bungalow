@@ -469,10 +469,10 @@ App.resolveUri = function (url) {
     var promise = new Promise(function (resolve, fail) {
         var uri = new Uri(url);
         var xmlHttp = new XMLHttpRequest();
-        xmlHttp.open('GET', '/apps/' + uri.app + '/bundle.js', false);
+        xmlHttp.open('GET', '/apps/' + uri.app + '/resolver.js', false);
         xmlHttp.send(null);
         if (xmlHttp.readyState == 4 && xmlHttp.status == 200) {
-            var code = "(function () { var module = {}; " + xmlHttp.responseText + "; return module;  })();";
+            var code = "(function () { var exports2 = {}; " + xmlHttp.responseText + "; return exports2;  })();";
             var app = eval(code);
             app.resolveUri(uri).then(resolve);
         }

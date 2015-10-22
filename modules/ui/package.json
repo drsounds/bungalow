@@ -11,6 +11,8 @@
         "jest": "*",
         "jest-cli": "*",
         "react-canvas": "*",
+        "es6-promise": "*",
+        "object-assign": "*",
         "babel-jest": "*"
     },
     "scripts": {

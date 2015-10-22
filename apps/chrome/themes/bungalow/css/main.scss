@@ -2,9 +2,9 @@
 @import url("http://fonts.googleapis.com/css?family=Montserrat");
 @import url("http://fonts.googleapis.com/css?family=Open+Sans:300");
 $primary-color: #FFA726; //#00BCD4; //#1db954;
-$bg-color: #181818;
+$bg-color: #080808;
 $sidebar-color: lighten($bg-color, 2%);
-$header-bg-color: lighten($bg-color, 3%);
+$header-bg-color: lighten($bg-color, 8%);
 
 .container {
     margin-left: 10%;
@@ -45,6 +45,9 @@ html {
 }
 #viewstack {
     width: 100%;
+}
+.sp-type {
+    opacity: 0.5;
 }
 .sp-track-dragover td {
     border-top: 2px solid white;
@@ -154,16 +157,21 @@ hr {
     table-layout: fixed;
     border-spacing: 0px;
 }
+p.description {
+    color: #444;
+}
 .sp-table tr:hover td {
     background-color: #555;
 }
 $sp-cover-image-size: 128px;
 .sp-cover-image {
-    background-color: #777;
-    border-radius: 50%;
+    background-color: #222;
     width: $sp-cover-image-size;
     height: $sp-cover-image-size;
     background-size: cover;
+}
+.sp-cover-image-round {
+    border-radius: 50%;
 }
 .sp-section {
     display: none;

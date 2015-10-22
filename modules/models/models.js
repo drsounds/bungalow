@@ -399,15 +399,29 @@ exports.Track = Track;
 
 var Country = function (data) {
     Object.assign(this, data);
-
+    console.log(this); 
 }
 
-Country.fromCode = function (countryCode) {
-    return new Country({'id': countryCode, type: 'country'});
 
-}
 Country.prototype = new Loadable;
 Country.prototype.constructor = new Loadable();
+
+Country.fromCode = function (countryCode) {
+    console.log({'id': countryCode, type: 'country'});
+    return new Country({'id': countryCode, type: 'country', uri: 'bungalow:country:' + countryCode, description: 'Beautiful country destroyed by Murderates'});
+
+}
+
+
+Country.prototype.load = function () {
+    console.log("FFE");
+    var self = this;
+    self.name = self.id;
+    return new Promise((resolve, fail) => {
+        resolve(new Country(self));
+    });
+}
+
 
 exports.Country = Country;
 
