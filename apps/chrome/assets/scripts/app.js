@@ -24,7 +24,11 @@ var XHR = function () {
 
 }
 
-
+window.onload = function () {
+	document.querySelector('form').onsubmit = function (event) {
+		shell.searchEnter(event);
+	}
+}
 
 
 XHR.prototype.request = function (method, url, params, data) {
@@ -570,38 +574,41 @@ Shell.prototype.navigate = function (url, nohistory) {
 	if (url.indexOf('bungalow:search:') === 0) {
 
 		try {
-		var uri = url;	
-		console.log("Adding search query " + q);
-		// Add search history
-		var searchTable = document.querySelector('#searchHistory tbody');
-		console.log($('li[data-uri="' + uri + '"]'));
-		if ($('li[data-uri="' + uri + '"]').length < 1) {
-			if (searchTable.childNodes.length < 1) {
-				// Append divider
-				$(searchTable).html('');
-			}
+			var uri = url;	
+			console.log("Adding search query " + q);
+			// Add search history
+			var searchTable = document.querySelector('#searchHistory tbody');
+			console.log($('li[data-uri="' + uri + '"]'));
+			if ($('li[data-uri="' + uri + '"]').length < 1) {
+				if (searchTable.childNodes.length < 1) {
+					// Append divider
+					$(searchTable).html('');
+				}
 
-			// Now append search query
-			var tr = document.createElement('tr');
-			tr.setAttribute('data-uri', uri);
-			tr.innerHTML = '<li data-uri="' + uri + '"><i class="fa fa-search"></i> ' + q + '</li>';
-			$(searchTable).eq(0).after(tr);
-			if (searchTable.childNodes.length > 5) {
-				$(searchTable).get(searchTable.childNodes.length - 2).remove();
+				// Now append search query
+				var tr = document.createElement('tr');
+				tr.setAttribute('data-uri', uri);
+				tr.innerHTML = '<li data-uri="' + uri + '"><i class="fa fa-search"></i> ' + q + '</li>';
+				$(searchTable).eq(0).after(tr);
+				if (searchTable.childNodes.length > 5) {
+					$(searchTable).get(searchTable.childNodes.length - 2).remove();
+				}
 			}
+		} catch (e) {
+			console.log(e.stack);	
 		}
-	} catch (e) {
-		console.log(e.stack);	
-	}
 	}
 
 	var parts = url.substr('bungalow:'.length).split(/\:/g);
-	var appId = parts[0];
+	if (!appId) {
+		appId = parts[0];
+	}
 	var args = parts.slice(1);
 	console.log(this.apps);
 	
 	
 	if (appId == null) {
+		console.log("The link could not be found");
 		alert("The link could not be found");
 		return;
 	}

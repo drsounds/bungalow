@@ -1048,60 +1048,12 @@ String.prototype.bungalowize = function () {
 }
 
 var SimpleHeader = function (resource, options) {
-    this.node = document.createElement('table');
-    this.node.cellPadding = '10px';
-    this.node.style.position = 'relative';
-    this.node.style.width = '100%';
-    var tr1 = document.createElement('tr');
-    var tr2 = document.createElement('tr');
-
-    this.node.appendChild(tr1);
-    var td1 = document.createElement('td');
-    td1.setAttribute('rowspan', 3);
-    var image = new CoverImage(resource, 192);
-    var td2 = document.createElement('td');
-    td2.appendChild(image.node);
-    console.log(resource);
-    td2.innerHTML = 
-
-    '<small class="sp-type">' + resource.type.toUpperCase() + '</small>' +
-    '<h2><a data-uri="' + resource.uri + '">' + resource.name + '</a>';
-    if ('owner' in resource)
-        td2.innerHTML += 'by <a data-uri="' + resource.owner.uri + '">' + resource.owner.id + '</a></h2>';
-    //'<p>Created by <a data-uri="bungalow:user:' + resource.owner.id + '">' + resource.owner.display_name + '</a></p>' +
-    
-    
-    td2.style.verticalAlign = 'top';
-    td1.style.verticalAlign = 'top';
-    td1.width = '128px';
-    tr1.appendChild(td1);
-    td1.appendChild(image.node);
-    tr1.appendChild(td2);
-    this.node.appendChild(td2);
-    this.node.appendChild(tr2);
-
-
-    var td3 = document.createElement('td');
-    //tr2.appendChild(td3);
-    var toolbar = document.createElement('div');
-    toolbar.style.position = 'absolute';
-    toolbar.style.bottom = '20px';
-    toolbar.classList.add('sp-toolbar');
-    var playButton = document.createElement('button');
-    playButton.innerHTML = '<i class="fa fa-play"></i> Play';
-    playButton.classList.add('btn');
-    playButton.classList.add('btn-primary');
-
-    var followButton = document.createElement('button');
-    followButton.innerHTML = 'Follow';
-    followButton.classList.add('btn');
-
-    toolbar.appendChild(playButton);
-    toolbar.appendChild(followButton);
-    td2.appendChild(toolbar);
-    if ('description' in resource)
-        td2.innerHTML += '<p class="description">' + resource.description.bungalowize(); + '</p>';
+    this.node = document.createElement('div');
+    var template = require('./templates/simple-header.tpl');
+    var html = template({object: resource});
+    this.node.innerHTML = html;
 }
+
 
 exports.SimpleHeader = SimpleHeader;
 

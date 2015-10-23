@@ -5,6 +5,7 @@ var source = require('vinyl-source-stream');
 var babelify = require('babelify');
 gulp.task('js', function () {
     return browserify('./src/js/main.js')
+        .transform('jstify')
         .transform(babelify)
         .bundle()
         .pipe(source('bundle.js'))

@@ -8,7 +8,7 @@ window.addEventListener('message', function (event) {
         console.log(event.data.arguments);
         var id = event.data.arguments[0];
 
-
+      
         models.Country.fromCode(id).load('').then(function (country) {
             console.log("Country", country);
             var header = new views.SimpleHeader(country, "Country");

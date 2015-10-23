@@ -1,0 +1,1 @@
+<h1>Resource: <%=object.name%></h1>

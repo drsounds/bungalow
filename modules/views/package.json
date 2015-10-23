@@ -1,16 +1,20 @@
 {
-    "name": "@bungalow/views",
-    "version": "1.0.0",
-    "description": "",
-    "main": "views.js",
-    "dependencies": {
-        "jquery": "*",
-        "react": "*",
-        "@bungalow/cosmos": "*"
-    },
-    "scripts": {
-        "test": "echo \"Error: no test specified\" && exit 1"
-    },
-    "author": "",
-    "license": "ISC"
+  "name": "@bungalow/views",
+  "version": "1.0.0",
+  "description": "",
+  "main": "views.js",
+  "dependencies": {
+    "jquery": "*",
+    "react": "*",
+    "@bungalow/cosmos": "*"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "jstify": "^0.12.0",
+    "underscore": "^1.8.3"
+  }
 }

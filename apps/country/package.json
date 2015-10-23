@@ -11,10 +11,11 @@
     "jquery": "*"
   },
   "devDependencies": {
-    "gulp": "*",
     "babelify": "*",
-    "vinyl-source-stream": "*",
-    "browserify": "*"
+    "browserify": "*",
+    "gulp": "*",
+    "jstify": "^0.12.0",
+    "vinyl-source-stream": "*"
   },
   "author": "",
   "license": "ISC"

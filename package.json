@@ -36,9 +36,10 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "gulp": "*",
-    "vinyl-source-stream": "*",
+    "babelify": "*",
     "browserify": "*",
-    "babelify": "*"
+    "gulp": "*",
+    "underscore": "^1.8.3",
+    "vinyl-source-stream": "*"
   }
 }
