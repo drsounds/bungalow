@@ -1,0 +1,7 @@
+{
+    "BundleName": {
+        "en": "Law"
+    },
+    "BudleIdentifier": "job",
+    "uri": "bungalow:job:(.*)"
+}

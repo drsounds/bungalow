@@ -1,0 +1,22 @@
+{
+  "name": "currency",
+  "version": "1.0.0",
+  "description": "",
+  "main": "Gulpfile.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "react": "*",
+    "jquery": "*"
+  },
+  "devDependencies": {
+    "babelify": "*",
+    "browserify": "*",
+    "gulp": "*",
+    "jstify": "^0.12.0",
+    "vinyl-source-stream": "*"
+  },
+  "author": "",
+  "license": "ISC"
+}

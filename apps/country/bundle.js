@@ -11285,11 +11285,11 @@ var __t,__p='',__j=Array.prototype.join,print=function(){__p+=__j.call(arguments
 with(obj||{}){
 __p+='<table width="100%" height="192px" style="position: relative"> <tr> <td width="192px"> ';
  if ('images' in object && object.images.length > 0) { 
-__p+=' <div class="cover" style="background-image: url(\''+
+__p+=' <div class="sp-cover-image" style="background-image: url(\''+
 ((__t=(object.images[0].src))==null?'':__t)+
 '\'); width: 192px; height: 192px"></div> ';
  } else { 
-__p+=' <div class="cover" style="width: 192px; height: 192px; position: relative"> <i class="fa fa-cube"></i> </div> ';
+__p+=' <div class="sp-cover-image" style="width: 192px; height: 192px; position: relative"> <i class="fa fa-cube"></i> </div> ';
  } 
 __p+=' </td> <td valign="top"> <small class="sp-type">'+
 ((__t=(object.type))==null?'':__t)+
@@ -11297,9 +11297,9 @@ __p+=' </td> <td valign="top"> <small class="sp-type">'+
 ((__t=(object.uri))==null?'':__t)+
 '">'+
 ((__t=(object.name))==null?'':__t)+
-'</a></h1> <p class="description">'+
+'</a></h1> <div class="sp-toolbar"> <button class="btn btn-primary">Action</button> <button class="btn">...</button> </div> <p class="description">'+
 ((__t=(object.description))==null?'':__t)+
-'</p> <div class="sp-toolbar" style="bottom: 0px; position: absolute"> <button class="btn btn-primary">Action</button> <button class="btn">...</button> </div> </td> </tr> </table>';
+'</p> </td> </tr> </table>';
 }
 return __p;
 };
