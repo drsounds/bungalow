@@ -5,24 +5,18 @@ require(['$api/models', '$api/views'], function (models, views) {
         if (event.data.action === 'navigate') {
             console.log(event.data.arguments);
             var id = event.data.arguments[0];
-            var hashtag = {
-                name: '#' + id,
-                id: id,
-                icon: '#',
-                images: [{
-                    url: ''
-                }]
-            };
-            var header = new views.Header(hashtag, {
+            
+            var header = new views.SimpleHeader({
                     type: 'hashtag',
-                    tabs: {
-                        'views':[
-                            {id: 'overview', title: 'Overview'}
-                        ],
-                        slicky: true
-                    }
-                }
-            , "Artist");
+                    name: '#' + id,
+                    description: 'Latest tweets from hashtag',
+                   
+            });
+            var tabBar = new views.TabBar({
+                views: [{id:'overview', title: 'Hashtag'}]
+            });
+            $('#tabbar').html("");
+            $('#tabbar').append(tabBar.node);
             $('#header').html("");
             $('#header').append(header.node);
 

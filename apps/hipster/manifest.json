@@ -3,5 +3,5 @@
         "en": "Hipster"
     },
     "BundleIdentifier": "hipster",
-    "uri": "bungalow:hipster:(.*)"
+    "uri": "bungalow:hipster((:)(.*)?)"
 }
