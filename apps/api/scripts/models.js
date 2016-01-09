@@ -1,3 +1,4 @@
+
 /* Rerun without minification for verbose metadata */
 require(['$api/cosmos'], function (Cosmos) {
      (function (undefined) {
@@ -367,8 +368,8 @@ require(['$api/cosmos'], function (Cosmos) {
         this.albums = new Collection('/music/charts/' + this.id + '/albums?', 'bungalow:chart:' + this.id + ':albums', 'album');
     }
 
-    Chart.prototype = new Loadable;
-    Chart.prototype.constructor = new Loadable();
+    Chart.prototype = new Loadable();
+    Chart.prototype.constructor = Loadable;
 
     exports.Chart = Chart;
 
@@ -410,12 +411,13 @@ require(['$api/cosmos'], function (Cosmos) {
 
     }
 
+    Country.prototype = new Loadable();
+    Country.prototype.constructor = Loadable;
+    
     Country.fromCode = function (countryCode) {
         return new Country({'id': countryCode, type: 'country'});
     
     }
-    Country.prototype = new Loadable;
-    Country.prototype.constructor = new Loadable();
 
     exports.Country = Country;
 

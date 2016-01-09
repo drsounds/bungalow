@@ -22,10 +22,7 @@
 		<script src="http://play.bungalow.qi/apps/mashcast/scripts/mashcast.js"></script>
 		<script src="http://play.bungalow.qi/apps/api/scripts/require.js"></script>
 		<script src="http://play.bungalow.qi/apps/chrome/scripts/main.js"></script>
-		<style>
-		font-smooth: never;
--webkit-font-smoothing : none;
-</style>
+
 
 	</head>
 	<body style="width:100%; height:100%;">
@@ -48,12 +45,6 @@
 						<ul cellspacing="0" width="100%" class="menu">
 							<li data-uri="bungalow:start"><span class="fa fa-home"></span> Start
 							</li>
-                            <li data-uri="bungalow:playqueue">
-                                <span class="fa fa-clock-o"></span> Play queue
-                            </li>
-                            <li data-uri="bungalow:radio">
-                                <span class="fa fa-wifi"></span> Radio</span>
-                            </li>
 						</ul>
 						<ul id="searchHistory" cellspacing="0" width="100%" class="menu">
 							
@@ -63,12 +54,14 @@
 							
 						</ul>
 						<hr>
-						</ul>
-						
+						 <ul id="new-playlist" class="menu">
+                            <li style="color: #aaffaa" data-uri="bungalow:playlist:new"><span style="color: #aaffaa" class="fa fa-plus"></span> New playlist</li>
+                        </ul>
 						<ul id="playlists" cellspacing="0" width="100%" class="menu">
 							
 							
 						</ul>
+                       
 					</div>
 
 					<div id="nowplaying" >
@@ -87,24 +80,24 @@
 				<div id="viewstack">
 
 				</div>
-				<aside style=" width: 15%; position: relative">
+                
+				<aside style="display: none; width: 15%; position: relative">
 					<div style="position: absolute; left: 50%; top: 50%; -webkit-transform: translate(-50%, -50%);">
 						Friend feed
 					</div>
 				</aside>
 			</main>
 			
-			<footer style="">
-				<!--<div class="controls" style="text-align: center; width:200px">
-					<i id="btnSkipBack" onclick="shell.playPrevious()" class="fa fa-fast-backward btn player-btn"></i>
-					<i id="btnPlay" onclick="shell.playPause()" class="fa fa-play btn player-btn" style="-webkit-liansform: scale(1.5)"></i>
-					<i id="btnSkipNext" onclick="shell.playNext()" class="fa fa-fast-forward btn player-btn"></i>
+			<footer style="vertical-align: middle;">
+				<div class="controls" style="text-align: center; width:200px">
+					<i id="btnSkipBack" onclick="shell.playPrevious()" class="fa fa-fast-backward player-btn"></i>
+					<i id="btnPlay" onclick="shell.playPause()" class="fa fa-play player-btn" style="-webkit-liansform: scale(1.5)"></i>
+					<i id="btnSkipNext" onclick="shell.playNext()" class="fa fa-fast-forward player-btn"></i>
 				</div>
-				<input type="range" style="width: 100%" min="0" max="1" value="0" id="liack_position">
+				<input type="range" class="playbar" style="width: 100%" min="0" max="1" value="0" id="liack_position">
 				<div class="controls" style="width: 150pt">
-					<a onclick="shell.toggleMashcast()"><i class="fa fa-toggle-off"></i> Podcasts</a>&nbsp;
 					<i class="fa fa-repeat"></i>
-				</div>-->
+				</div>
 			</footer>
 
 	</body>

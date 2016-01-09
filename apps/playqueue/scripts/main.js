@@ -14,34 +14,30 @@ require(['$api/views', '$api/models'], function (views, models) {
 			var username = event.data.arguments[0];
 			console.log("USER", username);
 			var id = event.data.arguments[2];
-			var uri = 'bungalow:user:' + username + ':playlist:' + id;
-			models.Playlist.fromUserId(username, id).load().then(function (playlist) {
+			var uri = 'bungalow:playqueue';
 				console.log(playlist);
 
-				var header = new views.SimpleHeader(playlist);
+				var header = new views.SimpleHeader({
+                    name: 'Play queue',
+                    type: 'plaqueue',
+                    uri: 'bungalow:playqueue'
+                });
 
 
 
 				var playlistView = document.createElement('div');
 
-				playlistView.appendChild(header.node);
-
-				var contextView = new views.TrackContext(playlist, {headers:true,  sticky: true, reorder:true, fields: [ 'title', 'artist' , 'duration', 'album']});
-				contextView.node.classList.add('sp-playlist');
-				playlistView.appendChild(contextView.node);
-
-				contextView.show();
-				
-				$('#sp-playlist').html("");
-				$('#sp-playlist').append(playlistView);
-				views.hideThrobber();
-			});
+				$('#header').append(header.node);
+/*
+				var contextView = new views.TrackContext({}, {headers:true,  sticky: true, reorder:true, fields: [ 'title', 'artist' , 'duration', 'album']});
+		*/
             $('#tabbar').html("");
             var tabBar = new views.TabBar({
-                views:[{id: 'overview', title: 'Playlist'}]
+                views:[{id: 'overview', title: 'Play Queue'}]
             });
+            $('#tabbar').html("");
             $('#tabbar').append(tabBar.node);
-		
+		      views.hideThrobber();
 		}
 
 	});

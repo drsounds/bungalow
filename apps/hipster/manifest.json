@@ -1,0 +1,7 @@
+{
+    "BundleName": {
+        "en": "Hipster"
+    },
+    "BundleIdentifier": "hipster",
+    "uri": "bungalow:hipster:(.*)"
+}

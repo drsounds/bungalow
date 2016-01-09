@@ -56,20 +56,16 @@ Music.prototype.getAlbum = function (id) {
 
 Music.prototype.login = function () {
 	return new Promise(function (resolve, fail) {
-		/* var loginWindow = window.open('https://accounts.spotify.com/authorize?client_id=d4dc306c3fe643a6933b35ee18ed4d89&scope=user-read-private&response_type=code&redirect_uri=' + encodeURI('http://play.bungalow.qi/callback.html'));
+		 var loginWindow = window.open('https://accounts.spotify.com/authorize?client_id=d4dc306c3fe643a6933b35ee18ed4d89&scope=user-read-private&response_type=code&redirect_uri=' + encodeURI('http://play.bungalow.qi/callback.html'));
 		var t = setInterval(function () {
 			if (!loginWindow) {
 				clearInterval(t);
 
 			}
-		}); */
+		});
 		var playlists = document.querySelector('#playlists');
 		
 		var uris = [
-			'bungalow:user:drsounds:playlist:782AlbjY7wiTvocWhN5xuk',
-			'bungalow:year:2009',
-			'bungalow:user:rebeccasandberg90',
-			'bungalow:doctrine:bungalow'
 		];
 		for (var i = 0; i < uris.length; i++) {
 			var li = document.createElement('li');

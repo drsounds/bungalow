@@ -240,28 +240,13 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#e5e5e5', end
 }
 *::-webkit-scrollbar-track:horizontal {
 /* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#111111+0,5b5b5b+100 */
-background: #111111; /* Old browsers */
-background: -moz-linear-gradient(top,  #111111 0%, #5b5b5b 100%); /* FF3.6+ */
-background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#111111), color-stop(100%,#5b5b5b)); /* Chrome,Safari4+ */
-background: -webkit-linear-gradient(top,  #111111 0%,#5b5b5b 100%); /* Chrome10+,Safari5.1+ */
-background: -o-linear-gradient(top,  #111111 0%,#5b5b5b 100%); /* Opera 11.10+ */
-background: -ms-linear-gradient(top,  #111111 0%,#5b5b5b 100%); /* IE10+ */
-background: linear-gradient(to bottom,  #111111 0%,#5b5b5b 100%); /* W3C */
-filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#111111', endColorstr='#5b5b5b',GradientType=0 ); /* IE6-9 */
-
+background: #474747; /* Old browsers */
+width: 10px;
 }
 *::-webkit-scrollbar-track:vertical {
 	/* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#111111+0,8c8c8c+100 */
 /* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#111111+0,5b5b5b+100 */
-background: #111111; /* Old browsers */
-background: -moz-linear-gradient(left,  #111111 0%, #5b5b5b 100%); /* FF3.6+ */
-background: -webkit-gradient(linear, left top, right top, color-stop(0%,#111111), color-stop(100%,#5b5b5b)); /* Chrome,Safari4+ */
-background: -webkit-linear-gradient(left,  #111111 0%,#5b5b5b 100%); /* Chrome10+,Safari5.1+ */
-background: -o-linear-gradient(left,  #111111 0%,#5b5b5b 100%); /* Opera 11.10+ */
-background: -ms-linear-gradient(left,  #111111 0%,#5b5b5b 100%); /* IE10+ */
-background: linear-gradient(to right,  #111111 0%,#5b5b5b 100%); /* W3C */
-filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#111111', endColorstr='#5b5b5b',GradientType=1 ); /* IE6-9 */
-
+background: #474747;
 }
 #throbber img {
 	left: 50%;
@@ -384,8 +369,9 @@ footer {
 	color: rgba(255, 255, 255, .25);
 	pointer-events: none;
 }
-footer div {
-	padding: 10pt;
+footer {
+	vertical-align: middle;
+	padding: 13pt;
 }
 .menu li:active {
 	background-color: lighten($body-bg, 15);
@@ -633,4 +619,28 @@ input {
 }
 *[data-uri] {
 	cursor: pointer !important;
+}
+
+input[type="range"]{
+    -webkit-appearance: none;
+    background: none;
+    border: none;
+    height: 1px;
+    background-color: darken($body-bg, 20%);
+}
+
+input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    border: none;
+    height: 16px;
+    width: 16px;
+    margin-top: -4px;
+}
+
+input[type=range]::-webkit-slider-runnable-track {
+    width: 300px;
+    height: 1px;
+    background: #111;
+    border: none;
+    border-radius: 3px;
 }

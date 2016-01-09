@@ -186,7 +186,13 @@ require(['$api/models', '$api/moment'], function (models, moment) {
         this.node.setAttribute('data-object', JSON.stringify(track));
         this.node.setAttribute('draggable', true);
         this.node.setAttribute('data-track-index', index);
-
+            
+        this.node.addEventListener('click', function (event) {
+            window.parent.postMessage({
+                action: 'play',
+                track: track
+            }, '*');
+        });
 
         for (var i = 0; i < options.fields.length; i++) {
             var field = options.fields[i];
@@ -249,7 +255,7 @@ require(['$api/models', '$api/moment'], function (models, moment) {
         if ('availability' in track && track.availability !== 1) {
            
         } else {
-        	 $(this.node).addClass('sp-track-unavailable');
+        	 //$(this.node).addClass('sp-track-unavailable');
         }
 
     }
@@ -586,6 +592,7 @@ require(['$api/models', '$api/moment'], function (models, moment) {
      */
     var Card = function (resource, options, type) {
         this.node = document.createElement('div');
+        
         this.node.classList.add('sp-card-holder');
         var card = document.createElement('div');
         card.classList.add('sp-card');
@@ -655,10 +662,10 @@ require(['$api/models', '$api/moment'], function (models, moment) {
     exports.CardCollection = CardCollection;
 
 
-    var AlbumCollection = function (resource, options, coverSize, type) {
+    var AlbumCollection = function (resource, options, type) {
         Collection.call(this, resource, options, Album);
 
-        this.coverSize = coverSize ? coverSize : 128;
+        this.imageSize = options ? (options.imageSize ? options.imageSize : null) : 128;
         this.Class = Album;
         this.resource = resource;
         this.node = document.createElement('table');
@@ -773,6 +780,7 @@ require(['$api/models', '$api/moment'], function (models, moment) {
      * @constructor
      */
     var Album = function (album, options) {
+        var imageSize = (options ? (options.imageSize ? options.imageSize : null) : 128);
         var self = this;
         this.node = document.createElement('tbody');
         self.node.setAttribute('width', '100%');
@@ -794,7 +802,6 @@ require(['$api/models', '$api/moment'], function (models, moment) {
             self.node.setAttribute('data-uri', album.uri);
             var td1 = document.createElement('td');
 
-        	td1.style.paddingLeft = '30pt';
             console.log(album);
             var image = '';
             if ('images' in album && album.images.length > 0) {
@@ -1069,6 +1076,7 @@ require(['$api/models', '$api/moment'], function (models, moment) {
     }
 
     var SimpleHeader = function (resource, options) {
+        var imageSize = (options ? (options.imageSize ? options.imageSize : false) : 64);
         this.node = document.createElement('table');
         this.node.cellPadding = '10px';
         this.node.style.width = '100%';
@@ -1077,22 +1085,26 @@ require(['$api/models', '$api/moment'], function (models, moment) {
 
         this.node.appendChild(tr1);
         var td1 = document.createElement('td');
-        td1.setAttribute('rowspan', 3);
-        var image = new CoverImage(resource, 128);
+        td1.setAttribute('rowspan', '3');
+        var image = new CoverImage(resource, imageSize);
         var td2 = document.createElement('td');
         td2.appendChild(image.node);
         console.log("Resource", resource);
         td2.innerHTML = '<small class="sp-type">' + resource.type.toUpperCase() + '</small>' +
         '<h2><a data-uri="' + resource.uri + '">' + resource.name + '</a> ' + (resource.owner != undefined ? 'by <a data-uri="' + resource.owner.uri + '">' + resource.owner.id + '</a>' : '') + '</h2>';
         //'<p>Created by <a data-uri="bungalow:user:' + resource.owner.id + '">' + resource.owner.display_name + '</a></p>' +
-        if ('description' in resource) {
+        if ('description' in resource && resource.description) {
         	td2.innerHTML += '<p>' + resource.description.bungalowize(); + '</p>';
         }
         td2.style.verticalAlign = 'top';
         td1.style.verticalAlign = 'top';
-        td1.width = '128px';
-        tr1.appendChild(td1);
-        td1.appendChild(image.node);
+        td1.width = imageSize + 'px';
+        if (('images' in resource) && resource.images.length > 0) {
+            tr1.appendChild(td1);
+            
+        
+         td1.appendChild(image.node);
+        }
         tr1.appendChild(td2);
         this.node.appendChild(td2);
         this.node.appendChild(tr2);
@@ -1120,6 +1132,9 @@ require(['$api/models', '$api/moment'], function (models, moment) {
 
     var CoverImage = function (resource, size) {
         this.node = document.createElement('div');
+        if (!('images' in resource) || resource.images.length < 1) {
+            return;   
+        }
         this.node.classList.add('sp-cover-image');
         this.node.style.width = size + 'px';
         this.node.style.height = size + 'px';
@@ -1149,10 +1164,10 @@ require(['$api/models', '$api/moment'], function (models, moment) {
 
     }
 
-    var Header = function (resource, options, coverSize) {
+    var Header = function (resource, options) {
         Object.assign(this, options);
         var type = options.type;
-        coverSize = coverSize ? coverSize : 128;
+        var imageSize = options ? (options.imageSize ? options.imageSize : null) : 128;
         this.node = document.createElement('div');
         this.node.classList.add('sp-header');
         var bgdiv = document.createElement('div');
@@ -1182,7 +1197,7 @@ require(['$api/models', '$api/moment'], function (models, moment) {
 
         var td1 = document.createElement('td');
 
-        var coverImage = new CoverImage(resource, coverSize);
+        var coverImage = new CoverImage(resource, imageSize);
         td1.width = "10px";
         td1.appendChild(coverImage.node);
 

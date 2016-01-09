@@ -8,13 +8,20 @@ require(['$api/models', '$api/views'], function (models, views) {
 
             $('.sp-artist').hide();	
 			$('#playlists').html("");
-
+           
             models.User.fromId(id).load().then(function (user) {
+                
                 console.log(user);
-                var header = new views.Header(user, { type: "user" }, 128);
+                var header = new views.SimpleHeader({
+                    uri: user.uri,
+                    name: user.name,
+                    imageSize: 128,
+                    images: user.images,
+                    type: 'user'
+                });
                 $('#header').html("");
                 $('#header').append(header.node);
-                var playlistCollection = new views.AlbumCollection(user, {extend: false}, 80, 'playlist');
+                var playlistCollection = new views.AlbumCollection(user, {extend: false}, 'playlist');
 
                 $('#playlists').append(playlistCollection.node);
 

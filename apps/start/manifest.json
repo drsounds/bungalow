@@ -2,5 +2,7 @@
 	"BundleType": "Application",
 	"BundleName": {
 		"en": "Album"
-	}
+	},
+    "BundleIdentifier": "start",
+    "uri": "bungalow:start"
 }

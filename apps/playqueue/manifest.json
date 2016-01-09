@@ -1,0 +1,7 @@
+{
+    "BundleName": {
+        "en": "Play Queue"
+    },
+    "BundleIdentifier": "playqueue",
+    "uri": "bungalow:playqueue"
+}
