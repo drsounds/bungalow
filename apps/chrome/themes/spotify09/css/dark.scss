@@ -7,8 +7,10 @@ $body-bg:  #363636;
 header, footer, aside, main {
 
 	box-sizing: border-box;
+	border-bottom: 1px solid #555;
 
 }
+$brand-primary: #b6e1fd;
 * {
 	cursor: default !important;
 }
@@ -20,11 +22,12 @@ h1 {
 }
 .alert {
 	height: 30px;
-	background-image: url('../img/infobar.png');
+	background-color: $brand-primary;
 	background-repeat: repeat-x;
 	padding-left: 15pt;
 	color: black;
 	font-family: 'Helvetica';
+	border-bottom: 1px solid #555;
 	font-size: 12pt;
 	line-height: 0pt;
 }
@@ -123,6 +126,8 @@ h2 {
 -webkit-font-smoothing : subpix;
 }
 body { 
+	opacity: 1;
+	-webkit-transition: opacity 1s;
 	background-color: $body-bg;
 	-webkit-user-select: none;
 	font-family: "Tahoma";
@@ -175,7 +180,10 @@ hr {
 }
 .sp-table th {
 	height: 19px;
-	background-image: url('../images/columnheader_normal.png');
+	//background-image: url('../images/columnheader_normal.png');
+	
+	background-color: #888888;
+
 	color: black;
 }
 .sp-now-playing td {
@@ -444,7 +452,7 @@ a[data-uri] {
 	color: #fff;
 }
 .menu li.active {
-	background-color: #b6e1fd;
+	background-color: $brand-primary;
 	color: #333377;
 	text-shadow: none;
 }
@@ -456,7 +464,7 @@ a[data-uri] {
 }
 
 .sp-track-selected td {
-	background-color: #b6e1fd;
+	background-color: $brand-primary;
 	color: #000033;
 }
 .sp-track-selected td, .sp-track-selected a {
@@ -523,16 +531,12 @@ meter {
 
 
 .sp-tabbar {
-	background-color: #636363;
-	border-bottom: 1px solid #292929;
-	border-top: 1px solid #414141;
+	background-color: rgba(88, 88, 88, .9);
 	height: 23px;
 	top: 0px;	
 	width: 100%;
 }
 .sp-tabbar-tab {
-	border-left: 1px solid #747474;
-	border-right: 1px solid #4a4a4a;
 	width: 100px;
 	height: 23px;
 	float: left;
@@ -543,14 +547,12 @@ meter {
 }
 
 .sp-tabbar-tab-active {
-	border-left: 1px solid #222;
-	border-right: 1px solid #222;
-	border-top: 1px solid #222;
+	//background-color: rgba(0, 0, 0, .1);
 	height: 24px;
 	float: left;
 	list-style: none;
 	color: white;
-	background-color: #373737;
+	border-bottom: 3px solid $brand-primary;
 }
 
 .sp-dragover {

@@ -186,13 +186,7 @@ require(['$api/models', '$api/moment'], function (models, moment) {
         this.node.setAttribute('data-object', JSON.stringify(track));
         this.node.setAttribute('draggable', true);
         this.node.setAttribute('data-track-index', index);
-            
-        this.node.addEventListener('click', function (event) {
-            window.parent.postMessage({
-                action: 'play',
-                track: track
-            }, '*');
-        });
+           
 
         for (var i = 0; i < options.fields.length; i++) {
             var field = options.fields[i];

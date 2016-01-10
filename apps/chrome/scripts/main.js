@@ -164,6 +164,7 @@ var Shell = function () {
 	this.uri = "";
 	this.loadedResources = {};
 	$(window).load(function () {
+		alert("Welcome to Bungalow!");
 		shell.login();
 	});
 	$(document).on('dragover', '.menu li', function (event) {
@@ -754,3 +755,5 @@ function setHash(hash) {
 window.addEventListener('hashchange', function (event) {
 	setHash(window.location.hash.slice(1));
 });
+
+$(document.body).css({'opacity': 1});
