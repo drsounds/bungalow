@@ -12,14 +12,7 @@ require(['$api/models', '$api/views'], function (models, views) {
 			console.log(models.Artist.fromId);
 			console.log(views);
 			models.Artist.fromId(id).load().then(function (artist) {
-				console.log("Loaded artist");
-				$('#artist_image').removeClass('shadow');
-				$('#name').html(artist.name);
-				$('#name').attr('data-uri', 'bungalow:artist:' + id);
-				$('#artist_image').attr('src', artist.images[0].url);
-				if (artist.images[0].url) {
-					$('#artist_image').addClass('shadow');
-				}
+				
 				$('#albums').html("");
 				$('#singles').html("");
 				$('#artistLink').html(artist.name);
@@ -29,18 +22,9 @@ require(['$api/models', '$api/views'], function (models, views) {
 				$('#albums').append(albumCollection.node);
 				views.hideThrobber();
 				console.log(artist);
-				var header = new views.Header(artist, {
-						type: 'artist',
-                        imageSize: 128,
-						tabs: {
-							'views':[
-								{id: 'overview', title: 'Overview'},
-								{id: 'about', title: 'About'}
-							],
-							slicky: true
-						}
-					}
-				, "Artist");
+				var header = new views.SimpleHeader(artist, {
+                        imageSize: 192
+				});
 				$('#header').html("");
 				$('#header').append(header.node);
 

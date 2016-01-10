@@ -37,10 +37,7 @@ require(['$api/views', '$api/models'], function (views, models) {
 				views.hideThrobber();
 			});
             $('#tabbar').html("");
-            var tabBar = new views.TabBar({
-                views:[{id: 'overview', title: 'Playlist'}]
-            });
-            $('#tabbar').append(tabBar.node);
+            
 		
 		}
 

@@ -186,7 +186,9 @@ require(['$api/models', '$api/moment'], function (models, moment) {
         this.node.setAttribute('data-object', JSON.stringify(track));
         this.node.setAttribute('draggable', true);
         this.node.setAttribute('data-track-index', index);
-           
+       	var td0 = document.createElement('td');
+       	td0.style.width = '5px';
+        this.node.appendChild(td0);
 
         for (var i = 0; i < options.fields.length; i++) {
             var field = options.fields[i];
@@ -436,7 +438,8 @@ require(['$api/models', '$api/moment'], function (models, moment) {
         this.node.setAttribute('data-drag-index', -1);
         var thead = document.createElement('thead');
         this.thead = thead;
-        var c = "";
+        var c = "<th width='5px'></th>";
+       
         for (var i = 0; i < fields.length; i++) {
             var field = fields[i];
             var title = fieldTypes[field];
@@ -1080,7 +1083,7 @@ require(['$api/models', '$api/moment'], function (models, moment) {
         this.node.appendChild(tr1);
         var td1 = document.createElement('td');
         td1.setAttribute('rowspan', '3');
-        var image = new CoverImage(resource, imageSize);
+        var image = new CoverImage(resource, {imageSize: imageSize});
         var td2 = document.createElement('td');
         td2.appendChild(image.node);
         console.log("Resource", resource);
@@ -1124,10 +1127,12 @@ require(['$api/models', '$api/moment'], function (models, moment) {
 
     exports.SimpleHeader = SimpleHeader;
 
-    var CoverImage = function (resource, size) {
+    var CoverImage = function (resource, options) {
+    	var size = (options ? (options.imageSize ? options.imageSize : null) : 64);
         this.node = document.createElement('div');
-        if (!('images' in resource) || resource.images.length < 1) {
-            return;   
+        var imageUrl = null;
+        if (('images' in resource) && resource.images && resource.images.length > 0) {
+             imageUrl = resource.images[0].url;
         }
         this.node.classList.add('sp-cover-image');
         this.node.style.width = size + 'px';
@@ -1150,8 +1155,7 @@ require(['$api/models', '$api/moment'], function (models, moment) {
 
         var image = document.createElement('div');
         var size = size ? size : 128;
-        if ('images' in resource && resource.images.length > 0)
-            image.style.backgroundImage = 'url("' + resource.images[0].url + '")';
+        image.style.backgroundImage = 'url("' + imageUrl + '")';
         image.style.width = size + 'px';
         image.style.height = size + 'px';
         this.node.appendChild(image);

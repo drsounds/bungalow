@@ -15,6 +15,17 @@ namespace Shell
         public Form1()
         {
             InitializeComponent();
+            this.menuStrip1.Renderer = new BungalowToolStripRenderer();
+        }
+
+        private void Renderer_RenderMenuItemBackground(object sender, ToolStripItemRenderEventArgs e)
+        {
+            e.Graphics.FillRectangle(new SolidBrush(Color.FromArgb(255, 44, 44, 44)), e.ToolStrip.Bounds);
+        }
+
+        private void Renderer_RenderToolStripBackground(object sender, ToolStripRenderEventArgs e)
+        {
+            e.Graphics.FillRectangle(new SolidBrush(Color.FromArgb(255, 44, 44, 44)), e.ToolStrip.Bounds);
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -30,6 +41,11 @@ namespace Shell
         private void panel5_Paint(object sender, PaintEventArgs e)
         {
 
+        }
+
+        private void panel1_Paint(object sender, PaintEventArgs e)
+        {
+            
         }
     }
 }

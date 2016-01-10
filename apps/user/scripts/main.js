@@ -10,14 +10,10 @@ require(['$api/models', '$api/views'], function (models, views) {
 			$('#playlists').html("");
            
             models.User.fromId(id).load().then(function (user) {
-                
+       
                 console.log(user);
-                var header = new views.SimpleHeader({
-                    uri: user.uri,
-                    name: user.name,
-                    imageSize: 128,
-                    images: user.images,
-                    type: 'user'
+                var header = new views.SimpleHeader(user, {
+                    imageSize: 192
                 });
                 $('#header').html("");
                 $('#header').append(header.node);

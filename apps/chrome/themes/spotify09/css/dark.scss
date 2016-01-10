@@ -351,6 +351,8 @@ main {
 .divider {
 	background-color: #616161;
 	color: white;
+	padding-top:3pt;
+	padding-left: 10pt;
 	height: 22px;
 	box-sizing: border-box;
 }
@@ -388,7 +390,7 @@ footer {
 }
 
 img.shadow {
-	box-shadow: 0px 0px 5px rgba(0, 0, 0, .5);
+	//box-shadow: 0px 0px 5px rgba(0, 0, 0, .5);
 }
 
 .menu {
@@ -610,7 +612,7 @@ input {
 	height: 128px;
 	width: 128px;
 	background-size: cover;
-	box-shadow: 0px 2px 2pt rgba(0, 0, 0, .25);
+//	box-shadow: 0px 2px 2pt rgba(0, 0, 0, .25);
 }
 .sp-cover-imge > div {
 	width: 100%;
