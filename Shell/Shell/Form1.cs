@@ -39,6 +39,14 @@ namespace Shell
             browser.BrowserSettings.BackgroundColor = 0xff000000;
             panel5.Controls.Add(browser);
             browser.RegisterJsObject("spotifyPlayer", new SpotifyBrowserAPI(), true);
+
+            if (!SoundBounce.SpotifyAPI.Spotify.IsLoggedIn)
+            {
+                if (new SpotifyLoginForm().ShowDialog() != DialogResult.OK)
+                {
+                    Close();
+                }
+            }
         }
 
         private void panel5_Paint(object sender, PaintEventArgs e)
@@ -48,7 +56,11 @@ namespace Shell
 
         private void panel1_Paint(object sender, PaintEventArgs e)
         {
-            
+        }
+
+        private void label1_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }
