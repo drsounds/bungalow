@@ -2,5 +2,6 @@
 	"BundleType": "Application",
 	"BundleName": {
 		"en": "Settings"
-	}
+	},
+	"uri": "bungalow:config"
 }

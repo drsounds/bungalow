@@ -8,6 +8,8 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using CefSharp.WinForms;
+using SoundBounce.WindowsClient;
+
 namespace Shell
 {
     public partial class Form1 : Form
@@ -36,6 +38,7 @@ namespace Shell
             };
             browser.BrowserSettings.BackgroundColor = 0xff000000;
             panel5.Controls.Add(browser);
+            browser.RegisterJsObject("spotifyPlayer", new SpotifyBrowserAPI(), true);
         }
 
         private void panel5_Paint(object sender, PaintEventArgs e)
