@@ -192,10 +192,9 @@ var Shell = function () {
 					for (var i =0; i < playlists.length && i < 100; i++) {
 						var playlist = playlists[i];
 						var listItem = document.createElement('tr');
-						listItem.setAttribute('data-uri', playlist.uri);
+						listItem.setAttribute('data-uri', playlist.uri.replace(/spotify\:/g, 'bungalow:'));
 						console.log(playlist.user);
-						listItem.innerHTML = '<li data-uri="' + playlist.uri + '"><i class="fa fa-music"></i> ' + playlist.name /*+ ' <span class="fade">by ' + playlist.user.displayName + '</span></li>'*/;
-						listItem.setAttribute('data-uri', playlist.uri);
+						listItem.innerHTML = '<li data-uri="' + playlist.uri.replace(/spotify\:/g, 'bungalow:') + '"><i class="fa fa-music"></i> ' + playlist.name /*+ ' <span class="fade">by ' + playlist.user.displayName + '</span></li>'*/;
 						$('#playlists').append(listItem);
 						$(listItem).click(function (event) {
 							var uri = event.target.getAttribute('data-uri');
