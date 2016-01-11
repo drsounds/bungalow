@@ -7,7 +7,6 @@ $body-bg:  #363636;
 header, footer, aside, main {
 
 	box-sizing: border-box;
-	border-bottom: 1px solid #555;
 
 }
 $brand-primary: #b6e1fd;
@@ -30,6 +29,14 @@ h1 {
 	border-bottom: 1px solid #555;
 	font-size: 12pt;
 	line-height: 0pt;
+}
+.alert a {
+	color: black;
+	font-weight: bold;	
+}
+.alert a:hover {
+	color: black;
+	text-decoration: underline;
 }
 #mainView {
 	display: none;
@@ -310,7 +317,6 @@ a:hover {
 #nowplaying_header {
 	height: 51px;
 	background-color: #888;
-	background-image: url('../images/nowplaying_header.png');
 	text-align: center;
 	color: black;
 	font-size: 11px;
@@ -533,7 +539,7 @@ meter {
 
 
 .sp-tabbar {
-	background-color: rgba(88, 88, 88, .9);
+	background-color: rgba(88, 88, 88, 1);
 	height: 23px;
 	top: 0px;	
 	width: 100%;
@@ -549,12 +555,12 @@ meter {
 }
 
 .sp-tabbar-tab-active {
-	//background-color: rgba(0, 0, 0, .1);
+	background-color: $body-bg;
 	height: 24px;
 	float: left;
 	list-style: none;
 	color: white;
-	border-bottom: 3px solid $brand-primary;
+	border-top: 3px solid black;
 }
 
 .sp-dragover {

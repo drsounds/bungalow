@@ -11,7 +11,9 @@ var url = require('url');
 
 var utils = require('./utils.js');
 var app = utils.createApp();
+var bodyParser = require('body-parser');
 
+app.use(bodyParser.json());
 app.get('/settings.json', function (req, res) {
 
     if (fs.existsSync(path)) {
@@ -213,7 +215,7 @@ app.get('/music/*', function (req, res) {
 app.put('/music/*', function (req, res) {
     console.log("A");
     console.log(music);
-    music.request("PUT", req.params[0], req.query).then(function (result) {
+    music.request("PUT", req.params[0], req.body).then(function (result) {
 
         res.json(result);
     }, function (reject) {
@@ -224,7 +226,7 @@ app.put('/music/*', function (req, res) {
 app.post('/music/*', function (req, res) {
     console.log("A");
     console.log(music);
-    music.request("POST", req.params[0], req.query).then(function (result) {
+    music.request("POST", req.params[0], req.body).then(function (result) {
 
         res.json(result);
     }, function (reject) {

@@ -35,6 +35,11 @@ require(['$api/views', '$api/models'], function (views, models) {
 				$('#sp-playlist').html("");
 				$('#sp-playlist').append(playlistView);
 				views.hideThrobber();
+				var tabBar = new views.TabBar({
+					views:[{id: 'overview', title: 'Playlist'}]
+				});
+				$('#tabbar').html("");
+				$('#tabbar').append(tabBar.node);
 			});
             $('#tabbar').html("");
             

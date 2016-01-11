@@ -1274,13 +1274,14 @@ require(['$api/models', '$api/moment'], function (models, moment) {
 
             var absolutePos = $(tabbar).offset();
             if (tabbarY == 0) {
-                tabbarY = absolutePos.top;
+                tabbarY = 0; //absolutePos.top;
             }
             console.log($(window).scrollTop() > tabbarY)
             if ($(window).scrollTop() >= tabbarY - (self.slicky ? $(tabbar).height(): 0)) {
                 var scrollOffset = $(window).scrollTop() - tabbarY  ;
                 console.log("Scrolloffset: " + scrollOffset);
                 var translate = 'translate(0px, ' + (scrollOffset) + 'px)';
+                console.log(translate);
                 $(tabbar).css({'transform': translate});
             } else {
                 $(tabbar).css({'transform': 'translate(0px, -' + (self.slicky ? 100 : 0) + '%)' });

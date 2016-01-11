@@ -6,11 +6,12 @@ Music.prototype.reorderTracks = function (uri, indicies, new_index) {
 		var segments = uri.split(/\:/g).slice(1);
 		$.ajax({
 			type: 'PUT',
-			data: {
+			data: JSON.stringify({
 				range_start: indicies[0],
 				range_length: indicies.length,
-				new_index: new_index
-			},
+				insert_before: new_index
+			}),
+			dataType: 'json',
 			url: '/api/music/users/' + segments[1] + '/playlists/' + segments[3] + '/tracks',
 			contentType: 'application/json',
 			success: function (event) {
@@ -74,7 +75,7 @@ Music.prototype.getAlbum = function (id) {
 
 Music.prototype.login = function () {
 	return new Promise(function (resolve, fail) {
-		 var loginWindow = window.open('https://accounts.spotify.com/authorize?client_id=d4dc306c3fe643a6933b35ee18ed4d89&scope=user-read-private&response_type=code&redirect_uri=' + encodeURI('http://play.bungalow.qi/callback.html'));
+		 var loginWindow = window.open('https://accounts.spotify.com/authorize?client_id=d4dc306c3fe643a6933b35ee18ed4d89&scope=user-read-private playlist-read-collaborative playlist-modify-public playlist-modify-private user-follow-modify user-library-modify user-read-birthdate user-read-email user-read-private&response_type=code&redirect_uri=' + encodeURI('http://play.bungalow.qi/callback.html'));
 		var t = setInterval(function () {
 			if (!loginWindow) {
 				clearInterval(t);
@@ -736,9 +737,21 @@ Shell.prototype.createApp = function (appId, callback) {
 
 }
 
-Shell.prototype.alert = function (message) {
+Shell.prototype.alert = function (message, icon) {
 	$('#alert').show();
-	$('#alert').html('<p>' + message + '</p>');
+	if (!icon) {
+		icon = 'flag';
+	}
+	$('#alert').html('<p><i style="display: inline-block; width:30px; float: left; line-height: 0px; margin-right: 10px; padding-right: 10px" class="fa fa-' + icon + '"></i><span style="margin-left: 30px">' + message + '</span></p>');
+	var a = document.createElement('a');
+	a.href = 'javascript:void(event)';
+	a.onclick = function (event) {
+		$('#alert').hide();
+	}
+	a.style.cssFloat = 'right';
+	a.innerHTML = 'x';	
+	a.style.marginRight = '30px';
+	$('#alert p').append(a);
 	$('#alert').animate({
 		'opacity': 0
 	}, 10, function () {

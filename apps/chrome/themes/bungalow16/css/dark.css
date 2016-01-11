@@ -3,8 +3,7 @@
   user-select: none; }
 
 header, footer, aside, main {
-  box-sizing: border-box;
-  border-bottom: 1px solid #555; }
+  box-sizing: border-box; }
 
 * {
   cursor: default !important; }
@@ -25,6 +24,14 @@ h1 {
   border-bottom: 1px solid #555;
   font-size: 12pt;
   line-height: 0pt; }
+
+.alert a {
+  color: black;
+  font-weight: bold; }
+
+.alert a:hover {
+  color: black;
+  text-decoration: underline; }
 
 #mainView {
   display: none;
@@ -299,7 +306,6 @@ a:hover {
 #nowplaying_header {
   height: 51px;
   background-color: #888;
-  background-image: url("../images/nowplaying_header.png");
   text-align: center;
   color: black;
   font-size: 11px; }
@@ -498,7 +504,7 @@ meter::-webkit-meter-optimum-value {
   border-radius: 0pt 5pt 5pt 0pt; }
 
 .sp-tabbar {
-  background-color: rgba(88, 88, 88, 0.9);
+  background-color: #585858;
   height: 23px;
   top: 0px;
   width: 100%; }
@@ -513,11 +519,12 @@ meter::-webkit-meter-optimum-value {
   box-sizing: border-box; }
 
 .sp-tabbar-tab-active {
+  background-color: #363636;
   height: 24px;
   float: left;
   list-style: none;
   color: white;
-  border-bottom: 3px solid #b6e1fd; }
+  border-top: 3px solid black; }
 
 .sp-dragover {
   background-color: white;

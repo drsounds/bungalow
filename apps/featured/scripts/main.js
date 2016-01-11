@@ -1,5 +1,5 @@
 var playlists = {};
-
+require(['$api/models', '$api/views'], function (models, views) {
 window.addEventListener('message', function (event) {
     console.log("Event data", event.data);
     if (event.data.action === 'tracksadded') {
@@ -32,4 +32,5 @@ window.addEventListener('message', function (event) {
         }
     }
 
-})
+});
+});

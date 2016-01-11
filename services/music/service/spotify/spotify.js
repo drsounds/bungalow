@@ -403,17 +403,18 @@ SpotifyPlayer.prototype.request = function (method, url, payload) {
                                 if (method == 'PUT') {
                                     var request_data = {
                                         range_start: payload.range_start,
-                                        range_end: payload.range_end,
-                                        insert_before: payload.insert_before,
-                                    
+                                        range_length: payload.range_length,
+                                        insert_before: payload.insert_before                                    
                                     };
                                     if ('snapshot_id' in payload) {
                                         request_data.snapshot_id = payload.snapshot_id; 
-                                    }
+                                    } 
+                                    console.log("Request data", request_data);
+                                    console.log("request data", JSON.stringify(request_data));
                                     request({
                                         method: 'PUT',
                                         json: true,
-                                        body: JSON.stringify(request_data),
+                                        body: request_data,
                                         url: 'https://api.spotify.com/v1/users/' + parts[1] + '/playlists/' + parts[3] + '/tracks',
                                         headers: headers,
 
@@ -425,9 +426,8 @@ SpotifyPlayer.prototype.request = function (method, url, payload) {
                                             return;
                                         }
                                         console.log(body);
-                                        var result = JSON.parse(body);
                                         resolve({
-                                            snapshot_id: result.snapshot_id
+                                            snapshot_id: body.snapshot_id
                                         });
                                     });
                                 } else {
