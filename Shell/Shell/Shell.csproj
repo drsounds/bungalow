@@ -58,10 +58,6 @@
     <Prefer32Bit>true</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="libspotifydotnet, Version=4.0.0.0, Culture=neutral, PublicKeyToken=ae9f20a153337be6, processorArchitecture=x86">
-      <HintPath>..\packages\libspotifydotnet.4.1.0.0\lib\libspotifydotnet.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="log4net, Version=1.2.15.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
       <HintPath>..\packages\log4net.2.0.5\lib\net45-full\log4net.dll</HintPath>
       <Private>True</Private>
@@ -133,6 +129,10 @@
     <None Include="Resources\icon16x16.png" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\libspotifydotnet\libspotifydotnet.csproj">
+      <Project>{1de51e4d-4e01-4662-8c22-026974faded9}</Project>
+      <Name>libspotifydotnet</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\SoundBounce.Spotify.API\SoundBounce.SpotifyAPI.csproj">
       <Project>{5c2e5c85-afc2-4066-bc59-cf5b19eb6a82}</Project>
       <Name>SoundBounce.SpotifyAPI</Name>

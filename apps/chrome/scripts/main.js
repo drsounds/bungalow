@@ -3,7 +3,8 @@ var Music = function () {
 };
 
 Music.prototype.play = function (uri) {
-	
+	alert(spotifyPlayer);
+	spotifyPlayer.playTrack(uri.split(/\:/g)[2], 0);
 }
 
 var XHR = function () {
@@ -63,7 +64,7 @@ Music.prototype.login = function () {
 
 			}
 		});
-		var playlists = document.querySelector('#playlists');
+		/*var playlists = document.querySelector('#playlists');
 		
 		var uris = [
 		];
@@ -73,7 +74,7 @@ Music.prototype.login = function () {
 			li.innerHTML = '<span class="fa fa-clock-o"></span> Loading</li>';
 			playlists.appendChild(li);
 			$(li).resolveLi();
-		}
+		}*/
 
 	});
 }
@@ -164,8 +165,32 @@ var Shell = function () {
 	this.uri = "";
 	this.loadedResources = {};
 	$(window).load(function () {
-		alert("Welcome to Bungalow!");
-		shell.login();
+		alert('Welcome to Bungalow! Please <a href="javascript:void(event)" onclick="shell.login()">log in</a> to your Spotify account.');
+		// music.play('spotify:track:4kgsK0fftHtg9gZOzkU5T2', 0);
+		console.log("Getting playlists");
+				$.getJSON('/api/music/me/playlists?offset=0&limit=30', function (data) {
+					console.log(data);
+					var playlists = data.objects;
+					for (var i =0; i < playlists.length && i < 100; i++) {
+						var playlist = playlists[i];
+						var listItem = document.createElement('tr');
+						listItem.setAttribute('data-uri', playlist.uri);
+						console.log(playlist.user);
+						listItem.innerHTML = '<li data-uri="' + playlist.uri + '"><i class="fa fa-music"></i> ' + playlist.name /*+ ' <span class="fade">by ' + playlist.user.displayName + '</span></li>'*/;
+						listItem.setAttribute('data-uri', playlist.uri);
+						$('#playlists').append(listItem);
+						$(listItem).click(function (event) {
+							var uri = event.target.getAttribute('data-uri');
+							console.log(event.target);
+							//alert(event.target.getAttribute('data-uri'));
+							self.navigate(uri);
+						});
+					}
+				}).fail(function (playlist) {
+					var $item = $('.menu tr[data-uri="' + playlist.uri + '"]');
+					$item.html('<li data-uri="' + playlist.uri + '"><i class="fa fa-music"></i> ' + playlist.name + ' <span class="fade">by ' + playlist.user.displayName + '</span></li>');
+
+				});
 	});
 	$(document).on('dragover', '.menu li', function (event) {
 		$.event.props.push('dataTransfer');
@@ -294,11 +319,11 @@ var Shell = function () {
 		}
 
 		if (event.data.action === 'play') {
-			console.log(event.data.track.availability);
+			/*console.log(event.data.track.availability);
 			if (event.data.track.availability !== 1) {
 				alert("Streaming is not possible until Spotify Web API supports streaming");
 				return;
-			}
+			}*/
 
 			$('#nowplaying_image').css({'background-image': 'initial'});
 			console.log("Got play event");
@@ -476,7 +501,7 @@ Shell.prototype.login = function (event) {
 	console.log("A");
 	music.login().then(function (ready) {
 		// Get user playlists
-		music.getUserPlaylists(function (playlists) {
+		$.getJSON('/api/music/me/playlists', function (playlists) {
 			for (var i =0; i < playlists.length && i < 100; i++) {
 				var playlist = playlists[i];
 				var listItem = document.createElement('tr');
@@ -492,7 +517,7 @@ Shell.prototype.login = function (event) {
 					self.navigate(uri);
 				});
 			}
-		}, function (playlist) {
+		}).fail(function (playlist) {
 			var $item = $('.menu tr[data-uri="' + playlist.uri + '"]');
 			$item.html('<li data-uri="' + playlist.uri + '"><i class="fa fa-music"></i> ' + playlist.name + ' <span class="fade">by ' + playlist.user.displayName + '</span></li>');
 

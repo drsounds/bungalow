@@ -384,6 +384,8 @@ require(['$api/cosmos'], function (Cosmos) {
         this.tracks = new Collection('/music/years/' + this.year + '/tracks?', 'bungalow:year:' + this.year + ':tracks');
     }
 
+
+
     Year.prototype = Object.create(Loadable.prototype);
     Year.prototype.constructor = Loadable;
 
@@ -394,6 +396,20 @@ require(['$api/cosmos'], function (Cosmos) {
             });
         });
     }
+
+    var Browse = function (data) {
+        Loadable.call(this.data);
+        this.categories = new Collection('/music/browse/categories', 'bungalow:browse:categories');
+        
+    }
+
+    var BrowseCategory = function (data) {
+        Loadable.call(this.data);
+        this.playlists = new Collection('/music/browse/categories/' + this.id + '/playlists','bungalow:browse:categories:' + this.id + ':playlists');
+    }
+
+    exports.BrowseCategory = BrowseCategory;
+    exports.Browse = Browse;
 
     var Track = function (data) {
         Object.assign(this, data);

@@ -56,6 +56,7 @@ namespace SoundBounce.WindowsClient
         public void playTrack(string trackId, int position)
         {
             // move to the spotify thread
+            //PlayTrack(new object[] { trackId, position });
             SpotifyAPI.Spotify.PostMessage(PlayTrack, new object[] { trackId, position });
         }
 

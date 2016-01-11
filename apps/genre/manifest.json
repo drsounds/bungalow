@@ -1,0 +1,7 @@
+{
+	"BundleName": {
+		"en": "Genre"
+	},
+	"BundleIdentifier": "genre",
+	"uri": "bungalow:genre:([a-zA-Z]+)"
+}

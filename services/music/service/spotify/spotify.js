@@ -124,8 +124,41 @@ SpotifyPlayer.prototype.request = function (method, url, payload) {
 
 
             }
-
             var parts = url.split(/\//g);
+            if (!('offset' in payload)) {
+                payload.offset = 0;
+            }
+            if (!('limit' in payload)) {
+                payload.limit = 10;
+            }
+            if (parts[0] === 'me') {
+                if (parts.length > 1) {
+                    if (parts[1] === 'playlists') {
+                        console.log(payload);
+                        request({
+                            url: 'https://api.spotify.com/v1/me/playlists?limit=' + payload.limit + '&offset=' + payload.offset,
+                            headers: headers
+                        },
+                        function (error, response, body) {
+                            var result = JSON.parse(body);
+                            console.log(result);
+                            try {
+                                resolve({
+                                    'objects': result.items.map(function (playlist) {
+                                        playlist.author = playlist.owner;
+                                        return playlist;
+                                    }),
+                                    'source': 'spotify'
+                                });
+                            } catch (e) {
+                                fail(e);
+                            }
+                        });
+                    }
+                } else {
+                    resolve();
+                }
+            }
             if (parts[0] == 'search') {
                 request({
                         url: 'https://api.spotify.com/v1/search?q=' + payload.q + '&type=' + payload.type + '&limit=' + payload.limit + '&offset=' + payload.offset
@@ -286,6 +319,48 @@ SpotifyPlayer.prototype.request = function (method, url, payload) {
                                 'href': 'spotify:country:' + code + ':followers'
                             }
                         })
+                    }
+                }
+            }
+            if (parts[0] == 'browse') {
+                if (parts[1] == 'categories') {
+                    if (parts.length > 3) {
+                        if (parts[3] == 'playlists') {
+                            request({
+                                url: 'https://api.spotify.com/v1/browse/categories/' + parts[2] + '/playlists?limit=' + payload.limit + '&offset=' + payload.offset,
+                                headers: headers
+                            }, function (error, response, body) {
+                                result = JSON.parse(body);
+                                console.log(result);
+                                resolve({
+                                    objects: result.playlists.items.map(function (playlist) {
+                                            playlist.author = playlist.owner;
+                                        return playlist;
+                                    })
+                                })
+                            });
+                        } else {
+                             request({
+                                url: 'https://api.spotify.com/v1/browse/categories/' + parts[2] + '',
+                                headers: headers
+                            }, function (error, response, body) {
+                                result = JSON.parse(body);
+                                resolve(result);
+                            });
+                        }
+                    } else {
+                        request({
+                            url: 'https://api.spotify.com/v1/browse/categories?limit=' + payload.limit + '&offset=' + payload.offset,
+                            headers: headers
+                        }, function (error, response, body) {
+                            result = JSON.parse(body);
+                            console.log(result);
+                            resolve({
+                                objects: result.categories.items.map(function (category) {
+                                    return category;
+                                })
+                            });
+                        });
                     }
                 }
             }

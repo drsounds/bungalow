@@ -14,6 +14,8 @@ namespace Shell
 {
     public partial class Form1 : Form
     {
+        private ChromiumWebBrowser browser;
+
         public Form1()
         {
             InitializeComponent();
@@ -32,7 +34,15 @@ namespace Shell
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            var browser = new ChromiumWebBrowser("http://play.bungalow.qi")
+            SoundBounce.SpotifyAPI.Spotify.Initialize();
+            /*if (!SoundBounce.SpotifyAPI.Spotify.IsLoggedIn)
+            {
+                if (new SpotifyLoginForm().ShowDialog() != DialogResult.OK)
+                {
+                    Close();
+                }
+            }*/
+            browser = new ChromiumWebBrowser("http://play.bungalow.qi")
             {
                 Dock = DockStyle.Fill
             };
@@ -40,13 +50,8 @@ namespace Shell
             panel5.Controls.Add(browser);
             browser.RegisterJsObject("spotifyPlayer", new SpotifyBrowserAPI(), true);
 
-            if (!SoundBounce.SpotifyAPI.Spotify.IsLoggedIn)
-            {
-                if (new SpotifyLoginForm().ShowDialog() != DialogResult.OK)
-                {
-                    Close();
-                }
-            }
+            
+            
         }
 
         private void panel5_Paint(object sender, PaintEventArgs e)
