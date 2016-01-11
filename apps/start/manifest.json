@@ -4,5 +4,5 @@
 		"en": "Album"
 	},
     "BundleIdentifier": "start",
-    "uri": "bungalow:start"
+    "uri": "(bungalow:start)|(bungalow:curator:([a-zA-Z0-9]+))"
 }

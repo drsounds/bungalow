@@ -3,5 +3,5 @@
 		"en": "Genre"
 	},
 	"BundleIdentifier": "genre",
-	"uri": "bungalow:genre:([a-zA-Z]+)"
+	"uri": "(bungalow:genre:([a-zA-Z]+))|(bungalow:curator:([a-zA-Z0-9]+):genres:([a-zA-Z0-9]+))"
 }
