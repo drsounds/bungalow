@@ -28,7 +28,20 @@ require(['$api/models', '$api/views'], function (models, views) {
 				$('#header').html("");
 				$('#header').append(header.node);
 
+				var tabBar = new views.TabBar({
+					views:[
+						{id: 'overview', title: 'Overview'},
+						{id: 'related', title: 'Related Artists'},
+						{id: 'about', title: 'About'}
+					]
+				});
+				$('#tabbar').append(tabBar.node);
 
+				var template = document.querySelector('#template').innerHTML;
+
+				template = _.template(template);
+
+				$('#info').html(template({object: artist}));
 
 
 			});

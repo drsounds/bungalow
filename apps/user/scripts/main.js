@@ -20,7 +20,13 @@ require(['$api/models', '$api/views'], function (models, views) {
                 var playlistCollection = new views.AlbumCollection(user, {extend: false}, 'playlist');
 
                 $('#playlists').append(playlistCollection.node);
-
+                var tabBar = new views.TabBar({
+                    views:[
+                        {id: 'overview', title: 'Overview'}
+                    ]
+                });
+                $('#tabbar').html("");
+                $('#tabbar').append(tabBar.node);
                 views.hideThrobber();
 
             });

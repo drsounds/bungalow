@@ -138,12 +138,14 @@ body {
   border-radius: 5pt; }
 
 .sp-container {
-  margin-top: 23px;
   width: 100%; }
 
 hr {
   border: none;
   border-top: 1px solid #333; }
+
+.major {
+  font-size: 60pt; }
 
 .playlist {
   min-height: 100%;
@@ -523,8 +525,7 @@ meter::-webkit-meter-optimum-value {
   height: 24px;
   float: left;
   list-style: none;
-  color: white;
-  border-top: 3px solid black; }
+  color: white; }
 
 .sp-dragover {
   background-color: white;
