@@ -400,21 +400,53 @@ SpotifyPlayer.prototype.request = function (method, url, payload) {
                                     'objects': users
                                 });
                             } else if (parts[4] == 'tracks') {
-                                request({
-                                    url: 'https://api.spotify.com/v1/users/' + parts[1] + '/playlists/' + parts[3] + '/tracks',
-                                    headers: headers
-                                }, function (error, response, body) {
-                                    var result = JSON.parse(body);
-                                    resolve({
-                                        'objects': result.items.map(function (track) {
-                                            var track = assign(track, track.track);
-                                            track.authors = track.artists;
-                                            track.collection = track.album;
-                                            track.user = track.added_by;
-                                            return track;
+                                if (method == 'PUT') {
+                                    var request_data = {
+                                        range_start: payload.range_start,
+                                        range_end: payload.range_end,
+                                        insert_before: payload.insert_before,
+                                    
+                                    };
+                                    if ('snapshot_id' in payload) {
+                                        request_data.snapshot_id = payload.snapshot_id; 
+                                    }
+                                    request({
+                                        method: 'PUT',
+                                        json: true,
+                                        body: JSON.stringify(request_data),
+                                        url: 'https://api.spotify.com/v1/users/' + parts[1] + '/playlists/' + parts[3] + '/tracks',
+                                        headers: headers,
+
+                                    }, function (error, response, body) {
+
+                                        console.log(error);
+                                        if (error) {
+                                            fail();
+                                            return;
+                                        }
+                                        console.log(body);
+                                        var result = JSON.parse(body);
+                                        resolve({
+                                            snapshot_id: result.snapshot_id
+                                        });
+                                    });
+                                } else {
+                                    request({
+                                        url: 'https://api.spotify.com/v1/users/' + parts[1] + '/playlists/' + parts[3] + '/tracks',
+                                        headers: headers
+                                    }, function (error, response, body) {
+                                        var result = JSON.parse(body);
+                                        resolve({
+                                            'objects': result.items.map(function (track) {
+                                                var track = assign(track, track.track);
+                                                track.authors = track.artists;
+                                                track.collection = track.album;
+                                                track.user = track.added_by;
+                                                return track;
+                                            })
                                         })
-                                    })
-                                });
+                                    });
+                                }
                             } else {
                                 request({
                                     url: 'https://api.spotify.com/v1/users/' + parts[1] + '/playlists/' + parts[3] + '',

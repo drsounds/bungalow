@@ -1,7 +1,24 @@
 var Music = function () {
 
 };
-
+Music.prototype.reorderTracks = function (uri, indicies, new_index) {
+	return new Promise(function (resolve, fail) {
+		var segments = uri.split(/\:/g).slice(1);
+		$.ajax({
+			type: 'PUT',
+			data: {
+				range_start: indicies[0],
+				range_length: indicies.length,
+				new_index: new_index
+			},
+			url: '/api/music/users/' + segments[1] + '/playlists/' + segments[3] + '/tracks',
+			contentType: 'application/json',
+			success: function (event) {
+				resolve({'status': 'OK'});
+			}
+		});
+	});
+}
 Music.prototype.play = function (uri) {
 	alert(spotifyPlayer);
 	spotifyPlayer.playTrack(uri.split(/\:/g)[2], 0);

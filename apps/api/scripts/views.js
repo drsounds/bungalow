@@ -183,7 +183,6 @@ require(['$api/models', '$api/moment'], function (models, moment) {
         this.node.classList.add('sp-track');
         this.node.setAttribute('data-uri', track.uri);
         this.node.setAttribute('data-context-uri', contextUri);
-        this.node.setAttribute('data-object', JSON.stringify(track));
         this.node.setAttribute('draggable', true);
         this.node.setAttribute('data-track-index', index);
        	var td0 = document.createElement('td');
@@ -434,7 +433,7 @@ require(['$api/models', '$api/moment'], function (models, moment) {
         this.node.appendChild(tbody);
         this.node.setAttribute('width', '100%');
         this.node.classList.add('sp-table');
-        this.node.setAttribute('data-reorder', this.reorder);
+        this.node.setAttribute('data-reorder', true);
         this.node.setAttribute('data-drag-index', -1);
         var thead = document.createElement('thead');
         this.thead = thead;
@@ -449,7 +448,7 @@ require(['$api/models', '$api/moment'], function (models, moment) {
             c += "<th>" + title + '</th>';
         }
         thead.innerHTML = '<tr>' + c + '<th style="width:10%; text-align: left"></th></tr>';
-        this.node.setAttribute('data-uri', resource.uri);
+        this.node.setAttribute('data-uri', resource.uri.replace(/spotify\:/, 'bungalow:'));
 
         var tableY = 0;
         var background = document.createElement('div');
@@ -946,8 +945,11 @@ require(['$api/models', '$api/moment'], function (models, moment) {
     $(document).on('dragenter', '.sp-track', function (event) {
         $.event.props.push('dataTransfer');
         var $collection = $('.sp-table[data-uri="' + $(this).attr('data-context-uri') + '"]');
+        var collection = document.querySelector('.sp-table[data-uri="' + $(this).attr('data-context-uri') + '"]');
+        console.log(collection);
+        console.log("Begin drag");
         if ($collection.attr('data-reorder') === 'true') {
-
+        	console.log("Dragging");
             event.originalEvent.dataTransfer.effectAllowed = 'copyMove';
             event.originalEvent.dataTransfer.dropEffect = 'copyMove';
             var index = $collection.find('tr').index($(this));

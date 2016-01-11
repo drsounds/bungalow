@@ -210,6 +210,28 @@ app.get('/music/*', function (req, res) {
     });
 });
 
+app.put('/music/*', function (req, res) {
+    console.log("A");
+    console.log(music);
+    music.request("PUT", req.params[0], req.query).then(function (result) {
+
+        res.json(result);
+    }, function (reject) {
+        res.json(reject);
+    });
+});
+
+app.post('/music/*', function (req, res) {
+    console.log("A");
+    console.log(music);
+    music.request("POST", req.params[0], req.query).then(function (result) {
+
+        res.json(result);
+    }, function (reject) {
+        res.json(reject);
+    });
+});
+
 app.get('/player/play', function (req, res) {
     var id = req.params.id;
     music.getAlbumTracks(id).then(function (artist) {
