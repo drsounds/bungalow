@@ -1,0 +1,7 @@
+{
+    "BundleName": {
+        "en": "Own music"
+    },
+    "BundleIdentifier": "own",
+    "uri": "(bungalow:own:(.*))|(bungalow:user:([a-zA-Z0-9]+):own:tracks)"
+}

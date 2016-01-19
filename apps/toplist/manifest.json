@@ -1,0 +1,7 @@
+{
+	"BundleName": {
+		"en": "Top List"
+	},
+	"BundleIdentifier": "toplist",
+	"uri": "(bungalow:chart:([a-zA-Z0-9]+))|(bungalow:artist:([a-zA-Z0-9]+):top:list)"
+}

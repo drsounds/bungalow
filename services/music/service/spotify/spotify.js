@@ -180,10 +180,45 @@ SpotifyPlayer.prototype.request = function (method, url, payload) {
                 );
             }
             if (parts[0] == 'artists') {
+               
                 if (parts.length > 2) {
-                    if (parts[2] == 'albums') {
+                     if (parts[2] == 'top') {
+                        console.log("F");
+                         if (parts.length > 3) {
+                            console.log("G");
+                                if (parts[4] == 'tracks') {
+                                request({
+                                    url: 'https://api.spotify.com/v1/artists/' + parts[1] + '/top-tracks?country=se',
+                                    headers: headers},
+                                    function (error, response, body) {
+                                        var data = JSON.parse(body);
+                                        console.log(body);
+                                        console.log(data.tracks.length);
+                                        try {
+                                            resolve({'objects': data.tracks.map(function (track) {
+                                                return track;
+                                            })});
+                                        } catch (e) {
+                                            console.log(e);
+                                            fail();
+                                        }
+                                        return;
+                                    }
+                                );
+                            }
+                        } else {
+                            resolve({
+                                name: 'Top Tracks',
+                                uri: 'bungalow:artist:' + parts[1] + ':top:' + parts[3],
+                                id: parts[3],
+                                type: 'toplist'
+                            });
+                            return;
+                        }
+                    } else if (parts[2] == 'albums') {
                         request({
-                                url: 'https://api.spotify.com/v1/artists/' + parts[1] + '/albums?limit=' + payload.limit + '&offset=' + payload.offset
+                                url: 'https://api.spotify.com/v1/artists/' + parts[1] + '/albums?limit=' + payload.limit + '&offset=' + payload.offset,
+                                headers: headers
                             },
                             function (error, response, body) {
                                 var data = JSON.parse(body);

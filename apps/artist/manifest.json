@@ -3,6 +3,6 @@
 	"BundleName": {
 		"en": "Album"
 	},
-	"uri": "bungalow:artist:([a-zA-Z0-9]+)",
+	"uri": "bungalow:artist:([a-zA-Z0-9]+)$",
 	"BundleIdentifier": "artist"
 }

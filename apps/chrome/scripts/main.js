@@ -660,7 +660,7 @@ Shell.prototype.navigate = function (url, nohistory) {
 		console.log("App is already loaded", appId);
 		this.activateApp(appId);
 		var appFrame = this.getAppFrame(appId);
-		appFrame.contentWindow.postMessage({'action': 'navigate', 'arguments': (args)}, '*');
+		appFrame.contentWindow.postMessage({'action': 'navigate', 'arguments': (args), 'appId': appId, 'urlParts': parts}, '*');
 
 	} else {
 
@@ -669,7 +669,7 @@ Shell.prototype.navigate = function (url, nohistory) {
 		var appFrame = this.createApp(appId, function (appFrame) {
 			appFrame.onload = function (event) {
 				console.log("Sending initial message");
-				appFrame.contentWindow.postMessage({'action': 'navigate', 'arguments': args}, '*');
+				appFrame.contentWindow.postMessage({'action': 'navigate', 'arguments': args, 'appId': appId, 'urlParts': parts}, '*');
 			};
 			self.activateApp(appId);
 		});
