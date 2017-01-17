@@ -1,7 +1,7 @@
 {
   "name": "Bungalow",
   "version": "1.0.0",
-  "main": "public/index.html",
+  "main": "main.js",
   "description": "",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -19,14 +19,18 @@
   },
   "node-remote": "*",
   "dependencies": {
-    "node-spotify": "*",
+    "express": "*",
     "less": "*",
-    "express": "*"
+    "node-webkit": "0.0.0",
+    "nwjs": "^1.4.3",
+    "spotilocal": "^0.1.0"
   },
   "author": "",
   "license": "ISC",
   "devDependencies": {
     "grunt": "^0.4.5",
-    "grunt-node-webkit-builder": "^1.0.0"
+    "grunt-node-webkit-builder": "^1.0.0",
+    "nw":"^0.18.2",
+    "nw-builder":"^3.1.2"
   }
 }
