@@ -1,4 +1,3 @@
-debugger;
 require(['$api/models', '$api/views'], function (models, views) {
 
     window.addEventListener('message', function (event) {
@@ -10,8 +9,6 @@ require(['$api/models', '$api/views'], function (models, views) {
 
             $('.sp-artist').hide();	
 			$('#playlists').html("");
-
-            debugger;
             models.User.fromId(id).load().then(function (user) {
                 console.log(user);
                 user.name = user.display_name;

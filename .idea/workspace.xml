@@ -2,9 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="2100ae74-f7e4-4243-93ff-794981e1fec3" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/apps/user/index.html" afterPath="$PROJECT_DIR$/apps/user/index.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/apps/user/scripts/main.js" afterPath="$PROJECT_DIR$/apps/user/scripts/main.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/services/spotify/spotify.js" afterPath="$PROJECT_DIR$/services/spotify/spotify.js" />
     </list>
     <ignored path="bungalow_old.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -90,7 +89,7 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="index.html" pinned="false" current-in-tab="true">
+      <file leaf-file-name="index.html" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/apps/user/index.html">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="120">
@@ -100,11 +99,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="main.js" pinned="false" current-in-tab="false">
+      <file leaf-file-name="main.js" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/apps/user/scripts/main.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="0">
-              <caret line="0" column="9" lean-forward="false" selection-start-line="0" selection-start-column="9" selection-end-line="0" selection-end-column="9" />
+            <state relative-caret-position="150">
+              <caret line="10" column="37" lean-forward="false" selection-start-line="10" selection-start-column="37" selection-end-line="10" selection-end-column="37" />
               <folding />
             </state>
           </provider>
@@ -217,8 +216,8 @@
         <option value="$PROJECT_DIR$/apps/api/scripts/require.js" />
         <option value="$PROJECT_DIR$/apps/api/scripts/cosmos.js" />
         <option value="$PROJECT_DIR$/services/spotify/spotify.js" />
-        <option value="$PROJECT_DIR$/apps/user/scripts/main.js" />
         <option value="$PROJECT_DIR$/apps/user/index.html" />
+        <option value="$PROJECT_DIR$/apps/user/scripts/main.js" />
       </list>
     </option>
   </component>
@@ -662,7 +661,7 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1436616556553</updated>
-      <workItem from="1492786818970" duration="3460000" />
+      <workItem from="1492786818970" duration="3513000" />
     </task>
     <task id="LOCAL-00001" summary="Begin changing to WebAPI. No sound yet supported in WebAPI">
       <created>1436620466084</created>
@@ -780,7 +779,7 @@
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="3460000" />
+    <option name="totallyTimeSpent" value="3513000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="293" y="102" width="1920" height="981" extended-state="0" />
@@ -1179,18 +1178,18 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/apps/user/scripts/main.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="9" lean-forward="false" selection-start-line="0" selection-start-column="9" selection-end-line="0" selection-end-column="9" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/apps/user/index.html">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="120">
           <caret line="8" column="55" lean-forward="false" selection-start-line="8" selection-start-column="55" selection-end-line="8" selection-end-column="55" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/apps/user/scripts/main.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="150">
+          <caret line="10" column="37" lean-forward="false" selection-start-line="10" selection-start-column="37" selection-end-line="10" selection-end-column="37" />
           <folding />
         </state>
       </provider>
