@@ -6,7 +6,6 @@ require(['$api/models', '$api/views'], function (models, views) {
 			views.showThrobber();
 			console.log(event.data.arguments);
 			var id = event.data.arguments[0];
-			$('.sp-tabbar').remove();
 			$('.sp-artist').hide();
 
 			console.log(models.Artist.fromId);
@@ -30,14 +29,7 @@ require(['$api/models', '$api/views'], function (models, views) {
 				views.hideThrobber();
 				console.log(artist);
 				var header = new views.Header(artist, {
-						type: 'artist',
-						tabs: {
-							'views':[
-								{id: 'overview', title: 'Overview'},
-								{id: 'biography', title: 'Biography'}
-							],
-							slicky: true
-						}
+						type: 'artist'
 					}
 				, "Artist");
 				$('#header').html("");

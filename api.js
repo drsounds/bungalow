@@ -202,7 +202,37 @@ app.get('/social/*', function (req, res) {
 app.get('/music/*', function (req, res) {
     console.log("A");
     console.log(music);
+    var body = {};
+    if (request.body) {
+        body = JSON.parse(request.body);
+    }
     music.request("GET", req.params[0], req.query).then(function (result) {
+
+        res.json(result);
+    }, function (reject) {
+        res.json(reject);
+    });
+});
+
+app.put('/music/*', function (req, res) {
+    console.log("A");
+    console.log(music);
+    var body = {};
+    if (request.body) {
+        body = JSON.parse(request.body);
+    }
+    music.request("PUT", req.params[0], req.query, body).then(function (result) {
+
+        res.json(result);
+    }, function (reject) {
+        res.json(reject);
+    });
+});
+
+app.post('/music/*', function (req, res) {
+    console.log("A");
+    console.log(music);
+    music.request("POST", req.params[0], req.query).then(function (result) {
 
         res.json(result);
     }, function (reject) {

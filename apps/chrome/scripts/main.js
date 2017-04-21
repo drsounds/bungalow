@@ -3,7 +3,15 @@ var Music = function () {
 };
 
 Music.prototype.play = function (uri) {
-	
+   Cosmos.request	('PUT',
+		'/music/me/player/play',
+	   	{},
+		{
+			uris: [uri]
+		}
+	).then(function (result) {
+		debugger;
+	})
 }
 
 var XHR = function () {
@@ -56,7 +64,7 @@ Music.prototype.getAlbum = function (id) {
 
 Music.prototype.login = function () {
 	return new Promise(function (resolve, fail) {
-		var loginWindow = window.open('https://accounts.spotify.com/authorize?client_id=9cae232f0ddd4ba3b55b7e54ca6e76f0&scope=user-read-private&response_type=code&redirect_uri=' + encodeURI('http://' + window.location.hostname + ':' + window.location.port + '/callback.html'));
+		var loginWindow = window.open('https://accounts.spotify.com/authorize?client_id=9cae232f0ddd4ba3b55b7e54ca6e76f0&scope=user-read-private user-modify-playback-state&response_type=code&redirect_uri=' + encodeURI('http://' + window.location.hostname + ':' + window.location.port + '/callback.html'));
 		var t = setInterval(function () {
 			if (!loginWindow) {
 				clearInterval(t);
@@ -287,10 +295,7 @@ var Shell = function () {
 
 		if (event.data.action === 'play') {
 			console.log(event.data.track.availability);
-			if (event.data.track.availability !== 1) {
-				alert("Track is not available");
-				return;
-			}
+
 
 			$('#nowplaying_image').css({'background-image': 'initial'});
 			console.log("Got play event");
@@ -300,7 +305,7 @@ var Shell = function () {
 			console.log("Context", context);
 			//alert(context.uri);
 			event.source.postMessage({'action': 'trackstarted', 'index': context.currentIndex, 'uri': context.uri}, '*');
-			self.play(context.tracks[context.currentIndex]);
+			music.play(context.tracks[context.currentIndex]);
 		}
 		if (event.data.action === 'hashchange') {
 			window.location.hash = event.data.hash;

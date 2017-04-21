@@ -104,7 +104,6 @@ require(['$api/models', '$api/moment'], function (models, moment) {
             'data': JSON.stringify(tracklist)
         }, '*');
         this.currentIndex = 0;
-        track.classList.add('sp-now-playing');
 
     }
 
@@ -1151,7 +1150,7 @@ require(['$api/models', '$api/moment'], function (models, moment) {
         coverSize = coverSize ? coverSize : 128;
         this.node = document.createElement('div');
         this.node.classList.add('sp-header');
-        var bgdiv = document.createElement('div');
+        /*var bgdiv = document.createElement('div');
         if ('images' in resource && resource.images > 0) {
             bgdiv.style.backgroundImage = 'url("' + resource.images[0].url + '")';
         } else {
@@ -1159,7 +1158,7 @@ require(['$api/models', '$api/moment'], function (models, moment) {
         }
         bgdiv.classList.add('sp-header-background-image');
         this.node.appendChild(bgdiv);
-
+         */
         var content = document.createElement('div');
         this.node.appendChild(content);
         content.classList.add('content');
@@ -1207,7 +1206,7 @@ require(['$api/models', '$api/moment'], function (models, moment) {
             this.tabbar = new TabBar(this.tabs);
             this.node.style.overflow = 'visible';
             this.node.appendChild(this.tabbar.node);
-            this.tabbar.node.style.top = 'calc(100% - 60pt)';
+            //this.tabbar.node.style.top = 'calc(100% - 60pt)';
 
         }
 
@@ -1232,7 +1231,7 @@ require(['$api/models', '$api/moment'], function (models, moment) {
             });
         }
 
-        content.style.top =  '-150px';
+        content.style.top =  '0px';
         content.style.left =  '30px';
     }
 

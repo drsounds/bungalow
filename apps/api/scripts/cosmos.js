@@ -2,6 +2,7 @@ require([], function () {
     var Cosmos = {
 
     };
+    window.Cosmos = Cosmos;
 
 
     Cosmos.request = function (method, url, params, data) {
