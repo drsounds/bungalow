@@ -2,6 +2,8 @@ var utils = require('./utils.js');
 var app = utils.createApp();
 var express = require('express');
 var fs = require('fs');
+
+var app = express();
 app.use(express.static(__dirname + '/apps/chrome/'));
 app.get('/callback.html', function (req, res) {
 
@@ -16,8 +18,6 @@ app.get('/*', function (req, res) {
     res.end();
 });
 
-
-
-app.listen(process.env.PORT || 9261);
-
-module.exports = app;
+module.exports = {
+    server: app
+};

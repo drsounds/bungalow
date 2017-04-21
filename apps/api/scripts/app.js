@@ -1,9 +1,9 @@
 require.config({
     paths: {
-        models: 'http://appfinder.bungalow.qi/api/ models',
-        views: 'http://appfinder.bungalow.qi/api/views',
-        cosmos: 'http://appfinder.bungalow.qi/api/cosmos',
-        $: 'http://appfinder.bungalow.qi/vendor/jquery',
-        polyfill: 'http://appfinder.bungalow.qi/vendor/polyfill'
+        models: 'http://localhost:9261/apps/api/ models',
+        views: 'http://localhost:9261/apps/api/views',
+        cosmos: 'http://localhost:9261/apps/api/cosmos',
+        $: 'http://localhost:9261/apps/vendor/jquery',
+        polyfill: 'http://localhost:9261/apps/vendor/polyfill'
     }
 });

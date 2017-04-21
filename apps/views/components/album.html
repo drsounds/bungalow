@@ -1,18 +1,18 @@
 <dom-module id="bungalow-album" attributes="uri">
-    <link rel="import" href="http://appfinder.bungalow.qi/components/playlist.html">
-    <link rel="import" href="http://appfinder.bungalow.qi/components/album.html">
+    <link rel="import" href="http://localhost:9261/apps/components/playlist.html">
+    <link rel="import" href="http://localhost:9261/apps/components/album.html">
     <template>
         <style>
             @import url("https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css");
             
-            @import url('http://play.bungalow.qi/themes/main.css');
+            @import url('http://localhost:9261/themes/main.css');
 
             
             h1 {
                 font-size: 35pt;
             }
         </style>
-        <script src="http://appfinder.bungalow.qi/views/scripts/cosmos.js"></script>
+        <script src="http://localhost:9261/apps/views/scripts/cosmos.js"></script>
         <bungalow-header name="{{name}}"></bungalow-header>
         <bungalow-playlist uri="{{uri}}"></bungalow-playlist>                
     </template>

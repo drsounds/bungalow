@@ -56,13 +56,13 @@ Music.prototype.getAlbum = function (id) {
 
 Music.prototype.login = function () {
 	return new Promise(function (resolve, fail) {
-		/* var loginWindow = window.open('https://accounts.spotify.com/authorize?client_id=d4dc306c3fe643a6933b35ee18ed4d89&scope=user-read-private&response_type=code&redirect_uri=' + encodeURI('http://play.bungalow.qi/callback.html'));
+		var loginWindow = window.open('https://accounts.spotify.com/authorize?client_id=9cae232f0ddd4ba3b55b7e54ca6e76f0&scope=user-read-private&response_type=code&redirect_uri=' + encodeURI('http://' + window.location.hostname + ':' + window.location.port + '/callback.html'));
 		var t = setInterval(function () {
 			if (!loginWindow) {
 				clearInterval(t);
 
 			}
-		}); */
+		});
 		var playlists = document.querySelector('#playlists');
 		
 		var uris = [
@@ -136,7 +136,7 @@ var Shell = function () {
 	this.mashcast.addEventListener('episodestopped', function (event) {
 	});
 	
-	$.getJSON('http://appfinder.bungalow.qi/api/v1/apps', function (data) {
+	$.getJSON('http://localhost:9261/apps/api/v1/apps', function (data) {
 		self.apps = data;
 	});
 
@@ -519,6 +519,7 @@ Shell.prototype.searchEnter = function (event) {
 }
 
 Shell.prototype.getMatchingApp = function (url) {
+	var appId = 'notfound';
 	for(var i = 0; i < this.apps.length; i++) {
 		
 		var app = this.apps[i];
@@ -544,6 +545,10 @@ Shell.prototype.getMatchingApp = function (url) {
 
 Shell.prototype.navigate = function (url, nohistory) {
 	var q = url;
+	if (url.indexOf('bungalow:internal:login') == 0) {
+		shell.login();
+		return;
+	}
 	if (url.indexOf('#') === 0) {
 		url = 'bungalow:hashtag:' + url.substr(1);
 	}
@@ -670,8 +675,9 @@ Shell.prototype.createApp = function (appId, callback) {
 
 
 	var appFrame = document.createElement('iframe');
-	appFrame.setAttribute('src', 'http://appfinder.bungalow.qi/' + appId + '/index.html?t=' + new Date().getTime());
+	appFrame.setAttribute('src', 'http://' + window.location.hostname + ':' + window.location.port + '/apps/' + appId + '/index.html?t=' + new Date().getTime());
 	console.log('/apps/' + appId + '/index.html');
+
 	appFrame.setAttribute('id', 'app_' + appId + '');
 	appFrame.classList.add('sp-app');
 	appFrame.setAttribute('nwdisable', 'nwdisable');

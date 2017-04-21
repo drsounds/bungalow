@@ -177,7 +177,7 @@ Bungalow.prototype.loadView = function (viewId, parameters, section) {
 
         view.setAttribute("frameborder", "0");
         if (viewId === 'cosmos') {
-            view.setAttribute('src', 'http://play.bungalow.qi/');
+            view.setAttribute('src', 'http://localhost:9261/');
         } else {
             view.setAttribute('src', 'app/' + viewId + '/index.html');
 

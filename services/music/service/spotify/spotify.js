@@ -1,6 +1,5 @@
 var fs = require('fs');
 var SpotifyNodeApi = require('spotify-web-api-node');
-var SpotifyWebApi = require('spotify-web-api');
 var request = require('request');
 var assign = require('object-assign');
 var Promise = require("es6-promise").Promise;
@@ -31,7 +30,7 @@ SpotifyPlayer.prototype.authenticate = function (code) {
             form: {
                 grant_type: 'authorization_code',
                 code: code,
-                redirect_uri: 'http://play.bungalow.qi/callback.html'
+                redirect_uri: 'http://localhost:9261/callback.html'
             },
             headers: {
                 'Authorization': 'Basic ' + new Buffer(self.apikeys.client_id + ':' + self.apikeys.client_secret).toString('base64') 
@@ -81,7 +80,7 @@ SpotifyPlayer.prototype.refreshAccessToken = function () {
             form: {
                 grant_type: 'refresh_token',
                 refresh_token: refresh_token,
-                redirect_uri: 'http://play.bungalow.qi/callback.html'
+                redirect_uri: 'http://localhost:9261/callback.html'
             },
             headers: {
                 'Authorization': 'Basic ' + new Buffer(self.apikeys.client_id + ':' + self.apikeys.client_secret).toString('base64')

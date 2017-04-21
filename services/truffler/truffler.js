@@ -1,6 +1,6 @@
 var fs = require('fs');
 var request = require('request');
-var echonest = require('./echonest.js');
+var echonest = require('./../echonest/echonest.js');
 var Promise = require('bluebird');
 
 function Truffler () {

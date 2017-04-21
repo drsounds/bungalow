@@ -17,7 +17,7 @@ require([], function () {
             };
             xhr.responseType = 'json';
             console.log(method, url);
-            xhr.open(method, 'http://api.bungalow.qi' + url, true);
+            xhr.open(method, 'http://localhost:9261/api' + url, true);
             xhr.send(data);
             console.log(data);
         });

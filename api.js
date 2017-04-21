@@ -1,8 +1,8 @@
 var path = require('path');
 var fs = require('fs');
 var async = require('async');
-var MusicService = require('./services/music/service/spotify/spotify.js');
-var SocialService = require('./services/social/service/mock.js');
+var MusicService = require('./services/spotify/spotify.js');
+var SocialService = require('./services/mock/mock.js');
 var social = new SocialService();   
 var music = new MusicService();
 var less = require('less');
@@ -10,7 +10,7 @@ var request = require('request');
 var url = require('url');
 
 var utils = require('./utils.js');
-var app = utils.createApp();
+var app = require('express').Router();
 
 app.get('/settings.json', function (req, res) {
 
@@ -219,4 +219,6 @@ app.get('/player/play', function (req, res) {
 });
 
 
-module.exports = app;
+module.exports = {
+    server: app
+};

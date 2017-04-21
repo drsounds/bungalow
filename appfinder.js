@@ -19,10 +19,11 @@ function AppFinder () {
     
 
 
-    var evh = require('express-vhost');
-    var server = utils.createApp();
+    var server = express.Router();
     this.server = server;
-    this.api = utils.createApp();
+
+    this.api = express();
+    server.use('/api', this.api);
     this.evh = evh;
 
 

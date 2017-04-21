@@ -1,6 +1,6 @@
 var fs = require('fs');
-var SpotifyBrowseNodeApi = require('SpotifyBrowse-web-api-node');
-var SpotifyBrowseWebApi = require('SpotifyBrowse-web-api');
+var os = require('os');
+var SpotifyWebApi = require('spotify-web-api-node');
 var request = require('request');
 var assign = require('object-assign');
 var Promise = require("es6-promise").Promise;
@@ -12,11 +12,9 @@ var SpotifyBrowseAPI = function () {
     
     this.resources = {};
     this.callbacks = {};
-    this.apikeys = JSON.parse(fs.readFileSync(__dirname +  SPOTIFY_DIR + 'spotify.key.json'));
+    this.apikeys = JSON.parse(fs.readFileSync(os.homedir() + '/.bungalow/spotify.key.json'));
     this.accessToken = null;
 
-    this.nodeSpotifyBrowseApi = new SpotifyBrowseNodeApi(this.apikeys);
-    this.SpotifyBrowseAPI = new SpotifyBrowseWebApi();
     this.me = null;
 
 };
@@ -31,7 +29,7 @@ SpotifyBrowseAPI.prototype.authenticate = function (code) {
             form: {
                 grant_type: 'authorization_code',
                 code: code,
-                redirect_uri: 'http://play.bungalow.qi/callback.html'
+                redirect_uri: 'http://localhost:9261/callback.html'
             },
             headers: {
                 'Authorization': 'Basic ' + new Buffer(self.apikeys.client_id + ':' + self.apikeys.client_secret).toString('base64') 
@@ -51,7 +49,7 @@ SpotifyBrowseAPI.prototype.authenticate = function (code) {
 
 SpotifyBrowseAPI.prototype.getAccessToken = function () {
     try {
-        return JSON.parse(fs.readFileSync(__dirname + SPOTIFY_DIR + '/access_token.json'));
+        return JSON.parse(fs.readFileSync(os.homedir() + '/.bungalow/spotify_access_token.json'));
     } catch (e) {
         return null;
     }
@@ -61,7 +59,7 @@ SpotifyBrowseAPI.prototype.setAccessToken = function (accessToken) {
 
     accessToken.time = new Date().getTime();
     console.log(accessToken);
-    fs.writeFileSync(__dirname + SPOTIFY_DIR + '/access_token.json', JSON.stringify(accessToken));
+    fs.writeFileSync(os.homedir() + '/.bungalow/spotify_access_token.json', JSON.stringify(accessToken));
 
 }
 
@@ -81,7 +79,7 @@ SpotifyBrowseAPI.prototype.refreshAccessToken = function () {
             form: {
                 grant_type: 'refresh_token',
                 refresh_token: refresh_token,
-                redirect_uri: 'http://play.bungalow.qi/callback.html'
+                redirect_uri: 'http://localhost:9261/callback.html'
             },
             headers: {
                 'Authorization': 'Basic ' + new Buffer(self.apikeys.client_id + ':' + self.apikeys.client_secret).toString('base64')
