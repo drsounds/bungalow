@@ -2,68 +2,9 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="2100ae74-f7e4-4243-93ff-794981e1fec3" name="Default" comment="">
-      <change type="DELETED" beforePath="$PROJECT_DIR$/.idea/libraries/bungalow_old_node_modules.xml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/.idea/misc.xml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/npm-debug.log" afterPath="" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/services/echonest.js" afterPath="$PROJECT_DIR$/services/echonest/echonest.js" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/services/music/discovery/mock/mock.js" afterPath="$PROJECT_DIR$/services/mock/mock.js" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/services/music/discovery/spotify/browse.js" afterPath="$PROJECT_DIR$/services/spotify/spotify.js" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/services/truffler.js" afterPath="$PROJECT_DIR$/services/truffler/truffler.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/bungalow_old.iml" afterPath="$PROJECT_DIR$/.idea/bungalow_old.iml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/jsLibraryMappings.xml" afterPath="$PROJECT_DIR$/.idea/jsLibraryMappings.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Bungalow.njsproj" afterPath="$PROJECT_DIR$/Bungalow.njsproj" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/api.js" afterPath="$PROJECT_DIR$/api.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/appfinder.js" afterPath="$PROJECT_DIR$/appfinder.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/apps/album/index.html" afterPath="$PROJECT_DIR$/apps/album/index.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/apps/api/scripts/app.js" afterPath="$PROJECT_DIR$/apps/api/scripts/app.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/apps/api/scripts/cosmos.js" afterPath="$PROJECT_DIR$/apps/api/scripts/cosmos.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/apps/api/scripts/require.js" afterPath="$PROJECT_DIR$/apps/api/scripts/require.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/apps/artist/index.html" afterPath="$PROJECT_DIR$/apps/artist/index.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/apps/browse/index.html" afterPath="$PROJECT_DIR$/apps/browse/index.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/apps/chart/index.html" afterPath="$PROJECT_DIR$/apps/chart/index.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/apps/chrome/callback.html" afterPath="$PROJECT_DIR$/apps/chrome/callback.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/apps/chrome/index.html" afterPath="$PROJECT_DIR$/apps/chrome/index.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/apps/chrome/scripts/main.js" afterPath="$PROJECT_DIR$/apps/chrome/scripts/main.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/apps/chrome/themes/dark.css" afterPath="$PROJECT_DIR$/apps/chrome/themes/dark.css" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/apps/chrome/themes/light.css" afterPath="$PROJECT_DIR$/apps/chrome/themes/light.css" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/apps/chrome/themes/main.css" afterPath="$PROJECT_DIR$/apps/chrome/themes/main.css" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/apps/config/index.html" afterPath="$PROJECT_DIR$/apps/config/index.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/apps/config/scripts/main.js" afterPath="$PROJECT_DIR$/apps/config/scripts/main.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/apps/country/index.html" afterPath="$PROJECT_DIR$/apps/country/index.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/apps/doctrine/index.html" afterPath="$PROJECT_DIR$/apps/doctrine/index.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/apps/ember/index.html" afterPath="$PROJECT_DIR$/apps/ember/index.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/apps/featured/index.html" afterPath="$PROJECT_DIR$/apps/featured/index.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/apps/finder/index.html" afterPath="$PROJECT_DIR$/apps/finder/index.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/apps/hashtag/index.html" afterPath="$PROJECT_DIR$/apps/hashtag/index.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/apps/law/index.html" afterPath="$PROJECT_DIR$/apps/law/index.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/apps/mashcast/index.html" afterPath="$PROJECT_DIR$/apps/mashcast/index.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/apps/notfound/index.html" afterPath="$PROJECT_DIR$/apps/notfound/index.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/apps/playlist/index.html" afterPath="$PROJECT_DIR$/apps/playlist/index.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/apps/podcasts/index.html" afterPath="$PROJECT_DIR$/apps/podcasts/index.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/apps/project/index.html" afterPath="$PROJECT_DIR$/apps/project/index.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/apps/search/index.html" afterPath="$PROJECT_DIR$/apps/search/index.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/apps/start/index.html" afterPath="$PROJECT_DIR$/apps/start/index.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/apps/testbungalow/index.html" afterPath="$PROJECT_DIR$/apps/testbungalow/index.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/apps/truffler/index.html" afterPath="$PROJECT_DIR$/apps/truffler/index.html" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/apps/user/index.html" afterPath="$PROJECT_DIR$/apps/user/index.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/apps/views/components/album.html" afterPath="$PROJECT_DIR$/apps/views/components/album.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/apps/views/components/collection.html" afterPath="$PROJECT_DIR$/apps/views/components/collection.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/apps/views/components/header.html" afterPath="$PROJECT_DIR$/apps/views/components/header.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/apps/views/components/info-bar.html" afterPath="$PROJECT_DIR$/apps/views/components/info-bar.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/apps/views/components/item.html" afterPath="$PROJECT_DIR$/apps/views/components/item.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/apps/views/components/playlist.html" afterPath="$PROJECT_DIR$/apps/views/components/playlist.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/apps/views/components/playlistview.html" afterPath="$PROJECT_DIR$/apps/views/components/playlistview.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/apps/views/components/profile-header.html" afterPath="$PROJECT_DIR$/apps/views/components/profile-header.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/apps/views/components/tab-bar.html" afterPath="$PROJECT_DIR$/apps/views/components/tab-bar.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/apps/views/components/tab-item.html" afterPath="$PROJECT_DIR$/apps/views/components/tab-item.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/apps/year/index.html" afterPath="$PROJECT_DIR$/apps/year/index.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/package.json" afterPath="$PROJECT_DIR$/package.json" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/public_new/scripts/bungalow.js" afterPath="$PROJECT_DIR$/public_new/scripts/bungalow.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/server.js" afterPath="$PROJECT_DIR$/server.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/services/music/service/spotify/spotify.js" afterPath="$PROJECT_DIR$/services/music/service/spotify/spotify.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/services/music/service/spotify/spotify.key.json" afterPath="$PROJECT_DIR$/services/music/service/spotify/spotify.key.json" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/www.js" afterPath="$PROJECT_DIR$/www.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/apps/user/scripts/main.js" afterPath="$PROJECT_DIR$/apps/user/scripts/main.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/services/spotify/spotify.js" afterPath="$PROJECT_DIR$/services/spotify/spotify.js" />
     </list>
     <ignored path="bungalow_old.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -83,7 +24,7 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="server.js" pinned="false" current-in-tab="true">
+      <file leaf-file-name="server.js" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/server.js">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="150">
@@ -93,45 +34,37 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="index.html" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/apps/chrome/index.html">
+      <file leaf-file-name="spotify.js" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/services/spotify/spotify.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="165">
-              <caret line="11" column="18" lean-forward="false" selection-start-line="11" selection-start-column="18" selection-end-line="11" selection-end-column="18" />
+            <state relative-caret-position="163">
+              <caret line="116" column="0" lean-forward="false" selection-start-line="116" selection-start-column="0" selection-end-line="116" selection-end-column="0" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="main.js" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/apps/chrome/scripts/main.js">
+      <file leaf-file-name="views.js" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/apps/api/scripts/views.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="214">
-              <caret line="58" column="120" lean-forward="false" selection-start-line="58" selection-start-column="120" selection-end-line="58" selection-end-column="120" />
+            <state relative-caret-position="-885">
+              <caret line="591" column="0" lean-forward="true" selection-start-line="591" selection-start-column="0" selection-end-line="591" selection-end-column="0" />
               <folding>
-                <marker date="1492789206000" expanded="true" signature="1104:2017" ph="{...}" />
-                <marker date="1492789206000" expanded="true" signature="1151:2013" ph="{...}" />
-                <marker date="1492789206000" expanded="true" signature="15360:15814" ph="{...}" />
+                <element signature="n#!!doc" expanded="true" />
+                <marker date="1492786694000" expanded="true" signature="107898:107910" ph="..." />
+                <marker date="1492786694000" expanded="true" signature="115542:115569" ph="..." />
+                <marker date="1492786694000" expanded="true" signature="128872:128891" ph="..." />
+                <marker date="1492786694000" expanded="true" signature="131792:131811" ph="..." />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="appfinder.js" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/appfinder.js">
+      <file leaf-file-name="api.js" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/api.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="388">
-              <caret line="144" column="26" lean-forward="false" selection-start-line="144" selection-start-column="26" selection-end-line="144" selection-end-column="26" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="callback.html" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/apps/chrome/callback.html">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="330">
-              <caret line="25" column="50" lean-forward="false" selection-start-line="25" selection-start-column="50" selection-end-line="25" selection-end-column="50" />
+            <state relative-caret-position="2220">
+              <caret line="148" column="62" lean-forward="false" selection-start-line="148" selection-start-column="59" selection-end-line="148" selection-end-column="62" />
               <folding />
             </state>
           </provider>
@@ -157,21 +90,31 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="index.html" pinned="false" current-in-tab="false">
+      <file leaf-file-name="index.html" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/apps/user/index.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="45">
-              <caret line="3" column="24" lean-forward="false" selection-start-line="3" selection-start-column="24" selection-end-line="3" selection-end-column="24" />
+            <state relative-caret-position="120">
+              <caret line="8" column="55" lean-forward="false" selection-start-line="8" selection-start-column="55" selection-end-line="8" selection-end-column="55" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="index.html" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/apps/album/index.html">
+      <file leaf-file-name="main.js" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/apps/user/scripts/main.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="45">
-              <caret line="3" column="28" lean-forward="false" selection-start-line="3" selection-start-column="28" selection-end-line="3" selection-end-column="28" />
+            <state relative-caret-position="0">
+              <caret line="0" column="9" lean-forward="false" selection-start-line="0" selection-start-column="9" selection-end-line="0" selection-end-column="9" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="manifest.json" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/apps/user/manifest.json">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="0">
+              <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
               <folding />
             </state>
           </provider>
@@ -209,6 +152,7 @@
       <find>music.login</find>
       <find>redirect_uri</find>
       <find>http://play.bungalow.qi/</find>
+      <find>getAccess</find>
       <find>http://appfinder.bungalow.qi/</find>
     </findStrings>
     <replaceStrings>
@@ -224,7 +168,6 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/apps/hashtag/index.html" />
         <option value="$PROJECT_DIR$/themes/bungalow/css/dark.css" />
         <option value="$PROJECT_DIR$/themes/main.css" />
         <option value="$PROJECT_DIR$/apps/album/scripts/main.js" />
@@ -259,7 +202,6 @@
         <option value="$PROJECT_DIR$/services/truffler.js" />
         <option value="$PROJECT_DIR$/services/music/service/spotify/spotify.js" />
         <option value="$PROJECT_DIR$/services/mock/mock.js" />
-        <option value="$PROJECT_DIR$/services/spotify/spotify.js" />
         <option value="$PROJECT_DIR$/appfinder.js" />
         <option value="$PROJECT_DIR$/api.js" />
         <option value="$PROJECT_DIR$/apps/chrome/themes/main.css" />
@@ -270,11 +212,13 @@
         <option value="$PROJECT_DIR$/apps/chrome/index.html" />
         <option value="$PROJECT_DIR$/apps/chrome/scripts/main.js" />
         <option value="$PROJECT_DIR$/apps/chrome/callback.html" />
-        <option value="$PROJECT_DIR$/apps/user/index.html" />
         <option value="$PROJECT_DIR$/apps/album/index.html" />
         <option value="$PROJECT_DIR$/Bungalow.njsproj" />
         <option value="$PROJECT_DIR$/apps/api/scripts/require.js" />
         <option value="$PROJECT_DIR$/apps/api/scripts/cosmos.js" />
+        <option value="$PROJECT_DIR$/services/spotify/spotify.js" />
+        <option value="$PROJECT_DIR$/apps/user/scripts/main.js" />
+        <option value="$PROJECT_DIR$/apps/user/index.html" />
       </list>
     </option>
   </component>
@@ -335,6 +279,38 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
+              <option name="myItemId" value="services" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="bungalow_old" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="bungalow" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="services" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="spotify" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="bungalow_old" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="bungalow" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
               <option name="myItemId" value="apps" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
@@ -354,6 +330,28 @@
             </PATH_ELEMENT>
             <PATH_ELEMENT>
               <option name="myItemId" value="user" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="bungalow_old" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="bungalow" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="apps" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="user" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="scripts" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -664,7 +662,7 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1436616556553</updated>
-      <workItem from="1492786818970" duration="2535000" />
+      <workItem from="1492786818970" duration="3460000" />
     </task>
     <task id="LOCAL-00001" summary="Begin changing to WebAPI. No sound yet supported in WebAPI">
       <created>1436620466084</created>
@@ -782,7 +780,7 @@
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="2535000" />
+    <option name="totallyTimeSpent" value="3460000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="293" y="102" width="1920" height="981" extended-state="0" />
@@ -798,7 +796,7 @@
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.24956672" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="4" side_tool="true" content_ui="tabs" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.43201753" sideWeight="0.48130596" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.43201753" sideWeight="0.48130596" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32919955" sideWeight="0.49605057" order="9" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
@@ -877,34 +875,18 @@
           <line>489</line>
           <option name="timeStamp" value="63" />
         </line-breakpoint>
+        <line-breakpoint enabled="true" type="javascript">
+          <url>file://$PROJECT_DIR$/services/spotify/spotify.js</url>
+          <line>40</line>
+          <properties />
+          <option name="timeStamp" value="120" />
+        </line-breakpoint>
       </breakpoints>
-      <option name="time" value="114" />
+      <option name="time" value="121" />
     </breakpoint-manager>
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/services/music/service/mockify/mockify.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="159" column="48" lean-forward="false" selection-start-line="159" selection-start-column="48" selection-end-line="159" selection-end-column="48" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/public_new/themes/bungalow/css/main.scss">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="193" column="26" lean-forward="false" selection-start-line="193" selection-start-column="26" selection-end-line="193" selection-end-column="26" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/node_modules/request/request.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="197" column="4" lean-forward="false" selection-start-line="197" selection-start-column="4" selection-end-line="197" selection-end-column="4" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$USER_HOME$/Library/Caches/WebStorm10/extLibs/nodejs-v0.10.34-src/core-modules-sources/lib/events.js" />
     <entry file="file://$PROJECT_DIR$/node_modules/jsdoc/node_modules/esprima/test/3rdparty/angular-1.0.2.js" />
     <entry file="file://$PROJECT_DIR$/services/music/service/mockify/manifest.json">
@@ -1027,14 +1009,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/services/spotify/spotify.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="181">
-          <caret line="16" column="0" lean-forward="true" selection-start-line="16" selection-start-column="0" selection-end-line="16" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/utils.js">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
@@ -1083,14 +1057,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/api.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2220">
-          <caret line="148" column="62" lean-forward="false" selection-start-line="148" selection-start-column="59" selection-end-line="148" selection-end-column="62" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/www.js">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="330">
@@ -1135,14 +1101,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/apps/user/index.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="45">
-          <caret line="3" column="24" lean-forward="false" selection-start-line="3" selection-start-column="24" selection-end-line="3" selection-end-column="24" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/apps/album/index.html">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="45">
@@ -1175,10 +1133,64 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/api.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="2220">
+          <caret line="148" column="62" lean-forward="false" selection-start-line="148" selection-start-column="59" selection-end-line="148" selection-end-column="62" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/server.js">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="150">
           <caret line="10" column="35" lean-forward="false" selection-start-line="10" selection-start-column="35" selection-end-line="10" selection-end-column="35" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/services/spotify/spotify.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="163">
+          <caret line="116" column="0" lean-forward="false" selection-start-line="116" selection-start-column="0" selection-end-line="116" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/apps/api/scripts/views.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-885">
+          <caret line="591" column="0" lean-forward="true" selection-start-line="591" selection-start-column="0" selection-end-line="591" selection-end-column="0" />
+          <folding>
+            <element signature="n#!!doc" expanded="true" />
+            <marker date="1492786694000" expanded="true" signature="107898:107910" ph="..." />
+            <marker date="1492786694000" expanded="true" signature="115542:115569" ph="..." />
+            <marker date="1492786694000" expanded="true" signature="128872:128891" ph="..." />
+            <marker date="1492786694000" expanded="true" signature="131792:131811" ph="..." />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/apps/user/manifest.json">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/apps/user/scripts/main.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="9" lean-forward="false" selection-start-line="0" selection-start-column="9" selection-end-line="0" selection-end-column="9" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/apps/user/index.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="120">
+          <caret line="8" column="55" lean-forward="false" selection-start-line="8" selection-start-column="55" selection-end-line="8" selection-end-column="55" />
           <folding />
         </state>
       </provider>

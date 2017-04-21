@@ -36,12 +36,13 @@ SpotifyBrowseAPI.prototype.authenticate = function (code) {
             }
         }, function (error, response, body) {
             console.log(error);
-            if (error) {
+            var body = JSON.parse(body);
+            if (error || !body.access_token) {
                 fail(error);
                 return;
             }
-            self.setAccessToken(JSON.parse(body));
-            resolve(JSON.parse(body));
+            self.setAccessToken(body);
+            resolve(body);
         });
     });
     

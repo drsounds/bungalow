@@ -1,4 +1,6 @@
+debugger;
 require(['$api/models', '$api/views'], function (models, views) {
+
     window.addEventListener('message', function (event) {
         console.log("Event data", event.data);
         if (event.data.action === 'navigate') {
@@ -9,6 +11,7 @@ require(['$api/models', '$api/views'], function (models, views) {
             $('.sp-artist').hide();	
 			$('#playlists').html("");
 
+            debugger;
             models.User.fromId(id).load().then(function (user) {
                 console.log(user);
                 user.name = user.display_name;
@@ -18,7 +21,6 @@ require(['$api/models', '$api/views'], function (models, views) {
                 var playlistCollection = new views.AlbumCollection(user, {extend: false}, 80, 'playlist');
 
                 $('#playlists').append(playlistCollection.node);
-
                 views.hideThrobber();
 
             });
