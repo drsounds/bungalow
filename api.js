@@ -3,15 +3,15 @@ var fs = require('fs');
 var async = require('async');
 var MusicService = require('./services/spotify/spotify.js');
 var SocialService = require('./services/mock/mock.js');
-var social = new SocialService();   
-var music = new MusicService();
+var social = new SocialService();
 var less = require('less');
 var request = require('request');
 var url = require('url');
-
+var cookieSession = require('cookie-session');
 var utils = require('./utils.js');
 var express =require('express');
 var app = express.Router();
+var music = new MusicService();
 app.get('/settings.json', function (req, res) {
 
     if (fs.existsSync(path)) {
@@ -30,9 +30,15 @@ app.get('/settings.json', function (req, res) {
     }
 });
 
+app.use(cookieSession({
+    name: 'session',
+    keys: ['key1', 'key2']
+}));
+
+
 app.get('/services/:id/authenticate', function (req, res) {
     console.log("Got authenticate request");
-    music.authenticate(req.query.code).then(function (success) {
+    music.authenticate(req).then(function (success) {
         console.log("success");
         res.statusCode = 200;
         res.send('success')
@@ -189,6 +195,7 @@ app.get('/chrome/*', function (req, res) {
 
 
 app.get('/social/*', function (req, res) {
+    music.session = req.session;
     console.log("A");
     console.log(social);
     social.request("GET", req.params[0], req.query).then(function (result) {
@@ -200,13 +207,14 @@ app.get('/social/*', function (req, res) {
 });
 
 app.get('/music/*', function (req, res) {
+    music.session = req.session;
     console.log("A");
     console.log(music);
     var body = {};
     if (request.body) {
         body = (request.body);
     }
-    music.request("GET", req.params[0], req.query, body).then(function (result) {
+    music.request("GET", req.params[0], req.query, body, req).then(function (result) {
 
         res.json(result);
     }, function (reject) {
@@ -215,13 +223,14 @@ app.get('/music/*', function (req, res) {
 });
 
 app.put('/music/*', function (req, res) {
+    music.session = req.session;
     console.log("A");
     console.log(music);
     var body = {};
     if (req.body) {
         body = (req.body);
     }
-    music.request("PUT", req.params[0], req.query, body).then(function (result) {
+    music.request("PUT", req.params[0], req.query, body, req).then(function (result) {
 
         res.json(result);
     }, function (reject) {
@@ -230,9 +239,11 @@ app.put('/music/*', function (req, res) {
 });
 
 app.post('/music/*', function (req, res) {
+    music.session = req.session;
     console.log("A");
     console.log(music);
-    music.request("POST", req.params[0], req.query).then(function (result) {
+
+    music.request("POST", req.params[0], req.query, req.body, req).then(function (result) {
 
         res.json(result);
     }, function (reject) {

@@ -5,7 +5,7 @@ var request = require('request');
 var assign = require('object-assign');
 var Promise = require("es6-promise").Promise;
 var SPOTIFY_DIR = '/../../service/spotify/';
-var SpotifyBrowseAPI = function () {
+var SpotifyBrowseAPI = function (session) {
     var self = this;
     this.cache = {};
     this.isPlaying = false;
@@ -14,21 +14,23 @@ var SpotifyBrowseAPI = function () {
     this.callbacks = {};
     this.apikeys = JSON.parse(fs.readFileSync(os.homedir() + '/.bungalow/spotify.key.json'));
     this.accessToken = null;
+    this.session = session;
 
     this.me = null;
 
 };
 
-SpotifyBrowseAPI.prototype.authenticate = function (code) {
+SpotifyBrowseAPI.prototype.authenticate = function (req) {
     var self = this;
     console.log(this.apikeys);
+    this.req = req;
     return new Promise(function (resolve, fail) {
         request({
             url: 'https://accounts.spotify.com/api/token',
             method: 'POST',
             form: {
                 grant_type: 'authorization_code',
-                code: code,
+                code: req.query.code,
                 redirect_uri: 'http://localhost:9261/callback.html'
             },
             headers: {
@@ -50,7 +52,7 @@ SpotifyBrowseAPI.prototype.authenticate = function (code) {
 
 SpotifyBrowseAPI.prototype.getAccessToken = function () {
     try {
-        return JSON.parse(fs.readFileSync(os.homedir() + '/.bungalow/spotify_access_token.json'));
+        return this.req.session.spotifyAccessToken; //JSON.parse(fs.readFileSync(os.homedir() + '/.bungalow/spotify_access_token.json'));
     } catch (e) {
         return null;
     }
@@ -60,8 +62,8 @@ SpotifyBrowseAPI.prototype.setAccessToken = function (accessToken) {
 
     accessToken.time = new Date().getTime();
     console.log(accessToken);
-    fs.writeFileSync(os.homedir() + '/.bungalow/spotify_access_token.json', JSON.stringify(accessToken));
-
+    //fs.writeFileSync(os.homedir() + '/.bungalow/spotify_access_token.json', JSON.stringify(accessToken));
+    this.req.session.spotifyAccessToken = accessToken;
 }
 
 SpotifyBrowseAPI.prototype.isAccessTokenValid = function () {
@@ -103,8 +105,9 @@ SpotifyBrowseAPI.prototype.getMe = function () {
     return JSON.parse(localStorage.getItem("me"));
 }
 
-SpotifyBrowseAPI.prototype.request = function (method, url, payload, postData) {
+SpotifyBrowseAPI.prototype.request = function (method, url, payload, postData, req) {
     var self = this;
+    this.req = req;
     var promise = new Promise(function (resolve, fail) {
 
         console.log("Got request");
@@ -164,6 +167,24 @@ SpotifyBrowseAPI.prototype.request = function (method, url, payload, postData) {
             }
             if (parts[0] == 'artists') {
                 if (parts.length > 2) {
+                    if (parts[2] == 'top-tracks') {
+                        request({
+                                url: 'https://api.spotify.com/v1/artists/' + parts[1] + '/top-tracks?limit=' + payload.limit + '&offset=' + payload.offset + '&country=se'
+                            },
+                            function (error, response, body) {
+                                var data = JSON.parse(body);
+                                try {
+                                    resolve({
+                                        type: 'toplist',
+                                        name: 'Top Tracks',
+                                        'objects': data.tracks
+                                    });
+                                } catch (e) {
+                                    fail();
+                                }
+                            }
+                        );
+                    }
                     if (parts[2] == 'albums') {
                         request({
                                 url: 'https://api.spotify.com/v1/artists/' + parts[1] + '/albums?limit=' + payload.limit + '&offset=' + payload.offset

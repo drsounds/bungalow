@@ -281,7 +281,7 @@ require(['$api/models', '$api/moment'], function (models, moment) {
         'album': 'Album',
         'artist': 'Artist',
         'duration': 'fa-clock',
-        'popularity': 'fa-thumbs-o-up',
+        // 'popularity': 'fa-thumbs-o-up',
         'user': 'User',
         'image': '',
         'creted': 'fa-clock'
@@ -406,6 +406,7 @@ require(['$api/models', '$api/moment'], function (models, moment) {
         var fields = ['title', 'artist', 'duration', 'album'];
         this.reorder = false;
         this.resource = resource;
+
         this.collection = resource.tracks;
         if (options && options.headers) {
             headers = options.headers;
@@ -435,12 +436,17 @@ require(['$api/models', '$api/moment'], function (models, moment) {
         this.thead = thead;
         var c = "";
         for (var i = 0; i < fields.length; i++) {
-            var field = fields[i];
-            var title = fieldTypes[field];
-            if (title.indexOf('fa-') == 0) {
-                title = '<i class="fa ' + title + '"></i>';
+            try {
+                var field = fields[i];
+                var title = fieldTypes[field];
+
+                if (title.indexOf('fa-') == 0) {
+                    title = '<i class="fa ' + title + '"></i>';
+                }
+                c += "<th>" + title + '</th>';
+            } catch (e) {
+
             }
-            c += "<th>" + title + '</th>';
         }
         thead.innerHTML = '<tr>' + c + '<th style="width:10%; text-align: left"></th></tr>';
         this.node.setAttribute('data-uri', resource.uri);
@@ -761,7 +767,63 @@ require(['$api/models', '$api/moment'], function (models, moment) {
         Collection.prototype.next.call(this, arguments);
     }
 
+    /**
+     * Represents an album view
+     * @param {Album} album Album instance
+     * @param {Object} options options
+     * @class
+     * @constructor
+     */
+    var TopList = function (toplist, options) {
+        var self = this;
+        this.node = document.createElement('tbody');
+        self.node.setAttribute('width', '100%');
+        self.node.classList.add('sp-album');
+        self.node.classList.add('sp-context');
+        self.node.style.padding = '2pt';
+        debugger;
+        var tr = document.createElement('tr');
+            var tbody = document.createElement('tbody');
+            var tr1 = document.createElement('tr');
+            self.loading = false;
+            // // console.log("ALBUM", album);
+            self.node.setAttribute('data-uri', toplist.uri);
+            var td1 = document.createElement('td');
+            var image = '';
 
+            td1.innerHTML = '<a data-uri="' +toplist.uri + '"><div class="sp-cover-image" data-uri="' + (toplist.uri) + '" src="" width="192px"></a>';
+           td1.setAttribute('valign', 'top');
+            td1.setAttribute('width', '192px');
+            td1.style.paddingRight = '13pt';
+            var tr2 = document.createElement('tr');
+            var td2 = document.createElement('td');
+            td2.setAttribute('valign', 'top');
+            td2.innerHTML = '<h2 style="margin-bottom: 10px"><a data-uri="' + toplist.uri + '">Top Tracks </a></h2>';
+
+
+            // // console.log(td2.innerHTML);
+            //alert(album.tracks);
+
+
+            var context = new TrackContext(toplist.tracks, {
+                headers: false,
+                'fields': ['title']
+            });
+            var tr2 = document.createElement('tr');
+            var tdtracks = document.createElement('td');
+            tdtracks.setAttribute('colspan', 2);
+            tr.appendChild(td1);
+            tr.appendChild(td2);
+            self.node.appendChild(tr);
+            // // console.log(table);
+            self.node.style.marginBottom = '26pt';
+            self.node.style.marginTop = '26pt';
+            self.node.style.paddingLeft = '26pt';
+            td2.appendChild(context.node);
+
+
+    }
+    exports.TopList = TopList;
     /**
      * Represents an album view
      * @param {Album} album Album instance
@@ -1077,7 +1139,7 @@ window.addEventListener('message', function (event) {
 
     var SimpleHeader = function (resource, options) {
         this.node = document.createElement('table');
-        this.node.cellPadding = '10px';
+        this.node.style.borderSpacing = '10px';
         this.node.style.width = '100%';
         var tr1 = document.createElement('tr');
         var tr2 = document.createElement('tr');
@@ -1208,7 +1270,7 @@ window.addEventListener('message', function (event) {
         tr.appendChild(td1);
         tr.appendChild(td2);
 
-        tr.appendChild(td3);
+        // tr.appendChild(td3);
 
         if ('tabs' in this) {
             this.tabbar = new TabBar(this.tabs);
@@ -1285,12 +1347,16 @@ window.addEventListener('message', function (event) {
 
     var TabBarTab = function (data) {
         Object.assign(this, data);
-        this.node = document.createElement('span');
+        this.node = document.createElement('a');
         this.node.setAttribute('class', 'sp-tabbar-tab');
         this.node.setAttribute('data-id', data.id);
+        this.node.setAttribute('href', '#' + data.id);
+
         $(this.node).html(this.title);
         this.node.addEventListener('click', function (event) {
             window.parent.postMessage({'action': 'hashchange', hash: event.target.dataset['id']}, '*');
+
+            event.preventDefault();
         });
     }
 
@@ -1304,14 +1370,15 @@ window.addEventListener('message', function (event) {
     window.addEventListener('message', function (event) {
         var data = event.data;
         if (data.action == 'hashchange') {
-            set(data.hash);
+            setView(data.hash);
         }
     });
 
-    function set (viewId) {
+    function setView(viewId) {
         $('.sp-tabbar-tab').removeClass('sp-tabbar-tab-active');
         $('.sp-tabbar-tab[data-id="' + viewId + '"]').addClass('sp-tabbar-tab-active');
         $('.sp-section').hide();
         $('.sp-section#' + viewId).show();
+
     }
 });

@@ -131,7 +131,6 @@ body {
 	border-radius: 5pt
 }
 .sp-container {
-	margin-top: 23px;
 	width: 100%;
 }
 hr {
@@ -546,19 +545,25 @@ meter {
 
 
 .sp-tabbar {
-	background-color: #636363;
-	border-bottom: 1px solid #292929;
-	border-top: 1px solid #414141;
-	height: 23px;
+	/* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#727272+0,262626+100 */
+	background: #727272; /* Old browsers */
+	background: -moz-linear-gradient(top, #727272 0%, #262626 100%); /* FF3.6-15 */
+	background: -webkit-linear-gradient(top, #727272 0%,#262626 100%); /* Chrome10-25,Safari5.1-6 */
+	background: linear-gradient(to bottom, #727272 0%,#262626 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#727272', endColorstr='#262626',GradientType=0 ); /* IE6-9 */
+
 	top: 0px;	
 	width: 100%;
+	padding: 8px;
+	padding-bottom: 6px;
+	text-align: center;
 }
 .sp-tabbar-tab {
-	border-left: 1px solid #747474;
-	border-right: 1px solid #4a4a4a;
+	height: 100%;
+	margin-right: 12pt;
 	width: 100px;
-	height: 23px;
-	float: left;
+	height: 14pt;
+	border-radius: 5pt;
 	list-style: none;
 	text-align: center;
 	padding: 3pt;
@@ -569,11 +574,10 @@ meter {
 	border-left: 1px solid #222;
 	border-right: 1px solid #222;
 	border-top: 1px solid #222;
-	height: 24px;
-	float: left;
 	list-style: none;
 	color: white;
 	background-color: #373737;
+	box-shadow: inset 0px 0px 2pt black;
 }
 
 .sp-dragover {
@@ -591,13 +595,14 @@ input {
 }
 
 .sp-header {
-	height: 153pt;
+	height: 188pt;
     width: 100%;
-	padding: 6pt;
     overflow: hidden;
 
 }
-
+.sp-header table td {
+	padding: 10pt;
+}
 .sp-header .sp-header-content {
     position: absolute;
     left: 0pt;

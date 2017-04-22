@@ -101,7 +101,7 @@ require(['$api/cosmos'], function (Cosmos) {
             console.log(self.complete);
             
 
-            var url = self.endpoint + '&offset=' + self.offset + '&limit=' + self.limit + '&type=' + self.type;
+            var url = self.endpoint + '&offset=' + self.offset + '&limit=' + self.limit + '&type=' + self.type + '&country=se';
 
             self.offset += self.limit;
 
@@ -183,6 +183,32 @@ require(['$api/cosmos'], function (Cosmos) {
 
     exports.Album = Album;
 
+    var TopList = function (data) {
+        MdL.call(this, data);
+        this.type = 'toplist';
+        this.id = data.id;
+        this.uri = 'bungalow:' + this.for + ':' + this.id + ':toplist'
+        this.tracks = new Collection('/music/' + this.for + 's/' + this.id + '/top-tracks?', 'bungalow:' + this.for + ':' + this.id + ':toplist', 'track');
+    }
+
+
+    TopList.forArtist = function (id) {
+        debugger;
+        return new TopList({for: 'artist', id: id, uri: 'bungalow:artist:' + id + ':toplist'});
+    }
+
+    TopList.prototype = Object.create(Loadable.prototype);
+    TopList.prototype.constructor = Loadable;
+    TopList.prototype.load = function () {
+
+        this.name = 'Top List';
+
+        return new Promise(function (resolve, fail) {
+            resolve(new TopList(this));
+        });
+    }
+    exports.TopList = TopList;
+
     /**
      * Represents an artist
      */
@@ -192,6 +218,7 @@ require(['$api/cosmos'], function (Cosmos) {
 
         this.albums = new Collection('/music/artists/' + this.id + '/albums?', 'bungalow:artist:' + this.id + ':albums', 'album');
         this.tracks = new Collection('/music/artists/' + this.id + '/tracks?', 'bungalow:artist:' + this.id + ':tracks', 'track');
+        this.toplist = new TopList({for: 'artist', id: this.id});
     }
 
     Artist.fromURI = function (uri) {

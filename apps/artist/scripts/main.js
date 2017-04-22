@@ -19,6 +19,10 @@ require(['$api/models', '$api/views'], function (models, views) {
 				if (artist.images[0].url) {
 					$('#artist_image').addClass('shadow');
 				}
+				$('#toplist').html("");
+                var toptracksCollection = new views.TopList(artist.toplist, {}, 192);
+
+				$('#toplist').append(toptracksCollection.node);
 				$('#albums').html("");
 				$('#singles').html("");
 				$('#artistLink').html(artist.name);
@@ -29,7 +33,19 @@ require(['$api/models', '$api/views'], function (models, views) {
 				views.hideThrobber();
 				console.log(artist);
 				var header = new views.Header(artist, {
-						type: 'artist'
+					type: 'artist',
+					tabs: {
+                        views: [
+                            {
+                                id: "overview",
+                                title: "Overview"
+                            },
+							{
+								id: "biography",
+								title: "Biography"
+							}
+                            ]
+                    }
 				}, 192);
 				$('#header').html("");
 				$('#header').append(header.node);

@@ -2,7 +2,19 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="2100ae74-f7e4-4243-93ff-794981e1fec3" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/apps/search/manifest.json" afterPath="$PROJECT_DIR$/apps/search/manifest.json" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/api.js" afterPath="$PROJECT_DIR$/api.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/apps/api/scripts/models.js" afterPath="$PROJECT_DIR$/apps/api/scripts/models.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/apps/api/scripts/views.js" afterPath="$PROJECT_DIR$/apps/api/scripts/views.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/apps/artist/index.html" afterPath="$PROJECT_DIR$/apps/artist/index.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/apps/artist/scripts/main.js" afterPath="$PROJECT_DIR$/apps/artist/scripts/main.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/apps/chrome/index.html" afterPath="$PROJECT_DIR$/apps/chrome/index.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/apps/chrome/themes/spotify09/css/dark.css" afterPath="$PROJECT_DIR$/apps/chrome/themes/spotify09/css/dark.css" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/apps/chrome/themes/spotify09/css/dark.css.map" afterPath="$PROJECT_DIR$/apps/chrome/themes/spotify09/css/dark.css.map" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/apps/chrome/themes/spotify09/css/dark.scss" afterPath="$PROJECT_DIR$/apps/chrome/themes/spotify09/css/dark.scss" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/package.json" afterPath="$PROJECT_DIR$/package.json" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/server.js" afterPath="$PROJECT_DIR$/server.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/services/spotify/spotify.js" afterPath="$PROJECT_DIR$/services/spotify/spotify.js" />
     </list>
     <ignored path="bungalow_old.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -22,52 +34,64 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
+      <file leaf-file-name="spotify.js" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/services/spotify/spotify.js">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="246">
+              <caret line="176" column="35" lean-forward="false" selection-start-line="176" selection-start-column="35" selection-end-line="176" selection-end-column="35" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
       <file leaf-file-name="main.js" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/apps/chrome/scripts/main.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="270">
-              <caret line="560" column="41" lean-forward="false" selection-start-line="560" selection-start-column="41" selection-end-line="560" selection-end-column="41" />
+            <state relative-caret-position="294">
+              <caret line="328" column="40" lean-forward="false" selection-start-line="328" selection-start-column="40" selection-end-line="328" selection-end-column="40" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="index.html" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/apps/playlist/index.html">
+      <file leaf-file-name="api.js" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/api.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="0">
-              <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+            <state relative-caret-position="15">
+              <caret line="40" column="26" lean-forward="false" selection-start-line="40" selection-start-column="26" selection-end-line="40" selection-end-column="26" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="www.js" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/www.js">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="330">
+              <caret line="22" column="2" lean-forward="false" selection-start-line="22" selection-start-column="2" selection-end-line="22" selection-end-column="2" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
       <file leaf-file-name="main.js" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/apps/playlist/scripts/main.js">
+        <entry file="file://$PROJECT_DIR$/apps/artist/scripts/main.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="0">
-              <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+            <state relative-caret-position="345">
+              <caret line="24" column="63" lean-forward="false" selection-start-line="24" selection-start-column="63" selection-end-line="24" selection-end-column="63" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="manifest.json" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/apps/playlist/manifest.json">
+      <file leaf-file-name="index.html" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/apps/artist/index.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="90">
-              <caret line="6" column="68" lean-forward="false" selection-start-line="6" selection-start-column="68" selection-end-line="6" selection-end-column="68" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="index.html" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/apps/user/index.html">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="180">
-              <caret line="12" column="23" lean-forward="false" selection-start-line="12" selection-start-column="23" selection-end-line="12" selection-end-column="23" />
-              <folding />
+            <state relative-caret-position="345">
+              <caret line="23" column="69" lean-forward="false" selection-start-line="23" selection-start-column="69" selection-end-line="23" selection-end-column="69" />
+              <folding>
+                <element signature="n#style#0;n#table#0;n#div#1;n#div#0;n#div#2;n#body#0;n#html#0;n#!!top" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -75,14 +99,15 @@
       <file leaf-file-name="views.js" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/apps/api/scripts/views.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="252">
-              <caret line="760" column="33" lean-forward="false" selection-start-line="760" selection-start-column="33" selection-end-line="760" selection-end-column="33" />
+            <state relative-caret-position="309">
+              <caret line="783" column="17" lean-forward="false" selection-start-line="783" selection-start-column="17" selection-end-line="783" selection-end-column="17" />
               <folding>
                 <element signature="n#!!doc" expanded="true" />
-                <marker date="1492870216000" expanded="true" signature="107851:107863" ph="..." />
-                <marker date="1492870216000" expanded="true" signature="115495:115522" ph="..." />
-                <marker date="1492870216000" expanded="true" signature="128920:128939" ph="..." />
-                <marker date="1492870216000" expanded="true" signature="131840:131859" ph="..." />
+                <marker date="1492888593000" expanded="true" signature="107851:107863" ph="..." />
+                <marker date="1492888593000" expanded="true" signature="115583:115610" ph="..." />
+                <marker date="1492888593000" expanded="true" signature="128421:128440" ph="..." />
+                <marker date="1492888593000" expanded="true" signature="131197:131216" ph="..." />
+                <marker date="1492888593000" expanded="true" signature="134117:134136" ph="..." />
               </folding>
             </state>
           </provider>
@@ -91,38 +116,28 @@
       <file leaf-file-name="api.js" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/apps/api/components/scripts/api.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="174">
-              <caret line="82" column="22" lean-forward="false" selection-start-line="82" selection-start-column="22" selection-end-line="82" selection-end-column="22" />
+            <state relative-caret-position="237">
+              <caret line="158" column="73" lean-forward="false" selection-start-line="158" selection-start-column="68" selection-end-line="158" selection-end-column="73" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="manifest.json" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/apps/search/manifest.json">
+      <file leaf-file-name="models.js" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/apps/api/scripts/models.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="75">
-              <caret line="5" column="32" lean-forward="false" selection-start-line="5" selection-start-column="32" selection-end-line="5" selection-end-column="32" />
+            <state relative-caret-position="324">
+              <caret line="189" column="19" lean-forward="false" selection-start-line="189" selection-start-column="19" selection-end-line="189" selection-end-column="19" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="main.js" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/apps/user/scripts/main.js">
+      <file leaf-file-name="dark.scss" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/apps/chrome/themes/spotify09/css/dark.scss">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="210">
-              <caret line="14" column="73" lean-forward="false" selection-start-line="14" selection-start-column="73" selection-end-line="14" selection-end-column="73" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="manifest.json" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/apps/user/manifest.json">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="75">
-              <caret line="5" column="39" lean-forward="false" selection-start-line="5" selection-start-column="39" selection-end-line="5" selection-end-column="39" />
+            <state relative-caret-position="331">
+              <caret line="48" column="13" lean-forward="false" selection-start-line="48" selection-start-column="13" selection-end-line="48" selection-end-column="13" />
               <folding />
             </state>
           </provider>
@@ -132,36 +147,36 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>.sp-track</find>
-      <find>heade</find>
-      <find>heade-</find>
-      <find>content</find>
-      <find>im</find>
-      <find>CoverImage</find>
-      <find>Header =</find>
+      <find>sp-tabbar</find>
+      <find>span</find>
+      <find>hashchange</find>
       <find>artist</find>
-      <find>sp-header</find>
-      <find>trackstarted</find>
-      <find>window.addeventlistener</find>
-      <find>Header</find>
-      <find>sp-cov</find>
-      <find>coverimage</find>
-      <find>img</find>
-      <find>shadow</find>
-      <find>new CoverImage</find>
-      <find>.collection div</find>
-      <find>player</find>
-      <find>navigate</find>
-      <find>navigate =</find>
-      <find>getMatc</find>
-      <find>appId</find>
-      <find>debugge</find>
+      <find>Artist</find>
+      <find>Artist =</find>
+      <find>Album</find>
+      <find>Album</find>
+      <find>.toplist</find>
+      <find>data-uri</find>
+      <find>TopList</find>
+      <find>title.indeXOf</find>
       <find>debugger</find>
-      <find>getMatchingApp</find>
-      <find>pag</find>
-      <find>Context</find>
-      <find>tracks</find>
-      <find>limit</find>
+      <find>topl</find>
+      <find>AlbumCollection</find>
+      <find>TrackContext</find>
+      <find>debugge</find>
+      <find>TrackCon</find>
+      <find>TopList =</find>
+      <find>' in alb</find>
+      <find>CoverImage</find>
+      <find>album</find>
+      <find>toplist</find>
+      <find>toplist =</find>
+      <find>TopList = f</find>
+      <find>toöp</find>
+      <find>Collection</find>
+      <find>top-tracks</find>
+      <find>Track</find>
+      <find>TopList</find>
     </findStrings>
     <replaceStrings>
       <replace>http://localhost:9261/apps/</replace>
@@ -200,8 +215,6 @@
         <option value="$PROJECT_DIR$/Bungalow.njsproj" />
         <option value="$PROJECT_DIR$/apps/api/scripts/require.js" />
         <option value="$PROJECT_DIR$/apps/api/scripts/cosmos.js" />
-        <option value="$PROJECT_DIR$/server.js" />
-        <option value="$PROJECT_DIR$/api.js" />
         <option value="$PROJECT_DIR$/apps/api/components/context.html" />
         <option value="$PROJECT_DIR$/apps/api/components/resource.html" />
         <option value="$PROJECT_DIR$/apps/components/js/ocean.js" />
@@ -212,21 +225,23 @@
         <option value="$PROJECT_DIR$/apps/lang/manifest.json" />
         <option value="$PROJECT_DIR$/apps/lang/sv.json" />
         <option value="$PROJECT_DIR$/apps/components/header.html" />
-        <option value="$PROJECT_DIR$/services/spotify/spotify.js" />
         <option value="$PROJECT_DIR$/apps/chrome/themes/spotify09/css/dark.css" />
-        <option value="$PROJECT_DIR$/apps/api/scripts/models.js" />
         <option value="$PROJECT_DIR$/apps/user/manifest.json" />
-        <option value="$PROJECT_DIR$/apps/artist/index.html" />
-        <option value="$PROJECT_DIR$/apps/chrome/index.html" />
         <option value="$PROJECT_DIR$/apps/user/scripts/main.js" />
         <option value="$PROJECT_DIR$/apps/user/index.html" />
-        <option value="$PROJECT_DIR$/apps/api/scripts/views.js" />
-        <option value="$PROJECT_DIR$/apps/chrome/themes/spotify09/css/dark.scss" />
-        <option value="$PROJECT_DIR$/apps/artist/scripts/main.js" />
         <option value="$PROJECT_DIR$/apps/playlist/manifest.json" />
-        <option value="$PROJECT_DIR$/apps/chrome/scripts/main.js" />
-        <option value="$PROJECT_DIR$/apps/api/components/scripts/api.js" />
         <option value="$PROJECT_DIR$/apps/search/manifest.json" />
+        <option value="$PROJECT_DIR$/apps/chrome/index.html" />
+        <option value="$PROJECT_DIR$/server.js" />
+        <option value="$PROJECT_DIR$/api.js" />
+        <option value="$PROJECT_DIR$/apps/chrome/themes/spotify09/css/dark.scss" />
+        <option value="$PROJECT_DIR$/apps/chrome/scripts/main.js" />
+        <option value="$PROJECT_DIR$/apps/artist/scripts/main.js" />
+        <option value="$PROJECT_DIR$/apps/api/components/scripts/api.js" />
+        <option value="$PROJECT_DIR$/services/spotify/spotify.js" />
+        <option value="$PROJECT_DIR$/apps/api/scripts/views.js" />
+        <option value="$PROJECT_DIR$/apps/api/scripts/models.js" />
+        <option value="$PROJECT_DIR$/apps/artist/index.html" />
       </list>
     </option>
   </component>
@@ -294,10 +309,6 @@
               <option name="myItemId" value="services" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="truffler" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
           </PATH>
           <PATH>
             <PATH_ELEMENT>
@@ -314,20 +325,6 @@
             </PATH_ELEMENT>
             <PATH_ELEMENT>
               <option name="myItemId" value="spotify" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="bungalow_old" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="bungalow" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="services" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -677,6 +674,46 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="bungalow_old" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="bungalow" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="apps" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="api" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="bungalow_old" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="bungalow" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="apps" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="api" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="scripts" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
         </subPane>
       </pane>
       <pane id="Scope" />
@@ -816,7 +853,7 @@
       <updated>1436616556553</updated>
       <workItem from="1492786818970" duration="7979000" />
       <workItem from="1492862274327" duration="3814000" />
-      <workItem from="1492866153329" duration="5637000" />
+      <workItem from="1492866153329" duration="13040000" />
     </task>
     <task id="LOCAL-00001" summary="Begin changing to WebAPI. No sound yet supported in WebAPI">
       <created>1436620466084</created>
@@ -934,7 +971,7 @@
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="17430000" />
+    <option name="totallyTimeSpent" value="24833000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="393" y="103" width="1913" height="1257" extended-state="0" />
@@ -1039,19 +1076,24 @@
           <line>317</line>
           <option name="timeStamp" value="156" />
         </line-breakpoint>
+        <line-breakpoint enabled="true" type="javascript">
+          <url>file://$PROJECT_DIR$/services/spotify/spotify.js</url>
+          <line>175</line>
+          <properties />
+          <option name="timeStamp" value="174" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="javascript">
+          <url>file://$PROJECT_DIR$/services/spotify/spotify.js</url>
+          <line>176</line>
+          <properties />
+          <option name="timeStamp" value="175" />
+        </line-breakpoint>
       </breakpoints>
-      <option name="time" value="165" />
+      <option name="time" value="176" />
     </breakpoint-manager>
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/apps/api/scripts/require.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="225">
-          <caret line="15" column="100" lean-forward="false" selection-start-line="15" selection-start-column="100" selection-end-line="15" selection-end-column="100" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/apps/artist/manifest.json">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
@@ -1073,24 +1115,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/www.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="330">
-          <caret line="22" column="2" lean-forward="false" selection-start-line="22" selection-start-column="2" selection-end-line="22" selection-end-column="2" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/apps/api/scripts/echonest.js">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/server.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="120">
-          <caret line="8" column="7" lean-forward="false" selection-start-line="8" selection-start-column="7" selection-end-line="8" selection-end-column="7" />
         </state>
       </provider>
     </entry>
@@ -1099,44 +1127,6 @@
         <state relative-caret-position="181">
           <caret line="50" column="71" lean-forward="false" selection-start-line="50" selection-start-column="67" selection-end-line="50" selection-end-column="71" />
           <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/api.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="253">
-          <caret line="223" column="3" lean-forward="false" selection-start-line="223" selection-start-column="3" selection-end-line="223" selection-end-column="3" />
-          <folding>
-            <marker date="1492863080000" expanded="true" signature="499:920" ph="{...}" />
-            <marker date="1492863080000" expanded="true" signature="531:637" ph="{...}" />
-            <marker date="1492863080000" expanded="true" signature="643:918" ph="{...}" />
-            <marker date="1492863080000" expanded="true" signature="668:831" ph="{&quot;theme&quot;: 'spotify09'...}" />
-            <marker date="1492863080000" expanded="true" signature="982:1321" ph="{...}" />
-            <marker date="1492863080000" expanded="true" signature="1092:1208" ph="{...}" />
-            <marker date="1492863080000" expanded="true" signature="1227:1316" ph="{...}" />
-            <marker date="1492863080000" expanded="true" signature="1371:3733" ph="{...}" />
-            <marker date="1492863080000" expanded="true" signature="2589:2761" ph="{...}" />
-            <marker date="1492863080000" expanded="true" signature="2821:2993" ph="{...}" />
-            <marker date="1492863080000" expanded="true" signature="3735:5618" ph="/*...*/" />
-            <marker date="1492863080000" expanded="true" signature="5620:6320" ph="/*...*/" />
-            <marker date="1492863080000" expanded="true" signature="6364:6579" ph="{...}" />
-            <marker date="1492863080000" expanded="true" signature="6488:6522" ph="{...}" />
-            <marker date="1492863080000" expanded="true" signature="6542:6575" ph="{...}" />
-            <marker date="1492863080000" expanded="true" signature="6623:6922" ph="{...}" />
-            <marker date="1492863080000" expanded="true" signature="6712:6750" ph="{...}" />
-            <marker date="1492863080000" expanded="true" signature="6831:6865" ph="{...}" />
-            <marker date="1492863080000" expanded="true" signature="6885:6918" ph="{...}" />
-            <marker date="1492863080000" expanded="true" signature="6966:7257" ph="{...}" />
-            <marker date="1492863080000" expanded="true" signature="7051:7085" ph="{...}" />
-            <marker date="1492863080000" expanded="true" signature="7166:7200" ph="{...}" />
-            <marker date="1492863080000" expanded="true" signature="7220:7253" ph="{...}" />
-            <marker date="1492863080000" expanded="true" signature="7302:7516" ph="{...}" />
-            <marker date="1492863080000" expanded="true" signature="7425:7459" ph="{...}" />
-            <marker date="1492863080000" expanded="true" signature="7479:7512" ph="{...}" />
-            <marker date="1492863080000" expanded="true" signature="7564:7726" ph="{...}" />
-            <marker date="1492863080000" expanded="true" signature="7646:7722" ph="{...}" />
-            <marker date="1492863080000" expanded="true" signature="7748:7767" ph="{&quot;server&quot;: app...}" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -1257,6 +1247,7 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
         </state>
       </provider>
     </entry>
@@ -1308,16 +1299,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/apps/api/scripts/models.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="114">
-          <caret line="320" column="30" lean-forward="true" selection-start-line="320" selection-start-column="30" selection-end-line="320" selection-end-column="30" />
-          <folding>
-            <element signature="n#!!doc" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/apps/api/scripts/cosmos.js">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="360">
@@ -1351,48 +1332,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/apps/chrome/index.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="352">
-          <caret line="93" column="44" lean-forward="false" selection-start-line="93" selection-start-column="44" selection-end-line="93" selection-end-column="44" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/services/spotify/spotify.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="327">
-          <caret line="154" column="0" lean-forward="false" selection-start-line="154" selection-start-column="0" selection-end-line="154" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/apps/artist/index.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="315">
-          <caret line="21" column="20" lean-forward="false" selection-start-line="21" selection-start-column="20" selection-end-line="21" selection-end-column="20" />
-          <folding>
-            <element signature="n#style#0;n#div#1;n#body#0;n#html#0;n#!!top" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/apps/artist/scripts/main.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="480">
-          <caret line="32" column="17" lean-forward="false" selection-start-line="32" selection-start-column="17" selection-end-line="32" selection-end-column="17" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/apps/chrome/themes/spotify09/css/dark.scss">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="588">
-          <caret line="638" column="61" lean-forward="false" selection-start-line="638" selection-start-column="61" selection-end-line="638" selection-end-column="61" />
           <folding />
         </state>
       </provider>
@@ -1445,41 +1384,128 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/apps/search/manifest.json">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="75">
+          <caret line="5" column="32" lean-forward="false" selection-start-line="5" selection-start-column="32" selection-end-line="5" selection-end-column="32" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/apps/chrome/index.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="436">
+          <caret line="69" column="28" lean-forward="true" selection-start-line="69" selection-start-column="28" selection-end-line="69" selection-end-column="28" />
+          <folding>
+            <element signature="n#style#0;n#aside#0;n#main#0;n#body#0;n#html#0;n#!!top" expanded="false" />
+            <element signature="n#style#0;n#div#0;n#aside#0;n#main#0;n#body#0;n#html#0;n#!!top" expanded="false" />
+            <element signature="n#style#0;n#aside#1;n#main#0;n#body#0;n#html#0;n#!!top" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/server.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="180">
+          <caret line="12" column="3" lean-forward="false" selection-start-line="12" selection-start-column="3" selection-end-line="12" selection-end-column="3" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/node_modules/request/request.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="255">
+          <caret line="1170" column="8" lean-forward="false" selection-start-line="1170" selection-start-column="8" selection-end-line="1170" selection-end-column="8" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/apps/chrome/scripts/main.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="270">
-          <caret line="560" column="41" lean-forward="false" selection-start-line="560" selection-start-column="41" selection-end-line="560" selection-end-column="41" />
+        <state relative-caret-position="294">
+          <caret line="328" column="40" lean-forward="false" selection-start-line="328" selection-start-column="40" selection-end-line="328" selection-end-column="40" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/apps/chrome/themes/spotify09/css/dark.scss">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="331">
+          <caret line="48" column="13" lean-forward="false" selection-start-line="48" selection-start-column="13" selection-end-line="48" selection-end-column="13" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/services/spotify/spotify.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="246">
+          <caret line="176" column="35" lean-forward="false" selection-start-line="176" selection-start-column="35" selection-end-line="176" selection-end-column="35" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/www.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="330">
+          <caret line="22" column="2" lean-forward="false" selection-start-line="22" selection-start-column="2" selection-end-line="22" selection-end-column="2" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/api.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="15">
+          <caret line="40" column="26" lean-forward="false" selection-start-line="40" selection-start-column="26" selection-end-line="40" selection-end-column="26" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/apps/api/components/scripts/api.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="237">
+          <caret line="158" column="73" lean-forward="false" selection-start-line="158" selection-start-column="68" selection-end-line="158" selection-end-column="73" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/apps/api/scripts/views.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="252">
-          <caret line="760" column="33" lean-forward="false" selection-start-line="760" selection-start-column="33" selection-end-line="760" selection-end-column="33" />
+        <state relative-caret-position="309">
+          <caret line="783" column="17" lean-forward="false" selection-start-line="783" selection-start-column="17" selection-end-line="783" selection-end-column="17" />
           <folding>
             <element signature="n#!!doc" expanded="true" />
-            <marker date="1492870216000" expanded="true" signature="107851:107863" ph="..." />
-            <marker date="1492870216000" expanded="true" signature="115495:115522" ph="..." />
-            <marker date="1492870216000" expanded="true" signature="128920:128939" ph="..." />
-            <marker date="1492870216000" expanded="true" signature="131840:131859" ph="..." />
+            <marker date="1492888593000" expanded="true" signature="107851:107863" ph="..." />
+            <marker date="1492888593000" expanded="true" signature="115583:115610" ph="..." />
+            <marker date="1492888593000" expanded="true" signature="128421:128440" ph="..." />
+            <marker date="1492888593000" expanded="true" signature="131197:131216" ph="..." />
+            <marker date="1492888593000" expanded="true" signature="134117:134136" ph="..." />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/apps/api/components/scripts/api.js">
+    <entry file="file://$PROJECT_DIR$/apps/artist/scripts/main.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="174">
-          <caret line="82" column="22" lean-forward="false" selection-start-line="82" selection-start-column="22" selection-end-line="82" selection-end-column="22" />
+        <state relative-caret-position="345">
+          <caret line="24" column="63" lean-forward="false" selection-start-line="24" selection-start-column="63" selection-end-line="24" selection-end-column="63" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/apps/search/manifest.json">
+    <entry file="file://$PROJECT_DIR$/apps/api/scripts/models.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="75">
-          <caret line="5" column="32" lean-forward="false" selection-start-line="5" selection-start-column="32" selection-end-line="5" selection-end-column="32" />
+        <state relative-caret-position="324">
+          <caret line="189" column="19" lean-forward="false" selection-start-line="189" selection-start-column="19" selection-end-line="189" selection-end-column="19" />
           <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/apps/artist/index.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="345">
+          <caret line="23" column="69" lean-forward="false" selection-start-line="23" selection-start-column="69" selection-end-line="23" selection-end-column="69" />
+          <folding>
+            <element signature="n#style#0;n#table#0;n#div#1;n#div#0;n#div#2;n#body#0;n#html#0;n#!!top" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>

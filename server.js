@@ -1,9 +1,16 @@
 var express = require('express');
 var evh = require('express-vhost');
 var execPath = process.env.PWD;
+var cookieSession = require('cookie-session')
 
 
 var app = express();
+app.set('trust proxy', 1) // trust first proxy
+
+app.use(cookieSession({
+    name: 'session',
+    keys: ['spotifyAccessToken']
+}))
 var bodyParser = require('body-parser');
 app.use(bodyParser.urlencoded({extended :false}));
 app.use(bodyParser.json());
