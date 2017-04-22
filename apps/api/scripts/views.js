@@ -781,7 +781,6 @@ require(['$api/models', '$api/moment'], function (models, moment) {
         self.node.classList.add('sp-album');
         self.node.classList.add('sp-context');
         self.node.style.padding = '2pt';
-        debugger;
         var tr = document.createElement('tr');
             var tbody = document.createElement('tbody');
             var tr1 = document.createElement('tr');
