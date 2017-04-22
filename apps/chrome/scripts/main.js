@@ -229,11 +229,12 @@ var Shell = function () {
 		event.dataTransfer.setData('text/uri-list', uris);
 	});
 	var self = this;
-	music.addEventListener('trackstarted', function () {
-		$('#btnPlay').removeClass('fa-play');
-		$('#btnPlay').addClass('fa-pause');
-		
-	});
+	music.addEventListener('trackstarted', function (event) {
+        $('#btnPlay').removeClass('fa-play');
+        $('#btnPlay').addClass('fa-pause');
+        $('#nowplaying_image').attr('src', event.data.track.images[0].src);
+
+    });
 	music.addEventListener('trackresumed', function () {
 
 		$('#btnPlay').removeClass('fa-play');
@@ -306,6 +307,7 @@ var Shell = function () {
                 offset: {
                     position: context.currentIndex,
                 },
+				track: context.tracks[context.currentIndex],
                 uri: context.tracks[context.currentIndex].uri
             };
 			if (context.uri.indexOf('spotify:artist') == 0 || context.uri.indexOf('spotify:album') == 0) {
@@ -316,6 +318,10 @@ var Shell = function () {
 			music.play(data, function (err, result) {
                 data.action = 'trackstarted';
                 event.source.postMessage(data, '*');
+                var evt = new CustomEvent('trackstarted');
+                evt.data = data;
+                music.dispatchEvent(evt);
+
             });
 		}
 		if (event.data.action === 'hashchange') {
@@ -549,11 +555,12 @@ Shell.prototype.getMatchingApp = function (url) {
 			continue;
 		}
 		var regExp = new RegExp(app.uri);
-		if (url.match(regExp)) {
+		if (regExp.test(url)) {
 			console.log("APP", appId, app);
 			console.log(regExp, url);
 			appId = app.BundleIdentifier;
-			break;
+            break;
+
 		}
 	}
 	return appId;
@@ -581,7 +588,6 @@ Shell.prototype.navigate = function (url, nohistory) {
 	if (!nohistory) {
 		history.pushState(url, "Bungalow", '/' +url.split(/\:/g).slice(1).join('/'));
 	}
-	
 	var appId = this.getMatchingApp(url);
 	if (url.indexOf('bungalow:search:') === 0) {
 
@@ -612,7 +618,6 @@ Shell.prototype.navigate = function (url, nohistory) {
 	}
 
 	var parts = url.substr('bungalow:'.length).split(/\:/g);
-	var appId = parts[0];
 	var args = parts.slice(1);
 	console.log(this.apps);
 	
@@ -732,7 +737,16 @@ var shell = new Shell();
 		}
 }( jQuery ));
 window.alert = shell.alert;
+window.addEventListener('message', function (event) {
 
+	if (event.data.action == 'play') {
+
+        $('#btnPlay').removeClass('fa-play');
+        $('#btnPlay').addClass('fa-pause');
+        $('#nowplaying_image').attr('src', event.data.track.images[0].src);
+
+    }
+});
 window.addEventListener('popstate', function (event) {
 	var url = event.state;
 	shell.navigate(url, true);

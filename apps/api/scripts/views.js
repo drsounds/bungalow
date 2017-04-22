@@ -794,7 +794,9 @@ require(['$api/models', '$api/moment'], function (models, moment) {
             if ('images' in album && album.images.length > 0) {
                 image = album.images[0].url;
             }
-            td1.innerHTML = '<a data-uri="' + album.uri + '"><img class="shadow" data-uri="' + (album.uri) + '" src="' + image + '" width="192px"></a>';
+            var image = new CoverImage(album, 192);
+            td1.appendChild(image.node);
+            //td1.innerHTML = '<a data-uri="' + album.uri + '"><div class="shadow" data-uri="' + (album.uri) + '" src="' + image + '" width="192px"></a>';
 			if ('description' in album) {
 				td1.innerHTML += '<p>' + album.description.bungalowize() + '</p>';
 			}
@@ -1148,17 +1150,16 @@ window.addEventListener('message', function (event) {
         var image = document.createElement('div');
         var size = size ? size : 128;
         if ('images' in resource && resource.images.length > 0)
-            image.style.backgroundImage = 'url("' + resource.images[0].url + '")';
-        image.style.width = size + 'px';
-        image.style.height = size + 'px';
-        this.node.appendChild(image);
+            this.node.style.backgroundImage = 'url("' + resource.images[0].url + '")';
+
+
 
     }
 
     var Header = function (resource, options, coverSize) {
         Object.assign(this, options);
         var type = options.type;
-        coverSize = coverSize ? coverSize : 128;
+        coverSize = coverSize ? coverSize : 192;
         this.node = document.createElement('div');
         this.node.classList.add('sp-header');
         /*var bgdiv = document.createElement('div');
@@ -1170,14 +1171,10 @@ window.addEventListener('message', function (event) {
         bgdiv.classList.add('sp-header-background-image');
         this.node.appendChild(bgdiv);
          */
-        var content = document.createElement('div');
-        this.node.appendChild(content);
-        content.classList.add('content');
 
         var table = document.createElement('table');
-        content.appendChild(table);
-        table.classList.add('sp-header-content');
-
+        this.node.appendChild(table);
+        table.style.width = '100%';
         var tbody = document.createElement('tbody');
 
         table.appendChild(tbody);
@@ -1189,7 +1186,7 @@ window.addEventListener('message', function (event) {
         var td1 = document.createElement('td');
 
         var coverImage = new CoverImage(resource, coverSize);
-        td1.width = "10px";
+        td1.width = "192px";
         td1.appendChild(coverImage.node);
 
         var td2 = document.createElement('td');
@@ -1242,8 +1239,6 @@ window.addEventListener('message', function (event) {
             });
         }
 
-        content.style.top =  '0px';
-        content.style.left =  '30px';
     }
 
     var TabBar = function (data) {

@@ -4,5 +4,5 @@
 		"en": "Playlist"
 	},
 	"BundleIdentifier": "playlist",
-	"uri": "bungalow:user:(.*):playlist:(.*)"
+	"uri": "^(bungalow:user:([a-zA-Z0-9]+):playlist:([a-zA-Z0-9]+))$"
 }

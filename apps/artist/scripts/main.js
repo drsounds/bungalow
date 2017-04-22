@@ -30,8 +30,7 @@ require(['$api/models', '$api/views'], function (models, views) {
 				console.log(artist);
 				var header = new views.Header(artist, {
 						type: 'artist'
-					}
-				, "Artist");
+				}, 192);
 				$('#header').html("");
 				$('#header').append(header.node);
 

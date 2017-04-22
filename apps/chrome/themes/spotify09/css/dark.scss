@@ -427,7 +427,6 @@ html, body {
 .collection div {
 	float: left;
 	list-style:none;
-	margin: 5pt;
 	min-width: 120pt;
 }
 .toplist-header {
@@ -592,8 +591,9 @@ input {
 }
 
 .sp-header {
-	height: 130pt;
+	height: 153pt;
     width: 100%;
+	padding: 6pt;
     overflow: hidden;
 
 }
@@ -608,7 +608,6 @@ input {
     line-height: 0pt;
 }
 .sp-header .content {
-    padding: 10pt;
     position: relative;
     -webkit-box-sizing: border-box;
     -moz-box-sizing: border-box;
@@ -628,10 +627,16 @@ input {
 .sp-card-image, .sp-cover-image  {
 	height: 128px;
 	width: 128px;
-	background-size: cover;
-	box-shadow: 0px 2px 2pt rgba(0, 0, 0, .25);
-}
-.sp-cover-imge > div {
-	width: 100%;
-	height: 100%;
+	padding: 0px;
+	background-size: cover !important;
+	/* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#6b6b6b+0,353535+100 */
+	background: #6b6b6b; /* Old browsers */
+	background: -moz-linear-gradient(top, #6b6b6b 0%, #353535 100%); /* FF3.6-15 */
+	background: -webkit-linear-gradient(top, #6b6b6b 0%,#353535 100%); /* Chrome10-25,Safari5.1-6 */
+	background: linear-gradient(to bottom, #6b6b6b 0%,#353535 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#6b6b6b', endColorstr='#353535',GradientType=0 ); /* IE6-9 */
+
+	box-shadow: 0px 2pt 5pt rgba(0, 0, 0, .25), inset 0px 1pt 2pt rgba(255, 255 , 255, .2), inset 0px -1pt 2pt rgba(0, 0, 0, .2);
+	border-radius: 5pt;
+	margin: 0px;
 }

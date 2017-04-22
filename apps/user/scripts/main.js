@@ -12,7 +12,7 @@ require(['$api/models', '$api/views'], function (models, views) {
             models.User.fromId(id).load().then(function (user) {
                 console.log(user);
                 user.name = user.display_name;
-                var header = new views.Header(user, { type: "user" }, 128);
+                var header = new views.Header(user, { type: "user" }, 192);
                 $('#header').html("");
                 $('#header').append(header.node);
                 var playlistCollection = new views.AlbumCollection(user, {extend: false}, 80, 'playlist');

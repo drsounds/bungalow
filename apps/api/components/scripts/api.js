@@ -80,7 +80,7 @@
         this.endpoint = endpoint;
         this.uri = uri;
         this.objects = [];
-        this.limit = 20;
+        this.limit = 120;
         this.offset = 0;
         this.type = type;
         this.complete = false;
