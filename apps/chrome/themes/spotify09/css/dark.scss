@@ -45,7 +45,10 @@ html {
 .menu tr.active {
 
 }
-
+.sp-track td {
+	white-space: nowrap;
+	word-wrap: break-word;
+}
 .sp-track-dragover td {
 	border-top: 2px solid white;
 }
@@ -112,7 +115,7 @@ h2 {
 body { 
 	background-color: #363636;
 	-webkit-user-select: none;
-	font-family: "MS Sans Serif";
+	font-family: "Helvetica";
 	font-size: 12px;
 	color: #aaa;
 	font-weight: thin;
@@ -352,6 +355,7 @@ main {
 	color: white;
 	height: 22px;
 	box-sizing: border-box;
+	background-image: url('../img/separator.png');
 }
 footer, header {
 
@@ -431,8 +435,15 @@ html, body {
 	padding: 15pt;
 	font-size:11pt;
 }
-h2.divider {
-	font-size: 10pt;
+.divider {
+	padding: 4pt;
+	font-weight: bold;
+	text-shadow: 0px 1px 0px black;
+	margin-top: 0pt;
+	font-size: 9pt;
+
+
+	background-image: url('../img/separator.png');
 	display: block;
 }
 h1, h2, h3, h4 {
@@ -581,7 +592,7 @@ input {
 }
 
 .sp-header {
-    min-height: 220px;
+	height: 130pt;
     width: 100%;
     overflow: hidden;
 

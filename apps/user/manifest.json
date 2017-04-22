@@ -3,5 +3,5 @@
   "BundleType": "Application",
   "UserInstallable": false,
   "BundleIdentifier": "user",
-  "uri": "bungalow:user:(.*)"
+  "uri": "^(bungalow:user:([a-zA-Z0-9]+))$"
 }

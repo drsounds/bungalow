@@ -164,7 +164,6 @@ var Shell = function () {
 	this.uri = "";
 	this.loadedResources = {};
 	$(window).load(function () {
-		shell.login();
 	});
 	$(document).on('dragover', '.menu li', function (event) {
 		$.event.props.push('dataTransfer');
@@ -304,7 +303,6 @@ var Shell = function () {
 			console.log("Context", context);
 			//alert(context.uri);
 			var data = {
-                uris: context.tracks.map(function (t) { return t.uri}),
                 offset: {
                     position: context.currentIndex,
                 },
