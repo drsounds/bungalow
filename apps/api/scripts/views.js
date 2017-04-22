@@ -902,7 +902,18 @@ require(['$api/models', '$api/moment'], function (models, moment) {
 
 
     }
+window.addEventListener('message', function (event) {
+    if (event.data.action === 'trackstarted') {
+        $('.sp-track').removeClass('sp-track-active');
+        if (event.context_uri) {
+            $('.sp-table[data-uri="' + event.data.context_uri + '"] .sp-track[data-uri="' + event.data.uri + '"]').addClass('sp-track-active');
+        } else {
+            $('.sp-track[data-uri="' + event.data.uri + '"]').addClass('sp-track-active');
+        }
 
+
+    }
+});
     exports.Playlist = Playlist;
 
     exports.Album = Album;

@@ -1,0 +1,76 @@
+<link rel="import" href="tab.html">
+<script>
+
+
+window.addEventListener('message', (event) => {
+  if (event.data.action == 'hashchanged') {
+    var tabId = event.data.hash;
+    var tabs = document.querySelectorAll('x-tabcontent');
+    // // // // console.log(tabs);
+    for (var i = 0; i < tabs.length; i++) {
+      tabs[i].style.display = 'none';
+    }
+    var tabs = document.querySelectorAll('x-tab');
+    for (var i = 0; i < tabs.length; i++) {
+      tabs[i].deactivate();
+    }
+    var tabContent = document.querySelector('x-tabcontent[data-id="' + tabId + '"]');
+    var tab = document.querySelector('x-tab[data-id="' + tabId +'"]');
+    if (tab) {
+      tab.classList.add('x-tab-active');
+      tabContent.style.display = 'block';
+    }
+  }
+});
+class TabBar extends HTMLElement {
+
+
+
+
+  createdCallback () {
+   
+    this.tabs = document.createElement('div');
+    
+     window.addEventListener('scroll', (event) => {
+      let doc = document.documentElement;
+      let top = (window.pageYOffset || doc.scrollTop)  - (doc.clientTop || 0);
+    
+      this.style.webkitTransform = ('translate(0px, ' + top + 'px)');
+    });
+    var views = document.querySelectorAll('x-tabcontent');
+    // // // // console.log(views);
+    for (var i = 0; i < views.length; i++) {
+      var  view = views[i];
+    
+      var tab = document.createElement('x-tab');
+      tab.setTitle(_(view.getAttribute('data-title')));
+      tab.setId(view.getAttribute('data-id'));
+      if (i == 0) {
+        tab.classList.add('x-tab-active');
+      } else {
+        view.style.display = 'none';
+      }
+      tab.addEventListener('selected', (event) => {
+        window.parent.postMessage({'action': 'hashchange', hash: event.target.dataset['id']}, '*');
+      })
+      this.tabs.appendChild(tab);
+    }
+    let addBtn = document.createElement('x-tab-button');
+    addBtn.innerHTML = '+';
+    let table = document.querySelector('x-table');
+    let editor = document.querySelector('x-editor');
+    addBtn.addEventListener('click', (event) => {
+        if (table != null) { 
+          let uri = table.getAttribute('uri');  
+          document.querySelector('x-editor').setAttribute('uri', uri);
+          document.querySelector('x-editor').show(event.target);
+        }
+    });
+    if (table != null && editor != null)
+    this.tabs.appendChild(addBtn);
+    this.insertBefore(this.tabs,this.childNodes[0]);
+  }
+}
+document.currentScript.ownerDocument.registerElement('x-tabbar', TabBar);
+
+</script>

@@ -151,6 +151,7 @@ hr {
 .sp-table tr:nth-child(odd) {
 	background-color: #313131;
 }
+
 .sp-table td, .sp-table th {
 	box-sizing: border-box;
 	padding: 1.5px 10pt;
@@ -199,6 +200,7 @@ hr {
 *::-webkit-scrollbar-button {
 
 }
+
 *::-webkit-scrollbar-thumb:horizontal {
 	/* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#e5e5e5+0,afafaf+100 */
 background: #e5e5e5; /* Old browsers */
@@ -228,7 +230,7 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#e5e5e5', end
 }
 *::-webkit-scrollbar-track:horizontal {
 /* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#111111+0,5b5b5b+100 */
-background: #111111; /* Old browsers */
+background: #111111;
 background: -moz-linear-gradient(top,  #111111 0%, #5b5b5b 100%); /* FF3.6+ */
 background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#111111), color-stop(100%,#5b5b5b)); /* Chrome,Safari4+ */
 background: -webkit-linear-gradient(top,  #111111 0%,#5b5b5b 100%); /* Chrome10+,Safari5.1+ */
@@ -458,6 +460,12 @@ a[data-uri] {
 }
 .menu li.active a {
 	color: #000033;
+}
+
+.sp-track-active {
+	background-color: black !important;
+	color: #33FF33 !important;
+
 }
 
 .sp-track-selected td {

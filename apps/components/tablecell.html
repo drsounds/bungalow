@@ -1,0 +1,22 @@
+<link rel="import" href="resource.html">
+<script>
+    class TableCell extends HTMLTableCellElement {
+
+        attachedCallback() {
+
+        }
+        attributeChangedCallback(attrName, oldVal, newVal) {
+            if (attrName === 'value') {
+                this.setState(newVal);
+            }
+        }
+        setState(data) {
+            var elm = document.createElement('x-resource');
+            this.appendChild(elm);
+            elm.setState(data);
+        }
+
+    }
+    document.currentScript.ownerDocument.registerElement('x-tablecell', TableCell);
+
+</script>

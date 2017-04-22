@@ -1,0 +1,50 @@
+<link rel="import" href="throbber.html">
+<script src="sp://api/js/ocean.js"></script>
+<link rel="import" href="resource.html">
+<script>
+
+/**
+ * Generic header element
+ */
+class HeaderElement extends ResourceElement {
+
+  createdCallback() {
+    super.createdCallback();
+    this.uri = this.dataset.uri;
+
+  }
+
+  setError (err) {
+    this.innerHTML = `
+      <p>There was an error loading the element</p>
+    `;
+  }
+
+  setState (object) {
+    this.object = object;
+
+    this.innerHTML = `
+      <table class="x-header" width="100%" style="min-height: 128pt">
+        <tr>
+          <td rowspan="2" width="192pt">
+            <img src="${object.image}" data-width="192px">
+          </td>
+          <td>
+            <small style="opacity: 0.5; text-transform: uppercase">${object.type}</small>
+            <h1 style="margin-top: 0px">
+
+              <x-a uri="bungalow:${object.type}:${object.id}">${object.name}</x-a>
+            </h1>
+            <p>${object.description}</p>
+          </td>
+        </tr>
+        <tr>
+          <td>
+          </td>
+        </tr>
+      </table>`;
+  }
+}
+document.currentScript.ownerDocument.registerElement('x-header', HeaderElement);
+
+</script>

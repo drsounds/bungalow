@@ -1,0 +1,34 @@
+<script>
+    class AnchorElement extends HTMLElement {
+      
+      createdCallback () {
+        // // // // console.log(this.dataset);
+      
+        this.addEventListener('click', (event) => {
+          event.preventDefault();
+      
+          window.parent.postMessage(
+            {
+              action: 'navigate',
+              uri: this.getAttribute('data-href')
+            },
+            '*'
+          );
+        });;
+      }
+      
+      setState (resource) {
+        this.dataset.uri = resource.uri
+        // // // // console.log(a);
+        // // // // console.log(this.dataset.uri);
+       
+        this.innerHTML = resource.name;
+       
+         // console.log(this.getAttribute('uri'));
+        
+      
+      }
+    }
+    document.currentScript.ownerDocument.registerElement('x-a', AnchorElement);
+
+</script>

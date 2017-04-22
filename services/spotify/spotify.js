@@ -94,7 +94,7 @@ SpotifyBrowseAPI.prototype.refreshAccessToken = function () {
             var accessToken = JSON.parse(body);
             accessToken.refresh_token = refresh_token 
             self.setAccessToken(accessToken);
-            console.log("Refresh", body);
+             console.log("Refresh", body);
             resolve(JSON.parse(body));
         });
     });
@@ -103,7 +103,7 @@ SpotifyBrowseAPI.prototype.getMe = function () {
     return JSON.parse(localStorage.getItem("me"));
 }
 
-SpotifyBrowseAPI.prototype.request = function (method, url, payload, data) {
+SpotifyBrowseAPI.prototype.request = function (method, url, payload, postData) {
     var self = this;
     var promise = new Promise(function (resolve, fail) {
 
@@ -142,21 +142,18 @@ SpotifyBrowseAPI.prototype.request = function (method, url, payload, data) {
             }
             if (parts[0] == 'me') {
                 if (parts[1] == 'player') {
-                    request({
-                            url: 'https://api.spotify.com/v1/me/player/' + parts.slice(2).join('/') + '',
-                            headers: headers,
-                            method: 'PUT',
-                            'content-type': 'application/json',
-                            body: JSON.stringify({
-                                uris: data.uris,
-                                context_uri: data.context_uri,
-                                offset: data.offset
-                            })
-                        },
+                    var uri = 'https://api.spotify.com/v1/me/player/' + parts.slice(2).join('/') + '';
+                    var d = {
+                        url: uri,
+                        headers: headers,
+                        method: 'PUT',
+                        contentType: 'application/json',
+                        body: JSON.stringify(postData)
+                    };
+                    request(d,
                         function (error, response, body) {
-                            var data = JSON.parse(body);
                             try {
-                                resolve(data);
+                                resolve(JSON.parse(postData));
                             } catch (e) {
                                 fail();
                             }

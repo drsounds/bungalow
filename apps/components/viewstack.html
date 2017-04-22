@@ -1,0 +1,57 @@
+<link rel="import" href="app.html">
+<script>
+    class ViewStack extends HTMLElement {
+        createdCallback() {
+    
+            
+        }
+        navigate(uri, isHistory) {
+            
+            if (!isHistory) {
+                var pathname = uri.substr(uri.split(':')[0].length).replace(/\:/g, '/');
+                history.pushState(uri, '', pathname);
+            }
+            var apps = this.querySelectorAll('x-app');
+            for(let i = 0; i < apps.length; i++) {
+                apps[i].style.display = 'none';
+            }
+            window.fetch('/api/app').then((resp) => resp.json()).then((data) => {
+                
+                for (var i = 0; i < data.objects.length; i++) {
+                    let appManifest = data.objects[i];
+                    if (new RegExp(appManifest.AcceptsUri).test(uri)) {
+                        var app = this.querySelector('x-app[data-bundle="' + appManifest.BundleIdentifier + '"]');
+                        if (app) {
+                            app.navigate(uri);
+                            app.style.display = 'block';
+                        } else {
+                            app = document.createElement('x-app');
+                            app.setAttribute('data-bundle', appManifest.BundleIdentifier);
+                            app.addEventListener('load', (event) => {
+                                event.target.navigate(uri);
+                            });
+                            app.style.display = 'block';
+                            this.appendChild(app);
+                        }
+                        window.currentAppId = appManifest.BundleIdentifier;
+                    } else {
+                        var app = this.querySelector('x-app[data-bundle="' + appManifest.BundleIdentifier + '"]');
+                        if (app) {
+                            app.style.display = 'none';
+                        }
+                    }
+                }
+            });
+        
+        
+            var evt = new CustomEvent('navigated');
+            evt.data = {
+                uri:uri,
+                history: isHistory
+            };
+            this.dispatchEvent(evt);
+        
+        }
+    }
+    document.currentScript.ownerDocument.registerElement('x-viewstack', ViewStack);
+</script>

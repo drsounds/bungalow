@@ -1,0 +1,84 @@
+<link rel="import" href="contextmenu.html">
+<script>
+    class TableRowElement extends HTMLTableRowElement {
+        showEditor() {
+            
+            let editor = document.querySelector('x-editor');
+            if (!editor) {
+                editor = document.createElement('x-editor');
+                document.body.appendChild(editor);
+            }
+            let table = this.parentNode.parentNode.parentNode.parentNode;
+            editor.setAttribute('fields', table.getAttribute('fields'));
+            editor.setAttribute('method', 'PUT');
+            editor.show(this);
+            editor.setAttribute('uri', this.getAttribute('uri'));
+        }
+        createdCallback() {
+            this.setAttribute('allowdrop', 1);
+            this.setAttribute('draggable', true);
+            this.addEventListener('mousedown', (event) => {
+                this.parentNode.parentNode.parentNode.parentNode.selectItem(this);
+            });
+            this.addEventListener('dblclick', (e) => {
+                if (e.target.hasAttribute('uri'))
+                window.parent.postMessage(
+                    {
+                        action: 'navigate',
+                        uri: e.target.getAttribute('uri'),
+                        context: this.getAttribute('uri')
+                    },
+                    '*'
+                );
+            });
+            this.addEventListener('contextmenu', (event) => {
+                event.preventDefault();
+                let contextMenu = document.createElement('x-contextmenu');
+                contextMenu.setItems([
+                    {
+                        label: 'Play/Open',
+                        onclick: (event) => {
+                            if (event.target.hasAttribute('uri'))
+                                window.parent.postMessage(
+                                    {
+                                        action: 'navigate',
+                                        uri: e.target.getAttribute('uri'),
+                                        context: this.getAttribute('uri')
+                                    },
+                                    '*'
+                                );
+                        }
+                    },
+                    {
+                        label: 'Edit',
+                        onclick: (event) => {
+                            this.showEditor();
+                        }
+                    },
+                    {
+                        label: 'Remove',
+                        onclick: (event) => {
+                            if (event.target.hasAttribute('uri'))
+                                window.parent.postMessage(
+                                    {
+                                        action: 'navigate',
+                                        uri: e.target.getAttribute('uri'),
+                                        context: this.getAttribute('uri')
+                                    },
+                                    '*'
+                                );
+                        }
+                    }
+                ]);
+                document.body.appendChild(contextMenu);
+                contextMenu.show(this);
+            });
+            this.addEventListener('dragstart', (event) => {
+                var uri = this.getAttribute('uri');
+                event.dataTransfer.setData('text/uri-list', this.getAttribute('uri'));
+                event.dataTransfer.setData('text/plain', this.getAttribute('uri'));
+            });
+        }
+    }
+    document.currentScript.ownerDocument.registerElement('x-tr', TableRowElement);
+</script>

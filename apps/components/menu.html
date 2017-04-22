@@ -1,0 +1,29 @@
+<script>
+class Menu extends HTMLElement {
+
+  createdCallback () {
+    window.addEventListener('message', (event) => {
+      if (event.data.action === 'selectItem') {
+        this.attributeChangedCallback('data-selected-uri', null, event.data.uri);
+      }
+    })
+  }
+
+  attributeChangedCallback (attrName, oldValue, newValue) {
+    if (attrName === 'data-selected-uri') {
+      var items = this.querySelectorAll('x-menuitem');
+
+      for (var i = 0; i < items.length; i++) {
+        var item = items[i];
+        if (newValue.indexOf(item.getAttribute('data-href').split('@')[0]) != -1) {
+          item.classList.add('menuitem-selected');
+        } else {
+          item.classList.remove('menuitem-selected');
+        }
+      }
+    }
+  }
+}
+document.currentScript.ownerDocument.registerElement('x-menu', Menu);
+
+</script>

@@ -1,0 +1,155 @@
+<script src="js/ocean.js"></script>
+<script>
+var activeEditor = null;
+document.body.addEventListener('mousedown', (event) => {
+    let menus = document.querySelectorAll('x-editor');
+    for(let i = 0; i < menus.length; i++) {
+        let menu = menus[i];
+        if (menu != activeEditor) {
+            menu.hide();
+            
+        }
+    }
+});
+    class Editor extends HTMLFormElement {
+        attachedCallback() {
+            this.addEventListener('blur', (event) => {
+            
+            });
+            this.addEventListener('mouseenter', (event) => {
+                activeEditor = event.target;
+            })
+            this.addEventListener('mouseleave', (event) => {
+                activeEditor = null;
+            })
+        }
+        fillData(data) {
+            let inputs = document.querySelectorAll('input');
+            for (let i = 0; i < inputs.length; i++) {
+                let input = inputs[i];
+                input.value = data[input.name];
+                
+            }
+        }
+        show(elm) {
+            let bounds = elm.getBoundingClientRect();
+           
+            this.style.display = 'block';
+        }
+        hide() {
+            this.style.display = 'none';
+        }
+        getData() {
+            let data = {};
+            let inputs = this.querySelectorAll('input');
+            for (let i = 0; i < inputs.length; i++) {
+                let input = inputs[i];
+                data[input.name] = input.value;
+                if (input.getAttribute('type') == 'Boolean') {
+                    data[input.name] = input.checked;
+                }
+                if (input.getAttribute('type') == 'Number') {
+                    data[input.name] = parseInt(input.value);
+                }
+            }
+            return data;
+        }
+        clearData() {
+            let inputs = this.querySelectorAll('input');
+            for (let i = 0; i < inputs.length; i++) {
+                let input = inputs[i];
+                input.value = '';
+            }
+        }
+        createdCallback() {
+            this.inputs = {};
+            this.addEventListener('submit', (event) => {
+                event.preventDefault();
+                let data = this.getData();
+                Ocean.request(
+                    this.getAttribute('method'),
+                    this.getAttribute('data-href'),
+                    data
+                ).then((result) => {
+                    let evt = new CustomEvent('saved');
+                    evt.data = result;
+                    this.dispatchEvent(evt);
+                });
+            });
+            this.attributeChangedCallback('fields', null, this.getAttribute('fields'));
+            this.attributeChangedCallback('uri', null, this.getAttribute('uri'));
+            this.attributeChangedCallback('method', null, this.getAttribute('method'));
+            
+        }
+        attributeChangedCallback(attrName, oldVal, newVal) {
+          
+            if (attrName === 'uri') {
+                let uri = new Uri(newVal);
+                this.clearData();
+                if (uri.id) {
+                    this.setAttribute('method', 'PUT');
+                
+                    Ocean.get(
+                        newVal
+                    ).then((result) => {
+                       this.fillData(result); 
+                 
+                    });
+                } else {
+                    this.setAttribute('method', 'POST');
+                }
+            }
+            if (attrName === 'fields') {
+                this.innerHTML = '';
+                let fields = newVal.split(',').map((f) => new Field(f));
+                for (let i = 0; i < fields.length; i++) {
+               
+                   let field = fields[i];
+                   if (field.id.indexOf('time') !== -1 || field.id.indexOf('At') !== -1)
+                    continue;
+                    let label = document.createElement('label');
+                    label.innerHTML = field.id;
+                    let input = document.createElement('input');
+                    input.name = field.id;
+                    input.placeholder = field.id;
+                    input.type = field.type
+                    if (field.type === 'Boolean') {
+                        input.type = 'checkbox';
+                    }
+                    
+                    input.classList.add('form-control');
+                    this.appendChild(label);
+                    this.appendChild(input);
+                }
+                let btn = document.createElement('button');
+                btn.classList.add('btn');
+                btn.classList.add('btn-primary');
+                btn.setAttribute('type', 'submit');
+                btn.innerHTML = 'submit';
+                btn.addEventListener('click', (event) => {
+                    event.preventDefault();
+                    let data = this.getData();
+                    let method = this.getAttribute('method');
+                    Ocean.request(
+                        method,
+                        this.getAttribute('uri'),
+                        data
+                    ).then((result) => {
+                        let evt = new CustomEvent('saved');
+                        evt.data = result;
+                        this.dispatchEvent(evt);
+                        let table = document.querySelector('x-table');
+                        if (table) table.refresh();
+                        let editor = document.querySelector('x-editor');
+                        if (editor != null) editor.hide();
+                    });
+                })
+                this.appendChild(btn);
+            } 
+        }
+        setState(state) {
+            this.fillData(state);
+        }
+    }
+    document.currentScript.ownerDocument.registerElement('x-editor', Editor);
+</script>

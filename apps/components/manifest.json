@@ -1,0 +1,8 @@
+{
+  "BundleIdentifier": "cosmos",
+  "AcceptsUri": "bungalow:internal:cosmos",
+  "BundleName": {
+    "en": "Cosmos"
+  },
+  "VendorIdentifier": "se.drsounds"
+}

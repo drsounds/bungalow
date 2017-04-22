@@ -1,0 +1,20 @@
+<script>
+    class Element extends HTMLElement {
+        createdCallback() {
+
+        }
+        attachedCallback() {
+            if (this.hasAttribute('uri')) {
+
+                this.setAttribute('allowdrop', 1);
+                this.setAttribute('draggable', true);
+            }
+            this.addEventListener('dragstart', (event) => {
+                event.dataTransfer.setData('uri', this.getAttribute('uri'));
+            });
+        }
+
+
+    }
+    document.currentScript.ownerDocument.registerElement('x-element', Element);
+</script>

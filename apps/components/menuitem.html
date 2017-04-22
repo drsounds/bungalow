@@ -1,0 +1,48 @@
+<link rel="import" href="link.html">
+<script>
+class MenuItem extends HTMLElement {
+  createdCallback () {
+    this.innerHTML = '<i style="width:10px" class="fa fa-' + this.getAttribute('data-icon') + ' menuicon"></i> ' + _(this.getAttribute('data-title')) + '';
+ 
+    this.parts = this.getAttribute('data-href').split(/\:/g);
+    this.appId = this.parts[1];
+  
+    this.args = this.parts.slice(2);
+    //a.href = `/${this.appId}/${this.args.join('/')}`;
+ 
+    this.addEventListener('click', (event) => {
+      event.preventDefault();
+      var uri = this.getAttribute('data-href');
+      window.parent.postMessage({
+        action: 'navigate',
+        uri: uri
+      }, '*');
+      return false;
+    });
+  }
+  
+  attributeChangedCallback (attrName, oldValue, newValue) {
+    if (attrName === 'data-href') {
+      var uri = Uri.parse(newValue);
+      a.href = `/${uri.domain}/${uri.path.join('/')}`;
+    }
+  
+      if (attrName === 'icon') {
+  
+          this.a.innerHTML = '<i style="width:10px" class="fa fa-' + this.getAttribute('icon') + ' menuicon"></i> ' + this.getAttribute('title');
+      }
+  
+  }
+  activate (args) {
+    var items = this.parentNode.querySelectorAll('menuitem');
+    for (var i = 0; i < items.length; i++) {
+      items[i].classList.remove('active');
+  
+    }
+    this.classList.add('active');
+  }
+}
+
+document.currentScript.ownerDocument.registerElement('x-menuitem', MenuItem);
+
+</script>

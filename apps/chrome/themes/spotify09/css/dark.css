@@ -225,7 +225,6 @@ hr {
 *::-webkit-scrollbar-track:horizontal {
   /* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#111111+0,5b5b5b+100 */
   background: #111111;
-  /* Old browsers */
   background: -moz-linear-gradient(top, #111111 0%, #5b5b5b 100%);
   /* FF3.6+ */
   background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #111111), color-stop(100%, #5b5b5b));
@@ -458,6 +457,10 @@ a[data-uri] {
 
 .menu li.active a {
   color: #000033; }
+
+.sp-track-active {
+  background-color: black !important;
+  color: #33FF33 !important; }
 
 .sp-track-selected td {
   background-color: #b6e1fd;

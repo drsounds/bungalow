@@ -20,6 +20,7 @@
   "node-remote": "*",
   "dependencies": {
     "bluebird": "*",
+    "body-parser": "^1.17.1",
     "es6-promise": "*",
     "express": "3.*",
     "express-async": "*",

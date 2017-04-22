@@ -1,0 +1,221 @@
+<link rel="import" href="tablecell.html">
+<link rel="import" href="throbber.html">
+<link rel="import" href="resource.html">
+<link rel="import" href="row.html">
+<script>
+
+class TableElement extends ResourceElement {
+    createdCallback () {
+        super.createdCallback();
+        this.innerHTML = '<x-throbber></x-throbber>';
+        window.addEventListener('resize', () => {
+          this.resize();
+        });
+    }
+    fetchNew () {
+      if (this.loadingMore) return;
+      this.loadingMore = true;
+      this.page++;
+      Ocean.request('GET', this.getAttribute('uri').appendQueryString('offset=' + this.page)).then((result) => {
+        this.addTracks(result.objects);
+        if (result.objects.length == 0) {
+          this.loadedAll = true;
+        }
+        this.loadingMore = false;
+
+        if (this.loadedAll) {
+          document.querySelector('.sp-paginator-next').style.display = 'none';
+        }
+
+
+      });
+    }
+
+    selectItem(item, multiple) {
+      if (!multiple) {
+        var rows = this.querySelectorAll('x-tr');
+        for (var i = 0; i < rows.length; i++) {
+          rows[i].classList.remove('selected');
+        }
+      }
+      item.classList.add('selected');
+    }
+
+    createTrack (track) {
+      var tr = document.createElement('x-tr');
+      tr.classList.add('x-track');
+      tr.setAttribute('uri', track.uri);
+      console.log(track.uri);
+
+      for (var i = 0; i < this.fields.length; i++) {
+        var field = this.fields[i];
+        // console.log("Field", field);
+        var elm = this.createTd(field, track[field.id]);
+   
+        tr.appendChild(elm);
+      }
+      return tr;
+
+    }
+
+    resize() {
+      var zebra = this.querySelector('.zebra');
+      var top = this.getBoundingClientRect().top;
+      if (this.table.getBoundingClientRect().height - this.table.getBoundingClientRect().top > window.innerHeight) {
+        zebra.style.height = (this.table.getBoundingClientRect().height) + 'px';  
+      } else {
+        zebra.style.height = (parseInt(window.innerHeight) - this.getBoundingClientRect().top) + 'px'; 
+      } 
+    }
+
+
+    createTrack (track) {
+      var tr = document.createElement('x-tr');
+      tr.classList.add('x-track');
+      tr.setAttribute('uri', track.uri);
+      console.log(track.uri);
+
+      for (var i = 0; i < this.fields.length; i++) {
+        let field = this.fields[i];
+        // console.log("Field", field);
+        var elm = this.createTd(field, track[field.id]);
+        let negative = this.getAttribute('data-negative') == 'true';
+        
+        let status = track.status || track.statusCode || 0;
+        if (status > 0) {
+          if (status >= 200 && status <= 299) {
+            let cls = negative ? 'error' : 'success-x';
+            tr.classList.add(cls);
+          } else if (status >= 100 && status <= 199) {
+            let cls = negative ? 'warning' : 'processing';
+            tr.classList.add(cls);
+          } else if (status >= 300 && status <= 300) {
+            let cls = negative ? 'warning' : 'redirect';
+            tr.classList.add(cls);
+          } else if (status >= 400 && status <= 600) {
+            let cls = negative ? 'success-x' : 'error';
+          
+            tr.classList.add(cls);
+          }
+        }
+        
+        if (track.unavailable) {
+          tr.classList.remove('error'); 
+          tr.classList.add('error');  
+        }
+    
+        tr.appendChild(elm);
+      }
+      return tr;
+
+    }
+
+    addTracks (tracks) {
+      for (var i = 0; i < tracks.length; i++) {
+        var track = tracks[i];
+
+        var trTrack = this.createTrack(track);
+        this.querySelector('tbody').appendChild(trTrack);
+      }
+    }
+    refresh() {
+      this.attributeChangedCallback('uri', this.getAttribute('uri'), this.getAttribute('uri'));
+    }
+    setState (result) {
+      if (result == null) {
+        this.innerHTML = _('The table could not be load');
+      }
+      var tracks = result.objects;
+      this.next = result.next;
+
+      this.innerHTML = `
+      <div class="zebra">
+      <table width="100%" class="sp-table">
+        <thead>
+          <tr>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+      </div>
+      `;
+
+      this.shouldPaginate = this.getAttribute('paginate') == 'true';
+
+      this.offset = 0;
+      this.page = 0;
+      this.pageSize = 25;
+      this.loadingMore = false;
+      this.loadedAll = false;
+    /*
+      window.addEventListener('scroll', (event) => {
+        if (this.loadingMore || !this.shouldPaginate) return;
+          var loadingMore = this.querySelector('.sp-paginator-next');
+          var rect = loadingMore.getBoundingClientRect();
+          if (rect.top < window.innerHeight) {
+            this.fetchNew();
+
+          }
+      });
+    */
+    this.thead =  this.querySelector('thead');
+    this.table = this.querySelector('table');
+      window.addEventListener('scroll', (event) => {
+        let doc = document.documentElement;
+        let scrollTop = (window.pageYOffset || doc.scrollTop)  - (doc.clientTop || 0);
+        let tabbar = document.querySelector('x-tabbar');
+        let endOfTabBar = 0;
+        let tabbarHeight = tabbar.getBoundingClientRect().height;
+        let headerHeight = this.thead.getBoundingClientRect().height;
+        if (scrollTop > tabbarHeight  + headerHeight) {
+          this.thead.style.webkitTransform = 'translate(0px, ' + (-this.getBoundingClientRect().top + tabbarHeight ) + 'px)';
+        } else {
+          this.thead.style.webkitTransform = 'translate(0px, 0px)';
+          
+        }
+      });
+      this.fields = (this.hasAttribute('fields') ? this.getAttribute('fields') : 'id,name').split(',').map((f) => new Field(f));
+
+      for (var i = 0; i < this.fields.length; i++) {
+        let field = this.fields[i];
+        this.querySelector('thead tr').appendChild(this.createTH(field));
+      }
+
+      this.querySelector('tbody').innerHTML = '';
+      // // // // console.log(result);
+      for (var i = 0; i < result.objects.length; i++) {
+        var track = result.objects[i];
+        if (track == null) {
+            track = {
+                time: moment().format(),
+                name: '',
+                balance: null
+            };
+        }
+        var trTrack = this.createTrack(track);
+        this.querySelector('tbody').appendChild(trTrack);
+      }
+    this.resize();
+    }
+    
+    createTH (field) {
+      var td = document.createElement('th');
+      td.innerHTML = _(field.id);
+      return td;
+    }
+    createTd (field, val) {
+      let td = document.createElement('td');
+      
+      let column = document.createElement('x-tablecell');
+      column.setAttribute('data-column', field.id);
+      column.setAttribute('data-column-type', field.type);
+      column.setState(val);
+      td.appendChild(column);
+      return td;
+  }
+}
+
+
+
+document.currentScript.ownerDocument.registerElement('x-table', TableElement);
+</script>

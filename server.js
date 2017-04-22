@@ -4,6 +4,9 @@ var execPath = process.env.PWD;
 
 
 var app = express();
+var bodyParser = require('body-parser');
+app.use(bodyParser.urlencoded({extended :false}));
+app.use(bodyParser.json());
 var www = require('./www.js');
 var api = require('./api.js');
 var appfinder = require('./appfinder.js');

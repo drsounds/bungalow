@@ -1,0 +1,186 @@
+<script src="/components/js/vendor/numeral.min.js"></script>
+<script src="/components/js/vendor/moment.js"></script>
+<link rel="import" href="element.html">
+<link rel="import" href="popularity.html">
+<script>
+function printTime(time) {
+	time = moment(time);
+	let now = new Date().getTime();
+	let then = time.toDate().getTime();
+	if ((new Date().getTime() - time.toDate().getTime()) > 1000 * 60 * 60 * 24 * 16) {
+		return time.format('YYYY-MM-DD');
+	} else {
+		return time.fromNow();
+	}
+}
+    try {
+        numeral.register('locale', 'qi', {
+            delimiters: {
+                thousands: ' ',
+                decimal: ','
+            },
+            abbreviations: {
+                thousand: 'k',
+                million: 'm',
+                billion: 'b',
+                trillion: 't'
+            },
+            ordinal : function (number) {
+                return number === 1 ? 'er' : 'ème';
+            },
+            currency: {
+                symbol: ' '
+            }
+        });
+    }
+    catch (e) {
+
+    }
+console.log("A");
+    function isFloat(n){
+        return Number(n) === n && n % 1 !== 0;
+    }
+/**
+ * SPResourceElement is an abstract class that can be subclassed to easily create
+ * resource based elements
+ */
+class ResourceElement extends Element {
+	createdCallback() {
+		console.log("Created callback");
+		console.log("Has attribute ", this.hasAttribute('base-uri'));
+		if (this.hasAttribute('base-uri')) {
+            this.setLoading();
+			console.log("Has attribute ", this.getAttribute('base-uri'));
+				console.log("D");
+			window.addEventListener('message', (event) => {
+				console.log(event.data);
+				if (event.data.action === 'navigate') {
+					console.log("navigated event");
+					var uri = event.data.uri;
+					var args = uri.split(/\:/).slice(1);
+					var strUri = this.getAttribute('base-uri');
+					args.forEach((arg, i) => {
+						strUri = strUri.replace('$' + (i + 1), arg);
+					});
+					strUri = strUri.replace('%s', uri);
+					strUri = strUri.replace('@service', '@' + event.data.service);		
+			        strUri = strUri.trim(':');
+					this.setAttribute('uri', strUri);
+				}
+			});
+		}
+	
+		
+		console.log("A");
+	}
+	setLoading() {
+		this.innerHTML = '<x-throbber></x-throbber>';
+	}
+ 	setError (err) {
+		this.innerHTML = `
+		  <p>There was an error loading the element</p>
+		`;
+	}
+	setState(data) {
+
+        numeral.locale('qi');
+	    this.data = data;
+        if (/^([0-9]{4}-[0-9]{2}-[0-9]{2})/g.test(data) || data instanceof Date) {
+            try {
+            this.innerHTML = '<span>' + moment(data).fromNow() + '</span>';
+            if (!data) {
+                return;
+            }
+            var relative = new Date().getTime() - data.getTime();
+         
+            if (relative < 1123200 * 1000) {
+            	this.style.opacity = 1 - (((relative / (1123200 * 1000))) / 100);
+            }
+            } catch (e) {
+                
+            }
+        } else if (data instanceof Object) {
+        	if (data.hasOwnProperty("name")) {
+            	this.innerHTML = `<x-a data-uri="${data.uri}">${data.name}</x-a>`;
+        	}
+        	if (data.hasOwnProperty("iso")) {
+        		let time = new Date(data.iso);
+            	this.innerHTML = '<span>' + printTime(time) + '</span>';
+	            var relative = new Date().getTime() - time.getTime();
+	            if ((new Date().getTime() - time.getTime()) > 1000 * 60 * 60 * 24 * 16) {
+	                this.style.opacity = 0.5;
+	            }
+	            if (relative < 1123200 * 1000) {
+	            	this.style.opacity = 1 - (((relative / (1123200 * 1000))) / 100);
+	            }
+	            let q = setInterval(() => {
+	            	let time = new Date(data.iso);
+	            	this.innerHTML = '<span>' + printTime(time) + '</span>';
+		            var relative = new Date().getTime() - time.getTime();
+		         
+		            if (relative < 1123200 * 1000) {
+		            	this.style.opacity = 1 - (((relative / (1123200 * 1000))) / 100);
+		            }
+	            }, 1000);
+        	}
+        } else if (typeof(data) === 'boolean') {
+        	if (data) {
+        		this.innerHTML = this.getAttribute('data-negative') == 'true' ? '✖︎' + _('no') : '✔ ' + _('yes');
+				this.style.color = '#88ff88';
+        	} else {
+        		this.innerHTML = this.getAttribute('data-negative') == 'true' ? '✖︎ No': '✖ No︎';
+				this.style.color = '#ff8888';
+        		
+        	}
+     
+        } else if (isFloat(data) && data <= 1) {
+            this.innerHTML = `<x-popularity value="${data}"></x-popularity>`;
+        } else if (data instanceof Number) {
+
+            this.innerHTML = _(`${data}`);
+            this.style.textAlign = 'right';
+
+        } else if (!isNaN(data)) {
+            this.innerHTML = _(`${numeral(data).format('0,00 $')}`);
+            this.style.textAlign = 'right';
+        } else {
+            this.innerHTML= _(data);
+        }
+        if (this.innerHTML === 'undefined') {this.innerHTML = ''}
+    }
+	attachedCallback () {
+		if (this.hasAttribute('data-uri') && !this.data) {
+            this.attributeChangedCallback('data-uri', null, this.getAttribute('data-uri'));
+        }
+        if (this.hasAttribute('data-href') && !this.data) {
+            this.attributeChangedCallback('data-href', null, this.getAttribute('data-href'));
+        }
+        if (this.hasAttribute('href') && !this.data) {
+            this.attributeChangedCallback('href', null, this.getAttribute('href'));
+        }
+        if (this.hasAttribute('uri') && !this.data) {
+            this.attributeChangedCallback('uri', null, this.getAttribute('uri'));
+        }
+	}
+	attributeChangedCallback(attrName, oldVal, newVal) {
+		this.setLoading();
+		console.log(arguments);
+		if (attrName === 'data-uri' || attrName == 'data-href' || attrName == 'href'  || attrName == 'uri') {
+			console.log(newVal);
+			Ocean.get(
+				newVal
+			).then((result)=> {
+				console.log(result);
+				if (!result) {
+					debugger;
+					this.setError();
+		  			return;
+		  		}
+				this.setState(result);
+			});
+		}
+
+	}
+}
+document.currentScript.ownerDocument.registerElement('x-resource', ResourceElement);
+</script>

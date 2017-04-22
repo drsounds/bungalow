@@ -10,8 +10,8 @@ var request = require('request');
 var url = require('url');
 
 var utils = require('./utils.js');
-var app = require('express').Router();
-
+var express =require('express');
+var app = express.Router();
 app.get('/settings.json', function (req, res) {
 
     if (fs.existsSync(path)) {
@@ -204,9 +204,9 @@ app.get('/music/*', function (req, res) {
     console.log(music);
     var body = {};
     if (request.body) {
-        body = JSON.parse(request.body);
+        body = (request.body);
     }
-    music.request("GET", req.params[0], req.query).then(function (result) {
+    music.request("GET", req.params[0], req.query, body).then(function (result) {
 
         res.json(result);
     }, function (reject) {
@@ -218,8 +218,8 @@ app.put('/music/*', function (req, res) {
     console.log("A");
     console.log(music);
     var body = {};
-    if (request.body) {
-        body = JSON.parse(request.body);
+    if (req.body) {
+        body = (req.body);
     }
     music.request("PUT", req.params[0], req.query, body).then(function (result) {
 

@@ -1,0 +1,58 @@
+<link rel="import" href="contextmenuitem.html">
+<script>
+var activeMenu = null;
+document.body.addEventListener('mousedown', (event) => {
+    let menus = document.querySelectorAll('x-contextmenu');
+    for(let i = 0; i < menus.length; i++) {
+        let menu = menus[i];
+        if (menu != activeMenu) {
+            menu.close();
+            
+        }
+    }
+});
+    class ContextMenu extends HTMLElement {
+        createdCallback() {
+            this.addEventListener('blur', (event) => {
+                this.close();
+            });
+            this.addEventListener('mouseenter', (event) => {
+                activeMenu = event.target;
+            })
+            this.addEventListener('mouseleave', (event) => {
+                activeMenu = null;
+            })
+        }
+        setItems(items) {
+            for (let item of items) {
+                let contextmenuitem = document.createElement('x-contextmenuitem');
+                contextmenuitem.innerHTML = item.label; 
+                contextmenuitem.addEventListener('click', (event) => {
+                    item.onclick.bind(this)(event);
+                    this.close();
+                })
+                this.appendChild(contextmenuitem);
+            }
+        }
+        close() {
+            $(this).fadeOut(() => {
+                this.parentNode.removeChild(this);
+            });
+            
+        }
+        show(element) {
+            if (!element) return;
+            this.style.display = 'block';
+            this.style.position = 'absolute';
+            let bounds = element.getBoundingClientRect();
+            let left = bounds.left;
+            let top = bounds.top + bounds.height;
+            this.style.left = left + 'px';
+            this.style.top = top + 'px';
+     
+            $(this).hide().fadeIn('fast');
+            this.setAttribute('active', true);
+        }
+    }
+    document.currentScript.ownerDocument.registerElement('x-contextmenu', ContextMenu);
+</script>

@@ -320,7 +320,7 @@ require(['$api/cosmos'], function (Cosmos) {
 
     Search = function (data) {
         Object.assign(this, data);
-        this.uri = 'bungalow:search:' + this.query;
+        this.uri = 'bungalow:search:' + this.q;
         this.tracks = new Collection('/music/search?q=' + this.q , this.uri + ':tracks', 'track');
         this.artists = new Collection('/music/search?q=' + this.q , this.uri + ':artists', 'artist');
         this.albums = new Collection('/music/search?q=' + this.q, this.uri + ':albums', 'album');

@@ -1,0 +1,33 @@
+<script>
+class Tab extends HTMLElement {
+  
+  createdCallback () {
+    // // // // console.log(this.dataset);
+    this.innerHTML = this.dataset.title;
+    this.addEventListener('click', (event) => {
+      var event = new CustomEvent('selected');
+      console.log("Selected event");
+      this.dispatchEvent(event);
+    });
+  }
+  
+  setTitle (title) {
+    this.dataset.title = title;
+    this.innerHTML = title;
+  }
+  
+  setId (id) {
+    this.dataset.id = id;
+  }
+  
+  activate () {
+    this.classList.add('x-tab-active');
+  }
+  
+  deactivate () {
+    this.classList.remove('x-tab-active');
+  }
+}
+document.currentScript.ownerDocument.registerElement('x-tab', Tab);
+
+</script>

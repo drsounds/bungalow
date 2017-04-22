@@ -19,7 +19,8 @@ require([], function () {
             xhr.responseType = 'json';
             console.log(method, url);
             xhr.open(method, 'http://localhost:9261/api' + url, true);
-            xhr.send(data);
+            xhr.setRequestHeader('Content-Type', 'application/json');
+            xhr.send(JSON.stringify(data));
             console.log(data);
         });
     };

@@ -2,15 +2,14 @@ var Music = function () {
 
 };
 
-Music.prototype.play = function (uri) {
+Music.prototype.play = function (c, cb) {
+
    Cosmos.request	('PUT',
 		'/music/me/player/play',
 	   	{},
-		{
-			uris: [uri]
-		}
+		c
 	).then(function (result) {
-		debugger;
+	   cb(null, c);
 	})
 }
 
@@ -304,8 +303,22 @@ var Shell = function () {
 			console.log(context);
 			console.log("Context", context);
 			//alert(context.uri);
-			event.source.postMessage({'action': 'trackstarted', 'index': context.currentIndex, 'uri': context.uri}, '*');
-			music.play(context.tracks[context.currentIndex]);
+			var data = {
+                uris: context.tracks.map(function (t) { return t.uri}),
+                offset: {
+                    position: context.currentIndex,
+                },
+                uri: context.tracks[context.currentIndex].uri
+            };
+			if (context.uri.indexOf('spotify:artist') == 0 || context.uri.indexOf('spotify:album') == 0) {
+                data.context_uri = context.uri;
+            } else {
+				data.uris = context.tracks.map(function (t) { return t.uri;});
+			}
+			music.play(data, function (err, result) {
+                data.action = 'trackstarted';
+                event.source.postMessage(data, '*');
+            });
 		}
 		if (event.data.action === 'hashchange') {
 			window.location.hash = event.data.hash;
