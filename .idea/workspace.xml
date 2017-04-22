@@ -2,18 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="2100ae74-f7e4-4243-93ff-794981e1fec3" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/apps/api/components/scripts/api.js" afterPath="$PROJECT_DIR$/apps/api/components/scripts/api.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/apps/api/scripts/views.js" afterPath="$PROJECT_DIR$/apps/api/scripts/views.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/apps/artist/index.html" afterPath="$PROJECT_DIR$/apps/artist/index.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/apps/artist/scripts/main.js" afterPath="$PROJECT_DIR$/apps/artist/scripts/main.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/apps/chrome/index.html" afterPath="$PROJECT_DIR$/apps/chrome/index.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/apps/chrome/scripts/main.js" afterPath="$PROJECT_DIR$/apps/chrome/scripts/main.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/apps/chrome/themes/spotify09/css/dark.css" afterPath="$PROJECT_DIR$/apps/chrome/themes/spotify09/css/dark.css" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/apps/chrome/themes/spotify09/css/dark.css.map" afterPath="$PROJECT_DIR$/apps/chrome/themes/spotify09/css/dark.css.map" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/apps/chrome/themes/spotify09/css/dark.scss" afterPath="$PROJECT_DIR$/apps/chrome/themes/spotify09/css/dark.scss" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/apps/playlist/manifest.json" afterPath="$PROJECT_DIR$/apps/playlist/manifest.json" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/apps/user/index.html" afterPath="$PROJECT_DIR$/apps/user/index.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/apps/user/scripts/main.js" afterPath="$PROJECT_DIR$/apps/user/scripts/main.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="bungalow_old.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -688,68 +677,6 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="bungalow_old" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="bungalow" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="apps" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="api" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="bungalow_old" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="bungalow" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="apps" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="api" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="scripts" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="bungalow_old" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="bungalow" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="apps" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="api" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="out" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
         </subPane>
       </pane>
       <pane id="Scope" />
@@ -889,7 +816,7 @@
       <updated>1436616556553</updated>
       <workItem from="1492786818970" duration="7979000" />
       <workItem from="1492862274327" duration="3814000" />
-      <workItem from="1492866153329" duration="5145000" />
+      <workItem from="1492866153329" duration="5364000" />
     </task>
     <task id="LOCAL-00001" summary="Begin changing to WebAPI. No sound yet supported in WebAPI">
       <created>1436620466084</created>
@@ -1007,13 +934,13 @@
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="16938000" />
+    <option name="totallyTimeSpent" value="17157000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="393" y="103" width="1913" height="1257" extended-state="0" />
-    <editor active="true" />
+    <editor active="false" />
     <layout>
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.18086775" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.18086775" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.33164984" sideWeight="0.55514896" order="11" side_tool="true" content_ui="tabs" />
       <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3366228" sideWeight="0.49131122" order="1" side_tool="false" content_ui="tabs" />
