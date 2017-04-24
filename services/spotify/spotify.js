@@ -169,7 +169,7 @@ SpotifyBrowseAPI.prototype.request = function (method, url, payload, postData, r
                 if (parts.length > 2) {
                     if (parts[2] == 'top-tracks') {
                         request({
-                                url: 'https://api.spotify.com/v1/artists/' + parts[1] + '/top-tracks?limit=' + payload.limit + '&offset=' + payload.offset + '&country=se'
+                                url: 'https://api.spotify.com/v1/artists/' + parts[1] + '/top-tracks?limit=5&offset=' + payload.offset + '&country=se'
                             },
                             function (error, response, body) {
                                 var data = JSON.parse(body);
@@ -177,7 +177,7 @@ SpotifyBrowseAPI.prototype.request = function (method, url, payload, postData, r
                                     resolve({
                                         type: 'toplist',
                                         name: 'Top Tracks',
-                                        'objects': data.tracks
+                                        'objects': data.tracks.slice(0,5)
                                     });
                                 } catch (e) {
                                     fail();

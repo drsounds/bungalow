@@ -20,14 +20,14 @@ require(['$api/models', '$api/views'], function (models, views) {
 					$('#artist_image').addClass('shadow');
 				}
 				$('#toplist').html("");
-                var toptracksCollection = new views.TopList(artist.toplist, {}, 192);
+                var toptracksCollection = new views.TopList(artist.toplist, {}, 128);
 
 				$('#toplist').append(toptracksCollection.node);
 				$('#albums').html("");
 				$('#singles').html("");
 				$('#artistLink').html(artist.name);
 				$('#artistLink').attr('data-uri', 'bungalow:artist:' + id);
-				var albumCollection = new views.AlbumCollection(artist, {}, 192);
+				var albumCollection = new views.AlbumCollection(artist, {}, 128);
 				console.log("Appending album collection");
 				$('#albums').append(albumCollection.node);
 				views.hideThrobber();
@@ -46,7 +46,7 @@ require(['$api/models', '$api/views'], function (models, views) {
 							}
                             ]
                     }
-				}, 192);
+				}, 128);
 				$('#header').html("");
 				$('#header').append(header.node);
 

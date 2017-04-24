@@ -398,6 +398,7 @@ require(['$api/models', '$api/moment'], function (models, moment) {
     var TrackContext = function (resource, options) {
         Collection.call(this, resource, options, Track);
         this.stickyHeader = (options || options.sticky) || false;
+
         var table = document.createElement('table');
         this.node = table;
         this.type = 'track';
@@ -780,45 +781,44 @@ require(['$api/models', '$api/moment'], function (models, moment) {
         self.node.setAttribute('width', '100%');
         self.node.classList.add('sp-album');
         self.node.classList.add('sp-context');
-        self.node.style.padding = '2pt';s
+        self.node.style.padding = '2pt';
         var tr = document.createElement('tr');
-            var tbody = document.createElement('tbody');
-            var tr1 = document.createElement('tr');
-            self.loading = false;
-            // // console.log("ALBUM", album);
-            self.node.setAttribute('data-uri', toplist.uri);
-            var td1 = document.createElement('td');
-            var image = '';
+        var tbody = document.createElement('tbody');
+        var tr1 = document.createElement('tr');
+        self.loading = false;
+        // // console.log("ALBUM", album);
+        self.node.setAttribute('data-uri', toplist.uri);
+        var td1 = document.createElement('td');
+        var image = '';
 
-            td1.innerHTML = '<a data-uri="' +toplist.uri + '"><div class="sp-cover-image" data-uri="' + (toplist.uri) + '" src="" width="192px"></a>';
-           td1.setAttribute('valign', 'top');
-            td1.setAttribute('width', '192px');
-            td1.style.paddingRight = '13pt';
-            var tr2 = document.createElement('tr');
-            var td2 = document.createElement('td');
-            td2.setAttribute('valign', 'top');
-            td2.innerHTML = '<h2 style="margin-bottom: 10px"><a data-uri="' + toplist.uri + '">Top Tracks </a></h2>';
-
-
-            // // console.log(td2.innerHTML);
-            //alert(album.tracks);
+        td1.innerHTML = '<img width="128" src="http://localhost:9261/themes/spotify09/img/toplist.png">';
+       td1.setAttribute('valign', 'top');
+        td1.setAttribute('width', '128');
+        var tr2 = document.createElement('tr');
+        var td2 = document.createElement('td');
+        td2.setAttribute('valign', 'top');
+        td2.innerHTML = '<h2 style="margin-bottom: 10px"><a data-uri="' + toplist.uri + '">Top Tracks </a></h2>';
 
 
-            var context = new TrackContext(toplist.tracks, {
-                headers: false,
-                'fields': ['title']
-            });
-            var tr2 = document.createElement('tr');
-            var tdtracks = document.createElement('td');
-            tdtracks.setAttribute('colspan', 2);
-            tr.appendChild(td1);
-            tr.appendChild(td2);
-            self.node.appendChild(tr);
-            // // console.log(table);
-            self.node.style.marginBottom = '26pt';
-            self.node.style.marginTop = '26pt';
-            self.node.style.paddingLeft = '26pt';
-            td2.appendChild(context.node);
+        // // console.log(td2.innerHTML);
+        //alert(album.tracks);
+
+
+        var context = new TrackContext(toplist, {
+            headers: false,
+            'fields': ['title']
+        });
+        var tr2 = document.createElement('tr');
+        var tdtracks = document.createElement('td');
+        tdtracks.setAttribute('colspan', 2);
+        tr.appendChild(td1);
+        tr.appendChild(td2);
+        self.node.appendChild(tr);
+        // // console.log(table);
+        self.node.style.marginBottom = '26pt';
+        self.node.style.marginTop = '26pt';
+        self.node.style.paddingLeft = '26pt';
+        td2.appendChild(context.node);
 
 
     }
@@ -855,15 +855,14 @@ require(['$api/models', '$api/moment'], function (models, moment) {
             if ('images' in album && album.images.length > 0) {
                 image = album.images[0].url;
             }
-            var image = new CoverImage(album, 192);
+            var image = new CoverImage(album, 128);
             td1.appendChild(image.node);
             //td1.innerHTML = '<a data-uri="' + album.uri + '"><div class="shadow" data-uri="' + (album.uri) + '" src="' + image + '" width="192px"></a>';
 			if ('description' in album) {
 				td1.innerHTML += '<p>' + album.description.bungalowize() + '</p>';
 			}
             td1.setAttribute('valign', 'top');
-            td1.setAttribute('width', '170px');
-            td1.style.paddingRight = '13pt';
+            td1.setAttribute('width', '128');
             var tr2 = document.createElement('tr');
             var td2 = document.createElement('td');
             td2.setAttribute('valign', 'top');
@@ -931,8 +930,7 @@ require(['$api/models', '$api/moment'], function (models, moment) {
             }
             td1.innerHTML = '<a data-uri="' + playlist.uri + '"><img class="shadow" data-uri="' + (playlist.uri) + '" src="' + image + '" width="192px"></a>';
             td1.setAttribute('valign', 'top');
-            td1.setAttribute('width', '170px');
-            td1.style.paddingRight = '13pt';
+            td1.setAttribute('width', '128');
             var tr2 = document.createElement('tr');
             var td2 = document.createElement('td');
             td2.setAttribute('valign', 'top');
@@ -1220,7 +1218,7 @@ window.addEventListener('message', function (event) {
     var Header = function (resource, options, coverSize) {
         Object.assign(this, options);
         var type = options.type;
-        coverSize = coverSize ? coverSize : 192;
+        coverSize = coverSize ? coverSize : 128;
         this.node = document.createElement('div');
         this.node.classList.add('sp-header');
         /*var bgdiv = document.createElement('div');
@@ -1247,7 +1245,7 @@ window.addEventListener('message', function (event) {
         var td1 = document.createElement('td');
 
         var coverImage = new CoverImage(resource, coverSize);
-        td1.width = "192px";
+        td1.width = coverSize + "pt";
         td1.appendChild(coverImage.node);
 
         var td2 = document.createElement('td');
