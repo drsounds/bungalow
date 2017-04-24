@@ -1,12 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="2100ae74-f7e4-4243-93ff-794981e1fec3" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/apps/chrome/themes/spotify09/css/dark.css" afterPath="$PROJECT_DIR$/apps/chrome/themes/spotify09/css/dark.css" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/apps/chrome/themes/spotify09/css/dark.css.map" afterPath="$PROJECT_DIR$/apps/chrome/themes/spotify09/css/dark.css.map" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/apps/chrome/themes/spotify09/css/dark.scss" afterPath="$PROJECT_DIR$/apps/chrome/themes/spotify09/css/dark.scss" />
-    </list>
+    <list default="true" id="2100ae74-f7e4-4243-93ff-794981e1fec3" name="Default" comment="" />
     <ignored path="bungalow_old.iws" />
     <ignored path=".idea/workspace.xml" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -118,7 +113,7 @@
         <entry file="file://$PROJECT_DIR$/apps/chrome/themes/spotify09/css/dark.scss">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="511">
-              <caret line="562" column="6" lean-forward="false" selection-start-line="562" selection-start-column="6" selection-end-line="562" selection-end-column="6" />
+              <caret line="562" column="52" lean-forward="false" selection-start-line="562" selection-start-column="52" selection-end-line="562" selection-end-column="52" />
               <folding />
             </state>
           </provider>
@@ -835,7 +830,7 @@
       <workItem from="1492786818970" duration="7979000" />
       <workItem from="1492862274327" duration="3814000" />
       <workItem from="1492866153329" duration="14098000" />
-      <workItem from="1493018476486" duration="2597000" />
+      <workItem from="1493018476486" duration="2625000" />
     </task>
     <task id="LOCAL-00001" summary="Begin changing to WebAPI. No sound yet supported in WebAPI">
       <created>1436620466084</created>
@@ -953,7 +948,7 @@
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="28488000" />
+    <option name="totallyTimeSpent" value="28516000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="393" y="103" width="1913" height="1257" extended-state="0" />
@@ -1454,7 +1449,7 @@
     <entry file="file://$PROJECT_DIR$/apps/chrome/themes/spotify09/css/dark.scss">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="511">
-          <caret line="562" column="6" lean-forward="false" selection-start-line="562" selection-start-column="6" selection-end-line="562" selection-end-column="6" />
+          <caret line="562" column="52" lean-forward="false" selection-start-line="562" selection-start-column="52" selection-end-line="562" selection-end-column="52" />
           <folding />
         </state>
       </provider>
