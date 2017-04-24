@@ -315,6 +315,7 @@ var Shell = function () {
             } else {
 				data.uris = context.tracks.map(function (t) { return t.uri;});
 			}
+			debugger;
 			music.play(data, function (err, result) {
                 data.action = 'trackstarted';
                 event.source.postMessage(data, '*');

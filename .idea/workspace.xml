@@ -2,7 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="2100ae74-f7e4-4243-93ff-794981e1fec3" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/apps/chrome/themes/spotify09/css/dark.scss" afterPath="$PROJECT_DIR$/apps/chrome/themes/spotify09/css/dark.scss" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/apps/chrome/scripts/main.js" afterPath="$PROJECT_DIR$/apps/chrome/scripts/main.js" />
     </list>
     <ignored path="bungalow_old.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -22,11 +23,31 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="spotify.js" pinned="false" current-in-tab="false">
+      <file leaf-file-name="spotify.js" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/services/spotify/spotify.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="294">
-              <caret line="179" column="73" lean-forward="false" selection-start-line="179" selection-start-column="73" selection-end-line="179" selection-end-column="73" />
+            <state relative-caret-position="624">
+              <caret line="172" column="24" lean-forward="true" selection-start-line="172" selection-start-column="24" selection-end-line="172" selection-end-column="24" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="main.js" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/apps/chrome/scripts/main.js">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="384">
+              <caret line="317" column="21" lean-forward="false" selection-start-line="317" selection-start-column="21" selection-end-line="317" selection-end-column="21" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="main.old.js" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/apps/chrome/scripts/main.old.js">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="0">
+              <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
               <folding />
             </state>
           </provider>
@@ -101,20 +122,10 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="models.js" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/apps/api/scripts/models.js">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="246">
-              <caret line="81" column="8" lean-forward="false" selection-start-line="81" selection-start-column="8" selection-end-line="81" selection-end-column="8" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="dark.scss" pinned="false" current-in-tab="true">
+      <file leaf-file-name="dark.scss" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/apps/chrome/themes/spotify09/css/dark.scss">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="511">
+            <state relative-caret-position="241">
               <caret line="562" column="52" lean-forward="false" selection-start-line="562" selection-start-column="52" selection-end-line="562" selection-end-column="52" />
               <folding />
             </state>
@@ -125,7 +136,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>128pt</find>
       <find>tabbar</find>
       <find>min-width: 120</find>
       <find>margin-right</find>
@@ -155,6 +165,7 @@
       <find>.divider</find>
       <find>sp-header</find>
       <find>sp-tabbar</find>
+      <find>track:</find>
     </findStrings>
     <replaceStrings>
       <replace>http://localhost:9261/apps/</replace>
@@ -210,7 +221,6 @@
         <option value="$PROJECT_DIR$/apps/chrome/index.html" />
         <option value="$PROJECT_DIR$/server.js" />
         <option value="$PROJECT_DIR$/api.js" />
-        <option value="$PROJECT_DIR$/apps/chrome/scripts/main.js" />
         <option value="$PROJECT_DIR$/apps/api/components/scripts/api.js" />
         <option value="$PROJECT_DIR$/apps/api/scripts/models.js" />
         <option value="$PROJECT_DIR$/apps/user/scripts/main.js" />
@@ -220,6 +230,7 @@
         <option value="$PROJECT_DIR$/apps/user/manifest.json" />
         <option value="$PROJECT_DIR$/apps/artist/index.html" />
         <option value="$PROJECT_DIR$/apps/chrome/themes/spotify09/css/dark.scss" />
+        <option value="$PROJECT_DIR$/apps/chrome/scripts/main.js" />
       </list>
     </option>
   </component>
@@ -289,6 +300,10 @@
               <option name="myItemId" value="services" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="truffler" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
           </PATH>
           <PATH>
             <PATH_ELEMENT>
@@ -305,6 +320,20 @@
             </PATH_ELEMENT>
             <PATH_ELEMENT>
               <option name="myItemId" value="spotify" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="bungalow_old" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="bungalow" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="services" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -832,7 +861,7 @@
       <workItem from="1492786818970" duration="7979000" />
       <workItem from="1492862274327" duration="3814000" />
       <workItem from="1492866153329" duration="14098000" />
-      <workItem from="1493018476486" duration="2626000" />
+      <workItem from="1493018476486" duration="3542000" />
     </task>
     <task id="LOCAL-00001" summary="Begin changing to WebAPI. No sound yet supported in WebAPI">
       <created>1436620466084</created>
@@ -950,7 +979,7 @@
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="28517000" />
+    <option name="totallyTimeSpent" value="29433000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="393" y="103" width="1913" height="1257" extended-state="0" />
@@ -1051,12 +1080,25 @@
           <option name="timeStamp" value="132" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="javascript">
+          <url>file://$PROJECT_DIR$/services/spotify/spotify.js</url>
+          <line>158</line>
+          <properties />
+          <option name="timeStamp" value="187" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="javascript">
           <url>file://$PROJECT_DIR$/apps/chrome/scripts/main.js</url>
-          <line>317</line>
-          <option name="timeStamp" value="156" />
+          <line>318</line>
+          <properties />
+          <option name="timeStamp" value="190" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="javascript">
+          <url>file://$PROJECT_DIR$/services/spotify/spotify.js</url>
+          <line>147</line>
+          <properties />
+          <option name="timeStamp" value="191" />
         </line-breakpoint>
       </breakpoints>
-      <option name="time" value="177" />
+      <option name="time" value="192" />
     </breakpoint-manager>
     <watches-manager />
   </component>
@@ -1281,14 +1323,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/apps/chrome/scripts/main.old.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/apps/playlist/scripts/main.js">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
@@ -1343,14 +1377,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/apps/chrome/scripts/main.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="4920">
-          <caret line="328" column="40" lean-forward="false" selection-start-line="328" selection-start-column="40" selection-end-line="328" selection-end-column="40" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/www.js">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="330">
@@ -1371,14 +1397,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="246">
           <caret line="81" column="8" lean-forward="false" selection-start-line="81" selection-start-column="8" selection-end-line="81" selection-end-column="8" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/services/spotify/spotify.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="294">
-          <caret line="179" column="73" lean-forward="false" selection-start-line="179" selection-start-column="73" selection-end-line="179" selection-end-column="73" />
           <folding />
         </state>
       </provider>
@@ -1450,8 +1468,32 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/apps/chrome/themes/spotify09/css/dark.scss">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="511">
+        <state relative-caret-position="241">
           <caret line="562" column="52" lean-forward="false" selection-start-line="562" selection-start-column="52" selection-end-line="562" selection-end-column="52" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/apps/chrome/scripts/main.old.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/apps/chrome/scripts/main.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="384">
+          <caret line="317" column="21" lean-forward="false" selection-start-line="317" selection-start-column="21" selection-end-line="317" selection-end-column="21" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/services/spotify/spotify.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="624">
+          <caret line="172" column="24" lean-forward="true" selection-start-line="172" selection-start-column="24" selection-end-line="172" selection-end-column="24" />
           <folding />
         </state>
       </provider>
