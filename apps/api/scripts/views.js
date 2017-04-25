@@ -1280,10 +1280,14 @@ window.addEventListener('message', function (event) {
             this.tabbar = new TabBar(this.tabs);
             this.node.style.overflow = 'visible';
             var q = setInterval(() => {
-                if (this.node.parentNode == null)
-                    return;
-                this.node.parentNode.appendChild(this.tabbar.node);
-                clearInterval(q);
+                try {
+                    if (this.node.parentNode == null)
+                        return;
+                    this.node.parentNode.appendChild(this.tabbar.node);
+                    clearInterval(q);
+                } catch (e) {
+                    
+                }
             }, 100);
             //this.tabbar.node.style.top = 'calc(100% - 60pt)';
 

@@ -639,3 +639,8 @@ input {
   margin: 0px; }
 
 /*# sourceMappingURL=dark.css.map */
+
+.sp-context > tr > td {
+  padding-top: 20pt;
+  padding-bottom: 20pt;
+}
