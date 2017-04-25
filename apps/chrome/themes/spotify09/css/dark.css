@@ -466,7 +466,7 @@ a[data-uri] {
 
 }
 .sp-track:active {
-  -webkit-transform: scale(0.99);
+  opacity: 0.5;
 }
 
 .sp-track-active {
@@ -636,11 +636,24 @@ input {
   /* IE6-9 */
   box-shadow: 0px 2pt 5pt rgba(0, 0, 0, 0.25), inset 0px 1pt 2pt rgba(255, 255, 255, 0.2), inset 0px -1pt 2pt rgba(0, 0, 0, 0.2);
   border-radius: 5pt;
+  background: white;
   margin: 0px; }
 
+.sp-cover-image.flat {
+  position: relative;
+  border: none;
+  box-shadow: none;
+  background-color: transparent;  
+}
+.sp-cover-image > i {
+  position: absolute;
+  left: 42px;
+  top: 22px;
+  font-size: 64pt;
+}
 /*# sourceMappingURL=dark.css.map */
 
-.sp-context > tr > td {
+.sp-context > tr > td, .sp-card > tr > td {
   padding-top: 20pt;
   padding-bottom: 20pt;
 }

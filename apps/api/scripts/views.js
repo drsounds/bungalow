@@ -686,6 +686,7 @@ require(['$api/models', '$api/moment'], function (models, moment) {
     var Feed = function (resource, options, coverSize) {
         Collection.call(this, resource, options, Post);
         this.node = document.createElement('table');
+        
         this.coverSize = coverSize ? coverSize : 128;
         this.Class = Post;
         this.resource = resource;
@@ -697,6 +698,7 @@ require(['$api/models', '$api/moment'], function (models, moment) {
         this.node.setAttribute('data-uri', resource.uri + ':' + this.type + 's');
        
         this.node.classList.add('sp-collection');
+        this.node.classList.add('collection');
         console.log("Hashtag uri", resource.uri);   
         collection_contexts[this.resource.uri + ':posts'] = this; // Register context here
         console.log("context", collection_contexts);
@@ -723,7 +725,7 @@ require(['$api/models', '$api/moment'], function (models, moment) {
         this.node.classList.add('sp-card');
 
         var td1 = document.createElement('td');
-        post.user.images = [{ url: 'http://simpleicon.com/wp-content/uploads/user-3.padding'}]
+        post.user.images = [{ url: 'http://simpleicon.com/wp-content/uploads/user-3.png', flat: true}]
         var image = new CoverImage(post.user, 64);
         image.node.style.cssFloat = 'left';
         image.node.style.marginRight = '13pt';
@@ -739,11 +741,10 @@ require(['$api/models', '$api/moment'], function (models, moment) {
 
         this.resource = Resource.fromURI(post.resource.uri);
         console.log(ViewResource);
-        var resource = new ViewResource(this.resource);
+        var resource = new ViewResource(this.resource, {}, 128);
         tr1.appendChild(td1);
         this.node.appendChild(tr1);
         this.node.appendChild(resource.node);
-        td1.style.paddingBottom = '10pt';
 		
 		var tr2 = document.createElement('tr');
 		var td2 = document.createElement('td');
@@ -820,7 +821,6 @@ require(['$api/models', '$api/moment'], function (models, moment) {
         self.node.style.paddingLeft = '26pt';
         td2.appendChild(context.node);
 
-
     }
     exports.TopList = TopList;
     /**
@@ -865,7 +865,7 @@ require(['$api/models', '$api/moment'], function (models, moment) {
             td2.setAttribute('valign', 'top');
             album.release_date = '1970-01-01';
             td2.innerHTML = '<h2 style="margin-bottom: 3px"><a data-uri="' + album.uri + '">' + album.name + '</a> %s </h2>';
-            //td1.innerHTML = '<a data-uri="' + album.uri + '"><div class="shadow" data-uri="' + (album.uri) + '" src="' + image + '" width="192px"></a>';
+            //td1.innerHTML = '<a data-uri="' + album.uri + '"><div class="shadow" data-uri="' + (album.uri) + '" src="' + image + '" width="128px"></a>';
 			if ('description' in album) {
 				td2.innerHTML += '<p style="opacity: 0.5">' + album.description.bungalowize() + '</p>';
 			}
@@ -928,7 +928,7 @@ require(['$api/models', '$api/moment'], function (models, moment) {
             if ('images' in playlist && playlist.images.length > 0) {
                 image = playlist.images[0].url;
             }
-            td1.innerHTML = '<a data-uri="' + playlist.uri + '"><img class="shadow" data-uri="' + (playlist.uri) + '" src="' + image + '" width="192px"></a>';
+            td1.innerHTML = '<a data-uri="' + playlist.uri + '"><img class="shadow" data-uri="' + (playlist.uri) + '" src="' + image + '" width="128px"></a>';
             td1.setAttribute('valign', 'top');
             td1.setAttribute('width', '128');
             var tr2 = document.createElement('tr');
@@ -1199,8 +1199,7 @@ window.addEventListener('message', function (event) {
         this.node.style.height = size + 'px';
         console.log("Width", this.node.style.width);
         if ('icon' in resource) {
-            var coverdefault = document.createElement('sp-cover-default');
-            var iconDiv = document.createElement('span');
+            var iconDiv = document.createElement('i');
             iconDiv.classList.add('sp-cover-icon');
             if (resource.icon.indexOf('fa-') == 0) {
                 iconDiv.classList.add('fa');
@@ -1208,16 +1207,19 @@ window.addEventListener('message', function (event) {
             } else {
                 iconDiv.innerHTML = resource.icon;
             }
-            coverdefault.appendChild(iconDiv);
-            this.node.appendChild(coverdefault);
+            this.node.appendChild(iconDiv);
         }
 
 
         var image = document.createElement('div');
         var size = size ? size : 128;
-        if ('images' in resource && resource.images.length > 0)
+        if ('images' in resource && resource.images.length > 0) {
             this.node.style.backgroundImage = 'url("' + resource.images[0].url + '")';
-
+            if (resource.images[0].flat)
+                this.node.classList.add('flat');
+        } else {
+            this.node.classList.add('flat');
+        }
 
 
     }

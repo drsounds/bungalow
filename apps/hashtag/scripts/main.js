@@ -10,6 +10,7 @@ require(['$api/models', '$api/views'], function (models, views) {
                 id: id,
                 icon: '#',
                 images: [{
+                    flat: true,
                     url: ''
                 }]
             };
@@ -22,7 +23,7 @@ require(['$api/models', '$api/views'], function (models, views) {
                         slicky: true
                     }
                 }
-            , "Artist");
+            , 128);
             $('#header').html("");
             $('#header').append(header.node);
 
