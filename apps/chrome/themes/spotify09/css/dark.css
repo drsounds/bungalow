@@ -462,9 +462,16 @@ a[data-uri] {
 .menu li.active a {
   color: #000033; }
 
+.sp-track:hover {
+
+}
+.sp-track:active {
+  -webkit-transform: scale(0.99);
+}
+
 .sp-track-active {
   background-color: black !important;
-  color: #33FF33 !important; }
+  color: #aaFFaa !important; }
 
 .sp-track-selected td {
   background-color: #b6e1fd;
@@ -543,6 +550,7 @@ meter::-webkit-meter-optimum-value {
   padding-bottom: 6px;
   text-shadow: 0px -1px 0px black;
   text-align: center;
+  position: static;
   background-size: 100% 100%; }
 
 .sp-tabbar-tab {
@@ -579,7 +587,7 @@ input {
   padding: 3pt; }
 
 .sp-header {
-  height: 143pt;
+  height: 123pt;
   width: 100%;
   overflow: hidden; }
 

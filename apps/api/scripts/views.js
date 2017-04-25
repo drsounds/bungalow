@@ -857,18 +857,18 @@ require(['$api/models', '$api/moment'], function (models, moment) {
             }
             var image = new CoverImage(album, 128);
             td1.appendChild(image.node);
-            //td1.innerHTML = '<a data-uri="' + album.uri + '"><div class="shadow" data-uri="' + (album.uri) + '" src="' + image + '" width="192px"></a>';
-			if ('description' in album) {
-				td1.innerHTML += '<p>' + album.description.bungalowize() + '</p>';
-			}
+            
             td1.setAttribute('valign', 'top');
             td1.setAttribute('width', '128');
             var tr2 = document.createElement('tr');
             var td2 = document.createElement('td');
             td2.setAttribute('valign', 'top');
             album.release_date = '1970-01-01';
-            td2.innerHTML = '<h2 style="margin-bottom: 10px"><a data-uri="' + album.uri + '">' + album.name + '</a> %s </h2>';
-            
+            td2.innerHTML = '<h2 style="margin-bottom: 3px"><a data-uri="' + album.uri + '">' + album.name + '</a> %s </h2>';
+            //td1.innerHTML = '<a data-uri="' + album.uri + '"><div class="shadow" data-uri="' + (album.uri) + '" src="' + image + '" width="192px"></a>';
+			if ('description' in album) {
+				td2.innerHTML += '<p style="opacity: 0.5">' + album.description.bungalowize() + '</p>';
+			}
             if ('owner' in album) {
                 td2.innerHTML = td2.innerHTML.replace('%s', '   by <a data-uri="bungalow:user:' + album.owner.id + '">' + album.owner.id + '</a>');
 
@@ -978,7 +978,7 @@ window.addEventListener('message', function (event) {
     if (event.data.action === 'track') {
         $('.sp-track').removeClass('sp-track-active');
         $('.sp-track[data-uri="spotify:track:' + event.data.id + '"]').addClass('sp-track-active');
-        debugger;
+    
 
     }
 });
@@ -1279,7 +1279,12 @@ window.addEventListener('message', function (event) {
         if ('tabs' in this) {
             this.tabbar = new TabBar(this.tabs);
             this.node.style.overflow = 'visible';
-            this.node.appendChild(this.tabbar.node);
+            var q = setInterval(() => {
+                if (this.node.parentNode == null)
+                    return;
+                this.node.parentNode.appendChild(this.tabbar.node);
+                clearInterval(q);
+            }, 100);
             //this.tabbar.node.style.top = 'calc(100% - 60pt)';
 
         }

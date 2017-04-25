@@ -581,6 +581,10 @@ Shell.prototype.getMatchingApp = function (url) {
 
 Shell.prototype.navigate = function (url, nohistory) {
 	var q = url;
+	if (url.indexOf('http') == 0) {
+		window.open(url);
+		return;
+	}
 	if (url.indexOf('bungalow:internal:login') == 0) {
 		shell.login();
 		return;
