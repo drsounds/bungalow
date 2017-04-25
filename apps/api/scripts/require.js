@@ -13,7 +13,7 @@ var requirejs = function (exports) {
                 var module = module.substr(0);
                 var app = module.split('/')[0];
                 module = app + '/scripts/' + module.split('/').slice(1).join('/');
-                module = 'http://' + window.location.hostname + ':' + window.location.port + '/apps/' + module.substr(1);
+                module = 'https://' + window.location.hostname + ':' + window.location.port + '/apps/' + module.substr(1);
 
 
             }

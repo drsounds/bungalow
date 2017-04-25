@@ -791,7 +791,7 @@ require(['$api/models', '$api/moment'], function (models, moment) {
         var td1 = document.createElement('td');
         var image = '';
 
-        td1.innerHTML = '<img width="128" src="http://localhost:9261/themes/spotify09/img/toplist.png">';
+        td1.innerHTML = '<img width="128" src="https://sporal-drsounds.c9users.io/themes/spotify09/img/toplist.png">';
        td1.setAttribute('valign', 'top');
         td1.setAttribute('width', '128');
         var tr2 = document.createElement('tr');
@@ -972,6 +972,13 @@ window.addEventListener('message', function (event) {
             $('.sp-track[data-uri="' + event.data.uri + '"]').addClass('sp-track-active');
         }
 
+
+    }
+    
+    if (event.data.action === 'track') {
+        $('.sp-track').removeClass('sp-track-active');
+        $('.sp-track[data-uri="spotify:track:' + event.data.id + '"]').addClass('sp-track-active');
+        debugger;
 
     }
 });

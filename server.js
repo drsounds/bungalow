@@ -1,9 +1,6 @@
 var express = require('express');
-var evh = require('express-vhost');
 var execPath = process.env.PWD;
 var cookieSession = require('cookie-session')
-
-
 var app = express();
 app.set('trust proxy', 1) // trust first proxy
 

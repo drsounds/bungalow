@@ -30,7 +30,7 @@ SpotifyPlayer.prototype.authenticate = function (code) {
             form: {
                 grant_type: 'authorization_code',
                 code: code,
-                redirect_uri: 'http://localhost:9261/callback.html'
+                redirect_uri: 'https://sporal-drsounds.c9users.io/callback.html'
             },
             headers: {
                 'Authorization': 'Basic ' + new Buffer(self.apikeys.client_id + ':' + self.apikeys.client_secret).toString('base64') 
@@ -80,7 +80,7 @@ SpotifyPlayer.prototype.refreshAccessToken = function () {
             form: {
                 grant_type: 'refresh_token',
                 refresh_token: refresh_token,
-                redirect_uri: 'http://localhost:9261/callback.html'
+                redirect_uri: 'https://sporal-drsounds.c9users.io/callback.html'
             },
             headers: {
                 'Authorization': 'Basic ' + new Buffer(self.apikeys.client_id + ':' + self.apikeys.client_secret).toString('base64')

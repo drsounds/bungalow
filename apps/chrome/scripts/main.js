@@ -1,6 +1,22 @@
 var Music = function () {
-
+	this.events = {};
 };
+
+Music.prototype.addEventListener = function (evt, cb) {
+	if (!((evt in this.events) && this.events[evt] instanceof Array)) {
+		this.events[evt] = [];
+	}
+	this.events[evt].push(cb);
+}
+
+Music.prototype.dispatchEvent = function (event) {
+	if (!((event.type in this.events) && this.events[event.type] instanceof Array)) {
+		return;
+	}
+	for (var i in this.events[event.type]) {
+		this.events[event.type][i].call(this, event);
+	}
+}
 
 Music.prototype.play = function (c, cb) {
 
@@ -16,6 +32,7 @@ Music.prototype.play = function (c, cb) {
 var XHR = function () {
 
 }
+
 
 
 
@@ -46,10 +63,6 @@ Music.prototype.request = function (method, url) {
 	});
 };
 
-Music.prototype.addEventListener = function () {
-
-}
-
 Music.prototype.getAlbum = function (id) {
 	return new Promise(function (resolve, fail) {
 		new XHR().request('GET', '/api/albums/' + id).then(function (data) {
@@ -63,7 +76,7 @@ Music.prototype.getAlbum = function (id) {
 
 Music.prototype.login = function () {
 	return new Promise(function (resolve, fail) {
-		var loginWindow = window.open('https://accounts.spotify.com/authorize?client_id=9cae232f0ddd4ba3b55b7e54ca6e76f0&scope=user-read-private user-modify-playback-state&response_type=code&redirect_uri=' + encodeURI('http://' + window.location.hostname + ':' + window.location.port + '/callback.html'));
+		var loginWindow = window.open('https://accounts.spotify.com/authorize?client_id=9cae232f0ddd4ba3b55b7e54ca6e76f0&scope=user-read-private user-read-currently-playing user-read-playback-state user-modify-playback-state&response_type=code&redirect_uri=' + encodeURI('https://' + window.location.hostname + '/callback.html'));
 		var t = setInterval(function () {
 			if (!loginWindow) {
 				clearInterval(t);
@@ -143,7 +156,7 @@ var Shell = function () {
 	this.mashcast.addEventListener('episodestopped', function (event) {
 	});
 	
-	$.getJSON('http://localhost:9261/apps/api/v1/apps', function (data) {
+	$.getJSON('https://sporal-drsounds.c9users.io/apps/api/v1/apps', function (data) {
 		self.apps = data;
 	});
 
@@ -229,12 +242,6 @@ var Shell = function () {
 		event.dataTransfer.setData('text/uri-list', uris);
 	});
 	var self = this;
-	music.addEventListener('trackstarted', function (event) {
-        $('#btnPlay').removeClass('fa-play');
-        $('#btnPlay').addClass('fa-pause');
-        $('#nowplaying_image').attr('src', event.data.track.images[0].src);
-
-    });
 	music.addEventListener('trackresumed', function () {
 
 		$('#btnPlay').removeClass('fa-play');
@@ -315,13 +322,18 @@ var Shell = function () {
             } else {
 				data.uris = context.tracks.map(function (t) { return t.uri;});
 			}
-			debugger;
+			
 			music.play(data, function (err, result) {
                 data.action = 'trackstarted';
                 event.source.postMessage(data, '*');
-                var evt = new CustomEvent('trackstarted');
-                evt.data = data;
-                music.dispatchEvent(evt);
+                Cosmos.request('GET',
+                	'/music/me/player/currently-playing'
+                ).then((state) => {
+                	var evt = new CustomEvent('trackstarted');
+                	evt.data = {};
+                	evt.data.track = state.item;
+                	music.dispatchEvent(evt);
+                })
 
             });
 		}
@@ -697,7 +709,7 @@ Shell.prototype.createApp = function (appId, callback) {
 
 
 	var appFrame = document.createElement('iframe');
-	appFrame.setAttribute('src', 'http://' + window.location.hostname + ':' + window.location.port + '/apps/' + appId + '/index.html?t=' + new Date().getTime());
+	appFrame.setAttribute('src', 'https://' + window.location.hostname + ':' + window.location.port + '/apps/' + appId + '/index.html?t=' + new Date().getTime());
 	console.log('/apps/' + appId + '/index.html');
 
 	appFrame.setAttribute('id', 'app_' + appId + '');
@@ -713,6 +725,15 @@ Shell.prototype.createApp = function (appId, callback) {
 	callback(appFrame);
 
 
+}
+
+Shell.prototype.setTrack = function (track) {
+	$('#btnPlay').removeClass('fa-play');
+    $('#btnPlay').addClass('fa-pause');
+    $('#song_title').html(track.artists.map(function (a) { return a.name }) + ' - ' + track.name);
+	$('#nowplaying_image').css({
+		'background-image': 'url(' + track.album.images[0].url + ')'
+	});
 }
 
 Shell.prototype.alert = function (message) {
@@ -741,10 +762,9 @@ window.alert = shell.alert;
 window.addEventListener('message', function (event) {
 
 	if (event.data.action == 'play') {
-
-        $('#btnPlay').removeClass('fa-play');
-        $('#btnPlay').addClass('fa-pause');
-        $('#nowplaying_image').attr('src', event.data.track.images[0].src);
+	var play = new CustomEvent('trackstarted');
+	play.track = event.data.track;
+        music.dispatchEvent(play);
 
     }
 });
@@ -758,6 +778,21 @@ window.addEventListener('load', function () {
 	if (location == 'bungalow:') {
 		location = 'bungalow:start';
 	}
+	music.addEventListener('trackstarted', function (event) {
+		var track = event.data.track;
+		shell.setTrack(track);
+	});
+	setInterval(function () {
+		Cosmos.request('GET',
+			'/music/me/player/currently-playing'
+		).then((result) => {
+			shell.setTrack(result.item);	
+			var iframes = document.querySelectorAll('iframe');
+			for (var i = 0; i < iframes.length; i++) {
+				iframes[i].contentWindow.postMessage({'action': 'track', 'id': result.item.id}, '*');
+			}
+		});
+	}, 200);
 	console.log(location);
 	shell.navigate(location, true);
 	setHash(window.location.hash.slice(1));

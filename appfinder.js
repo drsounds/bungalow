@@ -5,7 +5,6 @@ var fs = require('fs');
 var external_apps = {};
 
 var express = require('express');
-var evh = require('express-vhost');
 
 var appInventory = {};
 
@@ -24,7 +23,6 @@ function AppFinder () {
 
     this.api = express();
     server.use('/api', this.api);
-    this.evh = evh;
 
 
     

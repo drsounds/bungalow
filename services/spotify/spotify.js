@@ -31,7 +31,7 @@ SpotifyBrowseAPI.prototype.authenticate = function (req) {
             form: {
                 grant_type: 'authorization_code',
                 code: req.query.code,
-                redirect_uri: 'http://localhost:9261/callback.html'
+                redirect_uri: 'https://sporal-drsounds.c9users.io/callback.html'
             },
             headers: {
                 'Authorization': 'Basic ' + new Buffer(self.apikeys.client_id + ':' + self.apikeys.client_secret).toString('base64') 
@@ -82,7 +82,7 @@ SpotifyBrowseAPI.prototype.refreshAccessToken = function () {
             form: {
                 grant_type: 'refresh_token',
                 refresh_token: refresh_token,
-                redirect_uri: 'http://localhost:9261/callback.html'
+                redirect_uri: 'https://sporal-drsounds.c9users.io/callback.html'
             },
             headers: {
                 'Authorization': 'Basic ' + new Buffer(self.apikeys.client_id + ':' + self.apikeys.client_secret).toString('base64')
@@ -149,14 +149,14 @@ SpotifyBrowseAPI.prototype.request = function (method, url, payload, postData, r
                     var d = {
                         url: uri,
                         headers: headers,
-                        method: 'PUT',
+                        method: method,
                         contentType: 'application/json',
                         body: JSON.stringify(postData)
                     };
                     request(d,
                         function (error, response, body) {
                             try {
-                                resolve(JSON.parse(postData));
+                                resolve(JSON.parse(body));
                             } catch (e) {
                                 fail();
                             }
