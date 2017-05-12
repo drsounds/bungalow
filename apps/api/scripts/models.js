@@ -39,7 +39,8 @@ require(['$api/cosmos'], function (Cosmos) {
             }
         }
     }
-
+    
+    
    
 
     /**
@@ -79,6 +80,14 @@ require(['$api/cosmos'], function (Cosmos) {
 
     exports.MdL = MdL;
 
+
+    class History extends MdL {
+        constructor() {
+            this.tracks = new Collection('/music/history/tracks', 'bungalow:internal:history:track', 'track');
+        }
+        
+    }
+    
     var Collection = function (endpoint, uri, type) {
         this.endpoint = endpoint;
         this.uri = uri;
@@ -431,11 +440,24 @@ require(['$api/cosmos'], function (Cosmos) {
         this.data = data;
     };
 
+    var AppFinder = function (data) {
+        MdL.call(this, data);
+        console.log(data);
+        this.type = 'album';
 
-    App.find = function (callback) {
-        // console.log("Listing app");
-        $.getJSON('http://appfinder.aleros.webfactional.com/api/index.php', function (apps) {
-            callback(apps);
+        this.apps = new Collection('/apps?', 'bungalow:app', 'app');
+    }
+
+    AppFinder.prototype = Object.create(MdL.prototype);
+
+    AppFinder.constructor = Loadable;
+    
+    App.find = function () {
+        return new Promise((resolve, reject) => {
+            // console.log("Listing app");
+            $.getJSON('/api/apps', function (result) {
+                resolve(result);
+            });
         });
     }
 

@@ -11,7 +11,7 @@ require(['$api/models', '$api/views'], function (models, views) {
 			$('.sp-album').hide();
 			var search = models.Search.search('year:' + id, 10, 0, 'tracks');
 			$('#list').html("");
-			var contextView = new views.TrackContext(search.tracks, {headers: true, 'fields': ['title', 'duration', 'popularity']});
+			var contextView = new views.TrackContext(search, {headers: true, 'fields': ['title', 'artist', 'duration']});
 			contextView.node.classList.add('sp-album');
 			contextView.node.setAttribute('id', 'search_result_' + uri.replace(/\:/g, '__'));
 			$('#playlist').append(contextView.node);

@@ -1,26 +1,36 @@
-var playlists = {};
+require(['$api/views', '$api/models'], function (views, models) {
+	var playlists = {};
 
-window.addEventListener('message', function (event) {
-	console.log("Event data", event.data);
-	if (event.data.action === 'navigate') {
-		$('#app').html("");
-		showThrobber();
+	window.addEventListener('message', function (event) {
+	
+		if (event.data.action === 'navigate') {
+			views.showThrobber();
+			console.log(event.data.arguments);
+			var username = event.data.arguments[0];
+			console.log("USER", username);
+			var appFinder = new models.AppFinder();
+			console.log(playlist);
+
+			var header = new views.Header(appFinder {type: 'appfinder'});
+
+
+
+			var playlistView = document.createElement('div');
+
+			playlistView.appendChild(header.node);
+
+			var contextView = new views.TrackContext(playlist, {headers:true, sticky: true, reorder:true, fields: ['title', 'artist' , 'album', 'user']});
+			contextView.node.classList.add('sp-playlist');
+			playlistView.appendChild(contextView.node);
+
+			contextView.show();
+			
+			$('#sp-playlist').html("");
+			$('#sp-playlist').append(playlistView);
+			views.hideThrobber();
+			
 		
+		}
 
-		App.find(function (apps) {
-			var html = "<tr>";
-			for (var i = 0; i < apps.length; i++) {
-				var app = apps[i];
-				
-				html += '<td><table><tr><td><div class="app-icon" style="background-image: url(\'' + app.icon_url + '\')"></div></td><td valign="top"><h3 style="height: 20pt">' + app.name + '</h3><a class="btn" data-uri="spotify:' + app.id + '">View</a>	</td></tr></table></td>';
-				if (i % 2 == 1) {
-					html += '</tr><tr>';
-				}
-				hideThrobber();	
-			}
-			html += '<tr>';
-			$('#app').html(html);
-		});
-	}
-
-})
+	});
+});

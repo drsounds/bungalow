@@ -1,21 +1,20 @@
 var express = require('express');
 var execPath = process.env.PWD;
+var fs = require('fs');
 var cookieSession = require('cookie-session')
 var app = express();
-app.set('trust proxy', 1) // trust first proxy
 
-app.use(cookieSession({
-    name: 'session',
-    keys: ['spotifyAccessToken']
-}))
-var bodyParser = require('body-parser');
-app.use(bodyParser.urlencoded({extended :false}));
-app.use(bodyParser.json());
-var www = require('./www.js');
-var api = require('./api.js');
-var appfinder = require('./appfinder.js');
-app.use('/api', api.server);
-app.use('/apps', appfinder.server);
-app.use('/', www.server);
+app.use(express.static(__dirname + '/public/'));
+app.get('/callback.html', function (req, res) {
+    var index = fs.readFileSync(__dirname + '/public/callback.html');
+    res.write(index);
+    res.end();
+});
+app.get('/*', function (req, res) {
+
+    var index = fs.readFileSync(__dirname + '/public/index.html');
+    res.write(index);
+    res.end();
+});
 app.listen(process.env.PORT || 9261);
 

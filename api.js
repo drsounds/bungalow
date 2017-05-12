@@ -35,6 +35,21 @@ app.use(cookieSession({
     keys: ['key1', 'key2']
 }));
 
+app.get('/apps', function (req, res) {
+   res.json({
+       'objects': [
+            {
+                "BundleIdentifier": "testapp",
+                "BundleUrl": "https://testapp-drsounds.c9users.io",
+                "BundleName": {
+                    "en": "TestApp"
+                },
+                "UserInstallable": true,
+                "uri": "^(bungalow:testapp)$"
+            }   
+        ]
+   }) 
+});
 
 app.get('/services/:id/authenticate', function (req, res) {
     console.log("Got authenticate request");

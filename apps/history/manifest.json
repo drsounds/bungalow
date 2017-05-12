@@ -1,0 +1,11 @@
+{
+    "BundleIdentifier": "history",
+    "uri": "bungalow:internal:history",
+    "BundleName": {
+        "en": "History"
+    },
+    "BundleDescription": {
+        "en": "History"
+    },
+    "BundleType": "App"
+}

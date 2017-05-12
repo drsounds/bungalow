@@ -1,6 +1,8 @@
 {
 	"BundleType": "Application",
 	"BundleName": {
-		"en": "Album"
-	}
+		"en": "Start"
+	},
+	"BundleIdentifier": "start",
+	"uri": "^(bungalow:internal:start)$"
 }

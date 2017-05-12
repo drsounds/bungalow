@@ -780,12 +780,13 @@ window.addEventListener('popstate', function (event) {
 window.addEventListener('load', function () {
 	var location = 'bungalow:' + window.location.pathname.substr(1).split(/\//g).join(':');
 	if (location == 'bungalow:') {
-		location = 'bungalow:start';
+		location = 'bungalow:internal:start';
 	}
 	music.addEventListener('trackstarted', function (event) {
 		var track = event.data.track;
 		shell.setTrack(track);
 	});
+	if (false)
 	setInterval(function () {
 		Cosmos.request('GET',
 			'/music/me/player/currently-playing'
@@ -796,7 +797,7 @@ window.addEventListener('load', function () {
 				iframes[i].contentWindow.postMessage({'action': 'track', 'id': result.item.id}, '*');
 			}
 		});
-	}, 200);
+	}, 2000);
 	console.log(location);
 	shell.navigate(location, true);
 	setHash(window.location.hash.slice(1));
