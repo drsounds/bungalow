@@ -3,7 +3,7 @@ const {Redirect} = require('react-router');
 const {MusicStore} = require('../stores/MusicStore');
 
 
-export class HeaderView extends React.Component {
+export class Header extends React.Component {
     constructor(props) {
         super(props);
         

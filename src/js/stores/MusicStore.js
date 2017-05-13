@@ -22,8 +22,8 @@ class _MusicStore extends Store {
      * @return An book object
      **/
     async getResourceByUri(uri) {
-        let result = await fetch('/api/music/' + uri.substr(uri.split(':')[0].length).replace(/\:/, '/')).then((result) => result.json());
-        
+        let url = '/api/music/' + uri.substr(uri.split(':')[0].length + 1).split(':').join('/');
+        let result = await fetch(url).then((result) => result.json());
         this.state.resources[uri] = result;
         this.emitChange();    
     }

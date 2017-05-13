@@ -1,7 +1,19 @@
 const React = require('react');
 const {Redirect} = require('react-router');
-const {MusicStore} = require('../stores/MusicStore');
 
+const {MusicStore} = require('../stores/MusicStore');
+const {PlayContext} = require('../components/PlayContext');
+const {Header} = require('../components/Header');
+const Loader = require('react-loader');
+
+
+Object.prototype.toPath = function () {
+    let t = '';
+    for (let k of Object.keys(this)) {
+        t += '/' + k + '/' + k.value;
+    }
+    return t;
+}
 
 export class PlaylistView extends React.Component {
     constructor(props) {
@@ -13,7 +25,9 @@ export class PlaylistView extends React.Component {
         }
     }
     componentDidMount() {
-        let uri = 'bungalow:' + this.props.matches.params.join(':');
+        let uri = 'bungalow:user:' + this.props.match.params.username +
+            ':playlist:' + this.props.match.params.identifier; 
+        MusicStore.getResourceByUri(uri);
         MusicStore.addChangeListener(() => {
             this.setState({
                 object: MusicStore.state.resources[uri],
@@ -24,10 +38,11 @@ export class PlaylistView extends React.Component {
     render() {
         return (
             <Loader loaded={this.state.loaded}>
+                {this.state.object &&
                 <div className="sp-container">
-                    <Header obj={this.state.playlist} />
+                    <Header obj={this.state.object} />
                     <PlayContext uri={this.state.object.uri + ':track'} />
-                </div>
+                </div>}
             </Loader>
         )
     }

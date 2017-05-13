@@ -1,10 +1,12 @@
 var express = require('express');
 var execPath = process.env.PWD;
 var fs = require('fs');
-var cookieSession = require('cookie-session')
+var cookieSession = require('cookie-session');
+var api = require('./api.js');
 var app = express();
 
 app.use(express.static(__dirname + '/public/'));
+app.use('/api', api.server);
 app.get('/callback.html', function (req, res) {
     var index = fs.readFileSync(__dirname + '/public/callback.html');
     res.write(index);

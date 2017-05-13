@@ -14,9 +14,6 @@ export class StartView extends React.Component {
     render() {
         return (
             <div>
-            {this.state.loggedIn &&
-                <Redirect to="/" />
-            }
             </div>
         )
     }
