@@ -1,5 +1,5 @@
 const React = require('react');
-const {Redirect} = require('react-router');
+const {Redirect} = require('react-router-dom');
 const {MusicStore} = require('../stores/MusicStore');
 
 

@@ -1,5 +1,5 @@
 const React = require('react');
-const {Redirect} = require('react-router');
+const {Redirect} = require('react-router-dom');
 
 const {MusicStore} = require('../stores/MusicStore');
 const {PlayContext} = require('../components/PlayContext');
@@ -30,6 +30,7 @@ export class PlaylistView extends React.Component {
         MusicStore.getResourceByUri(uri);
         MusicStore.addChangeListener(() => {
             this.setState({
+                loaded: true,
                 object: MusicStore.state.resources[uri],
                 track: MusicStore.state.track
             });
@@ -40,8 +41,8 @@ export class PlaylistView extends React.Component {
             <Loader loaded={this.state.loaded}>
                 {this.state.object &&
                 <div className="sp-container">
-                    <Header obj={this.state.object} />
-                    <PlayContext uri={this.state.object.uri + ':track'} />
+                    <Header object={this.state.object} />
+                    <PlayContext showHeaders={true} uri={this.state.object.uri + ':track'} />
                 </div>}
             </Loader>
         )

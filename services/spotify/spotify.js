@@ -145,6 +145,7 @@ SpotifyBrowseAPI.prototype.request = function (method, url, payload, postData, r
             }
             if (parts[0] == 'me') {
                 if (parts[1] == 'player') {
+                   
                     var uri = 'https://api.spotify.com/v1/me/player/' + parts.slice(2).join('/') + '';
                     var d = {
                         url: uri,
@@ -154,7 +155,7 @@ SpotifyBrowseAPI.prototype.request = function (method, url, payload, postData, r
                         body: JSON.stringify(postData)
                     };
                     request(d,
-                        function (error, response, body) {
+                        function (error, response, body) {  
                             try {
                                 resolve(JSON.parse(body));
                             } catch (e) {
@@ -165,7 +166,7 @@ SpotifyBrowseAPI.prototype.request = function (method, url, payload, postData, r
                     return;
                 }
             }
-            if (parts[0] == 'artists') {
+            if (parts[0] == 'artist') {
                 if (parts.length > 2) {
                     if (parts[2] == 'top-track') {
                         request({
@@ -185,9 +186,10 @@ SpotifyBrowseAPI.prototype.request = function (method, url, payload, postData, r
                             }
                         );
                     }
-                    if (parts[2] == 'album') {
+                    if (parts[2] == 'release') {
+                        var limit = (payload.limit || 10);
                         request({
-                                url: 'https://api.spotify.com/v1/artists/' + parts[1] + '/albums?limit=' + payload.limit + '&offset=' + payload.offset
+                                url: 'https://api.spotify.com/v1/artists/' + parts[1] + '/albums?limit=' + limit + '&offset=' + (limit * payload.p)
                             },
                             function (error, response, body) {
                                 var data = JSON.parse(body);
@@ -216,10 +218,10 @@ SpotifyBrowseAPI.prototype.request = function (method, url, payload, postData, r
             if (parts[0] == 'album') {
                 if (parts.length > 2) {
                     request({
-                            url: 'https://api.spotify.com/v1/albums/' + parts[1] + '/tracks?limit=' + payload.limit + '&offset=' + payload.offset
+                            url: 'https://api.spotify.com/v1/albums/' + parts[1] + '/tracks'
                         },
                         function (error, response, body) {
-                            body = body.replace('SpotifyBrowse:', 'bungalow:');
+                            body = body.replace('spotify:', 'bungalow:');
                             var data = JSON.parse(body);
                             try {
                                 resolve({
@@ -292,7 +294,8 @@ SpotifyBrowseAPI.prototype.request = function (method, url, payload, postData, r
                                 {
                                     'id': 'substream',
                                     'name': 'Substream Music Group',
-                                    'uri': 'SpotifyBrowse:label:substream'
+                                    'href': '/label/substream',
+                                    'uri': 'spotify:label:substream'
                                 }
                             ];
                             resolve({objects: labels});
@@ -305,7 +308,7 @@ SpotifyBrowseAPI.prototype.request = function (method, url, payload, postData, r
                             'name': code,
                             'followers': {
                                 'count': 5000000,
-                                'href': 'SpotifyBrowse:country:' + code + ':followers'
+                                'href': '/country/' + code + '/follower'
                             }
                         })
                     }

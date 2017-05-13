@@ -1,31 +1,36 @@
 const React = require('react');
-const {Redirect} = require('react-router');
+const {Redirect} = require('react-router-dom');
 const {MusicStore} = require('../stores/MusicStore');
-
-const {Link} = require('react-router');
-const {Loading} = require('react-loader');
+const {uriToPath} = require('../utils');
+const {Link} = require('react-router-dom');
+const Loading = require('react-loader');
 
 
 export class PlayContext extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            object: null,
+            uri: this.props.uri,
+            objects: [],
+            showHeaders: this.props.showHeaders,
             selectedIndices: [],
             sorting: {
                 name: (a,b) => { return a.name > b.name;},
                 artist: (a,b) => { return a.artists[0].name > b.artists[0].name},
                 release: (a,b) => { return a.album.name > b.album.name}
             },
+            loaded: false,
             sort: null
         }
     }
     componentDidMount() {
         let uri = this.props.uri;
-        MusicStore.getResourceByUri(this.props.uri);
+        MusicStore.fetchObjectsFromCollection(this.props.uri);
         MusicStore.addChangeListener(() => {
+            let uri = this.props.uri;
             this.setState({
-                object: MusicStore.state.object.resources[uri]
+                loaded: true,
+                objects: MusicStore.state.resources[uri].objects
             });
         });
     }
@@ -35,18 +40,23 @@ export class PlayContext extends React.Component {
             selectedIndices: [i]
         });
     }
-    _onDblClick(i) {
+    _onDoubleClick(i) {
         let track = this.state.objects[i];
-        MusicStore.playTrack(track, this.state);
+        MusicStore.play({
+            context_uri: this.state.uri.substr(0, this.state.uri.length - ':track'.length),
+            offset: {
+                position: i
+            }
+        });
     }
     render() {
         
-        let tracks = this.state.tracks.objects;
+        let tracks = this.state.objects;
         if (this.state.sort != null) {
             tracks = tracks.sort(this.state.sorting[this.state.sort]);
         }
         return (
-            <Loading loaded={this.state.object != null}>
+            <Loading loaded={this.state.loaded}>
                 <table className="sp-table" style={{width: '100%'}}>
                     {this.state.showHeaders && 
                     <thead>
@@ -57,18 +67,19 @@ export class PlayContext extends React.Component {
                         </tr>
                     </thead>}
                     <tbody>
-                        {this.state.object.tracks.map((o, i) => {
-                            let isSelected = this.state.selectedIndices.indexOf(i) !== -1;
+                        {tracks instanceof Array && tracks.map((o, i) => {
+                            let isSelected = this.state.selectedIndices.includes(i);
                             let className = MusicStore.state.player.item && MusicStore.state.player.item.uri === o.uri ? 'sp-current-track' : '';
                             return (
                             
-                                <tr onDblClick={() => {this._onDblClick(i)}} onMouseDown={() => {this._onTouchTrack(i)}} className={className + ' ' + isSelected ? 'sp-track-selected' : ''}>
+                                <tr onDoubleClick={() => {this._onDoubleClick(i)}} onMouseDown={() => {this._onTouchTrack(i)}} className={className + ' ' + (isSelected ? 'sp-track-selected' : '')}>
                                     <td>{o.name}</td>
                                     <td>{o.artists.map((artist) => {
-                                       return <Link to={artist.name}>{artist}</Link>
+                                       return <Link to={uriToPath(artist.uri)}>{artist.name}</Link>
                                     })}
                                     </td>
-                                    <td><Link to={o.album.href}>{o.album}</Link></td>
+                                    {o.album &&
+                                    <td><Link to={uriToPath(o.album.uri)}>{o.album.name}</Link></td>}
                                 </tr>
                             )
                         })}

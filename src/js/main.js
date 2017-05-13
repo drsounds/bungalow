@@ -4,6 +4,8 @@ const ReactDOM = require('react-dom');
 const {StartView} = require('./views/StartView');
 const {LoginView} = require('./views/LoginView');
 const {PlaylistView} = require('./views/PlaylistView');
+const {ArtistView} = require('./views/ArtistView');
+const {UserView} = require('./views/UserView');
 const {MusicStore} = require('./stores/MusicStore');
 
 
@@ -40,7 +42,7 @@ class MainView extends React.Component {
     }
     render() {
         return (
-            <BrowserRouter history={browserHistory}>
+            <BrowserRouter>
                 <div style={{width: (window.innerWidth - 20) + 'px',height: (window.innerHeight - 160) + 'px'}}>
                     <header>
         				<div className="btn-group">
@@ -89,6 +91,8 @@ class MainView extends React.Component {
                             <Route component={StartView} path="/" />
                             <Route component={LoginView} path="/login" />
                             <Route component={PlaylistView} path="/user/:username/playlist/:identifier" />
+                            <Route component={ArtistView} path="/artist/:identifier" />
+                            <Route component={UserView} path="/user/:identifier" />
         				</div>
         				<aside style={{display: 'none', width: '15%', position: 'relative'}}>
         					<div style={{position: 'absolute', left: '50%', top: '50%', 'webkitTransform': 'translate(-50%, -50%)'}}>

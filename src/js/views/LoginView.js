@@ -1,5 +1,5 @@
 const React = require('react');
-const {Redirect} = require('react-router');
+const {Redirect} = require('react-router-dom');
 
 
 export class LoginView extends React.Component {

@@ -4,6 +4,9 @@ var fs = require('fs');
 var cookieSession = require('cookie-session');
 var api = require('./api.js');
 var app = express();
+var bodyParser = require('body-parser');
+  app.use(bodyParser());
+
 
 app.use(express.static(__dirname + '/public/'));
 app.use('/api', api.server);
