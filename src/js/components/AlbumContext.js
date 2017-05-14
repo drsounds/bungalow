@@ -20,6 +20,8 @@ export class AlbumContext extends React.Component {
         MusicStore.fetchObjectsFromCollection(this.props.uri);
         MusicStore.addChangeListener(() => {
             let uri = this.props.uri;
+            let state = MusicStore.state.resources[uri];
+            if (state)
             this.setState({
                 loaded: true,
                 objects: MusicStore.state.resources[uri].objects
@@ -40,7 +42,7 @@ export class AlbumContext extends React.Component {
                         {this.state.objects.map((o, i) => {
                             return (
                             
-                                <tr>
+                                <tr key={i}>
                                     <td style={{paddingLeft: '3pt',paddingBottom: '15pt', paddingTop: '15pt', width: '96pt', verticalAlign: 'top'}}>
                                         <Link to={uriToPath(o.uri)}><img width="96pt" className="sp-cover-image" src={o.images[0].url} /></Link>
                                     </td>

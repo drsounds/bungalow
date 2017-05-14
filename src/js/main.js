@@ -58,7 +58,7 @@ class MainView extends React.Component {
         				<p>{this.state.message.description} <a style={{color: 'black', marginRight: '10pt', float: 'right'}}>x</a></p>
         			</div>}
         			<main>
-        				<aside style={{width: '100pt'}}>
+        				<aside style={{width: '200pt'}}>
         					<div id="menu" style={{overflow: 'scroll'}}>
         						<ul cellspacing="0" width="100%" className="menu">
         						    {this.state.menu.objects.map((o) => {
@@ -84,7 +84,7 @@ class MainView extends React.Component {
         						<div id="nowplaying_header">
         							<p id="song_title"></p>
         						</div>
-        						<div id="nowplaying_image" style={{backgroundSize: 'cover', flex: 1}}></div>
+        						<div id="nowplaying_image" style={{backgroundSize: 'cover', backgroundImage: 'url("' + (MusicStore.state.player.item && MusicStore.state.player.item.album && MusicStore.state.player.item.album.images.length > 0 ? MusicStore.state.player.item.album.images[0].url: '') + '")', flex: 1}}></div>
         					</div>
         				</aside>
         				<div id="viewstack">
@@ -92,7 +92,7 @@ class MainView extends React.Component {
                             <Route component={LoginView} path="/login" />
                             <Route component={PlaylistView} path="/user/:username/playlist/:identifier" />
                             <Route component={ArtistView} path="/artist/:identifier" />
-                            <Route component={UserView} path="/user/:identifier" />
+                            <Route component={UserView} path="/user/:identifier$" />
         				</div>
         				<aside style={{display: 'none', width: '15%', position: 'relative'}}>
         					<div style={{position: 'absolute', left: '50%', top: '50%', 'webkitTransform': 'translate(-50%, -50%)'}}>
@@ -102,7 +102,7 @@ class MainView extends React.Component {
         			</main>
         			
         			<footer>
-        				<div className="conliols" style={{textAlign: 'center', width: '200px'}}>
+        				<div className="controls" style={{textAlign: 'center', width: '200px'}}>
         					<i id="btnSkipBack" onclick="shell.playPrevious()" className="fa fa-fast-backward btn player-btn"></i>
         					<i id="btnPlay" onclick="shell.playPause()" className="fa fa-play btn player-btn" style={{webkitTransform: 'scale(1.5)'}}></i>
         					<i id="btnSkipNext" onclick="shell.playNext()" className="fa fa-fast-forward btn player-btn"></i>

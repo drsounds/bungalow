@@ -22,6 +22,7 @@ class _MusicStore extends Store {
                 this.emitChange();
             });
         }, 1000);
+        this.loadState();
         
     }
     /**
@@ -46,7 +47,8 @@ class _MusicStore extends Store {
     
     async play(context) {
         fetch('/api/music/me/player/play', {headers: {'Content-Type': 'application/json'}, method: 'PUT', body: JSON.stringify(context), mode: 'cors', credentials: 'include'}).then((result) => result.json()).then((result) => {
-            
+            this.state.player = result;
+            this.emitChange();
         }, (error) => {
         });
         
@@ -60,18 +62,28 @@ class _MusicStore extends Store {
     
     
     async fetchObjectsFromCollection(uri) {
-        if (!(uri in this.state.resources)) {
-            this.state.resources[uri] = {
+       
+        let state = this.state.resources[uri];
+        if (state != null) {
+            
+            setTimeout(() => {this.emitChange()}, 1);
+            return;
+        
+        } else {
+            state = {
                 objects: [],
                 page: -1
             };
         }
-        let state = this.state.resources[uri];
-        state.page += 1;
+    
+        state.page++;
         let url = '/api/music/' + uri.substr(uri.split(':')[0].length + 1).split(':').join('/') + '?p=' + state.page;
         let result = await fetch(url, {method: 'GET', credentials: 'include', mode: 'cors'}).then((result) => result.json());
-        state.objects = result.objects;
+        for (let obj of result.objects) {
+            state.objects.push(obj);   
+        }
         this.state.resources[uri] = state;
+    
         this.emitChange();
     }
 }

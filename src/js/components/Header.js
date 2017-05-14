@@ -3,8 +3,8 @@ const {Redirect} = require('react-router-dom');
 const {MusicStore} = require('../stores/MusicStore');
 const {Link} = require('react-router-dom');
 const {uriToPath} = require('../utils');
-
-
+const numeral = require('numeral');
+numeral.locale('sv');
 export class Header extends React.Component {
     constructor(props) {
         super(props);
@@ -22,11 +22,19 @@ export class Header extends React.Component {
                             <Link to={uriToPath(this.props.object.uri)}><img src={this.props.object.images ? this.props.object.images[0].url : ''} style={{width: '96pt'}} className="sp-cover-image" /></Link>
                         </td>
                         <td style={{height: '100%', padding: '3pt', verticalAlign: 'top'}}>
-                            <small>{this.props.object.type}</small>
                             <h2 style={{minHeight: '25pt'}}><Link to={uriToPath(this.props.object.uri)}>{this.props.object.name}</Link></h2>
-                            <div className="sp-toolbar">
-                                <button className="btn btn-default">+ Follow</button>
+                            <div>
+                             <button className="btn btn-default">+ Follow</button>
                             </div>
+                            <p dangerouslySetInnerHTML={{__html: this.props.object.description}}></p>
+                        </td>
+                        <td style={{padding: '3pt', verticalAlign: 'top'}}>
+                        {this.props.object.followers && false &&
+                            <div style={{textAlign: 'right'}}>
+                                <h3>Followers</h3>
+                                <small>{numeral(this.props.object.followers.total).format('0,0')}</small>
+                            </div>
+                        }
                         </td>
                     </tr>
                     <tr>

@@ -34,6 +34,20 @@ export class ArtistView extends React.Component {
                         <div className="sp-container">
                             <Header object={this.state.object} />
                         </div>
+                        <Separator>Top tracks</Separator>
+                        <table style={{width: '100%', 'cell-padding': '3pt', 'padding-top': '15pt', 'padding-bottom': '15pt'}}>
+                            <tbody>
+                                <tr>
+                                    <td style={{width: '96pt'}}>
+                                        <img width="96pt" />
+                                    </td>
+                                    <td>    
+                                        <h2>Top tracks</h2>
+                                        <PlayContext uri={this.state.object.uri + ':top-track'} />
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
                         <Separator>Albums</Separator>
                         <AlbumContext uri={this.state.object.uri + ':release'} />
                     </div>

@@ -155,11 +155,18 @@ SpotifyBrowseAPI.prototype.request = function (method, url, payload, postData, r
                         body: JSON.stringify(postData)
                     };
                     request(d,
-                        function (error, response, body) {  
-                            try {
-                                resolve(JSON.parse(body));
-                            } catch (e) {
-                                fail();
+                        function (error, response, body) {
+                            if (method == 'PUT') {
+                                request('https://api.spotify.com/v1/me/player', {
+                                    headers: headers,
+                                    method: 'GET'
+                                }, function(error2, response2, body2) {
+                                    try {
+                                        resolve(JSON.parse(body2));
+                                    } catch (e) {
+                                        fail();
+                                    }
+                                });
                             }
                         }
                     );

@@ -28,9 +28,11 @@ export class PlayContext extends React.Component {
         MusicStore.fetchObjectsFromCollection(this.props.uri);
         MusicStore.addChangeListener(() => {
             let uri = this.props.uri;
+            let state = MusicStore.state.resources[uri];
+            if (state)
             this.setState({
                 loaded: true,
-                objects: MusicStore.state.resources[uri].objects
+                objects: state.objects
             });
         });
     }
@@ -69,12 +71,12 @@ export class PlayContext extends React.Component {
                     <tbody>
                         {tracks instanceof Array && tracks.map((o, i) => {
                             let isSelected = this.state.selectedIndices.includes(i);
-                            let className = MusicStore.state.player.item && MusicStore.state.player.item.uri === o.uri ? 'sp-current-track' : '';
+                            let className = MusicStore.state.player.item && MusicStore.state.player.item.uri === o.uri ? 'sp-now-playing' : '';
                             return (
                             
-                                <tr onDoubleClick={() => {this._onDoubleClick(i)}} onMouseDown={() => {this._onTouchTrack(i)}} className={className + ' ' + (isSelected ? 'sp-track-selected' : '')}>
+                                <tr key={i} onDoubleClick={() => {this._onDoubleClick(i)}} onMouseDown={() => {this._onTouchTrack(i)}} className={className + ' ' + (isSelected ? 'sp-track-selected' : '')}>
                                     <td>{o.name}</td>
-                                    <td>{o.artists.map((artist) => {
+                                    <td>{o.artists instanceof Array && o.artists.map((artist) => {
                                        return <Link to={uriToPath(artist.uri)}>{artist.name}</Link>
                                     })}
                                     </td>

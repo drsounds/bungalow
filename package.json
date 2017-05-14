@@ -47,6 +47,7 @@
     "express": "~4.13.4",
     "hostile": "*",
     "less": "*",
+    "numeral": "^2.0.6",
     "object-assign": "*",
     "request": "*",
     "spotify-web-api-node": "^2.3.6",
