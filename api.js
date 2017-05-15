@@ -223,8 +223,6 @@ app.get('/social/*', function (req, res) {
 
 app.get('/music/*', function (req, res) {
     music.session = req.session;
-    console.log("A");
-    console.log(music);
     var body = {};
     if (request.body) {
         body = (request.body);
@@ -239,8 +237,6 @@ app.get('/music/*', function (req, res) {
 
 app.put('/music/*', function (req, res) {
     music.session = req.session;
-    console.log("A");
-    console.log(music);
     var body = {};
     if (req.body) {
         body = (req.body);
@@ -255,8 +251,6 @@ app.put('/music/*', function (req, res) {
 
 app.post('/music/*', function (req, res) {
     music.session = req.session;
-    console.log("A");
-    console.log(music);
 
     music.request("POST", req.params[0], req.query, req.body, req).then(function (result) {
 

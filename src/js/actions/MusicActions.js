@@ -9,6 +9,13 @@ export let MusicActions = {
             uri: uri
         });            
     },
+    fetchResourcesFromUri(uri, p) {
+         AppDispatcher.dispatch({
+            actionType: MusicConstants.FETCH_RESOURCE_FROM_URI,    
+            uri: uri,
+            p: p
+        });            
+    },
     playContext(context) {
         AppDispatcher.dispatch({
             actionType: MusicConstants.PLAY_CONTEXT,

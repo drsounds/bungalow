@@ -26,6 +26,16 @@ export class ArtistView extends React.Component {
             });
         })
     }
+    componentWillReceiveProps() {
+        let uri = 'bungalow:artist:' + this.props.match.params.identifier; 
+        MusicStore.getResourceByUri(uri);
+        MusicStore.addChangeListener(() => {
+            this.setState({
+                loaded: true,
+                object: MusicStore.state.resources[uri]
+            });
+        })
+    }
     render() {
         return (
             <Loader loaded={this.state.object != null}>

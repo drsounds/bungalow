@@ -109,10 +109,6 @@ SpotifyBrowseAPI.prototype.request = function (method, url, payload, postData, r
     var self = this;
     this.req = req;
     var promise = new Promise(function (resolve, fail) {
-
-        console.log("Got request");
-        console.log("Doing request");
-        
         var activity = function () {
 
             var token = self.getAccessToken();
@@ -145,32 +141,76 @@ SpotifyBrowseAPI.prototype.request = function (method, url, payload, postData, r
             }
             if (parts[0] == 'me') {
                 if (parts[1] == 'player') {
-                   
-                    var uri = 'https://api.spotify.com/v1/me/player/' + parts.slice(2).join('/') + '';
-                    var d = {
-                        url: uri,
-                        headers: headers,
-                        method: method,
-                        contentType: 'application/json',
-                        body: JSON.stringify(postData)
-                    };
-                    request(d,
-                        function (error, response, body) {
-                            if (method == 'PUT') {
-                                request('https://api.spotify.com/v1/me/player', {
-                                    headers: headers,
-                                    method: 'GET'
-                                }, function(error2, response2, body2) {
-                                    try {
-                                        resolve(JSON.parse(body2));
-                                    } catch (e) {
-                                        fail();
-                                    }
+                    if (parts[2] == 'play') {
+                       
+                        var uri = 'https://api.spotify.com/v1/me/player/play';
+                        var d = {
+                            url: uri,
+                            headers: headers,
+                            method: method,
+                            contentType: 'application/json',
+                            body: JSON.stringify(postData)
+                        };
+                        request(d,
+                            function (error, response, body) {
+                                if (error) {
+                                    fail();
+                                    return;
+                                }
+                                request(
+                                    'https://api.spotify.com/v1/me/player',
+                                    {
+                                        headers: headers    
+                                    },
+                                    function (error2, response2, body2) {
+                                         try {
+                                            resolve(JSON.parse(body2));
+                                        } catch (e) {
+                                            fail();
+                                        }
+                                    return;
                                 });
                             }
-                        }
-                    );
-                    return;
+                        );
+                    } else if(parts[2] === 'pause') {
+                        var uri = 'https://api.spotify.com/v1/me/player/pause';
+                        var d = {
+                            url: uri,
+                            headers: headers,
+                            method: method,
+                            contentType: 'application/json',
+                            body: JSON.stringify(postData)
+                        };
+                        request(d,
+                            function (error, response, body) {
+                                 try {
+                                    resolve(JSON.parse(body));
+                                } catch (e) {
+                                    fail();
+                                }
+                            return;
+                            }
+                        )
+                    } else {
+                        var uri = 'https://api.spotify.com/v1/me/player';
+                        var d = {
+                            url: uri,
+                            headers: headers,
+                            method: method,
+                            contentType: 'application/json',
+                            body: JSON.stringify(postData)
+                        };
+                        request(d,
+                            function (error, response, body) {
+                                 try {
+                                    resolve(JSON.parse(body));
+                                } catch (e) {
+                                    fail();
+                                }
+                            return;
+                            }
+                        )
+                    }
                 }
             }
             if (parts[0] == 'artist') {

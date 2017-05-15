@@ -23,6 +23,9 @@ export class PlayContext extends React.Component {
             sort: null
         }
     }
+    componentWillUpdate() {
+        
+    }
     componentDidMount() {
         let uri = this.props.uri;
         MusicStore.fetchObjectsFromCollection(this.props.uri);

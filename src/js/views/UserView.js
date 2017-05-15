@@ -20,12 +20,24 @@ export class UserView extends React.Component {
         let uri = 'bungalow:user:' + this.props.match.params.identifier; 
         MusicStore.getResourceByUri(uri);
         MusicStore.addChangeListener(() => {
+            let object = MusicStore.state.resources[uri];
             this.setState({
                 loaded: true,
-                object: MusicStore.state.resources[uri]
+                object: object
             });
         })
     }   
+    componentWillReceiveProps() {
+        let uri = 'bungalow:user:' + this.props.match.params.identifier; 
+        MusicStore.getResourceByUri(uri);
+        MusicStore.addChangeListener(() => {
+            let object = MusicStore.state.resources[uri];
+            this.setState({
+                loaded: true,
+                object: object
+            });
+        })
+    }
     render() {
         return (
             <Loader loaded={this.state.object != null}>

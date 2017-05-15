@@ -1,6 +1,7 @@
 const React = require('react');
 const {Redirect} = require('react-router-dom');
 
+const {MusicActions} = require('../stores/MusicActions');
 const {MusicStore} = require('../stores/MusicStore');
 const {PlayContext} = require('../components/PlayContext');
 const {Header} = require('../components/Header');
@@ -15,7 +16,7 @@ Object.prototype.toPath = function () {
     return t;
 }
 
-export class PlaylistView extends React.Component {
+export class SearchView extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -25,7 +26,7 @@ export class PlaylistView extends React.Component {
         }
     }
     componentDidMount() {
-        let uri = 'bungalow:user:' + this.props.match.params.username +
+        let uri = 'bungalow:search:' + this.props.match.params.username +
             ':playlist:' + this.props.match.params.identifier; 
         MusicStore.getResourceByUri(uri);
         MusicStore.addChangeListener(() => {

@@ -47,7 +47,8 @@ class _MusicStore extends Store {
     
     async play(context) {
         fetch('/api/music/me/player/play', {headers: {'Content-Type': 'application/json'}, method: 'PUT', body: JSON.stringify(context), mode: 'cors', credentials: 'include'}).then((result) => result.json()).then((result) => {
-            this.state.player = result;
+            this.state.player.item = result.item;
+        
             this.emitChange();
         }, (error) => {
         });
@@ -93,7 +94,10 @@ export let MusicStore = new _MusicStore();
 
 
 AppDispatcher.register((payload) => {
-    if (payload.actionType === MusicConstants.GET_RESOURCE) {
-        MusicStore.getLibrariesForBook(payload.uri);
+    if (payload.actionType === MusicConstants.GET_RESOURCE_BY_URI) {
+        MusicStore.getResourceByUri(payload.uri);
+    }
+    if (payload.actionType == MusicConstants.FETCH_RESOURCE_FROM_URI) {
+        MusicStore.fetchObjectsFromCollection(payload.uri, payload.p);
     }
 });
