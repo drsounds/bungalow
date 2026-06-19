@@ -23,7 +23,7 @@ final class BuiltinPluginRegistry {
             "se.spacify.plugin.web.WebPlugin", cl));
         list.add(builtin("se.spacify.plugin.musicbrainz", "MusicBrainz", "1.0.0",
             "se.spacify.plugin.musicbrainz.MusicBrainzPlugin", cl));
-        // After MusicBrainz so the catalogue services it registers are present
+        // After MusicBrainz so the catalogue Services it registers are present
         // when the Catalogs sidebar folder is built.
         list.add(builtin("se.spacify.plugin.catalog", "Catalogs", "1.0.0",
             "se.spacify.plugin.catalog.CatalogsPlugin", cl));

@@ -27,7 +27,7 @@ public class ServiceManager {
     // ── Service registration ──────────────────────────────────────────────────
 
     public void register(Service service) {
-        services.put(service.getServiceId(), service);
+        services.put(service.getId(), service);
         service.onCreate();
     }
 
@@ -38,7 +38,7 @@ public class ServiceManager {
 
     /** Unregister a specific service instance (e.g. when a plugin is disabled). */
     public void unregister(Service service) {
-        if (service != null) unregister(service.getServiceId());
+        if (service != null) unregister(service.getId());
     }
 
     public void startAll() {

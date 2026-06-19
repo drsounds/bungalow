@@ -3,9 +3,9 @@ package se.spacify.web;
 import java.util.List;
 
 /**
- * Hardcoded list of known music-service "stores" shown in the navigation bar's
+ * Hardcoded list of known music-Service "stores" shown in the navigation bar's
  * stores dropdown. Selecting one opens it in the {@code SPServiceWebView} via a
- * {@code spacify:store:<host>} URI. (Temporary — a dynamic service registry
+ * {@code spacify:store:<host>} URI. (Temporary — a dynamic Service registry
  * will replace this later.)
  */
 public final class StoreCatalog {

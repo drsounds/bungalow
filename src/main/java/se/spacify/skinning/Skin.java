@@ -11,8 +11,14 @@ import se.spacify.controls.TabButton;
 import se.spacify.controls.ToolBar;
 import se.spacify.controls.ToolButton;
 import se.spacify.controls.VerticalPanel;
+import se.spacify.plugin.Plugin;
 
 public abstract class Skin {
+	protected Plugin plugin;
+	public Plugin getPlugin() {
+		return plugin;
+	}
+	public abstract String getId();
 	public abstract void paintTopBar(JPanel control, Graphics2D g2);
 	public abstract void paintHeader(JPanel header, Graphics2D g2);
 	public abstract void paintFooter(JPanel footer, Graphics2D g2);

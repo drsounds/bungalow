@@ -50,8 +50,8 @@ final class ResolutionStore {
             MusicServiceTrack m = new MusicServiceTrack();
             m.setTrack(req.track());
             m.setTrackKey(req.trackKey());
-            m.setServiceId(match.serviceId());
-            // Record how the service resolved it so the saved pick replays the
+            m.setServiceId(match.ServiceId());
+            // Record how the Service resolved it so the saved pick replays the
             // same way without re-searching: by ISRC, else by title/artist.
             if (match.byIsrc()) m.setMatchIsrc(req.isrc());
             m.setMatchTitle(req.title());

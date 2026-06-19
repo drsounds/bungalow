@@ -16,7 +16,7 @@ import java.util.regex.Pattern;
 /**
  * Read-only detail page for a single artist, reached from the sidebar via
  * {@code spacify:library:artist:<id>}. Lists the artist's recordings and the
- * album each appears on; double-click resolves and plays across services.
+ * album each appears on; double-click resolves and plays across Services.
  */
 public class ArtistDetailView extends AbstractLibraryView {
 

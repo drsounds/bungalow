@@ -9,7 +9,7 @@ import java.util.List;
 
 /**
  * Discovery aspect: catalogue browsing and search. Implementations can connect
- * to Discogs, MusicBrainz, etc. A service may combine this aspect with the
+ * to Discogs, MusicBrainz, etc. A Service may combine this aspect with the
  * streaming aspect ({@link se.spacify.service.media.MediaService}) to both find
  * and play music.
  */

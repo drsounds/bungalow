@@ -47,6 +47,6 @@ public final class PlayQueueItem {
     /** The play context this entry was built from, or {@code null} if none. */
     public PlayRequest getSource() { return source; }
 
-    /** Starts playback of this entry on its originating service. */
+    /** Starts playback of this entry on its originating Service. */
     public void play() { if (playAction != null) playAction.run(); }
 }

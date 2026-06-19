@@ -11,9 +11,9 @@ import java.util.List;
 
 /**
  * Library aspect: browsing a collection of music a user owns or has saved.
- * Implemented by services that expose such a collection — the local catalogue,
+ * Implemented by Services that expose such a collection — the local catalogue,
  * or a remote account's saved library — and discovered via
- * {@link se.spacify.service.ServiceManager#getServices(Class)}. A service may
+ * {@link se.spacify.service.ServiceManager#getServices(Class)}. A Service may
  * combine this with the streaming aspect ({@link se.spacify.service.media.MediaService})
  * to both browse and play, or with the discovery aspect
  * ({@link se.spacify.service.catalogue.MusicCatalogueService}).

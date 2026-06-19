@@ -35,7 +35,7 @@ public class NowPlayingPanel extends JPanel {
     private final JLabel            emptyLabel;
 	private JToolBar topToolbar;
 	private JToolBar bottomToolbar;
-	/** Hosts the active service's player surface, if any, at the bottom of the panel. */
+	/** Hosts the active Service's player surface, if any, at the bottom of the panel. */
 	private final JPanel playerHost = new JPanel(new BorderLayout());
 	private MediaServicePlayerComponent currentPlayer;
 
@@ -108,7 +108,7 @@ public class NowPlayingPanel extends JPanel {
         bottomToolbar.setBackground(ThemeManager.getTintColor());
         bottomToolbar.add(new JButton("Sync"));
 
-        // The active media service's player surface sits below the queue and above
+        // The active media Service's player surface sits below the queue and above
         // the toolbar; it's part of this sticky panel, so navigation never hides it.
         playerHost.setOpaque(false);
         playerHost.setVisible(false);
@@ -129,17 +129,17 @@ public class NowPlayingPanel extends JPanel {
         PlayQueue.getInstance().addChangeListener(() ->
             SwingUtilities.invokeLater(this::refresh));
         ThemeManager.addChangeListener(() -> { updateColors(); refresh(); });
-        // Swap in the player surface of whichever service is handling the current play.
+        // Swap in the player surface of whichever Service is handling the current play.
         PlaybackCoordinator.addActiveServiceListener(ms ->
             SwingUtilities.invokeLater(() -> setActivePlayer(ms)));
     }
 
     /**
-     * Show {@code service}'s player component (if it has one) in the bottom host,
+     * Show {@code Service}'s player component (if it has one) in the bottom host,
      * replacing any previous one. Components get {@code onDeactivated}/
      * {@code onActivated} callbacks around the swap.
      */
-    /** Right-click a queue entry to re-pick which service plays it ("Play with…"). */
+    /** Right-click a queue entry to re-pick which Service plays it ("Play with…"). */
     private void maybeShowQueueMenu(MouseEvent e) {
         if (!e.isPopupTrigger()) return;
         int row = table.rowAtPoint(e.getPoint());
@@ -156,8 +156,8 @@ public class NowPlayingPanel extends JPanel {
         menu.show(e.getComponent(), e.getX(), e.getY());
     }
 
-    private void setActivePlayer(MediaService service) {
-        MediaServicePlayerComponent next = service != null ? service.getPlayerComponent() : null;
+    private void setActivePlayer(MediaService Service) {
+        MediaServicePlayerComponent next = Service != null ? Service.getPlayerComponent() : null;
         if (next == currentPlayer) return;
 
         if (currentPlayer != null) {

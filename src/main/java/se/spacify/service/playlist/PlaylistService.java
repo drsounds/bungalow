@@ -7,7 +7,7 @@ import java.util.List;
 
 /**
  * Playlist aspect: listing and (optionally) editing playlists. Implemented by
- * services that own playlists — a local store, or a remote account exposing its
+ * Services that own playlists — a local store, or a remote account exposing its
  * own and curated playlists — and discovered via
  * {@link se.spacify.service.ServiceManager#getServices(Class)}.
  *
@@ -24,27 +24,27 @@ public interface PlaylistService extends Service {
     /** The playlist with the given id, or null if absent. */
     Playlist getPlaylist(String id);
 
-    /** Whether this service supports creating and modifying playlists. */
+    /** Whether this Service supports creating and modifying playlists. */
     default boolean isEditable() { return false; }
 
     default Playlist createPlaylist(String name) {
-        throw new UnsupportedOperationException("playlist service is read-only");
+        throw new UnsupportedOperationException("playlist Service is read-only");
     }
 
     default void renamePlaylist(String id, String name) {
-        throw new UnsupportedOperationException("playlist service is read-only");
+        throw new UnsupportedOperationException("playlist Service is read-only");
     }
 
     default void deletePlaylist(String id) {
-        throw new UnsupportedOperationException("playlist service is read-only");
+        throw new UnsupportedOperationException("playlist Service is read-only");
     }
 
     default void addToPlaylist(String playlistId, Playable item) {
-        throw new UnsupportedOperationException("playlist service is read-only");
+        throw new UnsupportedOperationException("playlist Service is read-only");
     }
 
     /** Remove the item at {@code index} from the playlist. */
     default void removeFromPlaylist(String playlistId, int index) {
-        throw new UnsupportedOperationException("playlist service is read-only");
+        throw new UnsupportedOperationException("playlist Service is read-only");
     }
 }

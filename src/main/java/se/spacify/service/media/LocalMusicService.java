@@ -13,7 +13,7 @@ import java.util.List;
 /**
  * JavaSound-based implementation of the music-streaming aspect for local audio
  * files. Supports WAV, AIFF, and AU formats natively; other formats require a
- * SPI codec on the classpath. Local playback needs no sign-in, so this service
+ * SPI codec on the classpath. Local playback needs no sign-in, so this Service
  * implements only {@link MusicService} (no {@link se.spacify.service.AuthAspect}).
  */
 public class LocalMusicService implements MusicService {
@@ -27,8 +27,8 @@ public class LocalMusicService implements MusicService {
 
     // ── Service identity ──────────────────────────────────────────────────────
 
-    @Override public String getServiceId()   { return "spacify.local.music"; }
-    @Override public String getServiceName() { return "Local Music"; }
+    @Override public String getId()   { return "spacify.local.music"; }
+    @Override public String getName() { return "Local Music"; }
 
     // ── Listener registration (delegated to PlaybackSupport) ──────────────────
 

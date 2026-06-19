@@ -42,8 +42,8 @@ public class ArtistsCatalogView extends AbstractCatalogView<Artist> {
     @Override
     protected String emptyHeader(MusicCatalogueService svc) {
         return query().isBlank()
-            ? "Search the " + svc.getServiceName() + " catalogue"
-            : svc.getServiceName() + " — no artists for \"" + query() + "\"";
+            ? "Search the " + svc.getName() + " catalogue"
+            : svc.getName() + " — no artists for \"" + query() + "\"";
     }
 
     @Override public String getTitle() { return "Catalogue Artists"; }

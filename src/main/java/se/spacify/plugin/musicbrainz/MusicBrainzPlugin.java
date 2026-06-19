@@ -10,7 +10,7 @@ import java.util.List;
  * Built-in plugin contributing the MusicBrainz catalogue. Registers a
  * {@link MusicBrainzService} (the discovery aspect,
  * {@link se.spacify.service.catalogue.MusicCatalogueService}) so search and
- * MBID/ISRC/ISNI lookups can resolve against the MusicBrainz web service.
+ * MBID/ISRC/ISNI lookups can resolve against the MusicBrainz web Service.
  *
  * <p>Exposes a single {@code contact} setting folded into the API
  * {@code User-Agent}, which MusicBrainz asks callers to supply.

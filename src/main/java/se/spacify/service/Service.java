@@ -3,29 +3,29 @@ package se.spacify.service;
 import javax.swing.*;
 
 /**
- * Core contract for every Spacify service: stable identity plus an
- * Android-style lifecycle. Capabilities a service may additionally take on
+ * Core contract for every Spacify Service: stable identity plus an
+ * Android-style lifecycle. Capabilities a Service may additionally take on
  * (streaming, discovery, purchases, authentication, …) are modelled as separate
  * <em>aspect</em> interfaces ({@link se.spacify.service.media.MediaService},
  * {@link se.spacify.service.catalogue.MusicCatalogueService},
- * {@link AuthAspect}, …). Because these are interfaces, a single service object
- * can implement any combination of them, and callers select services by aspect
+ * {@link AuthAspect}, …). Because these are interfaces, a single Service object
+ * can implement any combination of them, and callers select Services by aspect
  * via {@link ServiceManager#getServices(Class)}.
  */
 public interface Service {
 
     // ── Identity ──────────────────────────────────────────────────────────────
 
-    String getServiceId();
+    String getId();
 
-    String getServiceName();
+    String getName();
 
-    /** Optional icon shown in service-selection UI. */
+    /** Optional icon shown in Service-selection UI. */
     default ImageIcon getServiceIcon() { return null; }
 
     // ── Lifecycle ─────────────────────────────────────────────────────────────
 
-    /** Called once when the service is registered with ServiceManager. */
+    /** Called once when the Service is registered with ServiceManager. */
     default void onCreate() {}
 
     /** Called when ServiceManager.startAll() is invoked. */
@@ -34,6 +34,6 @@ public interface Service {
     /** Called when ServiceManager.stopAll() is invoked. */
     default void onStop() {}
 
-    /** Called once when the service is permanently removed from ServiceManager. */
+    /** Called once when the Service is permanently removed from ServiceManager. */
     default void onDestroy() {}
 }

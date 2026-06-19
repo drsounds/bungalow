@@ -18,7 +18,7 @@ import java.net.URI;
 public final class SiteUri {
 
     public static final String PREFIX       = "spacify:site:";
-    /** Same grammar, used by the service/store browser (SPServiceWebView). */
+    /** Same grammar, used by the Service/store browser (SPServiceWebView). */
     public static final String STORE_PREFIX = "spacify:store:";
 
     private SiteUri() {}

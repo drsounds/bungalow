@@ -5,7 +5,7 @@ import se.spacify.db.entity.Track;
 /**
  * The full context of a request to play one track, carried from the originating
  * view down to {@link PlaybackCoordinator#resolveAndPlay}. It bundles the
- * metadata used to resolve the track across services (ISRC, title, artist, and a
+ * metadata used to resolve the track across Services (ISRC, title, artist, and a
  * direct-URI fallback) together with the identity used to persist the user's
  * "Play with…" choice: the local {@link Track} (for a foreign-key binding) when
  * the play came from the library, plus a stable {@link #trackKey()} that also
@@ -21,7 +21,7 @@ public final class PlayRequest {
     private final String isrc;
     private final String title;
     private final String artist;
-    private final String fallbackUri; // direct play URI when no service resolves it
+    private final String fallbackUri; // direct play URI when no Service resolves it
     private final long   durationMs;
 
     public PlayRequest(Track track, String isrc, String title, String artist,
@@ -42,7 +42,7 @@ public final class PlayRequest {
     public long    durationMs()  { return durationMs; }
 
     /**
-     * Stable identity used to persist/look up the saved service choice when there
+     * Stable identity used to persist/look up the saved Service choice when there
      * is no {@link #track()}: the ISRC, else the play URI, else a title|artist key.
      */
     public String trackKey() {

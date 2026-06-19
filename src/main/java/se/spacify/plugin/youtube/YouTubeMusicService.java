@@ -6,15 +6,15 @@ import se.spacify.service.media.MusicService;
 import se.spacify.service.media.PlaybackSupport;
 
 /**
- * Music-streaming service backed by YouTube. Playback runs in a
- * {@link YouTubePlayerComponent} (an embedded IFrame-API player); this service
+ * Music-streaming Service backed by YouTube. Playback runs in a
+ * {@link YouTubePlayerComponent} (an embedded IFrame-API player); this Service
  * resolves tracks by title/artist search and drives that component.
  *
  * <p>It is a deliberate <em>fallback</em>: {@link #lookup(String)} can't resolve
  * an ISRC (returns null), but {@link #lookupByTitleArtist} reports any non-blank
- * title as playable, so — registered after the local service — it catches tracks
+ * title as playable, so — registered after the local Service — it catches tracks
  * nothing else can play. The shared {@code PlaybackCoordinator} then marks it the
- * active service and the Now Playing panel shows its player component.
+ * active Service and the Now Playing panel shows its player component.
  */
 public class YouTubeMusicService implements MusicService {
 
@@ -27,8 +27,8 @@ public class YouTubeMusicService implements MusicService {
 
     // ── Identity ────────────────────────────────────────────────────────────────
 
-    @Override public String getServiceId()   { return "se.spacify.plugin.youtube"; }
-    @Override public String getServiceName() { return "YouTube"; }
+    @Override public String getId()   { return "se.spacify.plugin.youtube"; }
+    @Override public String getName() { return "YouTube"; }
 
     // ── Listener registration ─────────────────────────────────────────────────
 

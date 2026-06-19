@@ -5,7 +5,12 @@ import se.spacify.navigation.SidebarNode;
 import se.spacify.service.Feature;
 import se.spacify.service.Service;
 import se.spacify.service.ServiceManager;
+import se.spacify.skinning.Skin;
+import se.spacify.skinning.SkinManager;
+
 import se.spacify.ui.LeftLibraryMenu;
+import se.spacify.ui.chrome.ChromeManager;
+import se.spacify.ui.chrome.Chrome;
 import se.spacify.navigation.SPViewStack;
 
 import javax.swing.Icon;
@@ -28,7 +33,7 @@ import java.util.Properties;
 /**
  * Singleton registry that discovers plugins, instantiates their main classes,
  * and activates/deactivates them on demand. Activation wires a plugin's
- * contributions (services, features, views, leftLibraryMenu nodes) into the running app
+ * contributions (Services, features, views, leftLibraryMenu nodes) into the running app
  * through a recording {@link PluginContext}; deactivation replays those records
  * in reverse so a disabled or removed plugin leaves no trace.
  *
@@ -240,7 +245,9 @@ public final class PluginManager {
         private final List<Feature>                features = new ArrayList<>();
         private final List<SPView>                 views    = new ArrayList<>();
         private final List<DefaultMutableTreeNode> nodes    = new ArrayList<>();
-
+        private final List<Chrome> 				   chromes = new ArrayList<>();
+        private final List<Skin> 				   skins = new ArrayList<>();
+      
         Recorder(ManagedPlugin owner) { this.owner = owner; }
 
         @Override public String pluginId() { return owner.descriptor.getId(); }
@@ -254,6 +261,12 @@ public final class PluginManager {
             s.onStart();
             services.add(s);
         }
+		@Override
+		public void registerChrome(Chrome c) {
+            ChromeManager.getInstance().register(c);
+			// TODO Auto-generated method stub
+            chromes.add(c);
+		}
 
         @Override public void registerView(SPView v) {
             if (viewStack != null) viewStack.registerView(v);
@@ -274,13 +287,20 @@ public final class PluginManager {
             f.getSidebarNodes().forEach(this::addSidebarNode);
         }
 
+        @Override public void registerSkin(Skin s) {
+            SkinManager.getInstance().register(s);
+            skins.add(s);
+        }
+
         /** Replay registrations in reverse, removing every contribution. */
         void undo() {
             for (DefaultMutableTreeNode n : nodes) if (leftLibraryMenu != null) leftLibraryMenu.removeSidebarNode(n);
             for (SPView v : views) if (viewStack != null) viewStack.unregisterView(v);
             for (Service s : services) ServiceManager.getInstance().unregister(s);
+             for (Skin s : skins) SkinManager.getInstance().unregister(s);
             for (Feature f : features) ServiceManager.getInstance().unregisterFeature(f);
-            nodes.clear(); views.clear(); services.clear(); features.clear();
+            nodes.clear(); views.clear(); services.clear(); features.clear(); chromes.clear(); skins.clear();
         }
+
     }
 }

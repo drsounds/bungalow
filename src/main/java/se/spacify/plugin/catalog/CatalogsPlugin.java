@@ -30,8 +30,8 @@ public class CatalogsPlugin implements Plugin {
 
         SidebarNode catalogs = new SidebarNode("Catalogs", null);
         for (MusicCatalogueService svc : ServiceManager.getInstance().getServices(MusicCatalogueService.class)) {
-            String id = svc.getServiceId();
-            SidebarNode node = new SidebarNode(svc.getServiceName(), null);
+            String id = svc.getId();
+            SidebarNode node = new SidebarNode(svc.getName(), null);
             node.addChild(new SidebarNode("Artists",    "spacify:catalog:" + id + ":artists"));
             node.addChild(new SidebarNode("Releases",   "spacify:catalog:" + id + ":releases"));
             node.addChild(new SidebarNode("Recordings", "spacify:catalog:" + id + ":recordings"));

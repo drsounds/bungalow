@@ -4,7 +4,7 @@ import se.spacify.navigation.SPViewStack;
 import se.spacify.web.SiteUri;
 
 /**
- * Embedded browser for music-service "stores", reached via
+ * Embedded browser for music-Service "stores", reached via
  * {@code spacify:store:<host>[:path]} (same grammar as {@code spacify:site:},
  * just a different scheme). It is meant to be shown full-width with the side
  * panels collapsed (see {@code MainWindow}'s immersive handling) and does not

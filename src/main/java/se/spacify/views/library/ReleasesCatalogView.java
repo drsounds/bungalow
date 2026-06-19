@@ -43,10 +43,10 @@ public class ReleasesCatalogView extends AbstractCatalogView<Release> {
 
     @Override
     protected String emptyHeader(MusicCatalogueService svc) {
-        if (param("artist") != null) return svc.getServiceName() + " — no releases for this artist";
+        if (param("artist") != null) return svc.getName() + " — no releases for this artist";
         return query().isBlank()
-            ? "Pick an artist, or search " + svc.getServiceName() + " releases"
-            : svc.getServiceName() + " — no releases for \"" + query() + "\"";
+            ? "Pick an artist, or search " + svc.getName() + " releases"
+            : svc.getName() + " — no releases for \"" + query() + "\"";
     }
 
     @Override public String getTitle() { return "Catalogue Releases"; }

@@ -1,11 +1,9 @@
-package se.spacify.skinning;
+package se.spacify.plugin.wmp.skin;
 
 import java.awt.Color;
 import java.awt.GradientPaint;
-import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RadialGradientPaint;
-import java.awt.RenderingHints;
 import java.awt.Shape;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Path2D;
@@ -13,98 +11,54 @@ import java.awt.geom.Path2D;
 import javax.swing.ButtonModel;
 import javax.swing.JPanel;
 import javax.swing.JTable;
-
 import se.spacify.controls.GlassPanel;
 import se.spacify.controls.GlossyButton;
 import se.spacify.controls.TabButton;
 import se.spacify.controls.ToolBar;
 import se.spacify.controls.ToolButton;
 import se.spacify.controls.VerticalPanel;
+import se.spacify.skinning.Skin;
 import se.spacify.ui.theme.ColorUtils;
 import se.spacify.ui.theme.ThemeManager;
 
-public class WMP9Skin extends Skin {
+public class WMP10Skin extends Skin {
 
 	private static final int ARC = 12;
-	
-	@Override
-	public void paintVerticalPanel(VerticalPanel control, Graphics2D g2) {
-        int w = control.getWidth(), h = control.getHeight();
-		g2.setPaint(new GradientPaint(0, 0, ColorUtils.darken(ThemeManager.getTintColor(), .5f), w, 0,  ColorUtils.darken(ThemeManager.getTintColor(), 0.2f)));
 
-		Path2D outerShape = new Path2D.Float();
-		outerShape.moveTo(0, 0);
-		outerShape.lineTo(0, h - 20);
-		outerShape.lineTo(w, h);
-		outerShape.lineTo(w, 0);
-		outerShape.closePath();
-		
-		g2.fill(outerShape);
-
-		g2.setPaint(new GradientPaint(0, 0, Color.WHITE, w, 0, ThemeManager.getTintColor()));
-
-		Path2D innerShape = new Path2D.Float();
-		innerShape.moveTo(w, 18);
-		innerShape.lineTo(18, 38);
-		innerShape.lineTo(18, h - 60 - 18);
-		innerShape.lineTo(w, h -58);
-		innerShape.lineTo(w, 18);
-		innerShape.closePath();
-	
-		g2.fill(innerShape);
-	}
 	@Override
 	public void paintTopBar(JPanel control, Graphics2D g2) {
-        int w = control.getWidth(), h = control.getHeight();
-        Color tintColor = ThemeManager.getTintColor();
-        g2.setPaint(new GradientPaint(0, 0, Color.WHITE, 0, h, tintColor));
-        g2.fillRect(0, 0, w, h);
+		int w = control.getWidth(), h = control.getHeight();
+		g2.setPaint(new GradientPaint(0, 0, ThemeManager.getTintColor(), 0, h, Color.WHITE));
+		g2.fillRect(0, 0, w, h);
 	}
+
 	@Override
 	public void paintHeader(JPanel control, Graphics2D g2) {
-        int w = control.getWidth(), h = control.getHeight();
-		g2.setPaint(new GradientPaint(0, 0, Color.WHITE, 0, h, ColorUtils.saturate(ColorUtils.lighten(ThemeManager.getTintColor(), 2f), 0.3f)));
-		g2.fillRect(0, 0, w, h);
-	}
-	@Override
-	public void paintGlassPanel(GlassPanel control, Graphics2D g2) {
 		int w = control.getWidth(), h = control.getHeight();
-		Path2D shape = control.shape(w, h);
-
-		// Base accent gradient, antialiased to the rounded/diagonal outline.
-		g2.setPaint(new GradientPaint(0, 0, ThemeManager.accentLight(2f), 0, h, ThemeManager.getTintColor()));
-		g2.fill(shape);
-
-		// Glossy white overlays, confined to the shape.
-		g2.setClip(shape);
-		g2.setPaint(new GradientPaint(0, 0, new Color(255, 255, 255, 0), 0, h, new Color(255, 255, 255, 255)));
-		g2.fillRect(0, h / 2, w, h - (h / 2));
+		g2.setPaint(new GradientPaint(0, 0, Color.WHITE, 0, h * 1, ThemeManager.getTintColor()));
+		g2.fillRect(0, 0, w, h);
 		g2.setPaint(new GradientPaint(0, 0, new Color(255, 255, 255, 127), 0, h, new Color(255, 255, 255, 0)));
-		g2.fillRect(0, 1, w, h / 2);
+		g2.fillRect(0, 1, w, (h / 2));
 	}
 
-	@Override
-	public void paintToolBar(ToolBar control, Graphics2D g2) {
-		int w = control.getWidth(), h = control.getHeight();
-		g2.setPaint(ThemeManager.getTintColor());
-		g2.fillRect(0, 0, w, h);
-	}
 	@Override
 	public void paintFooter(JPanel control, Graphics2D g2) {
-        int w = control.getWidth(), h = control.getHeight();
-       
-        g2.setPaint(Color.WHITE);
+		int w = control.getWidth(), h = control.getHeight();
+
+		g2.setPaint(new GradientPaint(0, 0, Color.WHITE, 0, (int)(h * 1.5f), ThemeManager.getTintColor()));
 		g2.fillRect(0, 0, w, h);
-		
-		g2.setPaint(new GradientPaint(0, 0, ThemeManager.getTintColor(), 0, h, new Color(255, 255, 255, 0)));
-		g2.fillRect(0, 0, w, h / 2);
-	
-		g2.setPaint(new GradientPaint(0, h / 2, new Color(255, 255, 255, 0), 0, h,  ThemeManager.getTintColor()));
-		g2.fillRect(0, h / 2, w, (h / 2));
+		g2.setPaint(new GradientPaint(0, 0, ThemeManager.getTintColor(), 0, 18, Color.WHITE));
+		g2.fillRect(0, 0, w, 18);
+
+		g2.setPaint(new GradientPaint(0, 0, new Color(255, 255, 255, 127), 0, h, new Color(255, 255, 255, 0)));
+		g2.fillRect(0, 1, w, (h / 2));
 	}
+
 	@Override
 	public void paintTabButton(TabButton control, Graphics2D g2) {
 		int w = control.getWidth(), h = control.getHeight();
+		
+		ButtonModel model = control.getModel();
 
 		// Top-rounded, bottom-sharp shape flush with the panel's bottom edge.
 		Path2D tab = new Path2D.Float();
@@ -116,72 +70,28 @@ public class WMP9Skin extends Skin {
 		tab.lineTo(w, h);
 		tab.closePath();
 
-
-	 	if (control.isSelected()) {
-			g2.setPaint(new RadialGradientPaint((float)(w / 2), (float)h, 20f, new float[] {0, 1}, new Color[] { ThemeManager.getTintColor(), ThemeManager.accentDark(0.5f)}));
+		if (model.isSelected() || model.isPressed() || control.isPressedState()) {
+			g2.setColor(ThemeManager.getTintColor());
 			if (control.getOrientation() == TabButton.ORIENTATION_HORIZONTAL) {
 				g2.fill(tab);
 			} else {
 				g2.fillRect(0, 0, w, h);
 			}
-			g2.setPaint(new GradientPaint(0f, 0f, ThemeManager.getAccentColor(), (float)(w), h / 2f, new Color(255, 255 ,255, 0)));
-	
-		} else if (control.isHovered()) {
+			g2.setPaint(new GradientPaint(0, 0, new Color(255, 255, 255, 60), 0, h / 2f, new Color(255, 255, 255, 0)));
+			if (control.getOrientation() == TabButton.ORIENTATION_HORIZONTAL) {
+				g2.fill(tab);
+			} else {
+				g2.fillRect(0, 0, w, h);
+			}
+		} else if (model.isRollover() || control.isHovered()) {
 			g2.setColor(new Color(255, 255, 255, 45));
-			g2.fill(tab);
+			if (control.getOrientation() == TabButton.ORIENTATION_HORIZONTAL) {
+				g2.fill(tab);
+			} else {
+				g2.fillRect(0, 0, w, h);
+			}
 		} else {
 		}
-	 	
-	}
-
-	@Override
-	public void paintToolButton(ToolButton control, Graphics2D g2) {
-		int w = control.getWidth(), h = control.getHeight();
-		Color background = ThemeManager.getTintColor();
-        ButtonModel model = control.getModel();
-		g2.setPaint(background);
-		g2.fillRect(0, 0, w, h);
-		if (model.isPressed()) {
-			background = ColorUtils.darken(background, 0.9f);
-			g2.setPaint(background);
-			g2.fillRect(0, 0, w, h);
-			background = ColorUtils.darken(background, 0.5f);
-			g2.setPaint(background);
-			g2.fillRect(0, 0, w, 2);
-			g2.fillRect(0, 0, 2, h);
-			g2.setPaint(ColorUtils.lighten(background, 5));
-			g2.fillRect(w - 2, 0, 2, h);
-			g2.fillRect(0, h - 2, 2, h);
-		} else if (model.isRollover()) {
-			background = ColorUtils.darken(background, 2f);
-			g2.setPaint(background);
-			g2.fillRect(0, 0, w, h);
-			background = ColorUtils.lighten(background, 2);
-			g2.setPaint(background);
-			g2.fillRect(0, 0, w, h);
-			g2.setPaint(ColorUtils.darken(background, 3));
-			g2.fillRect(0, 0, w, 2);
-			g2.fillRect(0, 0, 2, h);
-			g2.setPaint(ColorUtils.lighten(background, 3));
-			g2.fillRect(w, 0, 2, h);
-			g2.fillRect(0, h, 2, h);
-			
-		}
-	}
-
-	@Override
-	public void paintTableHeader(JTable table, int width, int height, Graphics2D g2) {
-		// TODO Auto-generated method stub
-		g2.setPaint(new Color(235, 234, 219));
-		g2.fillRect(0, 0, width, height);
-		
-	}
-	@Override
-	public void paintPlaylist(JPanel control, Graphics2D g2) {
-		// TODO Auto-generated method stub
-		Color tintColor = ThemeManager.getTintColor();
-        g2.setPaint(tintColor);
-        g2.fillRect(0, 0, control.getWidth(), control.getHeight());
 	}
 
 	@Override
@@ -242,7 +152,6 @@ public class WMP9Skin extends Skin {
 		// Top "bubble" sheen: a bright ellipse narrower than the face, fading down.
 		// This is the signature Aqua highlight.
 		int hlInsetX = Math.round(fd * 0.16f);
-		int hlTop = Math.round(fd * 0.06f);
 		int hlW = fd - hlInsetX * 2;
 		int hlH = Math.round(fd * 0.5f);
 		Ellipse2D sheen = new Ellipse2D.Float(fx + hlInsetX, 25, hlW, hlH);
@@ -261,4 +170,98 @@ public class WMP9Skin extends Skin {
 		g2.setColor(new Color(255, 255, 255, 60));
 		g2.draw(new Ellipse2D.Float(x + 0.5f, y + 0.5f, width - 1, height - 1));
 	}
+	
+	@Override
+	public void paintGlassPanel(GlassPanel control, Graphics2D g2) {
+		int w = control.getWidth(), h = control.getHeight();
+		Path2D shape = control.shape(w, h);
+
+		// Base accent gradient, antialiased to the rounded/diagonal outline.
+		g2.setPaint(new GradientPaint(0, 0, new Color(0.5f, 0.5f, .5f), 0, h, ThemeManager.getTintColor()));
+		g2.fill(shape);
+
+		// Glossy white overlays, confined to the shape.
+		g2.setClip(shape);
+		g2.setPaint(new GradientPaint(0, 0, new Color(255, 255, 255, 0), 0, h, new Color(255, 255, 255, 255)));
+		g2.fillRect(0, h / 2, w, h - (h / 2));
+		g2.setPaint(new GradientPaint(0, 0, new Color(255, 255, 255, 127), 0, h, new Color(255, 255, 255, 0)));
+		g2.fillRect(0, 1, w, h / 2);
+	}
+
+	@Override
+	public void paintToolBar(ToolBar control, Graphics2D g2) {
+		int w = control.getWidth(), h = control.getHeight();
+		g2.setPaint(ThemeManager.getTintColor());
+		g2.fillRect(0, 0, w, h);
+	}
+
+	@Override
+	public void paintToolButton(ToolButton control, Graphics2D g2) {
+		int w = control.getWidth(), h = control.getHeight();
+		Color background = ThemeManager.getTintColor();
+        ButtonModel model = control.getModel();
+		g2.setPaint(background);
+		g2.fillRect(0, 0, w, h);
+		if (model.isPressed()) {
+			background = ColorUtils.darken(background, 0.9f);
+			g2.setPaint(background);
+			g2.fillRect(0, 0, w, h);
+			background = ColorUtils.darken(background, 0.5f);
+			g2.setPaint(background);
+			g2.fillRect(0, 0, w, 2);
+			g2.fillRect(0, 0, 2, h);
+			g2.setPaint(ColorUtils.lighten(background, 5));
+			g2.fillRect(w - 2, 0, 2, h);
+			g2.fillRect(0, h - 2, 2, h);
+		} else if (model.isRollover()) {
+			background = ColorUtils.darken(background, 2f);
+			g2.setPaint(background);
+			g2.fillRect(0, 0, w, h);
+			background = ColorUtils.lighten(background, 2);
+			g2.setPaint(background);
+			g2.fillRect(0, 0, w, h);
+			g2.setPaint(ColorUtils.darken(background, 3));
+			g2.fillRect(0, 0, w, 2);
+			g2.fillRect(0, 0, 2, h);
+			g2.setPaint(ColorUtils.lighten(background, 3));
+			g2.fillRect(w, 0, 2, h);
+			g2.fillRect(0, h, 2, h);
+			
+		}
+	}
+
+	@Override
+	public void paintTableHeader(JTable table, int width, int height, Graphics2D g2) {
+		// TODO Auto-generated method stub
+		g2.setPaint(new Color(235, 234, 219));
+		g2.fillRect(0, 0, width, height);
+		
+	}
+	
+	@Override
+	public void paintPlaylist(JPanel control, Graphics2D g2) {
+		// TODO Auto-generated method stub
+		int w = control.getWidth(), h = control.getHeight();
+        Color tintColor = ThemeManager.getTintColor();
+        g2.setPaint(new GradientPaint(0, 0, tintColor, 0, h, ThemeManager.tintLight(2f)));
+        g2.fillRect(0, 0, w, h);
+	}
+
+	@Override
+	public void paintVerticalPanel(VerticalPanel control, Graphics2D g2) {
+		// TODO Auto-generated method stub
+
+		int w = control.getWidth(), h = control.getHeight();
+		g2.setPaint(new GradientPaint(0, 0, Color.WHITE, w, 0, ThemeManager.getTintColor()));
+		g2.fillRect(0, 0, w, h);
+		g2.setPaint(new GradientPaint(0, 0, new Color(255, 255, 255, 127), w, 0, new Color(255, 255, 255, 0)));
+		g2.fillRect(0, 1, w, (h / 2));
+	}
+
+	@Override
+	public String getId() {
+		// TODO Auto-generated method stub
+		return "wmp10";
+	}
+
 }

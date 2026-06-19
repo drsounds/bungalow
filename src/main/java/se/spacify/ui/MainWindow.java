@@ -2,16 +2,19 @@ package se.spacify.ui;
 
 import se.spacify.controls.SplitPane;
 import se.spacify.navigation.SPViewStack;
+import se.spacify.plugin.wmp.chrome.WMP10Chrome;
+import se.spacify.plugin.wmp.chrome.WMP9Chrome;
+import se.spacify.plugin.wmp.skin.WMP10Skin;
+import se.spacify.plugin.wmp.skin.WMP11BetaSkin;
+import se.spacify.plugin.wmp.skin.WMP11Skin;
+import se.spacify.plugin.wmp.skin.WMP8Skin;
+import se.spacify.plugin.wmp.skin.WMP9Skin;
 import se.spacify.service.ServiceManager;
 import se.spacify.service.media.MediaService;
 import se.spacify.service.media.PlayQueue;
 import se.spacify.controls.Panel;
 import se.spacify.skinning.Skin;
-import se.spacify.skinning.WMP8Skin;
-import se.spacify.skinning.WMP9Skin;
-import se.spacify.skinning.WMP10Skin;
-import se.spacify.skinning.WMP11BetaSkin;
-import se.spacify.skinning.WMP11Skin;
+import se.spacify.ui.chrome.Chrome;
 import se.spacify.ui.theme.ThemeManager;
 import se.spacify.views.*;
 
@@ -21,63 +24,58 @@ import java.awt.*;
 public class MainWindow extends JFrame {
     private static final long serialVersionUID = 2144395787232553079L;
 
-
-	private final SPViewStack    viewStack;
-    private final AppFooter      appFooter;
-    private final NowPlayingView nowPlayingView;
-    private final LeftLibraryMenu        leftLibraryMenu;
+    private Chrome chrome;
+    public Chrome getChrome() {
+    	return chrome;
+    }
+    public void setChrome(Chrome value) {
+    	chrome = value;
+    }
     
+
+    public void setSkin(Skin skin) {
+        this.skin = skin;
+        rebuildTheme();
+    }
+
     private LayoutMode layoutMode = LayoutMode.WMP10;
     
-    private Skin skin = skinForStyle(ThemeManager.getDesignStyle());
+    private Skin skin = new WMP10Skin();
     public Skin getSkin() {
     	return skin;
     }
-    
-    public void setAppLayoutMode(LayoutMode value) {
-    	if (value == LayoutMode.WMP10 || value == LayoutMode.WMP11) {
-    		leftMenuPanel.setVisible(false);
-    		navBar.setVisible(true);
-    	} else if (value == LayoutMode.WMP9 || value == LayoutMode.WMP8) {
-    		navBar.setVisible(false);
-    		leftMenuPanel.setVisible(true);
-    	}
-		getPlayerBar().setLayoutMode(value);
-    }
-
-    /** Maps a {@link ThemeManager} design-style constant to its Skin implementation. */
-    private static Skin skinForStyle(String style) {
-        if (style == null) return new WMP11Skin();
-        switch (style) {
-            case ThemeManager.DESIGN_STYLE_WMP8:       return new WMP8Skin();
-            case ThemeManager.DESIGN_STYLE_WMP9:       return new WMP9Skin();
-            case ThemeManager.DESIGN_STYLE_WMP10:      return new WMP10Skin();
-            case ThemeManager.DESIGN_STYLE_WMP11_BETA: return new WMP11BetaSkin();
-            case ThemeManager.DESIGN_STYLE_WMP11:      return new WMP11Skin();
-            default:                                   return new WMP11Skin();
-        }
-    }
-    
-    
+  
     public LayoutMode getLayoutMode() {
     	return layoutMode;
     }
-    
-
-	private SplitPane leftSplit;
-	private SplitPane mainSplit;
+   
     private boolean userWantsSidebar = true;  // user's manual show/hide preference
     private boolean immersive = false;        // full-width store browsing
+ 
+	public Panel getAppPanel() {
+		return getChrome().getAppPanel();
+	} 
 
-	private Panel appPanel;
+	public LeftMenuPanel getLeftMenuPanel() {
+		return getChrome().getLeftMenuPanel();
+	}
 
-	private LeftMenuPanel leftMenuPanel;
-
-	private JPanel centerPanel;
-
-	private TopBar topBar;
-
-	private AppHeader navBar;
+	public Panel getCenterPanel() {
+		return getChrome().getCenterPanel();
+	}
+ 
+	public TopBar getTopBar() {
+		return getChrome().getTopBar();
+	} 
+	public SplitPane getLeftSplit() {
+		return getChrome().getLeftSplit();
+	}
+	public SplitPane getMainSplit() {
+		return getChrome().getMainSplit();
+	}
+	public AppHeader getAppHeader() {
+		return getChrome().getAppHeader();
+	}
 
     public MainWindow() {
         super("Spacify");
@@ -88,99 +86,27 @@ public class MainWindow extends JFrame {
         setLocationRelativeTo(null);
         // 1px border so the window edge is visible against the desktop
         getRootPane().setBorder(BorderFactory.createLineBorder(new Color(40, 40, 40), 1));
-
-        viewStack      = new SPViewStack();
-        nowPlayingView = new NowPlayingView();
-        // Core shell views only; content views (library, web, search, playlist)
-        // are contributed by built-in plugins during PluginManager.start().
-        viewStack.registerView(nowPlayingView);
-        viewStack.registerView(new se.spacify.plugin.ui.PluginManagerView());
-        getContentPane().setLayout(new BoxLayout(getContentPane(), BoxLayout.LINE_AXIS));
         
-        leftMenuPanel = new LeftMenuPanel();
-        leftMenuPanel.setMinimumSize(new Dimension(100, 0));
-        leftMenuPanel.setMaximumSize(new Dimension(100, Short.MAX_VALUE));
-        leftMenuPanel.setPreferredSize(new Dimension(100, Short.MAX_VALUE));
-        leftMenuPanel.setOpaque(false);
-        appPanel = new Panel();
-        
-        add(leftMenuPanel);
-        leftMenuPanel.setVisible(false);
-        add(appPanel);
-        appPanel.setOpaque(false);
-        leftMenuPanel.setLayout(new BoxLayout(leftMenuPanel, BoxLayout.PAGE_AXIS));
-        appPanel.setLayout(new BoxLayout(appPanel, BoxLayout.PAGE_AXIS));
-        
-        Panel topSpacing = new Panel();
-        topSpacing.setMinimumSize(new Dimension(0, 1660));
-        topSpacing.setMaximumSize(new Dimension(Integer.MAX_VALUE, 1660));
-        topSpacing.setOpaque(false);
-        appPanel.add(topSpacing);
-        topBar = new TopBar();
-        topBar.add(new JButton());
-        appPanel.add(topBar);
-        topBar.setMaximumSize(new Dimension(Short.MAX_VALUE, 18));
-        topBar.setMinimumSize(new Dimension(0, 18));
-        navBar = new AppHeader(viewStack);
-        navBar.setMaximumSize(new Dimension(Short.MAX_VALUE, 28));
-        navBar.setMinimumSize(new Dimension(0, 28));
-        appPanel.add(navBar);
+        setChrome(new WMP10Chrome());
+        add(chrome, BorderLayout.CENTER);
 
-        leftLibraryMenu = new LeftLibraryMenu(viewStack);
-
-        centerPanel = new JPanel(new BorderLayout());
-        centerPanel.add(viewStack);
-
-        leftSplit = new SplitPane(SplitPane.HORIZONTAL_SPLIT, leftLibraryMenu, centerPanel);
-        leftSplit.setDividerLocation(220);
-        leftSplit.setDividerSize(6);
-        // Keep the leftLibraryMenu at its width and let the centre view absorb resizes.
-        leftSplit.setResizeWeight(0.0);
-        // Empty (non-UIResource) border survives the Nimbus reinstall in
-        // rebuildTheme(); a null border would get a default border re-installed.
-        leftSplit.setBorder(BorderFactory.createEmptyBorder());
-        leftSplit.setContinuousLayout(true);
-
-        mainSplit = new SplitPane(SplitPane.HORIZONTAL_SPLIT, leftSplit, new NowPlayingPanel(viewStack));
-        mainSplit.setDividerLocation(880);
-        mainSplit.setDividerSize(6);
-        // Give all extra width to the left (leftLibraryMenu + centre); the right
-        // Now Playing / queue panel keeps its width as the window resizes.
-        mainSplit.setResizeWeight(1.0);
-        mainSplit.setBorder(BorderFactory.createEmptyBorder());
-        mainSplit.setContinuousLayout(true);
-
-        appPanel.add(mainSplit, BorderLayout.CENTER);
-
-        appFooter = new AppFooter();
-        appPanel.add(appFooter);
-        appFooter.setMaximumSize(new Dimension(Short.MAX_VALUE, 18));
-        appFooter.setMinimumSize(new Dimension(0, 18));
-
-        // Debounced Nimbus L&F reinstall — the only way to flush SynthStyleFactory
-        // caches so all Nimbus-painted panels pick up updated colours.
-        // Debouncing prevents stutter during slider drags.
         Timer themeRebuildTimer = new Timer(250, e -> rebuildTheme());
         themeRebuildTimer.setRepeats(false);
         ThemeManager.addChangeListener(themeRebuildTimer::restart);
 
-        // Swap the active Skin when the selected design style changes.
+        // Swap the active Service when the selected design style changes.
         ThemeManager.addChangeListener(() -> {
-            Skin desired = skinForStyle(ThemeManager.getDesignStyle());
-            if (desired.getClass() != skin.getClass()) {
-                skin = desired;
-                repaint();
-            }
+            
         });
 
-        ServiceManager.getInstance().activateFeatures(viewStack, leftLibraryMenu.getRootNode());
+        ServiceManager.getInstance().activateFeatures(getViewStack(), getLeftLibraryMenu().getRootNode());
 
         // Discover and activate plugins (built-in bundle, <app>/plugins, ~/Bungalow).
-        // The Local Music plugin registers the media service, so wire it afterwards.
-        se.spacify.plugin.PluginManager.getInstance().init(viewStack, leftLibraryMenu);
+        // The Local Music plugin registers the media Service, so wire it afterwards.
+        se.spacify.plugin.PluginManager.getInstance().init(getViewStack(), getLeftLibraryMenu());
         se.spacify.plugin.PluginManager.getInstance().start();
 
-        // Wire every registered media service for events; the footer/queue follow
+        // Wire every registered media Service for events; the footer/queue follow
         // whichever one PlaybackCoordinator marks active for the current play.
         for (MediaService ms : ServiceManager.getInstance().getServices(MediaService.class)) {
             wireMediaService(ms);
@@ -189,11 +115,10 @@ public class MainWindow extends JFrame {
         applySidebar(false);
         // Glass-pane resize handler — intercepts edge events, redispatches others
         WindowResizer.install(this);
-
+        
         // Store pages browse full-width with the side panels collapsed.
-        viewStack.addNavigationListener((uri, b, f) ->
+        getChrome().getViewStack().addNavigationListener((uri, b, f) ->
             applyImmersive(uri != null && uri.startsWith("spacify:store:")));
-        setAppLayoutMode(LayoutMode.WMP10);
         navigate("spacify:now-playing");
     }
 
@@ -209,10 +134,10 @@ public class MainWindow extends JFrame {
     }
 
     private void applySidebar(boolean visible) {
-        leftLibraryMenu.setVisible(visible);
-        leftSplit.setDividerLocation(visible ? 220 : 0);
-        leftSplit.revalidate();
-        leftSplit.repaint();
+        getLeftLibraryMenu().setVisible(visible);
+        getLeftSplit().setDividerLocation(visible ? 220 : 0);
+        getLeftSplit().revalidate();
+        getLeftSplit().repaint();
     }
 
     /** Full-width browsing: collapse both side panels for store views. */
@@ -221,17 +146,17 @@ public class MainWindow extends JFrame {
         immersive = on;
         if (on) {
             applySidebar(false);
-            mainSplit.setDividerLocation(1.0);   // collapse the right Now Playing panel
+            getMainSplit().setDividerLocation(1.0);   // collapse the right Now Playing panel
         } else {
             applySidebar(userWantsSidebar);
-            mainSplit.setDividerLocation(880);
+            getMainSplit().setDividerLocation(880);
         }
-        mainSplit.revalidate();
-        mainSplit.repaint();
+        getMainSplit().revalidate();
+        getMainSplit().repaint();
     }
 
     public void navigate(String uri) {
-    	viewStack.navigate(uri);
+    	getViewStack().navigate(uri);
     	/*if (uri.startsWith("spacify:now-playing")) {
     		leftLibraryMenu.setVisible(false);
     	} else {
@@ -258,8 +183,8 @@ public class MainWindow extends JFrame {
 
     /** Connects a MediaService to AppFooter and NowPlayingView. */
     public void wireMediaService(MediaService ms) {
-        appFooter.setMediaService(ms);
-        nowPlayingView.setMediaService(ms);
+        getAppFooter().setMediaService(ms);
+        getNowPlayingView().setMediaService(ms);
         // Auto-advance the play queue when a track reaches its natural end.
         ms.addPlaybackListener(new MediaService.PlaybackListener() {
             @Override public void onCompleted() {
@@ -268,8 +193,8 @@ public class MainWindow extends JFrame {
         });
     }
 
-    public SPViewStack    getViewStack()     { return viewStack; }
-    public AppFooter      getPlayerBar()     { return appFooter; }
-    public NowPlayingView getNowPlayingView() { return nowPlayingView; }
-    public LeftLibraryMenu        getSidebar()       { return leftLibraryMenu; }
+    public SPViewStack    getViewStack()     { return getChrome().getViewStack(); }
+    public AppFooter      getAppFooter()     { return getChrome().getAppFooter(); }
+    public NowPlayingView getNowPlayingView() { return getChrome().getNowPlayingView(); }
+    public LeftLibraryMenu        getLeftLibraryMenu()       { return getChrome().getLeftLibraryMenu(); }
 }

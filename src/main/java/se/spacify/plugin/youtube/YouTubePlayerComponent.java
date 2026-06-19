@@ -57,7 +57,7 @@ public class YouTubePlayerComponent extends MediaServicePlayerComponent {
     /** The page handler factory is process-wide; register it at most once. */
     private static final AtomicBoolean schemeRegistered = new AtomicBoolean(false);
 
-    private final YouTubeMusicService service;
+    private final YouTubeMusicService Service;
     private final JLabel status;
 
     private CefClient  client;
@@ -66,8 +66,8 @@ public class YouTubePlayerComponent extends MediaServicePlayerComponent {
     private boolean    ready;
     private String     pendingQuery;
 
-    public YouTubePlayerComponent(YouTubeMusicService service) {
-        this.service = service;
+    public YouTubePlayerComponent(YouTubeMusicService Service) {
+        this.Service = Service;
         setLayout(new BorderLayout());
         setPreferredSize(new Dimension(0, 200));
         status = new JLabel("YouTube", SwingConstants.CENTER);
@@ -76,7 +76,7 @@ public class YouTubePlayerComponent extends MediaServicePlayerComponent {
         add(status, BorderLayout.CENTER);
     }
 
-    // ── Playback API used by the service ────────────────────────────────────────
+    // ── Playback API used by the Service ────────────────────────────────────────
 
     /** Search YouTube for {@code query} and play the top result. */
     public void loadAndPlay(String query) {
@@ -165,7 +165,7 @@ public class YouTubePlayerComponent extends MediaServicePlayerComponent {
                 }
             }
             case "state" -> {
-                try { service.onPlayerState(Integer.parseInt(val.trim())); }
+                try { Service.onPlayerState(Integer.parseInt(val.trim())); }
                 catch (NumberFormatException ignored) {}
             }
             case "time" -> {
@@ -173,10 +173,10 @@ public class YouTubePlayerComponent extends MediaServicePlayerComponent {
                 if (c >= 0) {
                     double cur = parseD(val.substring(0, c));
                     double dur = parseD(val.substring(c + 1));
-                    service.onPlayerTime(cur, dur);
+                    Service.onPlayerTime(cur, dur);
                 }
             }
-            case "title" -> service.onPlayerTitle(val);
+            case "title" -> Service.onPlayerTitle(val);
             default -> { /* ignore */ }
         }
     }

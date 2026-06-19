@@ -6,7 +6,7 @@ import se.spacify.service.Service;
  * Streaming / playback aspect. A {@link Service} that can play media implements
  * this interface; the concrete class typically composes a {@link PlaybackSupport}
  * to manage its listener list and fire events. Decoupling playback into an
- * aspect lets one service combine streaming with other aspects (discovery,
+ * aspect lets one Service combine streaming with other aspects (discovery,
  * purchases, …).
  */
 public interface MediaService extends Service {
@@ -46,10 +46,10 @@ public interface MediaService extends Service {
     // ── Optional visual surface ─────────────────────────────────────────────────
 
     /**
-     * The playback surface this service contributes to the Now Playing panel, or
+     * The playback surface this Service contributes to the Now Playing panel, or
      * {@code null} if it needs none (e.g. audio-only local playback). Services
      * that integrate an embedded player (YouTube via JCEF, …) return their
-     * component here; the panel shows the active service's component.
+     * component here; the panel shows the active Service's component.
      */
     default MediaServicePlayerComponent getPlayerComponent() { return null; }
 }

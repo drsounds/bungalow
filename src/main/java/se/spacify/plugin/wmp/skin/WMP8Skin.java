@@ -1,4 +1,4 @@
-package se.spacify.skinning;
+package se.spacify.plugin.wmp.skin;
 
 import java.awt.Color;
 import java.awt.GradientPaint;
@@ -17,6 +17,7 @@ import se.spacify.controls.TabButton;
 import se.spacify.controls.ToolBar;
 import se.spacify.controls.ToolButton;
 import se.spacify.controls.VerticalPanel;
+import se.spacify.skinning.Skin;
 import se.spacify.ui.theme.ColorUtils;
 import se.spacify.ui.theme.ThemeManager;
 
@@ -164,5 +165,10 @@ public class WMP8Skin extends Skin {
 
 		int w = control.getWidth(), h = control.getHeight();Color tintColor = ThemeManager.getTintColor();
 		g2.setPaint(new GradientPaint(0, 0, ThemeManager.accentLight(2f), w, 0, tintColor));
+	}
+	@Override
+	public String getId() {
+		// TODO Auto-generated method stub
+		return "wmp8";
 	}
 }

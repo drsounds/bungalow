@@ -4,17 +4,17 @@ import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
 /**
- * A user's saved decision about <em>which music service</em> plays a given track
+ * A user's saved decision about <em>which music Service</em> plays a given track
  * — the persistence behind the "Play with…" chooser (an "Open with" for music).
  *
  * <p>The choice is keyed two ways so it survives both library and non-library
  * plays: a nullable foreign key to the local {@link Track} when the play
  * originated from the library, and always a stable {@link #trackKey} (the track's
  * ISRC or play URI) so catalogue/transient plays can be matched too. The
- * {@code service*}/{@code match*} fields record enough to replay the pick on the
- * chosen service without re-running the cross-service search.
+ * {@code Service*}/{@code match*} fields record enough to replay the pick on the
+ * chosen Service without re-running the cross-Service search.
  */
-@DatabaseTable(tableName = "music_service_tracks")
+@DatabaseTable(tableName = "music_Service_tracks")
 public class MusicServiceTrack {
 
     @DatabaseField(generatedId = true)
@@ -30,7 +30,7 @@ public class MusicServiceTrack {
 
     /** {@code getServiceId()} of the chosen {@link se.spacify.service.media.MusicService}. */
     @DatabaseField(canBeNull = false)
-    private String serviceId;
+    private String ServiceId;
 
     // ── Chosen match descriptor (enough to replay without re-searching) ─────────
 
@@ -46,8 +46,8 @@ public class MusicServiceTrack {
     public void    setTrack(Track v)       { this.track = v; }
     public String  getTrackKey()           { return trackKey; }
     public void    setTrackKey(String v)   { this.trackKey = v; }
-    public String  getServiceId()          { return serviceId; }
-    public void    setServiceId(String v)  { this.serviceId = v; }
+    public String  getServiceId()          { return ServiceId; }
+    public void    setServiceId(String v)  { this.ServiceId = v; }
     public String  getMatchIsrc()          { return matchIsrc; }
     public void    setMatchIsrc(String v)  { this.matchIsrc = v; }
     public String  getMatchTitle()         { return matchTitle; }

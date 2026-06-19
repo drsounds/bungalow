@@ -3,21 +3,27 @@ package se.spacify.plugin;
 import se.spacify.navigation.SPView;
 import se.spacify.navigation.SPViewStack;
 import se.spacify.navigation.SidebarNode;
-import se.spacify.service.Feature;
 import se.spacify.service.Service;
+import se.spacify.service.Feature;
+import se.spacify.skinning.Skin;
+import se.spacify.ui.chrome.Chrome;
 
 /**
  * Registration surface handed to {@link Plugin#onActivate}. Every contribution
  * made through this context is recorded, so disabling or removing the plugin
- * can undo exactly what it added (services, features, views, sidebar nodes).
+ * can undo exactly what it added (Services, features, views, sidebar nodes).
  */
 public interface PluginContext {
 
     /** This plugin's java-namespace id, e.g. {@code se.spacify.plugin.library}. */
     String pluginId();
-
-    /** Register a service (its {@code onCreate}/{@code onStart} are invoked). */
+    
+    void registerChrome(Chrome c);
+    
     void registerService(Service s);
+
+    /** Register a Service (its {@code onCreate}/{@code onStart} are invoked). */
+    void registerSkin(Skin s);
 
     /** Register a feature; its views and sidebar nodes are wired automatically. */
     void registerFeature(Feature f);

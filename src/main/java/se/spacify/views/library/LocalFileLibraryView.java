@@ -13,7 +13,7 @@ import java.util.List;
 /**
  * Library view listing local audio files (name, artist, release, ISRC, path)
  * with full CRUD. Double-clicking a row plays it: it first tries to resolve the
- * ISRC across the registered music services, falling back to direct local
+ * ISRC across the registered music Services, falling back to direct local
  * playback.
  */
 public class LocalFileLibraryView extends AbstractLibraryView {

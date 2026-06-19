@@ -1,9 +1,9 @@
-package se.spacify.skinning;
+package se.spacify.plugin.wmp.skin;
 
 import java.awt.Color;
 import java.awt.GradientPaint;
 import java.awt.Graphics2D;
-import java.awt.Point;
+
 import java.awt.RadialGradientPaint;
 import java.awt.Shape;
 import java.awt.geom.Ellipse2D;
@@ -21,6 +21,7 @@ import se.spacify.controls.ToolBar;
 import se.spacify.controls.ToolButton;
 import se.spacify.controls.VerticalPanel;
 import se.spacify.graphics.StretchableRadialGradient;
+import se.spacify.skinning.Skin;
 import se.spacify.ui.theme.ColorUtils;
 import se.spacify.ui.theme.ThemeManager;
 
@@ -281,5 +282,10 @@ public class WMP11Skin extends Skin {
 	
 		g2.setPaint(new GradientPaint(0, h / 2, new Color(0, 0, 0, 0), w, 0,  ThemeManager.getTintColor()));
 		g2.fillRect(0, h / 2, w, (h / 2));
+	}
+	@Override
+	public String getId() {
+		// TODO Auto-generated method stub
+		return "wmp11";
 	}
 }

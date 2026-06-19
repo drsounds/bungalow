@@ -129,7 +129,7 @@ public class AppHeader extends JPanel implements NavigationListener {
 		storePanel.setDiagonalInset(65);
 		storesBtn = makeNavButton("Stores ▾");
 		storesBtn.setPreferredSize(new Dimension(160, 32));
-		storesBtn.setToolTipText("Open a music service");
+		storesBtn.setToolTipText("Open a music Service");
 		// Transparent & borderless so it floats on the glass field.
 		storesBtn.setOpaque(false);
 		storesBtn.setContentAreaFilled(false);

@@ -15,7 +15,7 @@ public class AppFooter extends JPanel {
 
     private static final Color HIGHLIGHT = new Color(255, 255, 255, 35);
 
-    // Fields exposed for service wiring
+    // Fields exposed for Service wiring
     private final JLabel  trackNameLabel;
     private final JLabel  artistLabel;
     private final GlossyButton playPauseBtn;
@@ -90,8 +90,8 @@ public class AppFooter extends JPanel {
         nextBtn.addActionListener(e -> PlayQueue.getInstance().next());
         buttons.add(nextBtn);
 
-        // Transport acts on whichever service is currently active, regardless of
-        // which one is playing. Wired once here; per-service event observation is
+        // Transport acts on whichever Service is currently active, regardless of
+        // which one is playing. Wired once here; per-Service event observation is
         // added separately via setMediaService.
         playPauseBtn.addActionListener(e -> {
             MediaService active = PlaybackCoordinator.getActiveService();
@@ -143,9 +143,9 @@ public class AppFooter extends JPanel {
 
     /**
      * Observe a MediaService so its playback events update the bar's labels and
-     * play/pause state. May be called for several services; transport controls
-     * are wired once (in the constructor) and act on the active service. So that
-     * only the active service drives the labels, events from a non-active service
+     * play/pause state. May be called for several Services; transport controls
+     * are wired once (in the constructor) and act on the active Service. So that
+     * only the active Service drives the labels, events from a non-active Service
      * are ignored.
      */
     public void setMediaService(MediaService ms) {

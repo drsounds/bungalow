@@ -17,7 +17,7 @@ import java.util.List;
  */
 public interface Plugin {
 
-    /** Register services, features, views and sidebar nodes via {@code ctx}. */
+    /** Register Services, features, views and sidebar nodes via {@code ctx}. */
     void onActivate(PluginContext ctx);
 
     /** Release any resources acquired in {@link #onActivate}. */

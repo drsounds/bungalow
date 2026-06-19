@@ -7,23 +7,6 @@ import java.util.List;
 
 public class ThemeManager {
 
-	public static final String DESIGN_STYLE_WMP8 = "DESIGN_STYLE_WMP8";
-	public static final String DESIGN_STYLE_WMP9 = "DESIGN_STYLE_WMP9";
-	public static final String DESIGN_STYLE_WMP10 = "DESIGN_STYLE_WMP10";
-	public static final String DESIGN_STYLE_WMP11_BETA = "DESIGN_STYLE_WMP11_BETA";
-	public static final String DESIGN_STYLE_WMP11 = "DESIGN_STYLE_WMP11";
-	public static final String DESIGN_STYLE_ITUNES = "DESIGN_STYLE_ITUNES";
-
-    private static String designStyle = ThemeManager.DESIGN_STYLE_WMP11;
-    public static void setDesignStyle(String value) {
-    	designStyle = value;
-    	notify_();   // lets MainWindow swap its Skin and ConfigManager persist
-    }
-
-    public static String getDesignStyle() {
-    	return designStyle;
-    }
-
     private static float hue        = 0.0f;  // 0-1  (background tint)
     private static float saturation = 0.0f;  // 0-1  (background tint)
     private static float lightness  = 0.5f;  // 0-1  (background tint)

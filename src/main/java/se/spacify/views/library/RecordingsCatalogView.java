@@ -61,10 +61,10 @@ public class RecordingsCatalogView extends AbstractCatalogView<Recording> {
 
     @Override
     protected String emptyHeader(MusicCatalogueService svc) {
-        if (param("release") != null) return svc.getServiceName() + " — no recordings on this release";
+        if (param("release") != null) return svc.getName() + " — no recordings on this release";
         return query().isBlank()
-            ? "Pick a release, or search " + svc.getServiceName() + " recordings"
-            : svc.getServiceName() + " — no recordings for \"" + query() + "\"";
+            ? "Pick a release, or search " + svc.getName() + " recordings"
+            : svc.getName() + " — no recordings for \"" + query() + "\"";
     }
 
     // ── Local-library membership (by ISRC when present, else title) ─────────────

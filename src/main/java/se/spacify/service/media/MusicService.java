@@ -23,7 +23,7 @@ public interface MusicService extends MediaService {
     /**
      * Best-effort lookup by title + artist without loading it for playback.
      * Returns null if not found. Default implementation finds nothing;
-     * services that can resolve metadata should override.
+     * Services that can resolve metadata should override.
      */
     default Recording lookupByTitleArtist(String title, String artist) { return null; }
 }

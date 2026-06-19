@@ -3,7 +3,6 @@ package se.spacify.controls;
 import se.spacify.ui.MainWindow;
 import se.spacify.ui.theme.ThemeManager;
 
-import javax.swing.JToggleButton;
 import javax.swing.SwingUtilities;
 import javax.swing.BorderFactory;
 import java.awt.Color;
@@ -108,7 +107,7 @@ public class TabButton extends ToggleButton {
 
 	@Override
 	public Color getForeground() {
-		// The skin fills the tab with the active background while selected or
+		// The Skin fills the tab with the active background while selected or
 		// pressed, so keep the label white in both cases for legibility.
 		if (pressed && !isSelected()) {
 			return Color.WHITE;

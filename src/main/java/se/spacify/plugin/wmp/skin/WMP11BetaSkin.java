@@ -1,4 +1,4 @@
-package se.spacify.skinning;
+package se.spacify.plugin.wmp.skin;
 
 import java.awt.Color;
 import java.awt.GradientPaint;
@@ -14,6 +14,7 @@ import se.spacify.controls.TabButton;
 import se.spacify.controls.ToolBar;
 import se.spacify.controls.ToolButton;
 import se.spacify.controls.VerticalPanel;
+import se.spacify.skinning.Skin;
 import se.spacify.ui.theme.ColorUtils;
 import se.spacify.ui.theme.ThemeManager;
 
@@ -123,5 +124,10 @@ public class WMP11BetaSkin extends Skin {
 	public void paintVerticalPanel(VerticalPanel verticalPanel, Graphics2D g2) {
 		// TODO Auto-generated method stub
 		
+	}
+	@Override
+	public String getId() {
+		// TODO Auto-generated method stub
+		return "wmp11";
 	}
 }

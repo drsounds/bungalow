@@ -20,7 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * {@link MusicCatalogueService} backed by the public MusicBrainz web service
+ * {@link MusicCatalogueService} backed by the public MusicBrainz web Service
  * (<a href="https://musicbrainz.org/doc/MusicBrainz_API">/ws/2</a>). Searches and
  * MBID/ISRC/ISNI lookups are mapped to transient {@link Release}/{@link Recording}/
  * {@link Artist} instances carrying their identity fields — this is a discovery
@@ -60,8 +60,8 @@ public class MusicBrainzService implements MusicCatalogueService {
 
     // ── Service identity ────────────────────────────────────────────────────────
 
-    @Override public String getServiceId()   { return "se.spacify.plugin.musicbrainz"; }
-    @Override public String getServiceName() { return "MusicBrainz"; }
+    @Override public String getId()   { return "se.spacify.plugin.musicbrainz"; }
+    @Override public String getName() { return "MusicBrainz"; }
 
     // ── Search ──────────────────────────────────────────────────────────────────
 

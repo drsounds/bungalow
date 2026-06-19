@@ -12,7 +12,7 @@ import java.util.List;
 
 /**
  * The "Play with…" chooser — an "Open with" dialog for a music track. Lists the
- * services that reported a match (icon, name and matched-track details) and lets
+ * Skins that reported a match (icon, name and matched-track details) and lets
  * the user pick one, optionally ticking "Always play this track with this match"
  * to persist the choice. Returns the selection via {@link #choose}.
  */
@@ -103,7 +103,7 @@ public final class ServiceMatchDialog extends JDialog {
         return dialog.result;
     }
 
-    /** Renders a match as: [service icon] Service — matched title · artist (m:ss). */
+    /** Renders a match as: [Service icon] Service — matched title · artist (m:ss). */
     private static final class MatchRenderer extends DefaultListCellRenderer {
         private static final long serialVersionUID = 1L;
 
@@ -121,7 +121,7 @@ public final class ServiceMatchDialog extends JDialog {
                 if (!dur.isEmpty()) detail.append("  (").append(dur).append(')');
                 if (rec.getIsrc() != null) detail.append("  ·  ISRC ").append(rec.getIsrc());
             }
-            setText("<html><b>" + escape(m.serviceName()) + "</b>"
+            setText("<html><b>" + escape(m.ServiceName()) + "</b>"
                     + (detail.length() > 0 ? " — <span>" + escape(detail.toString()) + "</span>" : "")
                     + "</html>");
             setIcon(m.icon());

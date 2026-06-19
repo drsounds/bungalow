@@ -12,23 +12,23 @@ import javax.swing.ImageIcon;
  */
 public final class ServiceMatch {
 
-    private final MusicService service;
+    private final MusicService Service;
     private final Recording    recording;
     private final boolean      byIsrc;
 
-    public ServiceMatch(MusicService service, Recording recording, boolean byIsrc) {
-        this.service   = service;
+    public ServiceMatch(MusicService Service, Recording recording, boolean byIsrc) {
+        this.Service   = Service;
         this.recording = recording;
         this.byIsrc    = byIsrc;
     }
 
-    public MusicService service()   { return service; }
+    public MusicService Service()   { return Service; }
     public Recording    recording() { return recording; }
 
-    /** Whether the service matched on ISRC (vs. title/artist) — drives how it loads. */
+    /** Whether the Service matched on ISRC (vs. title/artist) — drives how it loads. */
     public boolean byIsrc() { return byIsrc; }
 
-    public String    serviceId()   { return service.getServiceId(); }
-    public String    serviceName() { return service.getServiceName(); }
-    public ImageIcon icon()        { return service.getServiceIcon(); }
+    public String    ServiceId()   { return Service.getId(); }
+    public String    ServiceName() { return Service.getName(); }
+    public ImageIcon icon()        { return Service.getServiceIcon(); }
 }

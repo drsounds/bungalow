@@ -15,7 +15,7 @@ import java.util.regex.Pattern;
 /**
  * Read-only detail page for a single release, reached from the sidebar via
  * {@code spacify:library:release:<id>}. Lists the album's tracks; double-click
- * resolves and plays a track across the registered music services.
+ * resolves and plays a track across the registered music Services.
  */
 public class ReleaseDetailView extends AbstractLibraryView {
 

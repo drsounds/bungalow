@@ -5,6 +5,7 @@ import se.spacify.db.entity.MusicServiceTrack;
 import se.spacify.db.entity.Recording;
 import se.spacify.service.ServiceManager;
 import se.spacify.ui.ServiceMatchDialog;
+import se.spacify.service.media.ServiceMatch;
 
 import javax.swing.JOptionPane;
 import javax.swing.SwingWorker;
@@ -13,16 +14,16 @@ import java.util.List;
 import java.util.function.Consumer;
 
 /**
- * Routes a library "play" request to a registered service. It first asks every
+ * Routes a library "play" request to a registered Service. It first asks every
  * {@link MusicService} to resolve the row by ISRC ({@link MusicService#lookup}),
  * then falls back to a title/artist metadata lookup
- * ({@link MusicService#lookupByTitleArtist}); the first service that resolves
+ * ({@link MusicService#lookupByTitleArtist}); the first Service that resolves
  * the request plays it. Also supports direct URI / local-file playback.
  *
- * <p>The service that handled the most recent play is the <em>active</em> service
+ * <p>The Service that handled the most recent play is the <em>active</em> Service
  * ({@link #getActiveService()}); listeners ({@link #addActiveServiceListener})
  * are notified when it changes, so UI (the Now Playing panel, the footer) can
- * switch to that service's player component and transport target.
+ * switch to that Service's player component and transport target.
  */
 public final class PlaybackCoordinator {
 
@@ -31,13 +32,13 @@ public final class PlaybackCoordinator {
     private static MediaService activeService;
     private static final List<Consumer<MediaService>> activeListeners = new ArrayList<>();
 
-    /** The service that handled the most recent play, or null if none yet. */
+    /** The Service that handled the most recent play, or null if none yet. */
     public static MediaService getActiveService() { return activeService; }
 
-    /** Subscribe to active-service changes (fired on the calling/EDT thread). */
+    /** Subscribe to active-Service changes (fired on the calling/EDT thread). */
     public static void addActiveServiceListener(Consumer<MediaService> l) { activeListeners.add(l); }
 
-    /** Record the active service and notify listeners if it changed. */
+    /** Record the active Service and notify listeners if it changed. */
     private static void setActiveService(MediaService s) {
         if (s == activeService) return;
         activeService = s;
@@ -45,20 +46,20 @@ public final class PlaybackCoordinator {
     }
 
     /**
-     * Resolve a track across all registered services, by ISRC first and then by
-     * title/artist metadata, playing it on the first service that resolves it.
+     * Resolve a track across all registered Services, by ISRC first and then by
+     * title/artist metadata, playing it on the first Service that resolves it.
      *
-     * @return true if a service handled the request.
+     * @return true if a Service handled the request.
      */
     public static boolean play(String isrc, String title, String artist) {
         return playByIsrc(isrc) || playByMetadata(title, artist);
     }
 
     /**
-     * Look up the ISRC across all registered music services and play it on the
+     * Look up the ISRC across all registered music Services and play it on the
      * first that resolves it.
      *
-     * @return true if a service handled the request.
+     * @return true if a Service handled the request.
      */
     public static boolean playByIsrc(String isrc) {
         if (isrc == null || isrc.isBlank()) return false;
@@ -74,10 +75,10 @@ public final class PlaybackCoordinator {
     }
 
     /**
-     * Look up by title/artist metadata across all registered music services and
+     * Look up by title/artist metadata across all registered music Services and
      * play it on the first that resolves it.
      *
-     * @return true if a service handled the request.
+     * @return true if a Service handled the request.
      */
     public static boolean playByMetadata(String title, String artist) {
         if (title == null || title.isBlank()) return false;
@@ -92,7 +93,7 @@ public final class PlaybackCoordinator {
         return false;
     }
 
-    /** Play an arbitrary spacify: URI on the primary media service. */
+    /** Play an arbitrary spacify: URI on the primary media Service. */
     public static boolean playUri(String uri) {
         if (uri == null) return false;
         MediaService ms = ServiceManager.getInstance().getService(MediaService.class);
@@ -103,7 +104,7 @@ public final class PlaybackCoordinator {
         return true;
     }
 
-    /** Play a local file directly via the local music service. */
+    /** Play a local file directly via the local music Service. */
     public static boolean playLocalFile(LocalFile file) {
         LocalMusicService local = ServiceManager.getInstance().getService(LocalMusicService.class);
         if (local == null || file == null) return false;
@@ -118,7 +119,7 @@ public final class PlaybackCoordinator {
     /**
      * Play {@code req}, honouring the user's saved "Play with…" choice. If a saved
      * {@link MusicServiceTrack} exists for this track it plays straight away on
-     * that service; otherwise the track is "unresolved" and the cross-service
+     * that Service; otherwise the track is "unresolved" and the cross-Service
      * matches are gathered (off the EDT) and offered in the
      * {@link ServiceMatchDialog} so the user can choose — optionally remembering
      * the pick. Call on the EDT.
@@ -141,7 +142,7 @@ public final class PlaybackCoordinator {
         gatherAndChoose(req);
     }
 
-    /** Replay a saved pick on its service; false if that service is gone. */
+    /** Replay a saved pick on its Service; false if that Service is gone. */
     private static boolean playSaved(MusicServiceTrack saved) {
         MusicService ms = findService(saved.getServiceId());
         if (ms == null) return false;
@@ -173,7 +174,7 @@ public final class PlaybackCoordinator {
                         playUri(req.fallbackUri());
                     } else {
                         JOptionPane.showMessageDialog(null,
-                            "No installed service can play \"" + req.title() + "\".",
+                            "No installed Service can play \"" + req.title() + "\".",
                             "Couldn't play track", JOptionPane.INFORMATION_MESSAGE);
                     }
                     return;
@@ -190,7 +191,7 @@ public final class PlaybackCoordinator {
 
     /**
      * Ask every registered {@link MusicService} whether it can resolve {@code req}
-     * — by ISRC first, then by title/artist — collecting one match per service.
+     * — by ISRC first, then by title/artist — collecting one match per Service.
      * Performs blocking network I/O; never call on the EDT.
      */
     public static List<ServiceMatch> gatherMatches(PlayRequest req) {
@@ -210,9 +211,9 @@ public final class PlaybackCoordinator {
         return matches;
     }
 
-    /** Load and play a chosen match on its service. */
+    /** Load and play a chosen match on its Service. */
     private static void playMatch(ServiceMatch match, PlayRequest req) {
-        MusicService ms = match.service();
+        MusicService ms = match.Service();
         setActiveService(ms);
         if (match.byIsrc() && req.isrc() != null) {
             ms.loadByIsrc(req.isrc());
@@ -222,10 +223,10 @@ public final class PlaybackCoordinator {
         ms.play();
     }
 
-    private static MusicService findService(String serviceId) {
-        if (serviceId == null) return null;
+    private static MusicService findService(String ServiceId) {
+        if (ServiceId == null) return null;
         for (MusicService ms : ServiceManager.getInstance().getServices(MusicService.class)) {
-            if (serviceId.equals(ms.getServiceId())) return ms;
+            if (ServiceId.equals(ms.getId())) return ms;
         }
         return null;
     }

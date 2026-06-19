@@ -23,7 +23,7 @@ import java.util.regex.Pattern;
  * its rows from a remote {@link MusicCatalogueService} on a background thread —
  * a {@link SwingWorker} per reload, with the latest request winning so quick
  * navigations/searches don't race. A toolbar search field seeds the browse, and
- * the {@code spacify:catalog:<serviceId>:<kind>?<params>} URI carries the
+ * the {@code spacify:catalog:<ServiceId>:<kind>?<params>} URI carries the
  * drill-down context (e.g. {@code ?artist=<mbid>}).
  *
  * @param <T> the catalogue entity type a concrete view lists
@@ -33,7 +33,7 @@ public abstract class AbstractCatalogView<T> extends AbstractLibraryView {
     protected final SPViewStack viewStack;
     protected final List<T> rows = new ArrayList<>();
 
-    private String serviceId;
+    private String ServiceId;
     private final Map<String, String> params = new HashMap<>();
     private JTextField search;   // no initializer: assigned in toolbarAccessory() during super()
     private long requestSeq;
@@ -55,10 +55,10 @@ public abstract class AbstractCatalogView<T> extends AbstractLibraryView {
     @Override
     public void navigate(String uri) {
         params.clear();
-        serviceId = null;
+        ServiceId = null;
         Matcher m = Pattern.compile("spacify:catalog:(.+):" + kind() + "(?:\\?(.*))?").matcher(uri);
         if (m.matches()) {
-            serviceId = m.group(1);
+            ServiceId = m.group(1);
             if (m.group(2) != null) {
                 for (String pair : m.group(2).split("&")) {
                     int eq = pair.indexOf('=');
@@ -74,11 +74,11 @@ public abstract class AbstractCatalogView<T> extends AbstractLibraryView {
     /** Current trimmed search text, or "" when the field is empty. */
     protected String query() { return search != null ? search.getText().trim() : ""; }
 
-    /** The catalogue service named by the current URI, or null if unavailable. */
-    protected MusicCatalogueService service() {
-        if (serviceId == null) return null;
+    /** The catalogue Service named by the current URI, or null if unavailable. */
+    protected MusicCatalogueService Service() {
+        if (ServiceId == null) return null;
         for (MusicCatalogueService s : ServiceManager.getInstance().getServices(MusicCatalogueService.class)) {
-            if (serviceId.equals(s.getServiceId())) return s;
+            if (ServiceId.equals(s.getId())) return s;
         }
         return null;
     }
@@ -96,7 +96,7 @@ public abstract class AbstractCatalogView<T> extends AbstractLibraryView {
     @Override
     protected final void reload() {
         final long seq = ++requestSeq;
-        final MusicCatalogueService svc = service();
+        final MusicCatalogueService svc = Service();
         rows.clear();
         model.setRowCount(0);
         if (svc == null) {
@@ -132,14 +132,14 @@ public abstract class AbstractCatalogView<T> extends AbstractLibraryView {
 
     // ── Header text (overridable per view) ──────────────────────────────────────
 
-    protected String loadingHeader(MusicCatalogueService svc) { return svc.getServiceName() + " — loading…"; }
-    protected String emptyHeader(MusicCatalogueService svc)   { return svc.getServiceName() + " — no results"; }
-    protected String resultHeader(MusicCatalogueService svc, int count) { return svc.getServiceName(); }
+    protected String loadingHeader(MusicCatalogueService svc) { return svc.getName() + " — loading…"; }
+    protected String emptyHeader(MusicCatalogueService svc)   { return svc.getName() + " — no results"; }
+    protected String resultHeader(MusicCatalogueService svc, int count) { return svc.getName(); }
 
-    /** Navigate the app to another catalogue URI within the same service. */
+    /** Navigate the app to another catalogue URI within the same Service. */
     protected void open(String kindAndQuery) {
-        if (viewStack != null && serviceId != null) {
-            viewStack.navigate("spacify:catalog:" + serviceId + ":" + kindAndQuery);
+        if (viewStack != null && ServiceId != null) {
+            viewStack.navigate("spacify:catalog:" + ServiceId + ":" + kindAndQuery);
         }
     }
 

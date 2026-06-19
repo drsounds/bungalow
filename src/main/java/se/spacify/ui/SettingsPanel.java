@@ -1,17 +1,21 @@
 package se.spacify.ui;
 
 import se.spacify.ui.theme.ThemeManager;
+import se.spacify.skinning.Skin;
+import se.spacify.skinning.SkinManager;
+import se.spacify.controls.Panel;
 
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
 import java.awt.*;
 
-public class SettingsPanel extends JPanel {
+public class SettingsPanel extends Panel {
 
     private static final long serialVersionUID = 4436865841340299032L;
 	private static final Color BG   = Color.BLACK;
     private static final Color FG   = Color.WHITE;
     private static final Color FG_DIM = new Color(180, 180, 180);
+    private Skin[] skins;
 
     public SettingsPanel() {
         setLayout(new BorderLayout(12, 0));
@@ -47,18 +51,20 @@ public class SettingsPanel extends JPanel {
         skinSection.setOpaque(false);
         skinSection.setBorder(titledBorder("Skin"));
 
-        JComboBox<SkinItem> skinCombo = new JComboBox<>(SKINS);
+        skins = SkinManager.getInstance().getSkins(Skin.class).toArray(new Skin[0]);
+
+        JComboBox<Skin> skinCombo = new JComboBox<>();
         skinCombo.setMaximumSize(new Dimension(200, 24));
         skinCombo.setAlignmentX(Component.LEFT_ALIGNMENT);
-        for (SkinItem item : SKINS) {
-            if (item.style.equals(ThemeManager.getDesignStyle())) {
+        for (Skin item : skins) {
+            if (item.equals(getMainWindow().getSkin())) {
                 skinCombo.setSelectedItem(item);
                 break;
             }
         }
         skinCombo.addActionListener(e -> {
-            SkinItem sel = (SkinItem) skinCombo.getSelectedItem();
-            if (sel != null) ThemeManager.setDesignStyle(sel.style);
+            Skin sel = (Skin) skinCombo.getSelectedItem();
+            if (sel != null) getMainWindow().setSkin(sel);
         });
         skinSection.add(Box.createVerticalGlue());
         skinSection.add(skinCombo);
@@ -234,15 +240,7 @@ public class SettingsPanel extends JPanel {
     private record SkinItem(String label, String style) {
         @Override public String toString() { return label; }
     }
-
-    private static final SkinItem[] SKINS = {
-        new SkinItem("Windows Media Player 8",      ThemeManager.DESIGN_STYLE_WMP8),
-        new SkinItem("Windows Media Player 9",      ThemeManager.DESIGN_STYLE_WMP9),
-        new SkinItem("Windows Media Player 10",     ThemeManager.DESIGN_STYLE_WMP10),
-        new SkinItem("Windows Media Player 11 Beta", ThemeManager.DESIGN_STYLE_WMP11_BETA),
-        new SkinItem("Windows Media Player 11",     ThemeManager.DESIGN_STYLE_WMP11),
-    };
-
+ 
     private static TitledBorder titledBorder(String title) {
         TitledBorder b = BorderFactory.createTitledBorder(
             BorderFactory.createEtchedBorder(), title);

@@ -32,7 +32,6 @@ public class ConfigManager {
             ThemeManager.setHighContrast(        Boolean.parseBoolean(p.getProperty("theme.highContrast",         "false")));
             ThemeManager.setHighContrastInverted(Boolean.parseBoolean(p.getProperty("theme.highContrastInverted", "false")));
             ThemeManager.setTintText(            Boolean.parseBoolean(p.getProperty("theme.tintText",            "true")));
-            ThemeManager.setDesignStyle(p.getProperty("theme.designStyle", ThemeManager.getDesignStyle()));
         } catch (NumberFormatException ignored) {
             // corrupted config — keep defaults
         }
@@ -49,7 +48,6 @@ public class ConfigManager {
         p.setProperty("theme.highContrast",         String.valueOf(ThemeManager.isHighContrast()));
         p.setProperty("theme.highContrastInverted", String.valueOf(ThemeManager.isHighContrastInverted()));
         p.setProperty("theme.tintText",             String.valueOf(ThemeManager.isTintText()));
-        p.setProperty("theme.designStyle",          ThemeManager.getDesignStyle());
         try {
             Files.createDirectories(CONFIG_FILE.getParent());
             try (OutputStream out = Files.newOutputStream(CONFIG_FILE)) {

@@ -10,7 +10,7 @@ import java.util.List;
  * Reusable listener bookkeeping for {@link MediaService} implementations.
  * Holds the {@link PlaybackListener} list and fires events to all subscribers —
  * the stateful part that the {@code MediaService} interface itself can't carry.
- * Concrete services compose one of these and delegate
+ * Concrete Services compose one of these and delegate
  * {@code addPlaybackListener} / {@code removePlaybackListener} to it.
  */
 public final class PlaybackSupport {

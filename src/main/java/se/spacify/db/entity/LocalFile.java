@@ -25,7 +25,7 @@ public class LocalFile implements Playable {
     @DatabaseField(canBeNull = true, columnName = "release_name")
     private String releaseName;
 
-    /** International Standard Recording Code, used for cross-service lookup. */
+    /** International Standard Recording Code, used for cross-Service lookup. */
     @DatabaseField(unique = true, canBeNull = true)
     private String isrc;
 
