@@ -43,10 +43,6 @@ public class SpacifyApp {
             // fall back to default L&F
         }
 
-        // ── Theme ─────────────────────────────────────────────────────────────
-        ConfigManager.load();
-        ThemeManager.applyToDefaults();
-        ThemeManager.addChangeListener(ConfigManager::save);
 
         // ── Database ──────────────────────────────────────────────────────────
         try {

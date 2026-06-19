@@ -1,20 +1,21 @@
 package se.spacify.ui;
 
 import se.spacify.controls.SplitPane;
+import se.spacify.design.Design;
 import se.spacify.navigation.SPViewStack;
 import se.spacify.plugin.wmp.chrome.WMP10Chrome;
-import se.spacify.plugin.wmp.chrome.WMP9Chrome;
+
 import se.spacify.plugin.wmp.skin.WMP10Skin;
-import se.spacify.plugin.wmp.skin.WMP11BetaSkin;
-import se.spacify.plugin.wmp.skin.WMP11Skin;
-import se.spacify.plugin.wmp.skin.WMP8Skin;
-import se.spacify.plugin.wmp.skin.WMP9Skin;
+
 import se.spacify.service.ServiceManager;
 import se.spacify.service.media.MediaService;
 import se.spacify.service.media.PlayQueue;
+import se.spacify.config.ConfigManager;
 import se.spacify.controls.Panel;
 import se.spacify.skinning.Skin;
 import se.spacify.ui.chrome.Chrome;
+import se.spacify.ui.theme.Taste;
+import se.spacify.ui.theme.Theme;
 import se.spacify.ui.theme.ThemeManager;
 import se.spacify.views.*;
 
@@ -24,34 +25,42 @@ import java.awt.*;
 public class MainWindow extends JFrame {
     private static final long serialVersionUID = 2144395787232553079L;
 
-    private Chrome chrome;
-    public Chrome getChrome() {
-    	return chrome;
+    private Taste taste;
+
+    public Taste getTaste() {
+        return taste;
     }
-    public void setChrome(Chrome value) {
-    	chrome = value;
+
+    public void setTaste(Taste taste) {
+        remove(getChrome()); 
+        this.taste = taste;
+        add(getChrome(), BorderLayout.CENTER);
+    }
+
+    public Theme getTheme() {
+        return getTaste().getTheme();
     }
     
+    public Design getDesign() {
+        return getTaste().getDesign();
+    }
+    public void setDesign(Design design) {
+        getTaste().setDesign(design);
+        setSkin(design.getSkin());
+    }
+     
+    public Skin getSkin() {
+        return getTaste().getSkin();
+    }
 
     public void setSkin(Skin skin) {
-        this.skin = skin;
-        rebuildTheme();
+        this.getTaste().setSkin(skin);
     }
-
-    private LayoutMode layoutMode = LayoutMode.WMP10;
-    
-    private Skin skin = new WMP10Skin();
-    public Skin getSkin() {
-    	return skin;
-    }
-  
-    public LayoutMode getLayoutMode() {
-    	return layoutMode;
-    }
-   
     private boolean userWantsSidebar = true;  // user's manual show/hide preference
     private boolean immersive = false;        // full-width store browsing
- 
+    public Chrome getChrome() {
+        return getTaste().getChrome();
+    }
 	public Panel getAppPanel() {
 		return getChrome().getAppPanel();
 	} 
@@ -75,8 +84,11 @@ public class MainWindow extends JFrame {
 	}
 	public AppHeader getAppHeader() {
 		return getChrome().getAppHeader();
-	}
-
+	} 
+    public void setTheme(Theme theme) { 
+        getTaste().setTheme(theme);
+        rebuildTheme();
+    }
     public MainWindow() {
         super("Spacify");
         setUndecorated(true);  // remove native title bar + border on all platforms
@@ -86,16 +98,18 @@ public class MainWindow extends JFrame {
         setLocationRelativeTo(null);
         // 1px border so the window edge is visible against the desktop
         getRootPane().setBorder(BorderFactory.createLineBorder(new Color(40, 40, 40), 1));
-        
-        setChrome(new WMP10Chrome());
-        add(chrome, BorderLayout.CENTER);
+
+        // ── Theme ─────────────────────────────────────────────────────────────
+        config = new ConfigManager(this);
+        config.load();
+        ThemeManager.addChangeListener(ConfigManager::save);
 
         Timer themeRebuildTimer = new Timer(250, e -> rebuildTheme());
         themeRebuildTimer.setRepeats(false);
-        ThemeManager.addChangeListener(themeRebuildTimer::restart);
+        getTheme().addChangeListener(themeRebuildTimer::restart);
 
         // Swap the active Service when the selected design style changes.
-        ThemeManager.addChangeListener(() -> {
+        getTheme().addChangeListener(() -> {
             
         });
 

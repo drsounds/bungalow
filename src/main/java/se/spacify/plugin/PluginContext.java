@@ -1,5 +1,6 @@
 package se.spacify.plugin;
 
+import se.spacify.design.Design;
 import se.spacify.navigation.SPView;
 import se.spacify.navigation.SPViewStack;
 import se.spacify.navigation.SidebarNode;
@@ -7,6 +8,7 @@ import se.spacify.service.Service;
 import se.spacify.service.Feature;
 import se.spacify.skinning.Skin;
 import se.spacify.ui.chrome.Chrome;
+import se.spacify.ui.theme.Theme;
 
 /**
  * Registration surface handed to {@link Plugin#onActivate}. Every contribution
@@ -19,7 +21,10 @@ public interface PluginContext {
     String pluginId();
     
     void registerChrome(Chrome c);
-    
+
+    void registerDesign(Design d);
+    void registerTheme(Theme t);
+
     void registerService(Service s);
 
     /** Register a Service (its {@code onCreate}/{@code onStart} are invoked). */

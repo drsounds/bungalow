@@ -1,6 +1,6 @@
 package se.spacify.ui;
 
-import se.spacify.ui.theme.ThemeManager;
+import se.spacify.ui.theme.getTheme();
 import se.spacify.skinning.Skin;
 import se.spacify.skinning.SkinManager;
 import se.spacify.controls.Panel;
@@ -35,9 +35,9 @@ public class SettingsPanel extends Panel {
         GridBagConstraints c = new GridBagConstraints();
         c.insets = new Insets(1, 5, 1, 5);
 
-        JSlider hueSlider   = mkSlider(0, 360, (int)(ThemeManager.getHue()        * 360));
-        JSlider satSlider   = mkSlider(0, 100, (int)(ThemeManager.getSaturation() * 100));
-        JSlider lightSlider = mkSlider(0, 100, (int)(ThemeManager.getLightness()  * 100));
+        JSlider hueSlider   = mkSlider(0, 360, (int)(getTheme().getHue()        * 360));
+        JSlider satSlider   = mkSlider(0, 100, (int)(getTheme().getSaturation() * 100));
+        JSlider lightSlider = mkSlider(0, 100, (int)(getTheme().getLightness()  * 100));
 
         addRow(tintSection, c, 0, "Hue",        hueSlider);
         addRow(tintSection, c, 1, "Saturation", satSlider);
@@ -78,20 +78,20 @@ public class SettingsPanel extends Panel {
         optionsSection.setOpaque(false);
         optionsSection.setBorder(titledBorder("Display"));
 
-        JCheckBox stripedBox   = whiteCheck("Striped rows",        ThemeManager.isStripedRows());
-        JCheckBox contrastBox  = whiteCheck("B/W background",       ThemeManager.isHighContrast());
-        JCheckBox invertedBox  = whiteCheck("Inverted (dark)",      ThemeManager.isHighContrastInverted());
-        JCheckBox tintTextBox  = whiteCheck("Tint text (light)",    ThemeManager.isTintText());
+        JCheckBox stripedBox   = whiteCheck("Striped rows",        getTheme().isStripedRows());
+        JCheckBox contrastBox  = whiteCheck("B/W background",       getTheme().isHighContrast());
+        JCheckBox invertedBox  = whiteCheck("Inverted (dark)",      getTheme().isHighContrastInverted());
+        JCheckBox tintTextBox  = whiteCheck("Tint text (light)",    getTheme().isTintText());
 
-        invertedBox.setEnabled(ThemeManager.isHighContrast());
+        invertedBox.setEnabled(getTheme().isHighContrast());
 
-        stripedBox.addActionListener(e  -> ThemeManager.setStripedRows(stripedBox.isSelected()));
+        stripedBox.addActionListener(e  -> getTheme().setStripedRows(stripedBox.isSelected()));
         contrastBox.addActionListener(e -> {
-            ThemeManager.setHighContrast(contrastBox.isSelected());
+            getTheme().setHighContrast(contrastBox.isSelected());
             invertedBox.setEnabled(contrastBox.isSelected());
         });
-        invertedBox.addActionListener(e -> ThemeManager.setHighContrastInverted(invertedBox.isSelected()));
-        tintTextBox.addActionListener(e -> ThemeManager.setTintText(tintTextBox.isSelected()));
+        invertedBox.addActionListener(e -> getTheme().setHighContrastInverted(invertedBox.isSelected()));
+        tintTextBox.addActionListener(e -> getTheme().setTintText(tintTextBox.isSelected()));
 
         optionsSection.add(stripedBox);
         optionsSection.add(contrastBox);
@@ -106,8 +106,8 @@ public class SettingsPanel extends Panel {
         modeSection.setOpaque(false);
         modeSection.setBorder(titledBorder("Mode"));
 
-        JRadioButton darkBtn  = whiteRadio("Dark",  ThemeManager.isDarkMode());
-        JRadioButton lightBtn = whiteRadio("Light", !ThemeManager.isDarkMode());
+        JRadioButton darkBtn  = whiteRadio("Dark",  getTheme().isDarkMode());
+        JRadioButton lightBtn = whiteRadio("Light", !getTheme().isDarkMode());
         ButtonGroup modeGroup = new ButtonGroup();
         modeGroup.add(darkBtn);
         modeGroup.add(lightBtn);
@@ -124,7 +124,7 @@ public class SettingsPanel extends Panel {
         accentSection.setBorder(titledBorder("Accent Color"));
 
         JButton accentBtn = new JButton();
-        accentBtn.setBackground(ThemeManager.getAccentColor());
+        accentBtn.setBackground(getTheme().getAccentColor());
         accentBtn.setPreferredSize(new Dimension(48, 48));
         accentBtn.setMaximumSize(new Dimension(48, 48));
         accentBtn.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -133,9 +133,9 @@ public class SettingsPanel extends Panel {
         accentBtn.addActionListener(e -> {
             Color chosen = JColorChooser.showDialog(
                 SwingUtilities.getWindowAncestor(this), "Accent Color",
-                ThemeManager.getAccentColor());
+                getTheme().getAccentColor());
             if (chosen != null) {
-                ThemeManager.setAccentColor(chosen);
+                getTheme().setAccentColor(chosen);
                 accentBtn.setBackground(chosen);
             }
         });
@@ -144,11 +144,11 @@ public class SettingsPanel extends Panel {
         accentSection.add(Box.createVerticalGlue());
 
         // ── Listeners ────────────────────────────────────────────────────────
-        hueSlider.addChangeListener(e -> ThemeManager.setHue(hueSlider.getValue() / 360f));
-        satSlider.addChangeListener(e -> ThemeManager.setSaturation(satSlider.getValue() / 100f));
-        lightSlider.addChangeListener(e -> ThemeManager.setLightness(lightSlider.getValue() / 100f));
-        darkBtn.addActionListener(e -> ThemeManager.setDarkMode(true));
-        lightBtn.addActionListener(e -> ThemeManager.setDarkMode(false));
+        hueSlider.addChangeListener(e -> getTheme().setHue(hueSlider.getValue() / 360f));
+        satSlider.addChangeListener(e -> getTheme().setSaturation(satSlider.getValue() / 100f));
+        lightSlider.addChangeListener(e -> getTheme().setLightness(lightSlider.getValue() / 100f));
+        darkBtn.addActionListener(e -> getTheme().setDarkMode(true));
+        lightBtn.addActionListener(e -> getTheme().setDarkMode(false));
 
         JPanel right = new JPanel() {
             @Override public void updateUI() { super.updateUI(); setOpaque(false); }
@@ -236,7 +236,7 @@ public class SettingsPanel extends Panel {
 
     // ── Skin catalogue ─────────────────────────────────────────────────────────
 
-    /** Pairs a human-readable label with its {@link ThemeManager} design-style id. */
+    /** Pairs a human-readable label with its {@link getTheme()} design-style id. */
     private record SkinItem(String label, String style) {
         @Override public String toString() { return label; }
     }

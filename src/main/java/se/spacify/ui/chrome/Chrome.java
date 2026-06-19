@@ -90,6 +90,12 @@ public class Chrome extends Panel {
 	}
 
     public Chrome() {
+		viewStack = new SPViewStack();
+		nowPlayingView = new NowPlayingView();
+		// Core shell views only; content views (library, web, search, playlist)
+		// are contributed by built-in plugins during PluginManager.start().
+		viewStack.registerView(nowPlayingView);
+		viewStack.registerView(new se.spacify.plugin.ui.PluginManagerView());
     }
 
     /** Toggle the left leftLibraryMenu; remembers the user's preference. */
@@ -127,12 +133,6 @@ public class Chrome extends Panel {
 
     public void navigate(String uri) {
     	viewStack.navigate(uri);
-    	/*if (uri.startsWith("spacify:now-playing")) {
-    		leftLibraryMenu.setVisible(false);
-    	} else {
-    		leftLibraryMenu.setVisible(true);
-    		leftSplit.setDividerLocation(100);
-    	}*/
     } 
 
 }

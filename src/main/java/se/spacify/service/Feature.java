@@ -1,5 +1,8 @@
 package se.spacify.service;
 
+import se.spacify.aspect.Aspect;
+import se.spacify.aspect.AspectManager;
+import se.spacify.feature.FeatureManager;
 import se.spacify.navigation.SPView;
 import se.spacify.navigation.SidebarNode;
 
@@ -10,11 +13,10 @@ import java.util.List;
  * Base class for app features that contribute views and sidebar navigation.
  * Features are registered with ServiceManager alongside Services.
  */
-public abstract class Feature {
+public abstract class Feature implements Aspect {
+    public abstract String getId();
 
-    public abstract String getFeatureId();
-
-    public abstract String getFeatureName();
+    public abstract String getName();
 
     /** SPView instances to register with the view stack at activation time. */
     public List<SPView> getViews() { return Collections.emptyList(); }
@@ -23,5 +25,5 @@ public abstract class Feature {
     public List<SidebarNode> getSidebarNodes() { return Collections.emptyList(); }
 
     /** Called once when this feature is activated via ServiceManager. */
-    public void onRegister(ServiceManager serviceManager) {}
+    public void onRegister(AspectManager<Feature> featureManager) {}
 }

@@ -1,0 +1,81 @@
+package se.spacify.plugin.wmp.chrome;
+
+import java.awt.BorderLayout;
+
+import java.awt.Dimension;
+
+import javax.swing.BorderFactory;
+import javax.swing.BoxLayout;
+import javax.swing.JButton;
+
+import se.spacify.controls.Panel;
+import se.spacify.controls.SplitPane;
+import se.spacify.navigation.SPViewStack;
+import se.spacify.plugin.spot.controls.SpotAppHeader;
+import se.spacify.ui.AppFooter;
+import se.spacify.ui.AppHeader;
+import se.spacify.ui.chrome.Chrome;
+
+import se.spacify.ui.LeftLibraryMenu;
+import se.spacify.ui.LeftMenuPanel;
+import se.spacify.ui.NowPlayingPanel;
+import se.spacify.ui.TopBar;
+
+import se.spacify.views.NowPlayingView;
+
+public class SpotChrome extends Chrome {
+        private static final long serialVersionUID = 2766717544747588265L;
+
+        public SpotChrome() {
+                setLayout(new BoxLayout(this, BoxLayout.LINE_AXIS));
+                leftMenuPanel = new LeftMenuPanel();
+                leftMenuPanel.setMinimumSize(new Dimension(100, 0));
+                leftMenuPanel.setMaximumSize(new Dimension(100, Short.MAX_VALUE));
+                leftMenuPanel.setPreferredSize(new Dimension(100, Short.MAX_VALUE));
+                leftMenuPanel.setOpaque(false);
+                appPanel = new Panel();
+
+                add(leftMenuPanel);
+                leftMenuPanel.setVisible(false);
+                add(appPanel);
+                appPanel.setOpaque(false);
+                leftMenuPanel.setLayout(new BoxLayout(leftMenuPanel, BoxLayout.PAGE_AXIS));
+                appPanel.setLayout(new BoxLayout(appPanel, BoxLayout.PAGE_AXIS));
+
+                appHeader = new SpotAppHeader(viewStack);
+                appHeader.setMaximumSize(new Dimension(Short.MAX_VALUE, 28));
+                appHeader.setMinimumSize(new Dimension(0, 28));
+
+                leftLibraryMenu = new LeftLibraryMenu(viewStack);
+
+                centerPanel = new Panel(new BorderLayout());
+                centerPanel.add(viewStack);
+
+                leftSplit = new SplitPane(SplitPane.HORIZONTAL_SPLIT, leftLibraryMenu, centerPanel);
+                leftSplit.setDividerLocation(220);
+                leftSplit.setDividerSize(6);
+                // Keep the leftLibraryMenu at its width and let the centre view absorb resizes.
+                leftSplit.setResizeWeight(0.0);
+                // Empty (non-UIResource) border survives the Nimbus reinstall in
+                // rebuildTheme(); a null border would get a default border re-installed.
+                leftSplit.setBorder(BorderFactory.createEmptyBorder());
+                leftSplit.setContinuousLayout(true);
+
+                mainSplit = new SplitPane(SplitPane.HORIZONTAL_SPLIT, leftSplit, new NowPlayingPanel(viewStack));
+                mainSplit.setDividerLocation(880);
+                mainSplit.setDividerSize(6);
+                // Give all extra width to the left (leftLibraryMenu + centre); the right
+                // Now Playing / queue panel keeps its width as the window resizes.
+                mainSplit.setResizeWeight(1.0);
+                mainSplit.setBorder(BorderFactory.createEmptyBorder());
+                mainSplit.setContinuousLayout(true);
+
+                appPanel.add(mainSplit, BorderLayout.CENTER);
+
+                appFooter = new AppFooter();
+                appPanel.add(appFooter);
+                appFooter.setMaximumSize(new Dimension(Short.MAX_VALUE, 18));
+                appFooter.setMinimumSize(new Dimension(0, 18));
+
+        }
+}

@@ -10,7 +10,7 @@ import java.util.*;
  * Central singleton registry for Services and Features.
  * Call register() for each, then startAll() to drive onCreate → onStart.
  */
-public class ServiceManager {
+public class ServiceManager implements AspectManager<Service> {
 
     private static ServiceManager instance;
 
@@ -53,6 +53,10 @@ public class ServiceManager {
         for (Service s : services.values()) { s.onStop(); s.onDestroy(); }
         services.clear();
     }
+
+    public Service get(String id) {
+        return services.get(id);
+     }
 
     /**
      * Returns the first registered service exposing the given aspect, or null.
@@ -112,5 +116,5 @@ public class ServiceManager {
         return node;
     }
 
-    public List<Feature> allFeatures() { return Collections.unmodifiableList(features); }
+    public Collection<Feature> all() { return Collections.unmodifiableList(features); }
 }
