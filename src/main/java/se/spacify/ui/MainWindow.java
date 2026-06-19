@@ -2,18 +2,21 @@ package se.spacify.ui;
 
 import se.spacify.controls.SplitPane;
 import se.spacify.design.Design;
+import se.spacify.design.DesignManager;
+import se.spacify.feature.FeatureManager;
 import se.spacify.navigation.SPViewStack;
-import se.spacify.plugin.wmp.chrome.WMP10Chrome;
-
-import se.spacify.plugin.wmp.skin.WMP10Skin;
+import se.spacify.plugin.PluginManager;
 
 import se.spacify.service.ServiceManager;
 import se.spacify.service.media.MediaService;
 import se.spacify.service.media.PlayQueue;
+import se.spacify.concept.ConceptManager;
 import se.spacify.config.ConfigManager;
 import se.spacify.controls.Panel;
 import se.spacify.skinning.Skin;
+import se.spacify.skinning.SkinManager;
 import se.spacify.ui.chrome.Chrome;
+import se.spacify.ui.chrome.ChromeManager;
 import se.spacify.ui.theme.Taste;
 import se.spacify.ui.theme.Theme;
 import se.spacify.ui.theme.ThemeManager;
@@ -26,6 +29,52 @@ public class MainWindow extends JFrame {
     private static final long serialVersionUID = 2144395787232553079L;
 
     private Taste taste;
+
+    private ConceptManager conceptManager;
+    public ConceptManager getConceptManager() {
+        return conceptManager;
+    }
+
+
+    private ThemeManager themeManager;
+    public ThemeManager getThemeManager() {
+        return themeManager;
+    }
+
+    private ChromeManager chromeManager;
+    public ChromeManager getChromeManager() {
+        return chromeManager;
+    }
+    private DesignManager designManager;
+    public DesignManager getDesignManager() {
+        return designManager;
+    }
+    private FeatureManager featureManager;
+    public FeatureManager getFeatureManager() {
+        return featureManager;
+    }
+
+    private ServiceManager serviceManager;
+    public ServiceManager getServiceManager() {
+        return serviceManager;
+    }
+    private PluginManager pluginManager;
+    public PluginManager getPluginManager() {
+        return pluginManager;
+    }
+
+    public void setPluginManager(PluginManager pluginManager) {
+        this.pluginManager = pluginManager;
+    }
+    private SkinManager skinManager;
+
+    public SkinManager getSkinManager() {
+        return skinManager;
+    }
+
+    public void setSkinManager(SkinManager skinManager) {
+        this.skinManager = skinManager;
+    }
 
     public Taste getTaste() {
         return taste;
@@ -58,6 +107,8 @@ public class MainWindow extends JFrame {
     }
     private boolean userWantsSidebar = true;  // user's manual show/hide preference
     private boolean immersive = false;        // full-width store browsing
+
+    private ConfigManager config;
     public Chrome getChrome() {
         return getTaste().getChrome();
     }
@@ -90,7 +141,15 @@ public class MainWindow extends JFrame {
         rebuildTheme();
     }
     public MainWindow() {
-        super("Spacify");
+        super("Spacify"); 
+        conceptManager = new ConceptManager(this);
+        serviceManager.startAll();
+        pluginManager = new PluginManager(this);
+        chromeManager = new ChromeManager(this);
+        designManager = new DesignManager(this);
+        featureManager = new FeatureManager(this);
+        skinManager = new SkinManager(this);
+        themeManager = new ThemeManager(this);
         setUndecorated(true);  // remove native title bar + border on all platforms
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(1100, 700);
@@ -102,27 +161,27 @@ public class MainWindow extends JFrame {
         // ── Theme ─────────────────────────────────────────────────────────────
         config = new ConfigManager(this);
         config.load();
-        ThemeManager.addChangeListener(ConfigManager::save);
+        getTaste().addChangeListener(config::save);
 
         Timer themeRebuildTimer = new Timer(250, e -> rebuildTheme());
         themeRebuildTimer.setRepeats(false);
-        getTheme().addChangeListener(themeRebuildTimer::restart);
+        getTaste().addChangeListener(themeRebuildTimer::restart);
 
         // Swap the active Service when the selected design style changes.
-        getTheme().addChangeListener(() -> {
+        getTaste().addChangeListener(() -> {
             
         });
 
-        ServiceManager.getInstance().activateFeatures(getViewStack(), getLeftLibraryMenu().getRootNode());
+        featureManager.activateFeatures(getViewStack(), getLeftLibraryMenu().getRootNode());
 
         // Discover and activate plugins (built-in bundle, <app>/plugins, ~/Bungalow).
         // The Local Music plugin registers the media Service, so wire it afterwards.
-        se.spacify.plugin.PluginManager.getInstance().init(getViewStack(), getLeftLibraryMenu());
-        se.spacify.plugin.PluginManager.getInstance().start();
+        pluginManager.init(getViewStack(), getLeftLibraryMenu());
+        pluginManager.start();
 
         // Wire every registered media Service for events; the footer/queue follow
         // whichever one PlaybackCoordinator marks active for the current play.
-        for (MediaService ms : ServiceManager.getInstance().getServices(MediaService.class)) {
+        for (MediaService ms : serviceManager.getServices(MediaService.class)) {
             wireMediaService(ms);
         }
 
@@ -171,12 +230,6 @@ public class MainWindow extends JFrame {
 
     public void navigate(String uri) {
     	getViewStack().navigate(uri);
-    	/*if (uri.startsWith("spacify:now-playing")) {
-    		leftLibraryMenu.setVisible(false);
-    	} else {
-    		leftLibraryMenu.setVisible(true);
-    		leftSplit.setDividerLocation(100);
-    	}*/
     }
 
     private void rebuildTheme() {

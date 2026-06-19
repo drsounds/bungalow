@@ -2,38 +2,20 @@ package se.spacify.ui.chrome;
 
 import java.util.*;
 
+import se.spacify.aspect.BaseAspectManager;
+import se.spacify.ui.MainWindow;
+
 /**
  * Central singleton registry for Services and Features.
  * Call register() for each, then startAll() to drive onCreate → onStart.
  */
-public class ChromeManager {
+public class ChromeManager extends BaseAspectManager<Chrome> {
 
-    private static ChromeManager instance;
-
-    private final Map<String, Chrome> chromes = new LinkedHashMap<>();
-
-    private ChromeManager() {}
-
-    public static ChromeManager getInstance() {
-        if (instance == null) instance = new ChromeManager();
-        return instance;
+    public ChromeManager(MainWindow mainWindow) {
+        super(mainWindow);
     }
 
     // ── Service registration ──────────────────────────────────────────────────
-
-    public void register(Chrome chrome) {
-        chromes.put(chrome.getId(), chrome);
-    }
-
-    public void unregister(String chromeId) {
-        Chrome c = chromes.remove(chromeId);
-        if (c != null) { c.onDestroy(); }
-    }
-
-    /** Unregister a specific service instance (e.g. when a plugin is disabled). */
-    public void unregister(Chrome chrome) {
-        if (chrome != null) unregister(chrome.getId());
-    } 
 
     /**
      * Returns the first registered service exposing the given aspect, or null.
@@ -43,7 +25,7 @@ public class ChromeManager {
      */
     @SuppressWarnings("unchecked")
     public <T> T getChrome(Class<T> aspect) {
-        for (Chrome s : chromes.values())
+        for (Chrome s : getNodes().values())
             if (aspect.isInstance(s)) return (T) s;
         return null;
     }
@@ -52,11 +34,11 @@ public class ChromeManager {
     @SuppressWarnings("unchecked")
     public <T> List<T> getChromes(Class<T> aspect) {
         List<T> result = new ArrayList<>();
-        for (Chrome s : chromes.values())
+        for (Chrome s : getNodes().values())
             if (aspect.isInstance(s)) result.add((T) s);
         return result;
     }
 
-    public Collection<Chrome> allChromes() { return Collections.unmodifiableCollection(chromes.values()); }
+    public Collection<Chrome> allChromes() { return Collections.unmodifiableCollection(getNodes().values()); }
 
 }

@@ -3,6 +3,16 @@ package se.spacify.navigation;
 import javax.swing.JComponent;
 
 public abstract class SPView {
+    
+    private SPViewStack viewStack;
+    
+    public SPViewStack getViewStack() {
+        return viewStack;
+    }
+
+    public SPView(SPViewStack viewStack) {
+        this.viewStack = viewStack;
+    }
 
     public abstract boolean acceptsUri(String uri);
 

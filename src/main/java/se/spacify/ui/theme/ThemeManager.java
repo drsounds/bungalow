@@ -2,8 +2,11 @@ package se.spacify.ui.theme;
 
 import javax.swing.*;
 
-import se.spacify.navigation.SPViewStack;
-import se.spacify.navigation.SidebarNode;
+import se.spacify.aspect.AspectManager;
+import se.spacify.aspect.BaseAspectManager;
+import se.spacify.ui.MainWindow;
+import se.spacify.ui.theme.Theme;
+
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -12,32 +15,15 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-public class ThemeManager {
+public class ThemeManager extends BaseAspectManager<Theme> {
 
-    private static ThemeManager instance;
-
-    private final Map<String, Theme> themes = new LinkedHashMap<>();
-
-    public static ThemeManager getInstance() {
-        if (instance == null) instance = new ThemeManager();
-        return instance;
+    public ThemeManager(MainWindow mainWindow) {
+        super(mainWindow);
+        //TODO Auto-generated constructor stub
     }
 
     // ── Theme registration ──────────────────────────────────────────────────
 
-    public void register(Theme theme) {
-        themes.put(theme.getId(), theme);
-    }
-
-    public void unregister(String themeId) {
-        Theme s = themes.remove(themeId);
-    }
-
-    /** Unregister a specific theme instance (e.g. when a plugin is disabled). */
-    public void unregister(Theme theme) {
-        if (theme != null) unregister(theme.getId());
-    }
- 
     /**
      * Returns the first registered theme exposing the given aspect, or null.
      * {@code aspect} may be {@link Theme} itself, a concrete theme class, or
@@ -46,7 +32,7 @@ public class ThemeManager {
      */
     @SuppressWarnings("unchecked")
     public <T> T getTheme(Class<T> aspect) {
-        for (Theme s : themes.values())
+        for (Theme s : getNodes().values())
             if (aspect.isInstance(s)) return (T) s;
         return null;
     }
@@ -55,16 +41,16 @@ public class ThemeManager {
     @SuppressWarnings("unchecked")
     public <T> List<T> getThemes(Class<T> aspect) {
         List<T> result = new ArrayList<>();
-        for (Theme s : themes.values())
+        for (Theme s : getNodes().values())
             if (aspect.isInstance(s)) result.add((T) s);
         return result;
     }
 
     public Theme getById(String id) {
-        return themes.get(id);
+        return getNodes().get(id);
     }
 
-    public Collection<Theme> allThemes() { return Collections.unmodifiableCollection(themes.values()); }
+    public Collection<Theme> allThemes() { return Collections.unmodifiableCollection(getNodes().values()); }
 
     private static float hue        = 0.0f;  // 0-1  (background tint)
     private static float saturation = 0.0f;  // 0-1  (background tint)
@@ -260,5 +246,17 @@ public class ThemeManager {
 
     private static void notify_() {
         for (Runnable r : listeners) r.run();
+    }
+
+    @Override
+    public Theme get(String featureId) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'get'");
+    }
+
+    @Override
+    public Collection<Theme> all() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'all'");
     }
 }

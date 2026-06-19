@@ -3,6 +3,7 @@ package se.spacify.views.library;
 import se.spacify.navigation.SPViewStack;
 import se.spacify.service.ServiceManager;
 import se.spacify.service.catalogue.MusicCatalogueService;
+import se.spacify.ui.MainWindow;
 
 import javax.swing.JComponent;
 import javax.swing.JTextField;
@@ -30,7 +31,7 @@ import java.util.regex.Pattern;
  */
 public abstract class AbstractCatalogView<T> extends AbstractLibraryView {
 
-    protected final SPViewStack viewStack;
+
     protected final List<T> rows = new ArrayList<>();
 
     private String ServiceId;
@@ -39,7 +40,7 @@ public abstract class AbstractCatalogView<T> extends AbstractLibraryView {
     private long requestSeq;
 
     protected AbstractCatalogView(SPViewStack viewStack) {
-        this.viewStack = viewStack;
+        super(viewStack); 
     }
 
     @Override protected boolean isEditable() { return false; }
@@ -77,7 +78,7 @@ public abstract class AbstractCatalogView<T> extends AbstractLibraryView {
     /** The catalogue Service named by the current URI, or null if unavailable. */
     protected MusicCatalogueService Service() {
         if (ServiceId == null) return null;
-        for (MusicCatalogueService s : ServiceManager.getInstance().getServices(MusicCatalogueService.class)) {
+        for (MusicCatalogueService s : getViewStack().getMainWindow().getServiceManager().getServices(MusicCatalogueService.class)) {
             if (ServiceId.equals(s.getId())) return s;
         }
         return null;
@@ -138,8 +139,8 @@ public abstract class AbstractCatalogView<T> extends AbstractLibraryView {
 
     /** Navigate the app to another catalogue URI within the same Service. */
     protected void open(String kindAndQuery) {
-        if (viewStack != null && ServiceId != null) {
-            viewStack.navigate("spacify:catalog:" + ServiceId + ":" + kindAndQuery);
+        if (getViewStack() != null && ServiceId != null) {
+            getViewStack().navigate("spacify:catalog:" + ServiceId + ":" + kindAndQuery);
         }
     }
 

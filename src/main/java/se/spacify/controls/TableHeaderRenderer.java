@@ -12,7 +12,7 @@ import se.spacify.ui.MainWindow;
 
 public class TableHeaderRenderer extends DefaultTableCellRenderer {
     private static final long serialVersionUID = 1L;
-    private Table table;
+    
     public Skin getSkin() {
     	return getMainWindow().getSkin();
     }

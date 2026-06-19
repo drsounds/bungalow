@@ -1,5 +1,7 @@
 package se.spacify.plugin.musicbrainz;
 
+import se.spacify.aspect.Aspect;
+import se.spacify.aspect.AspectManager;
 import se.spacify.plugin.Plugin;
 import se.spacify.plugin.PluginContext;
 import se.spacify.plugin.PluginSetting;
@@ -15,7 +17,7 @@ import java.util.List;
  * <p>Exposes a single {@code contact} setting folded into the API
  * {@code User-Agent}, which MusicBrainz asks callers to supply.
  */
-public class MusicBrainzPlugin implements Plugin {
+public class MusicBrainzPlugin extends Plugin {
 
     /** Settings key for the contact URL/email sent in the MusicBrainz User-Agent. */
     public static final String SETTING_CONTACT = "contact";
@@ -32,5 +34,23 @@ public class MusicBrainzPlugin implements Plugin {
             PluginSetting.string(SETTING_CONTACT,
                 "Contact (email or URL, sent to MusicBrainz in the User-Agent)", "")
         );
+    }
+
+    @Override
+    public String getId() {
+        // TODO Auto-generated method stub
+        return "musicbrainz";
+    }
+
+    @Override
+    public String getName() {
+        // TODO Auto-generated method stub
+        return "MusicBrainz";
+    }
+
+    @Override
+    public void onRegister(AspectManager<? extends Aspect> aspectManager) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'onRegister'");
     }
 }

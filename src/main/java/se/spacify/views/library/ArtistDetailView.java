@@ -5,7 +5,9 @@ import se.spacify.db.LibraryRepository;
 import se.spacify.db.entity.Artist;
 import se.spacify.db.entity.Recording;
 import se.spacify.db.entity.RecordingArtistCredit;
+import se.spacify.navigation.SPViewStack;
 import se.spacify.service.media.PlaybackCoordinator;
+import se.spacify.ui.MainWindow;
 import se.spacify.service.media.PlayQueueItem;
 
 import java.util.ArrayList;
@@ -20,6 +22,9 @@ import java.util.regex.Pattern;
  */
 public class ArtistDetailView extends AbstractLibraryView {
 
+    public ArtistDetailView(SPViewStack viewStack) {
+        super(viewStack);
+    }
     private static final Pattern URI = Pattern.compile("spacify:library:artist:(\\d+)");
 
     private final List<Recording> rows = new ArrayList<>();

@@ -8,6 +8,8 @@ import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 
+import se.spacify.aspect.Aspect;
+import se.spacify.aspect.AspectManager;
 import se.spacify.controls.Panel;
 import se.spacify.controls.SplitPane;
 import se.spacify.navigation.SPViewStack;
@@ -29,11 +31,11 @@ public class WMP9Chrome extends Chrome {
 	public WMP9Chrome() {
 
         viewStack      = new SPViewStack();
-        nowPlayingView = new NowPlayingView();
+        nowPlayingView = new NowPlayingView(viewStack);
         // Core shell views only; content views (library, web, search, playlist)
         // are contributed by built-in plugins during PluginManager.start().
         viewStack.registerView(nowPlayingView);
-        viewStack.registerView(new se.spacify.plugin.ui.PluginManagerView());
+        viewStack.registerView(new se.spacify.plugin.ui.PluginManagerView(viewStack));
         setLayout(new BoxLayout(this, BoxLayout.LINE_AXIS));
  
         leftMenuPanel = new LeftMenuPanel();
@@ -96,4 +98,14 @@ public class WMP9Chrome extends Chrome {
         appFooter.setMinimumSize(new Dimension(0, 18));
         
 	}
+
+        @Override
+        public String getId() {
+                // TODO Auto-generated method stub
+                return "wmp9";
+        }
+        @Override
+        public void onRegister(AspectManager<? extends Aspect> aspectManager) {
+                // TODO Auto-generated method stub
+        }
 }

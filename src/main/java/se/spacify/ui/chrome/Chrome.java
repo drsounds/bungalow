@@ -1,4 +1,5 @@
 package se.spacify.ui.chrome;
+import se.spacify.aspect.Aspect;
 import se.spacify.controls.Panel;
 import se.spacify.controls.SplitPane;
 import se.spacify.navigation.SPViewStack;
@@ -10,12 +11,9 @@ import se.spacify.ui.LeftMenuPanel;
 
 import se.spacify.ui.TopBar;
 import se.spacify.views.NowPlayingView;
-
-public class Chrome extends Panel {
 	
-	protected String getId() {
-		return "chrome";
-	}
+public abstract class Chrome extends Panel implements Aspect {
+	
     private static final long serialVersionUID = 2144395787232553079L;
 	public void onDestroy() {
 		
@@ -91,11 +89,11 @@ public class Chrome extends Panel {
 
     public Chrome() {
 		viewStack = new SPViewStack();
-		nowPlayingView = new NowPlayingView();
+		nowPlayingView = new NowPlayingView(viewStack);
 		// Core shell views only; content views (library, web, search, playlist)
 		// are contributed by built-in plugins during PluginManager.start().
 		viewStack.registerView(nowPlayingView);
-		viewStack.registerView(new se.spacify.plugin.ui.PluginManagerView());
+		viewStack.registerView(new se.spacify.plugin.ui.PluginManagerView(viewStack));
     }
 
     /** Toggle the left leftLibraryMenu; remembers the user's preference. */

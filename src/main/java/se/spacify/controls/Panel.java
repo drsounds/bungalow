@@ -9,6 +9,7 @@ import javax.swing.SwingUtilities;
 import se.spacify.design.Design;
 import se.spacify.skinning.Skin;
 import se.spacify.ui.MainWindow;
+import se.spacify.ui.theme.Taste;
 import se.spacify.ui.theme.Theme;
 
 public class Panel extends JPanel implements Control {
@@ -69,6 +70,19 @@ public class Panel extends JPanel implements Control {
 		}
 		return getMainWindow().getDesign();
 	}
+	private Taste taste;
+	public Taste getTaste() {
+		if (taste != null) {
+			return taste;
+		}
+		if (getParent() != null && getParent() instanceof Panel) {
+			if (((Panel)getParent()).getTaste() != null) {
+				return ((Panel)getParent()).getTaste();
+			}
+		}
+		return getMainWindow().getTaste();
+	}
+
 	public MainWindow getMainWindow() {
 		return ((MainWindow)(SwingUtilities.getWindowAncestor(this)));
 	}

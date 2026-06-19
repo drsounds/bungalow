@@ -1,5 +1,7 @@
 package se.spacify.plugin.catalog;
 
+import se.spacify.aspect.Aspect;
+import se.spacify.aspect.AspectManager;
 import se.spacify.navigation.SPViewStack;
 import se.spacify.navigation.SidebarNode;
 import se.spacify.plugin.Plugin;
@@ -19,7 +21,7 @@ import se.spacify.views.library.ReleasesCatalogView;
  * catalogue views — browsing remote data on background threads, in the spirit of
  * Windows Media Player 11's "Urge" online catalogue.
  */
-public class CatalogsPlugin implements Plugin {
+public class CatalogsPlugin extends Plugin {
 
     @Override
     public void onActivate(PluginContext ctx) {
@@ -29,7 +31,7 @@ public class CatalogsPlugin implements Plugin {
         ctx.registerView(new RecordingsCatalogView(viewStack));
 
         SidebarNode catalogs = new SidebarNode("Catalogs", null);
-        for (MusicCatalogueService svc : ServiceManager.getInstance().getServices(MusicCatalogueService.class)) {
+        for (MusicCatalogueService svc : getManager().getMainWindow().getServiceManager().getServices(MusicCatalogueService.class)) {
             String id = svc.getId();
             SidebarNode node = new SidebarNode(svc.getName(), null);
             node.addChild(new SidebarNode("Artists",    "spacify:catalog:" + id + ":artists"));
@@ -40,5 +42,23 @@ public class CatalogsPlugin implements Plugin {
 
         SidebarHandle handle = ctx.addSidebarNode(catalogs);
         handle.expand();
+    }
+
+    @Override
+    public String getId() {
+        // TODO Auto-generated method stub
+        return "catalogs";
+    }
+
+    @Override
+    public String getName() {
+        // TODO Auto-generated method stub
+        return "Catalogs";
+    }
+
+    @Override
+    public void onRegister(AspectManager<? extends Aspect> aspectManager) {
+        // TODO Auto-generated method stub
+        return;
     }
 }

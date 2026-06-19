@@ -5,6 +5,7 @@ import java.awt.Graphics2D;
 import javax.swing.JPanel;
 import javax.swing.JTable;
 
+import se.spacify.aspect.Aspect;
 import se.spacify.controls.GlassPanel;
 import se.spacify.controls.GlossyButton;
 import se.spacify.controls.TabButton;
@@ -13,7 +14,7 @@ import se.spacify.controls.ToolButton;
 import se.spacify.controls.VerticalPanel;
 import se.spacify.plugin.Plugin;
 
-public abstract class Skin {
+public abstract class Skin implements Aspect {
 	protected Plugin plugin;
 	public Plugin getPlugin() {
 		return plugin;
@@ -30,4 +31,7 @@ public abstract class Skin {
 	public abstract void paintTableHeader(JTable table, int width, int height, Graphics2D g2);
 	public abstract void paintToolButton(ToolButton control, Graphics2D g2);
 	public abstract void paintVerticalPanel(VerticalPanel verticalPanel, Graphics2D g2);
+	public void onRegister(SkinManager manager) {
+		
+	}
 }

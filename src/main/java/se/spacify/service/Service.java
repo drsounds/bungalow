@@ -2,6 +2,8 @@ package se.spacify.service;
 
 import javax.swing.*;
 
+import se.spacify.aspect.Aspect;
+
 /**
  * Core contract for every Spacify Service: stable identity plus an
  * Android-style lifecycle. Capabilities a Service may additionally take on
@@ -12,7 +14,7 @@ import javax.swing.*;
  * can implement any combination of them, and callers select Services by aspect
  * via {@link ServiceManager#getServices(Class)}.
  */
-public interface Service {
+public interface Service extends Aspect {
 
     // ── Identity ──────────────────────────────────────────────────────────────
 

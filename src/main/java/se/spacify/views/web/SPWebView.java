@@ -29,7 +29,6 @@ import java.awt.*;
  */
 public class SPWebView extends SPView {
 
-    private final SPViewStack viewStack;
     private final JPanel      panel;
     private final JLabel      status;
 
@@ -45,7 +44,7 @@ public class SPWebView extends SPView {
     private String     currentTitle;
 
     public SPWebView(SPViewStack viewStack) {
-        this.viewStack = viewStack;
+        super(viewStack);
         panel = new JPanel(new BorderLayout());
         status = new JLabel("", SwingConstants.CENTER);
         status.setBorder(BorderFactory.createEmptyBorder(24, 24, 24, 24));
@@ -126,7 +125,7 @@ public class SPWebView extends SPView {
                     currentUri = sp;
                     if (uriField != null) uriField.setText(sp);
                     updateStar();
-                    viewStack.updateCurrentUri(sp);
+                    getViewStack().updateCurrentUri(sp);
                 });
             }
             @Override
@@ -151,7 +150,7 @@ public class SPWebView extends SPView {
         }
 
         uriField = new JTextField(currentUri != null ? currentUri : "");
-        uriField.addActionListener(e -> viewStack.navigate(uriField.getText().trim()));
+        uriField.addActionListener(e -> getViewStack().navigate(uriField.getText().trim()));
         toolbar.add(uriField);
 
         btnRefresh = new JButton("⟳");
@@ -164,7 +163,7 @@ public class SPWebView extends SPView {
         panel.revalidate();
         panel.repaint();
         updateStar();
-        viewStack.refreshNavState();
+        getViewStack().refreshNavState();
     }
 
     // ── Bookmarking ───────────────────────────────────────────────────────────────

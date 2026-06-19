@@ -2,6 +2,7 @@ package se.spacify.plugin.ui;
 
 import se.spacify.controls.Table;
 import se.spacify.navigation.SPView;
+import se.spacify.navigation.SPViewStack;
 import se.spacify.plugin.PluginDescriptor;
 import se.spacify.plugin.PluginManager;
 import se.spacify.plugin.PluginManager.ManagedPlugin;
@@ -30,7 +31,8 @@ public class PluginManagerView extends SPView {
 
     private boolean refreshing = false;
 
-    public PluginManagerView() {
+    public PluginManagerView(SPViewStack viewStack) {
+        super(viewStack);
         panel = new JPanel(new BorderLayout(0, 8));
         panel.setOpaque(true);
         panel.setBorder(BorderFactory.createEmptyBorder(16, 16, 16, 16));
@@ -70,7 +72,7 @@ public class PluginManagerView extends SPView {
             int r = e.getFirstRow();
             if (r >= 0 && r < rows.size()) {
                 boolean on = Boolean.TRUE.equals(model.getValueAt(r, 0));
-                PluginManager.getInstance().setEnabled(rows.get(r).getDescriptor().getId(), on);
+                getViewStack().getMainWindow().getPluginManager().setEnabled(rows.get(r).getDescriptor().getId(), on);
             }
         });
 
@@ -88,8 +90,8 @@ public class PluginManagerView extends SPView {
 
         refresh();
         applyTheme();
-        PluginManager.getInstance().addChangeListener(() -> SwingUtilities.invokeLater(this::refresh));
-        ThemeManager.addChangeListener(this::applyTheme);
+        getViewStack().getMainWindow().getPluginManager().addChangeListener(() -> SwingUtilities.invokeLater(this::refresh));
+        getViewStack().getMainWindow().getThemeManager().addChangeListener(this::applyTheme);
     }
 
     // ── Actions ──────────────────────────────────────────────────────────────
@@ -99,7 +101,7 @@ public class PluginManagerView extends SPView {
         chooser.setFileFilter(new javax.swing.filechooser.FileNameExtensionFilter("Plugin jar (*.jar)", "jar"));
         if (chooser.showOpenDialog(panel) != JFileChooser.APPROVE_OPTION) return;
         File jar = chooser.getSelectedFile();
-        boolean ok = PluginManager.getInstance().install(jar);
+        boolean ok = getViewStack().getMainWindow().getPluginManager().install(jar);
         if (!ok) {
             JOptionPane.showMessageDialog(panel,
                 "Not a valid Spacify plugin jar (missing Spacify-Plugin-Id / -Class manifest headers).",
@@ -120,7 +122,7 @@ public class PluginManagerView extends SPView {
             "Remove plugin \"" + m.getDescriptor().getName() + "\"?",
             "Remove plugin", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
         if (ans == JOptionPane.YES_OPTION) {
-            PluginManager.getInstance().uninstall(m.getDescriptor().getId());
+            getViewStack().getMainWindow().getPluginManager().uninstall(m.getDescriptor().getId());
         }
     }
 

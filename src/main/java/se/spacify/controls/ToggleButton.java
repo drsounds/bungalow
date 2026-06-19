@@ -5,6 +5,7 @@ import javax.swing.SwingUtilities;
 
 import se.spacify.skinning.Skin;
 import se.spacify.ui.MainWindow;
+import se.spacify.ui.theme.Theme;
 
 public class ToggleButton extends JToggleButton implements Control {
 	private static final long serialVersionUID = 1L;
@@ -43,4 +44,10 @@ public class ToggleButton extends JToggleButton implements Control {
 	public MainWindow getMainWindow() {
 		return ((MainWindow)(SwingUtilities.getWindowAncestor(this)));
 	}
+
+    @Override
+    public Theme getTheme() {
+        // TODO Auto-generated method stub
+        return getMainWindow().getTheme();
+    }
 }

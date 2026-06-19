@@ -1,6 +1,9 @@
 package se.spacify.plugin.youtube;
 
+import se.spacify.aspect.Aspect;
+import se.spacify.aspect.AspectManager;
 import se.spacify.db.entity.Recording;
+import se.spacify.plugin.Plugin;
 import se.spacify.service.media.MediaServicePlayerComponent;
 import se.spacify.service.media.MusicService;
 import se.spacify.service.media.PlaybackSupport;
@@ -132,5 +135,9 @@ public class YouTubeMusicService implements MusicService {
     private void setState(PlaybackState s) {
         state = s;
         playback.fireStateChanged(s);
+    } 
+    @Override
+    public void onRegister(AspectManager<? extends Aspect> aspectManager) {
+        // TODO Auto-generated method stub
     }
 }

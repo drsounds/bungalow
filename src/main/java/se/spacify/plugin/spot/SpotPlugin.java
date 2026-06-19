@@ -1,5 +1,7 @@
 package se.spacify.plugin.spot;
 
+import se.spacify.aspect.Aspect;
+import se.spacify.aspect.AspectManager;
 import se.spacify.plugin.Plugin;
 import se.spacify.plugin.PluginContext;
 import se.spacify.plugin.spot.chrome.SpotChrome;
@@ -11,7 +13,7 @@ import se.spacify.plugin.spot.skin.SpotSkin;
  * {@link se.spacify.service.media.MediaService}); registered after the local
  * music plugin so YouTube acts as a fallback for tracks not available locally.
  */
-public class SpotPlugin implements Plugin {
+public class SpotPlugin extends Plugin {
 
     @Override
     public void onActivate(PluginContext ctx) {
@@ -19,5 +21,22 @@ public class SpotPlugin implements Plugin {
         ctx.registerDesign(new SpotDesign());
         ctx.registerSkin(new SpotSkin());
         ctx.registerTheme(new SpotTheme());
+    }
+
+    @Override
+    public String getId() {
+        // TODO Auto-generated method stub
+        return "spot";
+    }
+
+    @Override
+    public String getName() {
+        // TODO Auto-generated method stub
+        return "Spot";
+    }
+
+    @Override
+    public void onRegister(AspectManager<? extends Aspect> aspectManager) {
+        // TODO Auto-generated method stub
     }
 }

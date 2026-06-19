@@ -14,6 +14,8 @@ import javax.swing.ButtonModel;
 import javax.swing.JPanel;
 import javax.swing.JTable;
 
+import se.spacify.aspect.Aspect;
+import se.spacify.aspect.AspectManager;
 import se.spacify.controls.GlassPanel;
 import se.spacify.controls.GlossyButton;
 import se.spacify.controls.TabButton;
@@ -287,5 +289,14 @@ public class WMP11Skin extends Skin {
 	public String getId() {
 		// TODO Auto-generated method stub
 		return "wmp11";
+	}
+	@Override
+	public String getName() {
+		// TODO Auto-generated method stub
+		return "WMP 11";
+	}
+	@Override
+	public void onRegister(AspectManager<? extends Aspect> aspectManager) {
+		// TODO Auto-generated method stub
 	}
 }

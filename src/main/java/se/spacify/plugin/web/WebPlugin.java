@@ -1,5 +1,7 @@
 package se.spacify.plugin.web;
 
+import se.spacify.aspect.Aspect;
+import se.spacify.aspect.AspectManager;
 import se.spacify.db.entity.Bookmark;
 import se.spacify.navigation.SPViewStack;
 import se.spacify.navigation.SidebarNode;
@@ -21,7 +23,7 @@ import java.util.List;
  * stack), plus the "Sites" sidebar subtree of bookmarks kept in sync via
  * {@link BookmarkEvents}.
  */
-public class WebPlugin implements Plugin {
+public class WebPlugin extends Plugin {
 
     private final Runnable refresh = this::refresh;
     private SidebarHandle sites;
@@ -63,5 +65,23 @@ public class WebPlugin implements Plugin {
         SidebarNode sn = new SidebarNode(b.toString(), b.getSpacifyUri());
         if (b.getFavicon() != null) sn.setIcon(new ImageIcon(b.getFavicon()));
         return sn;
+    }
+
+    @Override
+    public String getId() {
+        // TODO Auto-generated method stub
+        return "web";
+    }
+
+    @Override
+    public String getName() {
+        // TODO Auto-generated method stub
+        return "Web Browser";
+    }
+
+    @Override
+    public void onRegister(AspectManager<? extends Aspect> aspectManager) {
+        // TODO Auto-generated method stub
+        
     }
 }

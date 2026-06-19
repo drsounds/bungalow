@@ -1,7 +1,11 @@
 package se.spacify.service;
 
+import se.spacify.aspect.AspectManager;
+import se.spacify.aspect.BaseAspectManager;
+import se.spacify.feature.Feature;
 import se.spacify.navigation.SPViewStack;
 import se.spacify.navigation.SidebarNode;
+import se.spacify.ui.MainWindow;
 
 import javax.swing.tree.DefaultMutableTreeNode;
 import java.util.*;
@@ -10,29 +14,25 @@ import java.util.*;
  * Central singleton registry for Services and Features.
  * Call register() for each, then startAll() to drive onCreate → onStart.
  */
-public class ServiceManager implements AspectManager<Service> {
-
-    private static ServiceManager instance;
-
-    private final Map<String, Service> services = new LinkedHashMap<>();
-    private final List<Feature>        features  = new ArrayList<>();
-
-    private ServiceManager() {}
-
-    public static ServiceManager getInstance() {
-        if (instance == null) instance = new ServiceManager();
-        return instance;
-    }
+public class ServiceManager extends BaseAspectManager<Service> {
 
     // ── Service registration ──────────────────────────────────────────────────
 
+    public ServiceManager(MainWindow mainWindow) {
+        super(mainWindow);
+        //TODO Auto-generated constructor stub
+    }
+
+    @Override
     public void register(Service service) {
-        services.put(service.getId(), service);
+        super.register(service);
         service.onCreate();
     }
 
+    @Override
     public void unregister(String serviceId) {
-        Service s = services.remove(serviceId);
+        Service s = get(serviceId);
+        super.unregister(serviceId);
         if (s != null) { s.onStop(); s.onDestroy(); }
     }
 
@@ -42,20 +42,20 @@ public class ServiceManager implements AspectManager<Service> {
     }
 
     public void startAll() {
-        for (Service s : services.values()) s.onStart();
+        for (Service s : getNodes().values()) s.onStart();
     }
 
     public void stopAll() {
-        for (Service s : services.values()) s.onStop();
+        for (Service s : getNodes().values()) s.onStop();
     }
 
     public void shutdownAll() {
-        for (Service s : services.values()) { s.onStop(); s.onDestroy(); }
-        services.clear();
+        for (Service s : getNodes().values()) { s.onStop(); s.onDestroy(); }
+        getNodes().clear();
     }
 
     public Service get(String id) {
-        return services.get(id);
+        return getNodes().get(id);
      }
 
     /**
@@ -66,7 +66,7 @@ public class ServiceManager implements AspectManager<Service> {
      */
     @SuppressWarnings("unchecked")
     public <T> T getService(Class<T> aspect) {
-        for (Service s : services.values())
+        for (Service s : getNodes().values())
             if (aspect.isInstance(s)) return (T) s;
         return null;
     }
@@ -75,46 +75,11 @@ public class ServiceManager implements AspectManager<Service> {
     @SuppressWarnings("unchecked")
     public <T> List<T> getServices(Class<T> aspect) {
         List<T> result = new ArrayList<>();
-        for (Service s : services.values())
+        for (Service s : getNodes().values())
             if (aspect.isInstance(s)) result.add((T) s);
         return result;
     }
 
-    public Collection<Service> allServices() { return Collections.unmodifiableCollection(services.values()); }
-
     // ── Feature registration ──────────────────────────────────────────────────
 
-    public void register(Feature feature) {
-        features.add(feature);
-        feature.onRegister(this);
-    }
-
-    /** Drop a feature from the registry (its views/nodes are removed by the caller). */
-    public void unregisterFeature(Feature feature) {
-        features.remove(feature);
-    }
-
-    /**
-     * Wire all registered features into the running UI.
-     * Call this after MainWindow has been built and the SPViewStack is live.
-     *
-     * @param viewStack     the app's main view stack
-     * @param sidebarRoot   root node of the sidebar JTree model
-     */
-    public void activateFeatures(SPViewStack viewStack, DefaultMutableTreeNode sidebarRoot) {
-        for (Feature f : features) {
-            f.getViews().forEach(viewStack::registerView);
-            for (SidebarNode sn : f.getSidebarNodes()) {
-                sidebarRoot.add(buildTreeNode(sn));
-            }
-        }
-    }
-
-    private static DefaultMutableTreeNode buildTreeNode(SidebarNode sn) {
-        DefaultMutableTreeNode node = new DefaultMutableTreeNode(sn);
-        for (SidebarNode child : sn.getChildren()) node.add(buildTreeNode(child));
-        return node;
-    }
-
-    public Collection<Feature> all() { return Collections.unmodifiableList(features); }
 }

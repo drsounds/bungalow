@@ -1,4 +1,4 @@
-package se.spacify.plugin.wmp.chrome;
+package se.spacify.plugin.spot.chrome;
 
 import java.awt.BorderLayout;
 
@@ -6,26 +6,33 @@ import java.awt.Dimension;
 
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
-import javax.swing.JButton;
 
+import se.spacify.aspect.Aspect;
+import se.spacify.aspect.AspectManager;
 import se.spacify.controls.Panel;
 import se.spacify.controls.SplitPane;
-import se.spacify.navigation.SPViewStack;
+
 import se.spacify.plugin.spot.controls.SpotAppHeader;
 import se.spacify.ui.AppFooter;
-import se.spacify.ui.AppHeader;
+
 import se.spacify.ui.chrome.Chrome;
 
 import se.spacify.ui.LeftLibraryMenu;
 import se.spacify.ui.LeftMenuPanel;
 import se.spacify.ui.NowPlayingPanel;
-import se.spacify.ui.TopBar;
-
-import se.spacify.views.NowPlayingView;
 
 public class SpotChrome extends Chrome {
         private static final long serialVersionUID = 2766717544747588265L;
 
+        @Override
+        public String getId() {
+                // TODO Auto-generated method stub
+                return "spot";
+        }
+        @Override
+        public void onRegister(AspectManager<? extends Aspect> aspectManager) {
+                // TODO Auto-generated method stub
+        }
         public SpotChrome() {
                 setLayout(new BoxLayout(this, BoxLayout.LINE_AXIS));
                 leftMenuPanel = new LeftMenuPanel();

@@ -3,6 +3,7 @@ package se.spacify.config;
 import se.spacify.ui.MainWindow;
 import se.spacify.ui.theme.Taste;
 import se.spacify.ui.theme.Theme;
+import se.spacify.ui.theme.ThemeManager;
 
 import java.awt.Color;
 import java.io.*;
@@ -39,10 +40,10 @@ public class ConfigManager {
         }
         try {
             String themeId = p.getProperty("theme.id", "wmp10");
-             Theme theme = ThemeManager.getThemeById(themeId);
+             Theme theme = mainWindow.getThemeManager().get(themeId);
              if (theme != null) {
                  taste.setTheme(theme);
-             }
+             } 
             taste.setHue(        Float.parseFloat(p.getProperty("taste.hue",        "0.0")));
             taste.setSaturation( Float.parseFloat(p.getProperty("taste.saturation", "0.0")));
             taste.setLightness(  Float.parseFloat(p.getProperty("taste.lightness",  "0.5")));

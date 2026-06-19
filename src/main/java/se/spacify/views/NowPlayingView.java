@@ -3,6 +3,7 @@ package se.spacify.views;
 import se.spacify.controls.ToolBar;
 import se.spacify.navigation.PlayerView;
 import se.spacify.navigation.SPView;
+import se.spacify.navigation.SPViewStack;
 import se.spacify.service.media.MediaService;
 import se.spacify.ui.SettingsPanel;
 import se.spacify.ui.theme.ThemeManager;
@@ -21,7 +22,8 @@ public class NowPlayingView extends SPView {
     private PlayerView activeView;
 	private JToolBar topToolbar;
 
-    public NowPlayingView() {
+    public NowPlayingView(SPViewStack viewStack) {
+        super(viewStack);
         panel = new JPanel(new BorderLayout());
         panel.setOpaque(true);
         panel.setBackground(Color.BLACK);

@@ -6,6 +6,7 @@ import javax.swing.SwingUtilities;
 
 import se.spacify.skinning.Skin;
 import se.spacify.ui.MainWindow;
+import se.spacify.ui.theme.Theme;
 
 public class Button extends JButton implements Control {
 	private boolean primary = false;
@@ -74,5 +75,10 @@ public class Button extends JButton implements Control {
 		return ((MainWindow)(SwingUtilities.getWindowAncestor(this)));
 	}
 	private static final long serialVersionUID = 1L;
+    @Override
+    public Theme getTheme() {
+        // TODO Auto-generated method stub
+        return getMainWindow().getTheme();
+    }
 
 }

@@ -4,6 +4,7 @@ import se.spacify.db.entity.LocalFile;
 import se.spacify.db.entity.MusicServiceTrack;
 import se.spacify.db.entity.Recording;
 import se.spacify.service.ServiceManager;
+import se.spacify.ui.MainWindow;
 import se.spacify.ui.ServiceMatchDialog;
 import se.spacify.service.media.ServiceMatch;
 
@@ -27,7 +28,18 @@ import java.util.function.Consumer;
  */
 public final class PlaybackCoordinator {
 
-    private PlaybackCoordinator() {}
+    private MainWindow mainWindow;
+
+    public static MainWindow staticMainWindow;
+
+    public MainWindow getMainWindow() {
+        return mainWindow;
+    }
+
+    private PlaybackCoordinator(MainWindow mainWindow) {
+        this.mainWindow = mainWindow;
+        staticMainWindow = mainWindow;
+    }
 
     private static MediaService activeService;
     private static final List<Consumer<MediaService>> activeListeners = new ArrayList<>();
@@ -63,7 +75,7 @@ public final class PlaybackCoordinator {
      */
     public static boolean playByIsrc(String isrc) {
         if (isrc == null || isrc.isBlank()) return false;
-        for (MusicService ms : ServiceManager.getInstance().getServices(MusicService.class)) {
+        for (MusicService ms : staticMainWindow.getServiceManager().getServices(MusicService.class)) {
             if (ms.lookup(isrc) != null) {
                 setActiveService(ms);
                 ms.loadByIsrc(isrc);
@@ -82,7 +94,7 @@ public final class PlaybackCoordinator {
      */
     public static boolean playByMetadata(String title, String artist) {
         if (title == null || title.isBlank()) return false;
-        for (MusicService ms : ServiceManager.getInstance().getServices(MusicService.class)) {
+        for (MusicService ms : staticMainWindow.getServiceManager().getServices(MusicService.class)) {
             if (ms.lookupByTitleArtist(title, artist) != null) {
                 setActiveService(ms);
                 ms.loadByTitleArtist(title, artist);
@@ -96,7 +108,7 @@ public final class PlaybackCoordinator {
     /** Play an arbitrary spacify: URI on the primary media Service. */
     public static boolean playUri(String uri) {
         if (uri == null) return false;
-        MediaService ms = ServiceManager.getInstance().getService(MediaService.class);
+        MediaService ms = staticMainWindow.getServiceManager().getService(MediaService.class);
         if (ms == null) return false;
         setActiveService(ms);
         ms.loadUri(uri);
@@ -106,7 +118,7 @@ public final class PlaybackCoordinator {
 
     /** Play a local file directly via the local music Service. */
     public static boolean playLocalFile(LocalFile file) {
-        LocalMusicService local = ServiceManager.getInstance().getService(LocalMusicService.class);
+        LocalMusicService local = staticMainWindow.getServiceManager().getService(LocalMusicService.class);
         if (local == null || file == null) return false;
         setActiveService(local);
         local.loadLocalFile(file);
@@ -196,7 +208,7 @@ public final class PlaybackCoordinator {
      */
     public static List<ServiceMatch> gatherMatches(PlayRequest req) {
         List<ServiceMatch> matches = new ArrayList<>();
-        for (MusicService ms : ServiceManager.getInstance().getServices(MusicService.class)) {
+        for (MusicService ms : staticMainWindow.getServiceManager().getServices(MusicService.class)) {
             Recording match = null;
             boolean byIsrc = false;
             if (req.isrc() != null) {
@@ -225,7 +237,7 @@ public final class PlaybackCoordinator {
 
     private static MusicService findService(String ServiceId) {
         if (ServiceId == null) return null;
-        for (MusicService ms : ServiceManager.getInstance().getServices(MusicService.class)) {
+        for (MusicService ms : staticMainWindow.getServiceManager().getServices(MusicService.class)) {
             if (ServiceId.equals(ms.getId())) return ms;
         }
         return null;

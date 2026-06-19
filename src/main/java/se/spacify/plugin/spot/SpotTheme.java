@@ -6,5 +6,5 @@ public class SpotTheme extends Theme {
     @Override
     public String getId() {
         return "spot";
-    }   
+    }
 }

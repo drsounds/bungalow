@@ -1,6 +1,7 @@
 package se.spacify.views;
 
 import se.spacify.navigation.SPView;
+import se.spacify.navigation.SPViewStack;
 
 import javax.swing.*;
 import java.awt.*;
@@ -9,7 +10,8 @@ public class HomeView extends SPView {
 
     private final JPanel panel;
 
-    public HomeView() {
+    public HomeView(SPViewStack viewStack) {
+        super(viewStack);
         panel = new JPanel(new BorderLayout());
         panel.setOpaque(false);
 

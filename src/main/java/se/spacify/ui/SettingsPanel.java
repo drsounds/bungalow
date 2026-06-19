@@ -1,6 +1,6 @@
 package se.spacify.ui;
 
-import se.spacify.ui.theme.getTheme();
+import se.spacify.ui.theme.Theme;
 import se.spacify.skinning.Skin;
 import se.spacify.skinning.SkinManager;
 import se.spacify.controls.Panel;
@@ -35,9 +35,9 @@ public class SettingsPanel extends Panel {
         GridBagConstraints c = new GridBagConstraints();
         c.insets = new Insets(1, 5, 1, 5);
 
-        JSlider hueSlider   = mkSlider(0, 360, (int)(getTheme().getHue()        * 360));
-        JSlider satSlider   = mkSlider(0, 100, (int)(getTheme().getSaturation() * 100));
-        JSlider lightSlider = mkSlider(0, 100, (int)(getTheme().getLightness()  * 100));
+        JSlider hueSlider   = mkSlider(0, 360, (int)(getTaste().getHue()        * 360));
+        JSlider satSlider   = mkSlider(0, 100, (int)(getTaste().getSaturation() * 100));
+        JSlider lightSlider = mkSlider(0, 100, (int)(getTaste().getLightness()  * 100));
 
         addRow(tintSection, c, 0, "Hue",        hueSlider);
         addRow(tintSection, c, 1, "Saturation", satSlider);
@@ -51,7 +51,7 @@ public class SettingsPanel extends Panel {
         skinSection.setOpaque(false);
         skinSection.setBorder(titledBorder("Skin"));
 
-        skins = SkinManager.getInstance().getSkins(Skin.class).toArray(new Skin[0]);
+        skins = getMainWindow().getSkinManager().getSkins(Skin.class).toArray(new Skin[0]);
 
         JComboBox<Skin> skinCombo = new JComboBox<>();
         skinCombo.setMaximumSize(new Dimension(200, 24));
@@ -78,20 +78,20 @@ public class SettingsPanel extends Panel {
         optionsSection.setOpaque(false);
         optionsSection.setBorder(titledBorder("Display"));
 
-        JCheckBox stripedBox   = whiteCheck("Striped rows",        getTheme().isStripedRows());
-        JCheckBox contrastBox  = whiteCheck("B/W background",       getTheme().isHighContrast());
-        JCheckBox invertedBox  = whiteCheck("Inverted (dark)",      getTheme().isHighContrastInverted());
-        JCheckBox tintTextBox  = whiteCheck("Tint text (light)",    getTheme().isTintText());
+        JCheckBox stripedBox   = whiteCheck("Striped rows",        getTaste().isStripedRows());
+        JCheckBox contrastBox  = whiteCheck("B/W background",       getTaste().isHighContrast());
+        JCheckBox invertedBox  = whiteCheck("Inverted (dark)",      getTaste().isHighContrastInverted());
+        JCheckBox tintTextBox  = whiteCheck("Tint text (light)",    getTaste().isTintText());
 
-        invertedBox.setEnabled(getTheme().isHighContrast());
+        invertedBox.setEnabled(getTaste().isHighContrast());
 
-        stripedBox.addActionListener(e  -> getTheme().setStripedRows(stripedBox.isSelected()));
+        stripedBox.addActionListener(e  -> getTaste().setStripedRows(stripedBox.isSelected()));
         contrastBox.addActionListener(e -> {
-            getTheme().setHighContrast(contrastBox.isSelected());
+            getTaste().setHighContrast(contrastBox.isSelected());
             invertedBox.setEnabled(contrastBox.isSelected());
         });
-        invertedBox.addActionListener(e -> getTheme().setHighContrastInverted(invertedBox.isSelected()));
-        tintTextBox.addActionListener(e -> getTheme().setTintText(tintTextBox.isSelected()));
+        invertedBox.addActionListener(e -> getTaste().setHighContrastInverted(invertedBox.isSelected()));
+        tintTextBox.addActionListener(e -> getTaste().setTintText(tintTextBox.isSelected()));
 
         optionsSection.add(stripedBox);
         optionsSection.add(contrastBox);
@@ -106,8 +106,8 @@ public class SettingsPanel extends Panel {
         modeSection.setOpaque(false);
         modeSection.setBorder(titledBorder("Mode"));
 
-        JRadioButton darkBtn  = whiteRadio("Dark",  getTheme().isDarkMode());
-        JRadioButton lightBtn = whiteRadio("Light", !getTheme().isDarkMode());
+        JRadioButton darkBtn  = whiteRadio("Dark",  getTaste().isDarkMode());
+        JRadioButton lightBtn = whiteRadio("Light", !getTaste().isDarkMode());
         ButtonGroup modeGroup = new ButtonGroup();
         modeGroup.add(darkBtn);
         modeGroup.add(lightBtn);
@@ -124,7 +124,7 @@ public class SettingsPanel extends Panel {
         accentSection.setBorder(titledBorder("Accent Color"));
 
         JButton accentBtn = new JButton();
-        accentBtn.setBackground(getTheme().getAccentColor());
+        accentBtn.setBackground(getTaste().getAccentColor());
         accentBtn.setPreferredSize(new Dimension(48, 48));
         accentBtn.setMaximumSize(new Dimension(48, 48));
         accentBtn.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -133,9 +133,9 @@ public class SettingsPanel extends Panel {
         accentBtn.addActionListener(e -> {
             Color chosen = JColorChooser.showDialog(
                 SwingUtilities.getWindowAncestor(this), "Accent Color",
-                getTheme().getAccentColor());
+                getTaste().getAccentColor());
             if (chosen != null) {
-                getTheme().setAccentColor(chosen);
+                getTaste().setAccentColor(chosen);
                 accentBtn.setBackground(chosen);
             }
         });
@@ -144,11 +144,11 @@ public class SettingsPanel extends Panel {
         accentSection.add(Box.createVerticalGlue());
 
         // ── Listeners ────────────────────────────────────────────────────────
-        hueSlider.addChangeListener(e -> getTheme().setHue(hueSlider.getValue() / 360f));
-        satSlider.addChangeListener(e -> getTheme().setSaturation(satSlider.getValue() / 100f));
-        lightSlider.addChangeListener(e -> getTheme().setLightness(lightSlider.getValue() / 100f));
-        darkBtn.addActionListener(e -> getTheme().setDarkMode(true));
-        lightBtn.addActionListener(e -> getTheme().setDarkMode(false));
+        hueSlider.addChangeListener(e -> getTaste().setHue(hueSlider.getValue() / 360f));
+        satSlider.addChangeListener(e -> getTaste().setSaturation(satSlider.getValue() / 100f));
+        lightSlider.addChangeListener(e -> getTaste().setLightness(lightSlider.getValue() / 100f));
+        darkBtn.addActionListener(e -> getTaste().setDarkMode(true));
+        lightBtn.addActionListener(e -> getTaste().setDarkMode(false));
 
         JPanel right = new JPanel() {
             @Override public void updateUI() { super.updateUI(); setOpaque(false); }

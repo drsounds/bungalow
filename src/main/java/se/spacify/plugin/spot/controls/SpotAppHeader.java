@@ -1,7 +1,7 @@
 package se.spacify.plugin.spot.controls;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
+
 import java.awt.Dimension;
 
 import java.net.URLEncoder;

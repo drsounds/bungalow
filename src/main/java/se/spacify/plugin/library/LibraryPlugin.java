@@ -1,5 +1,7 @@
 package se.spacify.plugin.library;
 
+import se.spacify.aspect.Aspect;
+import se.spacify.aspect.AspectManager;
 import se.spacify.db.DatabaseManager;
 import se.spacify.db.entity.Artist;
 import se.spacify.db.entity.Release;
@@ -22,7 +24,7 @@ import java.util.List;
  * sidebar subtree with live Releases/Artists lists kept in sync via
  * {@link LibraryEvents}.
  */
-public class LibraryPlugin implements Plugin {
+public class LibraryPlugin extends Plugin {
 
     private final Runnable refresh = this::refresh;
     private SidebarHandle releases;
@@ -30,15 +32,15 @@ public class LibraryPlugin implements Plugin {
 
     @Override
     public void onActivate(PluginContext ctx) {
-        ctx.registerView(new SearchView());
-        ctx.registerView(new TracksLibraryView());
-        ctx.registerView(new RecordingsLibraryView());
-        ctx.registerView(new ReleasesLibraryView());
-        ctx.registerView(new ArtistsLibraryView());
-        ctx.registerView(new LocalFileLibraryView());
-        ctx.registerView(new ReleaseDetailView());
-        ctx.registerView(new ArtistDetailView());
-        ctx.registerView(new PlaylistView());
+        ctx.registerView(new SearchView(getViewStack()));
+        ctx.registerView(new TracksLibraryView(getViewStack()));
+        ctx.registerView(new RecordingsLibraryView(getViewStack()));
+        ctx.registerView(new ReleasesLibraryView(getViewStack()));
+        ctx.registerView(new ArtistsLibraryView(getViewStack()));
+        ctx.registerView(new LocalFileLibraryView(getViewStack()));
+        ctx.registerView(new ReleaseDetailView(getViewStack()));
+        ctx.registerView(new ArtistDetailView(getViewStack()));
+        ctx.registerView(new PlaylistView(getViewStack()));
 
         SidebarNode lib = new SidebarNode("Your Library", "spacify:library");
         lib.addChild(new SidebarNode("Tracks",      "spacify:library:tracks"));
@@ -84,5 +86,23 @@ public class LibraryPlugin implements Plugin {
             }
         } catch (Exception ignored) {}
         return out;
+    }
+
+    @Override
+    public String getId() {
+        // TODO Auto-generated method stub
+        return "library";
+    }
+
+    @Override
+    public String getName() {
+        // TODO Auto-generated method stub
+        return "Library";
+    }
+
+    @Override
+    public void onRegister(AspectManager<? extends Aspect> aspectManager) {
+        // TODO Auto-generated method stub
+
     }
 }

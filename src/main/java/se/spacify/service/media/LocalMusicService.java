@@ -1,9 +1,13 @@
 package se.spacify.service.media;
 
+import se.spacify.aspect.Aspect;
+import se.spacify.aspect.AspectManager;
 import se.spacify.db.DatabaseManager;
 import se.spacify.db.entity.LocalFile;
 import se.spacify.db.entity.Recording;
 import se.spacify.db.entity.RecordingArtistCredit;
+import se.spacify.plugin.Plugin;
+import se.spacify.service.ServiceManager;
 
 import javax.sound.sampled.*;
 import javax.swing.*;
@@ -17,7 +21,8 @@ import java.util.List;
  * implements only {@link MusicService} (no {@link se.spacify.service.AuthAspect}).
  */
 public class LocalMusicService implements MusicService {
-
+    private Plugin plugin;
+    public Plugin getPlugin() { return plugin; }
     private final PlaybackSupport playback = new PlaybackSupport();
 
     private Clip          clip;
@@ -248,5 +253,10 @@ public class LocalMusicService implements MusicService {
                 .map(c -> c.getArtist().getName())
                 .orElse("");
         } catch (Exception e) { return ""; }
+    }
+    
+    @Override
+    public void onRegister(AspectManager<? extends Aspect> aspectManager) {
+        // TODO Auto-generated method stub
     }
 }

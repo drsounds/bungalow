@@ -4,6 +4,9 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+
+import se.spacify.aspect.Aspect;
+import se.spacify.aspect.AspectManager;
 import se.spacify.db.entity.Artist;
 import se.spacify.db.entity.Recording;
 import se.spacify.db.entity.Release;
@@ -247,5 +250,11 @@ public class MusicBrainzService implements MusicCatalogueService {
 
     private static boolean isBlank(String s) {
         return s == null || s.isBlank();
+    }
+
+    @Override
+    public void onRegister(AspectManager<? extends Aspect> aspectManager) {
+        // TODO Auto-generated method stub
+        
     }
 }

@@ -1,15 +1,20 @@
 package se.spacify.plugin;
 
+import se.spacify.aspect.AspectManager;
+import se.spacify.design.Design;
+import se.spacify.feature.Feature;
+import se.spacify.feature.FeatureManager;
 import se.spacify.navigation.SPView;
 import se.spacify.navigation.SidebarNode;
-import se.spacify.service.Feature;
 import se.spacify.service.Service;
 import se.spacify.service.ServiceManager;
 import se.spacify.skinning.Skin;
 import se.spacify.skinning.SkinManager;
 
 import se.spacify.ui.LeftLibraryMenu;
+import se.spacify.ui.MainWindow;
 import se.spacify.ui.chrome.ChromeManager;
+import se.spacify.ui.theme.Theme;
 import se.spacify.ui.chrome.Chrome;
 import se.spacify.navigation.SPViewStack;
 
@@ -41,15 +46,21 @@ import java.util.Properties;
  * per-plugin setting values persist via {@link PluginSettings}.
  */
 public final class PluginManager {
+ 
 
-    private static PluginManager instance;
+    private MainWindow mainWindow;
 
-    public static PluginManager getInstance() {
-        if (instance == null) instance = new PluginManager();
-        return instance;
+    public MainWindow getMainWindow() {
+        return mainWindow;
     }
 
-    private PluginManager() {}
+    public void setMainWindow(MainWindow mainWindow) {
+        this.mainWindow = mainWindow;
+    }
+
+    public PluginManager(MainWindow mainWindow) {
+        this.mainWindow = mainWindow; // avoid "unused" warning; the manager is wired to the UI in MainWindow.init()
+    }
 
     private final PluginLoader loader = new PluginLoader();
     private final Map<String, ManagedPlugin> plugins = new LinkedHashMap<>();
@@ -220,19 +231,23 @@ public final class PluginManager {
         private final Plugin           plugin;
         private final PluginSettings   settings;
         private boolean                enabled;
-        private Recorder               recorder;   // non-null while active
-
+        private boolean                active;
+        private Recorder               recorder;
+        private Icon                   icon;
+        public Icon getIcon() { return icon; }
+        public void setIcon(Icon icon) { this.icon = icon; }
+        
         ManagedPlugin(PluginDescriptor descriptor, Plugin plugin) {
             this.descriptor = descriptor;
             this.plugin = plugin;
             this.settings = new PluginSettings(descriptor.getId(), plugin.getSettingsSchema());
             this.enabled = enabledByDefault(descriptor.getId());
+            this.active = false;
         }
 
         public PluginDescriptor    getDescriptor() { return descriptor; }
         public boolean             isEnabled()     { return enabled; }
-        public boolean             isActive()      { return recorder != null; }
-        public Icon                getIcon()       { return plugin.getIcon(); }
+        public boolean             isActive()      { return active; } 
         public List<PluginSetting> getSchema()     { return plugin.getSettingsSchema(); }
         public PluginSettings      getSettings()   { return settings; }
     }
@@ -247,6 +262,8 @@ public final class PluginManager {
         private final List<DefaultMutableTreeNode> nodes    = new ArrayList<>();
         private final List<Chrome> 				   chromes = new ArrayList<>();
         private final List<Skin> 				   skins = new ArrayList<>();
+        private final List<Design> 				   designs = new ArrayList<>();
+        private final List<Theme> 				   themes = new ArrayList<>();
       
         Recorder(ManagedPlugin owner) { this.owner = owner; }
 
@@ -257,17 +274,23 @@ public final class PluginManager {
         @Override public SPViewStack viewStack() { return viewStack; }
 
         @Override public void registerService(Service s) {
-            ServiceManager.getInstance().register(s);
+            getMainWindow().getServiceManager().register(s);
             s.onStart();
             services.add(s);
         }
 		@Override
 		public void registerChrome(Chrome c) {
-            ChromeManager.getInstance().register(c);
+            getMainWindow().getChromeManager().register(c);
 			// TODO Auto-generated method stub
             chromes.add(c);
 		}
 
+		@Override
+		public void registerDesign(Design c) {
+            getMainWindow().getDesignManager().register(c);
+			// TODO Auto-generated method stub
+            designs.add(c);
+		}
         @Override public void registerView(SPView v) {
             if (viewStack != null) viewStack.registerView(v);
             views.add(v);
@@ -281,14 +304,14 @@ public final class PluginManager {
         }
 
         @Override public void registerFeature(Feature f) {
-            ServiceManager.getInstance().register(f);
+            getMainWindow().getFeatureManager().register(f);
             features.add(f);
             f.getViews().forEach(this::registerView);
             f.getSidebarNodes().forEach(this::addSidebarNode);
         }
 
         @Override public void registerSkin(Skin s) {
-            SkinManager.getInstance().register(s);
+            getMainWindow().getSkinManager().register(s);
             skins.add(s);
         }
 
@@ -296,11 +319,17 @@ public final class PluginManager {
         void undo() {
             for (DefaultMutableTreeNode n : nodes) if (leftLibraryMenu != null) leftLibraryMenu.removeSidebarNode(n);
             for (SPView v : views) if (viewStack != null) viewStack.unregisterView(v);
-            for (Service s : services) ServiceManager.getInstance().unregister(s);
-             for (Skin s : skins) SkinManager.getInstance().unregister(s);
-            for (Feature f : features) ServiceManager.getInstance().unregisterFeature(f);
+            for (Service s : services) getMainWindow().getServiceManager().unregister(s);
+             for (Skin s : skins) getMainWindow().getSkinManager().unregister(s);
+            for (Feature f : features) getMainWindow().getFeatureManager().unregister(f);
             nodes.clear(); views.clear(); services.clear(); features.clear(); chromes.clear(); skins.clear();
         }
 
+        @Override
+        public void registerTheme(Theme t) {
+            // TODO Auto-generated method stub
+            getMainWindow().getThemeManager().register(t);
+            themes.add(t);
+        }
     }
 }

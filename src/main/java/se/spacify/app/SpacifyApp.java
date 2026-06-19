@@ -61,12 +61,10 @@ public class SpacifyApp {
         // ── Services ──────────────────────────────────────────────────────────
         // Services are now contributed by plugins (see the Local Music plugin),
         // discovered and started by PluginManager during MainWindow startup.
-        ServiceManager sm = ServiceManager.getInstance();
-        sm.startAll();
 
         // ── Register shutdown hook ────────────────────────────────────────────
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-            sm.shutdownAll();
+            //sm.shutdownAll();
             se.spacify.web.CefRuntime.dispose();
             DatabaseManager.getInstance().close();
         }));

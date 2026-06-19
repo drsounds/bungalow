@@ -6,6 +6,7 @@ import se.spacify.db.entity.Playable;
 import se.spacify.db.entity.Recording;
 import se.spacify.db.entity.Release;
 import se.spacify.db.entity.Track;
+import se.spacify.navigation.SPViewStack;
 import se.spacify.service.ServiceManager;
 import se.spacify.service.media.PlayRequest;
 import se.spacify.service.playlist.Playlist;
@@ -24,6 +25,11 @@ import java.util.Map;
  * view ({@code spacify:library}).
  */
 public class TracksLibraryView extends AbstractLibraryView {
+
+    public TracksLibraryView(SPViewStack viewStack) {
+        super(viewStack);
+        //TODO Auto-generated constructor stub
+    }
 
     private final List<Track> rows = new ArrayList<>();
 
@@ -101,7 +107,7 @@ public class TracksLibraryView extends AbstractLibraryView {
      */
     private void rebuildPlaylistIndex() {
         playlistByUri.clear();
-        for (PlaylistService svc : ServiceManager.getInstance().getServices(PlaylistService.class)) {
+        for (PlaylistService svc : getViewStack().getMainWindow().getServiceManager().getServices(PlaylistService.class)) {
             for (Playlist pl : svc.getPlaylists()) {
                 GroupRef ref = new GroupRef("playlist:" + pl.getId(), pl.getName(),
                         pl.getItems().size() + " tracks");

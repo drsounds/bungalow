@@ -8,10 +8,12 @@ import se.spacify.controls.ToolButton;
 import se.spacify.graphics.GroupAvatar;
 import se.spacify.library.LibraryEvents;
 import se.spacify.navigation.SPView;
+import se.spacify.navigation.SPViewStack;
 import se.spacify.service.media.PlaybackCoordinator;
 import se.spacify.service.media.PlayQueue;
 import se.spacify.service.media.PlayQueueItem;
 import se.spacify.service.media.PlayRequest;
+import se.spacify.ui.MainWindow;
 import se.spacify.ui.theme.ThemeManager;
 
 import javax.swing.*;
@@ -64,7 +66,8 @@ public abstract class AbstractLibraryView extends SPView {
 		GroupRef groupOf(int modelRow);
 	}
 
-	protected AbstractLibraryView() {
+	protected AbstractLibraryView(SPViewStack viewStack) {
+		super(viewStack);
 		panel = new JPanel(new BorderLayout(0, 8));
 		panel.setOpaque(false);
 

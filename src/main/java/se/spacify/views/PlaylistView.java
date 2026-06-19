@@ -1,6 +1,7 @@
 package se.spacify.views;
 
 import se.spacify.navigation.SPView;
+import se.spacify.navigation.SPViewStack;
 
 import javax.swing.*;
 import java.awt.*;
@@ -10,7 +11,8 @@ public class PlaylistView extends SPView {
     private final JPanel panel;
     private final JLabel titleLabel;
 
-    public PlaylistView() {
+    public PlaylistView(SPViewStack viewStack) {
+        super(viewStack);
         panel = new JPanel(new BorderLayout(0, 12));
         panel.setOpaque(false);
         panel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));

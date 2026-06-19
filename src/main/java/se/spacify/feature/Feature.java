@@ -25,5 +25,5 @@ public abstract class Feature implements Aspect {
     public List<SidebarNode> getSidebarNodes() { return Collections.emptyList(); }
 
     /** Called once when this feature is activated via ServiceManager. */
-    public void onRegister(AspectManager<Feature> featureManager) {}
+    public void onRegister(FeatureManager featureManager) {}
 }

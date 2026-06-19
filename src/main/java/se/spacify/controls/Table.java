@@ -6,6 +6,7 @@ import javax.swing.table.TableModel;
 
 import se.spacify.skinning.Skin;
 import se.spacify.ui.MainWindow;
+import se.spacify.ui.theme.Theme;
 
 public class Table extends JTable implements Control {
 	
@@ -25,5 +26,10 @@ public class Table extends JTable implements Control {
 	public Table(TableModel model) {
 		super(model);
 		this.getTableHeader().setDefaultRenderer(new TableHeaderRenderer(this));
+	}
+	@Override
+	public Theme getTheme() {
+		// TODO Auto-generated method stub
+		return getMainWindow().getTheme();
 	}
 }

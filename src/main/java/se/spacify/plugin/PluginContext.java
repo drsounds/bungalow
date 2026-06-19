@@ -1,11 +1,11 @@
 package se.spacify.plugin;
 
 import se.spacify.design.Design;
+import se.spacify.feature.Feature;
 import se.spacify.navigation.SPView;
 import se.spacify.navigation.SPViewStack;
 import se.spacify.navigation.SidebarNode;
 import se.spacify.service.Service;
-import se.spacify.service.Feature;
 import se.spacify.skinning.Skin;
 import se.spacify.ui.chrome.Chrome;
 import se.spacify.ui.theme.Theme;

@@ -1,6 +1,7 @@
 package se.spacify.views;
 
 import se.spacify.navigation.SPView;
+import se.spacify.navigation.SPViewStack;
 
 import javax.swing.*;
 import java.awt.*;
@@ -13,7 +14,8 @@ public class SearchView extends SPView {
     private final JLabel queryLabel;
     private final JPanel resultsPanel;
 
-    public SearchView() {
+    public SearchView(SPViewStack viewStack) {
+        super(viewStack);
         panel = new JPanel(new BorderLayout(0, 12));
         panel.setOpaque(false);
         panel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));

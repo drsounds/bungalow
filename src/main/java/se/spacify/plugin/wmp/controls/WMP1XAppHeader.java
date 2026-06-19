@@ -4,8 +4,7 @@ import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -15,12 +14,11 @@ import javax.swing.ImageIcon;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
-import javax.swing.JTextField;
+
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker; 
 
-import se.spacify.controls.Button;
 import se.spacify.controls.GlassPanel;
 import se.spacify.controls.GlossyButton;
 import se.spacify.controls.Panel;
