@@ -174,8 +174,6 @@ public class MainWindow extends JFrame {
         // Discover and activate plugins (built-in bundle, <app>/plugins, ~/Bungalow).
         // The Local Music plugin registers the media Service, so wire it afterwards.
         viewStack = new SPViewStack();
-        leftLibraryMenu = new LeftLibraryMenu(viewStack);
-        nowPlayingView = new NowPlayingView(viewStack);
         
         pluginManager = new PluginManager(this);
         pluginManager.init(getViewStack(), getLeftLibraryMenu());
@@ -190,6 +188,8 @@ public class MainWindow extends JFrame {
         designManager = new DesignManager(this);
         featureManager = new FeatureManager(this);
         skinManager = new SkinManager(this);
+        leftLibraryMenu = new LeftLibraryMenu(viewStack);
+        nowPlayingView = new NowPlayingView(viewStack);
         setUndecorated(true);  // remove native title bar + border on all platforms
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(1100, 700);

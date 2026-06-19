@@ -1,16 +1,16 @@
 package se.spacify.navigation;
 
-import javax.swing.*;
-
 import se.spacify.ui.MainWindow;
+import se.spacify.controls.Panel;
 
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Component;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Deque;
 import java.util.List;
 
-public class SPViewStack extends JPanel {
+public class SPViewStack extends Panel {
 
     private static final long serialVersionUID = 6893909424664812987L;
 	private final List<SPView> registeredViews = new ArrayList<>();
@@ -22,7 +22,7 @@ public class SPViewStack extends JPanel {
     private SPView currentView = null;
     
     public MainWindow getMainWindow() {
-    	Container parent = getParent();
+    	Component parent = getParent();
     	while (parent != null && parent != this) {
     		if (parent instanceof MainWindow) {
     			return (MainWindow)parent;
