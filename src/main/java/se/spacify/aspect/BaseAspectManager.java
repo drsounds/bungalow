@@ -4,7 +4,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
 
-import se.spacify.concept.Concept;
 import se.spacify.ui.MainWindow;
 
 public abstract class BaseAspectManager<T extends Aspect> implements AspectManager<T> {

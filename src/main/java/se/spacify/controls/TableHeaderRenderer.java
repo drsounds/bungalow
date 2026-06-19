@@ -1,7 +1,7 @@
 package se.spacify.controls;
 import java.awt.Component;
 import java.awt.Graphics;
-import java.awt.Graphics2D;
+//import java.awt.Graphics2D;
 
 import javax.swing.JTable;
 import javax.swing.SwingUtilities;
@@ -13,6 +13,10 @@ import se.spacify.ui.MainWindow;
 public class TableHeaderRenderer extends DefaultTableCellRenderer {
     private static final long serialVersionUID = 1L;
     private Table table;
+    public Table getTable() {
+        return table;
+    }
+
     public Skin getSkin() {
     	return getMainWindow().getSkin();
     }
@@ -35,7 +39,7 @@ public class TableHeaderRenderer extends DefaultTableCellRenderer {
 
     @Override
     protected void paintComponent(Graphics g) {
-    	Graphics2D g2 = (Graphics2D)g;
+    	//Graphics2D g2 = (Graphics2D)g;
     	
         super.paintComponent(g);
     }

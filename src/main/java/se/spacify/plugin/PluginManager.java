@@ -1,19 +1,14 @@
 package se.spacify.plugin;
 
-import se.spacify.aspect.AspectManager;
 import se.spacify.design.Design;
 import se.spacify.feature.Feature;
-import se.spacify.feature.FeatureManager;
 import se.spacify.navigation.SPView;
 import se.spacify.navigation.SidebarNode;
 import se.spacify.service.Service;
-import se.spacify.service.ServiceManager;
 import se.spacify.skinning.Skin;
-import se.spacify.skinning.SkinManager;
 
 import se.spacify.ui.LeftLibraryMenu;
 import se.spacify.ui.MainWindow;
-import se.spacify.ui.chrome.ChromeManager;
 import se.spacify.ui.theme.Theme;
 import se.spacify.ui.chrome.Chrome;
 import se.spacify.navigation.SPViewStack;

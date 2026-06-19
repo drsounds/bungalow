@@ -1,9 +1,13 @@
 package se.spacify.ui.chrome;
+import java.awt.Component;
+
+import javax.swing.BoxLayout;
+
 import se.spacify.aspect.Aspect;
 import se.spacify.controls.Panel;
 import se.spacify.controls.SplitPane;
 import se.spacify.navigation.SPViewStack;
-import se.spacify.skinning.Skin;
+
 import se.spacify.ui.AppFooter;
 import se.spacify.ui.AppHeader;
 import se.spacify.ui.LeftLibraryMenu;
@@ -18,21 +22,21 @@ public abstract class Chrome extends Panel implements Aspect {
 	public void onDestroy() {
 		
 	}
-	protected SPViewStack    viewStack; 
+	protected SPViewStack viewStack; 
 	public void setViewStack(SPViewStack value) {
 		viewStack = value;
 	} 
-    protected AppFooter      appFooter;
+    protected AppFooter appFooter;
     protected NowPlayingView nowPlayingView;
-    protected LeftLibraryMenu  leftLibraryMenu;
+    protected LeftLibraryMenu leftLibraryMenu;
 	public void setLeftLibraryMenu(LeftLibraryMenu value) {
 		leftLibraryMenu = value;
 	}
 
-    public SPViewStack    getViewStack()     { return viewStack; }
-    public AppFooter      getAppFooter()     { return appFooter; }
+    public SPViewStack getViewStack() { return viewStack; }
+    public AppFooter getAppFooter() { return appFooter; }
     public NowPlayingView getNowPlayingView() { return nowPlayingView; }
-    public LeftLibraryMenu        getLeftLibraryMenu()       { return leftLibraryMenu; }
+    public LeftLibraryMenu getLeftLibraryMenu() { return leftLibraryMenu; }
   
 	protected SplitPane leftSplit;
 	public SplitPane getLeftSplit() {
@@ -88,13 +92,14 @@ public abstract class Chrome extends Panel implements Aspect {
 	}
 
     public Chrome() {
-		viewStack = new SPViewStack();
-		nowPlayingView = new NowPlayingView(viewStack);
-		// Core shell views only; content views (library, web, search, playlist)
-		// are contributed by built-in plugins during PluginManager.start().
-		viewStack.registerView(nowPlayingView);
-		viewStack.registerView(new se.spacify.plugin.ui.PluginManagerView(viewStack));
     }
+
+	public void build() {
+		for (Component comp : getComponents()) {
+			remove(comp);
+		}
+		setLayout(new BoxLayout(this, BoxLayout.LINE_AXIS));
+	}
 
     /** Toggle the left leftLibraryMenu; remembers the user's preference. */
     public void toggleSidebar() {

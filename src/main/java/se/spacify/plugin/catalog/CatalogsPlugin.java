@@ -7,7 +7,7 @@ import se.spacify.navigation.SidebarNode;
 import se.spacify.plugin.Plugin;
 import se.spacify.plugin.PluginContext;
 import se.spacify.plugin.SidebarHandle;
-import se.spacify.service.ServiceManager;
+
 import se.spacify.service.catalogue.MusicCatalogueService;
 import se.spacify.views.library.ArtistsCatalogView;
 import se.spacify.views.library.RecordingsCatalogView;

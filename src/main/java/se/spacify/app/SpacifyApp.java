@@ -1,10 +1,7 @@
 package se.spacify.app;
 
-import se.spacify.config.ConfigManager;
 import se.spacify.db.DatabaseManager;
-import se.spacify.service.ServiceManager;
 import se.spacify.ui.MainWindow;
-import se.spacify.ui.theme.ThemeManager;
 
 import java.awt.Color;
 import java.awt.Graphics2D;

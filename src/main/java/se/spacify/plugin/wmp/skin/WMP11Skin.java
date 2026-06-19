@@ -103,8 +103,7 @@ public class WMP11Skin extends Skin {
 		Color glowColor = new Color(255, 255, 255, 0);
 		if (primary) {
 			glowColor = ColorUtils.saturate(tint, 125.2f);
-		}
-		int sheenAlpha = pressed ? 110 : 220;
+		} 
 		Color[] lights = new Color[] { ColorUtils.alpha(ColorUtils.lighten(glowColor, 25f), 255f), ColorUtils.alpha(ColorUtils.lighten(glowColor, 25f), 0f) };
 		
 		// Darker outer rim, slightly inset face sits on top of it.
@@ -164,7 +163,6 @@ public class WMP11Skin extends Skin {
 		);
 		g2.fillRect(x, y + height -20, width, 20);
 		
-		Ellipse2D sheen2 = new Ellipse2D.Float(0, 0, width, height / 2);
 		g2.setPaint(
 			new StretchableRadialGradient(
 				new Point2D.Float(width / 2f,
@@ -218,7 +216,6 @@ public class WMP11Skin extends Skin {
 	public void paintPlaylist(JPanel control, Graphics2D g2) {
 		// TODO Auto-generated method stub
 		int w = control.getWidth(), h = control.getHeight();
-        Color tintColor = ThemeManager.getTintColor();
         g2.setPaint(ThemeManager.getBackground());
         g2.fillRect(0, 0, w, h);
 	}

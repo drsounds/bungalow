@@ -16,7 +16,6 @@ public class TopBar extends JPanel {
     @Override
     protected void paintComponent(Graphics g) {
         Graphics2D g2 = (Graphics2D) g.create();
-        int w = getWidth(), h = getHeight();
 
         ((MainWindow)(SwingUtilities.getWindowAncestor(this))).getSkin().paintTopBar(this, g2);
 		

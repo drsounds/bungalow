@@ -3,7 +3,6 @@ package se.spacify.config;
 import se.spacify.ui.MainWindow;
 import se.spacify.ui.theme.Taste;
 import se.spacify.ui.theme.Theme;
-import se.spacify.ui.theme.ThemeManager;
 
 import java.awt.Color;
 import java.io.*;

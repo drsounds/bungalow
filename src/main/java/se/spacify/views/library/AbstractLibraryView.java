@@ -13,7 +13,7 @@ import se.spacify.service.media.PlaybackCoordinator;
 import se.spacify.service.media.PlayQueue;
 import se.spacify.service.media.PlayQueueItem;
 import se.spacify.service.media.PlayRequest;
-import se.spacify.ui.MainWindow;
+
 import se.spacify.ui.theme.ThemeManager;
 
 import javax.swing.*;

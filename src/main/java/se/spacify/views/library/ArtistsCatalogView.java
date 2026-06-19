@@ -3,7 +3,6 @@ package se.spacify.views.library;
 import se.spacify.db.entity.Artist;
 import se.spacify.navigation.SPViewStack;
 import se.spacify.service.catalogue.MusicCatalogueService;
-import se.spacify.ui.MainWindow;
 
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;

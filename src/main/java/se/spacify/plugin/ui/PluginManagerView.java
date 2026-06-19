@@ -4,7 +4,7 @@ import se.spacify.controls.Table;
 import se.spacify.navigation.SPView;
 import se.spacify.navigation.SPViewStack;
 import se.spacify.plugin.PluginDescriptor;
-import se.spacify.plugin.PluginManager;
+
 import se.spacify.plugin.PluginManager.ManagedPlugin;
 import se.spacify.ui.theme.ThemeManager;
 
@@ -31,6 +31,7 @@ public class PluginManagerView extends SPView {
 
     private boolean refreshing = false;
 
+    @SuppressWarnings("static-access")
     public PluginManagerView(SPViewStack viewStack) {
         super(viewStack);
         panel = new JPanel(new BorderLayout(0, 8));
@@ -151,6 +152,7 @@ public class PluginManagerView extends SPView {
         applyTheme();
     }
 
+    @SuppressWarnings("static-access")
     private void showSelected() {
         ManagedPlugin m = selected();
         if (m == null) { detail.setViewportView(null); return; }

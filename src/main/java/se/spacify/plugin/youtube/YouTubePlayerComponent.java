@@ -51,7 +51,7 @@ public class YouTubePlayerComponent extends MediaServicePlayerComponent {
     private static final String SCHEME   = "https";
     private static final String DOMAIN   = "spacify.youtube";
     private static final String PAGE_URL = SCHEME + "://" + DOMAIN + "/player.html";
-    private static final String ORIGIN   = SCHEME + "://" + DOMAIN;
+    
     private static final byte[] PAGE_BYTES = page().getBytes(StandardCharsets.UTF_8);
 
     /** The page handler factory is process-wide; register it at most once. */

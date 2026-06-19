@@ -2,18 +2,12 @@ package se.spacify.ui.theme;
 
 import javax.swing.*;
 
-import se.spacify.aspect.AspectManager;
 import se.spacify.aspect.BaseAspectManager;
 import se.spacify.ui.MainWindow;
-import se.spacify.ui.theme.Theme;
 
 import java.awt.*;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 
 public class ThemeManager extends BaseAspectManager<Theme> {
 
@@ -46,12 +40,6 @@ public class ThemeManager extends BaseAspectManager<Theme> {
         return result;
     }
 
-    public Theme getById(String id) {
-        return getNodes().get(id);
-    }
-
-    public Collection<Theme> allThemes() { return Collections.unmodifiableCollection(getNodes().values()); }
-
     private static float hue        = 0.0f;  // 0-1  (background tint)
     private static float saturation = 0.0f;  // 0-1  (background tint)
     private static float lightness  = 0.5f;  // 0-1  (background tint)
@@ -64,7 +52,6 @@ public class ThemeManager extends BaseAspectManager<Theme> {
     private static boolean highContrastInverted = false;  // white-on-black vs black-on-white
     private static boolean tintText             = true;   // tint text in light mode (else black)
 
-    private static final Color CHROME_DARK = new Color(14, 14, 14);
     private static final List<Runnable> listeners = new ArrayList<>();
 
     // Cached per applyToDefaults() — safe to read from any component at render time

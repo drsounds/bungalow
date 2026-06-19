@@ -7,7 +7,6 @@ import se.spacify.db.entity.LocalFile;
 import se.spacify.db.entity.Recording;
 import se.spacify.db.entity.RecordingArtistCredit;
 import se.spacify.plugin.Plugin;
-import se.spacify.service.ServiceManager;
 
 import javax.sound.sampled.*;
 import javax.swing.*;

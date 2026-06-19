@@ -38,7 +38,4 @@ public class ChromeManager extends BaseAspectManager<Chrome> {
             if (aspect.isInstance(s)) result.add((T) s);
         return result;
     }
-
-    public Collection<Chrome> allChromes() { return Collections.unmodifiableCollection(getNodes().values()); }
-
 }

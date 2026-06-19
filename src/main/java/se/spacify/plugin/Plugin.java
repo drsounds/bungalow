@@ -3,7 +3,6 @@ package se.spacify.plugin;
 import javax.swing.Icon;
 
 import se.spacify.aspect.Aspect;
-import se.spacify.feature.FeatureManager;
 import se.spacify.navigation.SPViewStack;
 
 import java.util.List;

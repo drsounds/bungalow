@@ -29,6 +29,24 @@ public class MainWindow extends JFrame {
     private static final long serialVersionUID = 2144395787232553079L;
 
     private Taste taste;
+    
+    private LeftLibraryMenu leftLibraryMenu;
+    public void setLeftLibraryMenu(LeftLibraryMenu leftLibraryMenu) {
+        this.leftLibraryMenu = leftLibraryMenu;
+    }
+
+    private Chrome chrome; 
+
+    private SPViewStack viewStack;
+    public SPViewStack getViewStack() { return viewStack; }
+    private AppFooter appFooter;
+    public AppFooter getAppFooter() { return appFooter; }
+    private NowPlayingView nowPlayingView;
+    public NowPlayingView getNowPlayingView() { return nowPlayingView; }
+    public LeftLibraryMenu getLeftLibraryMenu() { return leftLibraryMenu; }
+    public void setViewStack(SPViewStack viewStack) {
+        this.viewStack = viewStack;
+    }
 
     private ConceptManager conceptManager;
     public ConceptManager getConceptManager() {
@@ -85,7 +103,9 @@ public class MainWindow extends JFrame {
             remove(getChrome()); 
         }
         this.taste = taste;
-        add(getChrome(), BorderLayout.CENTER);
+        if (getChrome() != null) {
+            add(getChrome(), BorderLayout.CENTER);
+        }
     }
 
     public Theme getTheme() {
@@ -98,8 +118,15 @@ public class MainWindow extends JFrame {
     public void setDesign(Design design) {
         getTaste().setDesign(design);
         setSkin(design.getSkin());
+        setChrome(design.getChrome());
+        design.getChrome().setViewStack(viewStack);
+        design.getChrome().setLeftLibraryMenu(leftLibraryMenu);
     }
      
+    private void setChrome(Chrome value) {
+        // TODO Auto-generated method stub
+        chrome = value;
+    }
     public Skin getSkin() {
         return getTaste().getSkin();
     }
@@ -112,10 +139,7 @@ public class MainWindow extends JFrame {
 
     private ConfigManager config;
     public Chrome getChrome() {
-        if (getTaste() == null) {
-            return null;
-        }
-        return getTaste().getChrome();
+       return chrome;
     }
 	public Panel getAppPanel() {
 		return getChrome().getAppPanel();
@@ -147,13 +171,21 @@ public class MainWindow extends JFrame {
     }
     public MainWindow() {
         super("Spacify");
+        // Discover and activate plugins (built-in bundle, <app>/plugins, ~/Bungalow).
+        // The Local Music plugin registers the media Service, so wire it afterwards.
+        viewStack = new SPViewStack();
+        leftLibraryMenu = new LeftLibraryMenu(viewStack);
+        nowPlayingView = new NowPlayingView(viewStack);
+        
+        pluginManager = new PluginManager(this);
+        pluginManager.init(getViewStack(), getLeftLibraryMenu());
+        pluginManager.start();
         themeManager = new ThemeManager(this);
         config = new ConfigManager(this);
         config.load();
         serviceManager = new ServiceManager(this);
         conceptManager = new ConceptManager(this);
         serviceManager.startAll();
-        pluginManager = new PluginManager(this);
         chromeManager = new ChromeManager(this);
         designManager = new DesignManager(this);
         featureManager = new FeatureManager(this);
@@ -180,10 +212,6 @@ public class MainWindow extends JFrame {
 
         featureManager.activateFeatures(getViewStack(), getLeftLibraryMenu().getRootNode());
 
-        // Discover and activate plugins (built-in bundle, <app>/plugins, ~/Bungalow).
-        // The Local Music plugin registers the media Service, so wire it afterwards.
-        pluginManager.init(getViewStack(), getLeftLibraryMenu());
-        pluginManager.start();
 
         // Wire every registered media Service for events; the footer/queue follow
         // whichever one PlaybackCoordinator marks active for the current play.
@@ -266,8 +294,4 @@ public class MainWindow extends JFrame {
         });
     }
 
-    public SPViewStack    getViewStack()     { return getChrome().getViewStack(); }
-    public AppFooter      getAppFooter()     { return getChrome().getAppFooter(); }
-    public NowPlayingView getNowPlayingView() { return getChrome().getNowPlayingView(); }
-    public LeftLibraryMenu        getLeftLibraryMenu()       { return getChrome().getLeftLibraryMenu(); }
 }

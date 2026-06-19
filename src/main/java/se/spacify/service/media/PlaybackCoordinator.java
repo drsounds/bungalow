@@ -3,10 +3,9 @@ package se.spacify.service.media;
 import se.spacify.db.entity.LocalFile;
 import se.spacify.db.entity.MusicServiceTrack;
 import se.spacify.db.entity.Recording;
-import se.spacify.service.ServiceManager;
+
 import se.spacify.ui.MainWindow;
 import se.spacify.ui.ServiceMatchDialog;
-import se.spacify.service.media.ServiceMatch;
 
 import javax.swing.JOptionPane;
 import javax.swing.SwingWorker;

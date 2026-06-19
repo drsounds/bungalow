@@ -1,9 +1,8 @@
 package se.spacify.views.library;
 
 import se.spacify.navigation.SPViewStack;
-import se.spacify.service.ServiceManager;
+
 import se.spacify.service.catalogue.MusicCatalogueService;
-import se.spacify.ui.MainWindow;
 
 import javax.swing.JComponent;
 import javax.swing.JTextField;

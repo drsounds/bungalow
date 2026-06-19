@@ -3,7 +3,6 @@ package se.spacify.views.library;
 import se.spacify.db.DatabaseManager;
 import se.spacify.db.entity.Artist;
 import se.spacify.navigation.SPViewStack;
-import se.spacify.ui.MainWindow;
 
 import javax.swing.*;
 import java.util.ArrayList;

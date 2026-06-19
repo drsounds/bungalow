@@ -4,7 +4,7 @@ import se.spacify.db.DatabaseManager;
 import se.spacify.db.entity.LocalFile;
 import se.spacify.navigation.SPViewStack;
 import se.spacify.service.media.PlaybackCoordinator;
-import se.spacify.ui.MainWindow;
+
 import se.spacify.service.media.PlayQueueItem;
 
 import javax.swing.*;

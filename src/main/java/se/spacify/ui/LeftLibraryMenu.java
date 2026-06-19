@@ -9,7 +9,7 @@ import se.spacify.navigation.SPViewStack;
 import se.spacify.navigation.SidebarNode;
 import se.spacify.ui.theme.ThemeManager;
 import se.spacify.views.library.LibraryScanAction;
-
+import se.spacify.controls.Panel;
 import javax.swing.*;
 import javax.swing.tree.*;
 import java.awt.*;
@@ -19,10 +19,9 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 
-public class LeftLibraryMenu extends JPanel implements NavigationListener {
+public class LeftLibraryMenu extends Panel implements NavigationListener {
 
-    private final SPViewStack viewStack;
-    private final JTree       tree;
+    private final JTree tree;
     private final JScrollPane scroll;
     private final DefaultMutableTreeNode root;
     private boolean suppressSelection = false;
@@ -32,8 +31,13 @@ public class LeftLibraryMenu extends JPanel implements NavigationListener {
 	private MenuToolButton addToLibraryMenuButton;
 	@SuppressWarnings("unused")
 	private JPopupMenu addToLibraryMenu;
+    private SPViewStack viewStack;
 
-	public void reload() {
+	public SPViewStack getViewStack() {
+        return viewStack;
+    }
+
+    public void reload() {
 		
 	}
 	

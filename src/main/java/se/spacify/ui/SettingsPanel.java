@@ -1,8 +1,6 @@
 package se.spacify.ui;
 
-import se.spacify.ui.theme.Theme;
 import se.spacify.skinning.Skin;
-import se.spacify.skinning.SkinManager;
 import se.spacify.controls.Panel;
 
 import javax.swing.*;
@@ -235,11 +233,6 @@ public class SettingsPanel extends Panel {
     }
 
     // ── Skin catalogue ─────────────────────────────────────────────────────────
-
-    /** Pairs a human-readable label with its {@link getTheme()} design-style id. */
-    private record SkinItem(String label, String style) {
-        @Override public String toString() { return label; }
-    }
  
     private static TitledBorder titledBorder(String title) {
         TitledBorder b = BorderFactory.createTitledBorder(

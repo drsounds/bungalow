@@ -28,19 +28,19 @@ public class WMP8Skin extends Skin {
 	private static final int ARC = 12;
 	@Override
 	public void paintTopBar(JPanel control, Graphics2D g2) {
-        int w = control.getWidth(), h = control.getHeight();
+        int  h = control.getHeight();
         Color tintColor = ThemeManager.getTintColor();
         g2.setPaint(new GradientPaint(0, 0, tintColor, 0, h, ThemeManager.accentLight(2f)));
 	}
 	@Override
 	public void paintHeader(JPanel control, Graphics2D g2) {
-        int w = control.getWidth(), h = control.getHeight();
+        int h = control.getHeight();
 		Color tintColor = ThemeManager.getTintColor();
 		g2.setPaint(new GradientPaint(0, 0, ThemeManager.accentLight(2f), 0, h, tintColor));
 	}
 	@Override
 	public void paintFooter(JPanel control, Graphics2D g2) {
-        int w = control.getWidth(), h = control.getHeight();
+        int h = control.getHeight();
 
     	Color tintColor = ThemeManager.getTintColor();        
     	g2.setPaint(new GradientPaint(0, 0, ThemeManager.accentLight(2f), 0, h, tintColor));
@@ -165,7 +165,8 @@ public class WMP8Skin extends Skin {
 	public void paintVerticalPanel(VerticalPanel control, Graphics2D g2) {
 		// TODO Auto-generated method stub
 
-		int w = control.getWidth(), h = control.getHeight();Color tintColor = ThemeManager.getTintColor();
+		int w = control.getWidth();
+		Color tintColor = ThemeManager.getTintColor();
 		g2.setPaint(new GradientPaint(0, 0, ThemeManager.accentLight(2f), w, 0, tintColor));
 	}
 	@Override

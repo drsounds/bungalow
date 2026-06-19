@@ -1,13 +1,9 @@
 package se.spacify.service;
 
-import se.spacify.aspect.AspectManager;
 import se.spacify.aspect.BaseAspectManager;
-import se.spacify.feature.Feature;
-import se.spacify.navigation.SPViewStack;
-import se.spacify.navigation.SidebarNode;
+
 import se.spacify.ui.MainWindow;
 
-import javax.swing.tree.DefaultMutableTreeNode;
 import java.util.*;
 
 /**

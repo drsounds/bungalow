@@ -2,16 +2,11 @@ package se.spacify.feature;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-
 import javax.swing.tree.DefaultMutableTreeNode;
 
-import se.spacify.aspect.AspectManager;
 import se.spacify.aspect.BaseAspectManager;
 import se.spacify.navigation.SPViewStack;
 import se.spacify.navigation.SidebarNode;
-import se.spacify.plugin.Plugin;
 import se.spacify.ui.MainWindow;
 
 public class FeatureManager extends BaseAspectManager<Feature> {

@@ -19,7 +19,15 @@ public class StretchableRadialGradient implements Paint {
     
     // Stretching parameters
     private final double scaleX;
+    public double getScaleX() {
+        return scaleX;
+    }
+
     private final double scaleY;
+    public double getScaleY() {
+        return scaleY;
+    }
+
     private final double rotationInRadians;
 
     public StretchableRadialGradient(

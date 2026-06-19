@@ -242,8 +242,7 @@ public class WMP9Skin extends Skin {
 
 		// Top "bubble" sheen: a bright ellipse narrower than the face, fading down.
 		// This is the signature Aqua highlight.
-		int hlInsetX = Math.round(fd * 0.16f);
-		int hlTop = Math.round(fd * 0.06f);
+		int hlInsetX = Math.round(fd * 0.16f); 
 		int hlW = fd - hlInsetX * 2;
 		int hlH = Math.round(fd * 0.5f);
 		Ellipse2D sheen = new Ellipse2D.Float(fx + hlInsetX, 25, hlW, hlH);

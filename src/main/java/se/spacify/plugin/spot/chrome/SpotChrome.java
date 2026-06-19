@@ -18,7 +18,7 @@ import se.spacify.ui.AppFooter;
 import se.spacify.ui.chrome.Chrome;
 
 import se.spacify.ui.LeftLibraryMenu;
-import se.spacify.ui.LeftMenuPanel;
+
 import se.spacify.ui.NowPlayingPanel;
 
 public class SpotChrome extends Chrome {
@@ -33,9 +33,10 @@ public class SpotChrome extends Chrome {
         public void onRegister(AspectManager<? extends Aspect> aspectManager) {
                 // TODO Auto-generated method stub
         }
-        public SpotChrome() {
+        @Override
+        public void build() {
+                super.build();
                 setLayout(new BoxLayout(this, BoxLayout.LINE_AXIS));
-                leftMenuPanel = new LeftMenuPanel();
                 leftMenuPanel.setMinimumSize(new Dimension(100, 0));
                 leftMenuPanel.setMaximumSize(new Dimension(100, Short.MAX_VALUE));
                 leftMenuPanel.setPreferredSize(new Dimension(100, Short.MAX_VALUE));

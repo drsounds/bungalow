@@ -1,7 +1,5 @@
 package se.spacify.service.media;
 
-import javax.swing.JPanel;
-
 import se.spacify.controls.Panel;
 
 /**
