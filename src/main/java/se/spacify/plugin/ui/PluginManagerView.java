@@ -134,7 +134,7 @@ public class PluginManagerView extends SPView {
         refreshing = true;
         rows.clear();
         model.setRowCount(0);
-        for (ManagedPlugin m : PluginManager.getInstance().getPlugins()) {
+        for (ManagedPlugin m : getViewStack().getMainWindow().getPluginManager().getPlugins()) {
             rows.add(m);
             PluginDescriptor d = m.getDescriptor();
             model.addRow(new Object[]{ m.isEnabled(), d.getName(), d.getVersion(), sourceLabel(d.getSource()) });
@@ -163,7 +163,7 @@ public class PluginManagerView extends SPView {
         JLabel head = new JLabel("<html><b>" + d.getName() + "</b> " + d.getVersion()
             + "<br><span style='font-size:9px'>" + d.getId() + " — "
             + sourceLabel(d.getSource()) + (m.isActive() ? " — active" : "") + "</span></html>");
-        head.setForeground(ThemeManager.getForeground());
+        head.setForeground(getViewStack().getMainWindow().getThemeManager().getForeground());
         if (m.getIcon() != null) head.setIcon(m.getIcon());
         info.add(head, BorderLayout.NORTH);
         info.add(new PluginSettingsEditor(m), BorderLayout.CENTER);

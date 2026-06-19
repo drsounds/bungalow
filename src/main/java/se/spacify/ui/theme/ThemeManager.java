@@ -247,16 +247,4 @@ public class ThemeManager extends BaseAspectManager<Theme> {
     private static void notify_() {
         for (Runnable r : listeners) r.run();
     }
-
-    @Override
-    public Theme get(String featureId) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'get'");
-    }
-
-    @Override
-    public Collection<Theme> all() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'all'");
-    }
 }

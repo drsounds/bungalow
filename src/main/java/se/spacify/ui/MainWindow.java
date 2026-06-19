@@ -81,7 +81,9 @@ public class MainWindow extends JFrame {
     }
 
     public void setTaste(Taste taste) {
-        remove(getChrome()); 
+        if (getChrome() != null) {
+            remove(getChrome()); 
+        }
         this.taste = taste;
         add(getChrome(), BorderLayout.CENTER);
     }
@@ -110,6 +112,9 @@ public class MainWindow extends JFrame {
 
     private ConfigManager config;
     public Chrome getChrome() {
+        if (getTaste() == null) {
+            return null;
+        }
         return getTaste().getChrome();
     }
 	public Panel getAppPanel() {
@@ -141,7 +146,11 @@ public class MainWindow extends JFrame {
         rebuildTheme();
     }
     public MainWindow() {
-        super("Spacify"); 
+        super("Spacify");
+        themeManager = new ThemeManager(this);
+        config = new ConfigManager(this);
+        config.load();
+        serviceManager = new ServiceManager(this);
         conceptManager = new ConceptManager(this);
         serviceManager.startAll();
         pluginManager = new PluginManager(this);
@@ -149,7 +158,6 @@ public class MainWindow extends JFrame {
         designManager = new DesignManager(this);
         featureManager = new FeatureManager(this);
         skinManager = new SkinManager(this);
-        themeManager = new ThemeManager(this);
         setUndecorated(true);  // remove native title bar + border on all platforms
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(1100, 700);
@@ -159,8 +167,6 @@ public class MainWindow extends JFrame {
         getRootPane().setBorder(BorderFactory.createLineBorder(new Color(40, 40, 40), 1));
 
         // ── Theme ─────────────────────────────────────────────────────────────
-        config = new ConfigManager(this);
-        config.load();
         getTaste().addChangeListener(config::save);
 
         Timer themeRebuildTimer = new Timer(250, e -> rebuildTheme());

@@ -1,8 +1,7 @@
-package se.spacify.service;
+package se.spacify.feature;
 
 import se.spacify.aspect.Aspect;
 import se.spacify.aspect.AspectManager;
-import se.spacify.feature.FeatureManager;
 import se.spacify.navigation.SPView;
 import se.spacify.navigation.SidebarNode;
 
