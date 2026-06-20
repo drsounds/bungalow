@@ -1,5 +1,6 @@
 package se.spacify.plugin.spot.skin;
 
+import java.awt.Color;
 import java.awt.Graphics2D;
 
 import javax.swing.JPanel;
@@ -10,12 +11,13 @@ import se.spacify.aspect.AspectManager;
 import se.spacify.controls.GlassPanel;
 import se.spacify.controls.GlossyButton;
 import se.spacify.controls.TabButton;
+import se.spacify.controls.TextField;
 import se.spacify.controls.ToolBar;
 import se.spacify.controls.ToolButton;
 import se.spacify.controls.VerticalPanel;
 import se.spacify.skinning.Skin;
 
-public class SpotSkin extends Skin {
+public class Spot15Skin extends Skin {
 
     @Override
     public String getId() {
@@ -64,6 +66,21 @@ public class SpotSkin extends Skin {
     @Override
     public void paintTableHeader(JTable table, int width, int height, Graphics2D g2) {
         
+    }
+
+    @Override
+    public void paintTextField(TextField control, Graphics2D g2) {
+
+        Color bgColor = new Color(255, 255, 255, 255);
+        Color fgColor = new Color(0, 0, 0, 0);
+
+        if (control.getMainWindow().getTaste().isDarkMode()) {
+            bgColor = new Color(0, 0, 0, 255);
+            fgColor = new Color(0, 0, 0, 255);
+        }
+ 
+        control.setForeground(fgColor);
+        control.setBackground(bgColor);
     }
 
     @Override

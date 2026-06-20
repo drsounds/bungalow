@@ -14,13 +14,13 @@ public class AppHeader extends JPanel implements NavigationListener {
 	protected static final Color CHROME_DARK = new Color(14, 14, 14);
 	protected static final Color HIGHLIGHT = new Color(255, 255, 255, 35);
 
-	protected final ViewStack viewStack;
-	protected final GlossyButton backBtn;
-	protected final GlossyButton forwardBtn;
+	protected ViewStack viewStack;
+	protected GlossyButton backBtn;
+	protected GlossyButton forwardBtn;
 	/** Cached store favicons, fetched off the EDT. */
 
-	public AppHeader(ViewStack viewStack) {
-		this.viewStack = viewStack;
+	public void build() {
+
 		setLayout(new BorderLayout(8, 0));
 		setPreferredSize(new Dimension(0, 56));
 		setOpaque(true);
@@ -42,7 +42,11 @@ public class AppHeader extends JPanel implements NavigationListener {
 
 		backBtn.addActionListener((ActionEvent e) -> viewStack.back());
 		forwardBtn.addActionListener((ActionEvent e) -> viewStack.forward());
+	}
 
+	public AppHeader(ViewStack viewStack) {
+		this.viewStack = viewStack;
+		this.build();
 	}
 
 	@Override

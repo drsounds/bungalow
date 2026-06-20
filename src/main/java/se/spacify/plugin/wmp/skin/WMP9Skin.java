@@ -17,6 +17,7 @@ import se.spacify.aspect.AspectManager;
 import se.spacify.controls.GlassPanel;
 import se.spacify.controls.GlossyButton;
 import se.spacify.controls.TabButton;
+import se.spacify.controls.TextField;
 import se.spacify.controls.ToolBar;
 import se.spacify.controls.ToolButton;
 import se.spacify.controls.VerticalPanel;
@@ -261,7 +262,12 @@ public class WMP9Skin extends Skin {
 		g2.setColor(new Color(255, 255, 255, 60));
 		g2.draw(new Ellipse2D.Float(x + 0.5f, y + 0.5f, width - 1, height - 1));
 	}
-	
+
+	@Override
+	public void paintTextField(TextField control, Graphics2D g2) {
+
+	}
+
 	@Override
 	public String getId() {
 		// TODO Auto-generated method stub

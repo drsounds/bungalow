@@ -1,6 +1,5 @@
 package se.spacify.controls;
 
-import se.spacify.ui.MainWindow;
 import se.spacify.ui.theme.ThemeManager;
 
 import javax.swing.SwingUtilities;
@@ -136,9 +135,8 @@ public class TabButton extends ToggleButton {
 	protected void paintComponent(Graphics g) {
 		Graphics2D g2 = (Graphics2D) g.create();
 		g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-		
 
-		((MainWindow)(SwingUtilities.getWindowAncestor(this))).getSkin().paintTabButton(this, g2);
+		getMainWindow().getSkin().paintTabButton(this, g2);
 
 		g2.dispose();
 

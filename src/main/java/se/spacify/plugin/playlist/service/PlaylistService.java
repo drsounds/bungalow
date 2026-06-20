@@ -1,6 +1,7 @@
-package se.spacify.service.playlist;
+package se.spacify.plugin.playlist.service;
 
 import se.spacify.db.entity.Playable;
+import se.spacify.plugin.playlist.models.Playlist;
 import se.spacify.service.Service;
 
 import java.util.List;

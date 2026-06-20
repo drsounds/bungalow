@@ -17,6 +17,7 @@ import se.spacify.aspect.AspectManager;
 import se.spacify.controls.GlassPanel;
 import se.spacify.controls.GlossyButton;
 import se.spacify.controls.TabButton;
+import se.spacify.controls.TextField;
 import se.spacify.controls.ToolBar;
 import se.spacify.controls.ToolButton;
 import se.spacify.controls.VerticalPanel;
@@ -231,6 +232,11 @@ public class WMP10Skin extends Skin {
 			g2.fillRect(0, h, 2, h);
 			
 		}
+	}
+
+	@Override
+	public void paintTextField(TextField control, Graphics2D g2) {
+
 	}
 
 	@Override

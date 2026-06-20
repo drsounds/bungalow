@@ -7,10 +7,9 @@ import se.spacify.db.entity.Recording;
 import se.spacify.db.entity.Release;
 import se.spacify.db.entity.Track;
 import se.spacify.navigation.ViewStack;
-
+import se.spacify.plugin.playlist.models.Playlist;
+import se.spacify.plugin.playlist.service.PlaylistService;
 import se.spacify.service.media.PlayRequest;
-import se.spacify.service.playlist.Playlist;
-import se.spacify.service.playlist.PlaylistService;
 
 import javax.swing.*;
 import java.util.ArrayList;

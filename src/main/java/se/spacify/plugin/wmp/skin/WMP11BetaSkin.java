@@ -13,6 +13,7 @@ import se.spacify.aspect.AspectManager;
 import se.spacify.controls.GlassPanel;
 import se.spacify.controls.GlossyButton;
 import se.spacify.controls.TabButton;
+import se.spacify.controls.TextField;
 import se.spacify.controls.ToolBar;
 import se.spacify.controls.ToolButton;
 import se.spacify.controls.VerticalPanel;
@@ -137,6 +138,11 @@ public class WMP11BetaSkin extends Skin {
 	public String getName() {
 		// TODO Auto-generated method stub
 		return "WMP 11 Beta";
+	}
+
+	@Override
+	public void paintTextField(TextField control, Graphics2D g2) {
+
 	}
 
 	@Override

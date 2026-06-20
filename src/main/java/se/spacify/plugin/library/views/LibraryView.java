@@ -1,4 +1,4 @@
-package se.spacify.views;
+package se.spacify.plugin.library.views;
 
 import se.spacify.controls.Table;
 import se.spacify.navigation.View;

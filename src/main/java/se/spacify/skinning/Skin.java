@@ -9,6 +9,7 @@ import se.spacify.aspect.Aspect;
 import se.spacify.controls.GlassPanel;
 import se.spacify.controls.GlossyButton;
 import se.spacify.controls.TabButton;
+import se.spacify.controls.TextField;
 import se.spacify.controls.ToolBar;
 import se.spacify.controls.ToolButton;
 import se.spacify.controls.VerticalPanel;
@@ -34,4 +35,5 @@ public abstract class Skin implements Aspect {
 	public void onRegister(SkinManager manager) {
 		
 	}
+    public abstract void paintTextField(TextField textField, Graphics2D g2);
 }

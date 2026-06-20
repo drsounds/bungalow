@@ -1,22 +1,22 @@
-package se.spacify.plugin.spot;
+package se.spacify.plugin.spot.design;
 
 import se.spacify.aspect.Aspect;
 import se.spacify.aspect.AspectManager;
 import se.spacify.design.Design;
-import se.spacify.plugin.spot.skin.SpotSkin;
-import se.spacify.plugin.spot.chrome.SpotChrome;
+import se.spacify.plugin.spot.skin.Spot09Skin;
+import se.spacify.plugin.spot.chrome.Spot09Chrome;
 import se.spacify.skinning.Skin;
 
 import se.spacify.ui.chrome.Chrome;
 
-public class SpotDesign implements Design {
-    private SpotSkin skin;
-    private SpotChrome chrome;
+public class Spot09Design implements Design {
+    private Spot09Skin skin;
+    private Spot09Chrome chrome;
 
     @Override
     public String getName() {
         // TODO Auto-generated method stub
-        return "spot";
+        return "Spot 09";
     }
 
     @Override
@@ -28,19 +28,19 @@ public class SpotDesign implements Design {
     @Override
     public String getId() {
         // TODO Auto-generated method stub
-        return "spot";
+        return "spot09";
     }
 
     @Override
     public Chrome getChrome() {
         // TODO Auto-generated method stub
-        return chrome == null ? chrome = new SpotChrome() : chrome;
+        return chrome == null ? chrome = new Spot09Chrome() : chrome;
     }
 
     @Override
     public Skin getSkin() {
         // TODO Auto-generated method stub
-        return skin == null ? skin = new SpotSkin() : skin;
+        return skin == null ? skin = new Spot09Skin() : skin;
     }
     
 }

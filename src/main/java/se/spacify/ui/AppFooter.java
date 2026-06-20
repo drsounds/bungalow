@@ -16,27 +16,30 @@ import java.awt.*;
 
 public class AppFooter extends JPanel {
 
-    private static final Color HIGHLIGHT = new Color(255, 255, 255, 35);
+    private static Color HIGHLIGHT = new Color(255, 255, 255, 35);
 
     // Fields exposed for Service wiring
-    private final JLabel  trackNameLabel;
-    private final JLabel  artistLabel;
-    private final GlossyButton playPauseBtn;
-	private Panel mainBar;
-	private GlassPanel leftPanel;
-	private Panel controls;
-	private Panel buttons;
-	private GlassPanel rightPanel;
-	private Slider progress;
-	private Panel progressPanel;
-	private GlossyButton backwardButton;
-	private GlossyButton forwardButton;
+    protected JLabel  trackNameLabel;
+    protected JLabel  artistLabel;
+    protected GlossyButton playPauseBtn;
+	protected Panel mainBar;
+	protected GlassPanel leftPanel;
+	protected Panel controls;
+	protected Panel buttons;
+	protected GlassPanel rightPanel;
+	protected Slider progress;
+	protected Panel progressPanel;
+	protected GlossyButton backwardButton;
+	protected GlossyButton forwardButton;
 
     public AppFooter() {
-        setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
         setBorder(BorderFactory.createEmptyBorder(8, 16, 8, 16));
-        setPreferredSize(new Dimension(0, 90));
         setOpaque(true);
+        this.build();
+    }
+    public void build() {
+        setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
+        setPreferredSize(new Dimension(0, 90));
   
         progressPanel = new Panel(new BorderLayout());
         progressPanel.setMinimumSize(new Dimension(0, 18));
@@ -124,8 +127,8 @@ public class AppFooter extends JPanel {
         mainBar.add(leftPanel);
         mainBar.add(controls);
         mainBar.add(rightPanel);
-
         ThemeManager.addChangeListener(this::repaint);
+
     }
     private LayoutMode layoutMode = LayoutMode.WMP10;
     public LayoutMode getLayoutMode() {
@@ -198,7 +201,7 @@ public class AppFooter extends JPanel {
         g2.dispose();
     }
 
-    private GlossyButton makeControlButton(String text) {
+    protected GlossyButton makeControlButton(String text) {
         GlossyButton btn = new GlossyButton(text);
         btn.setFocusPainted(false);
         btn.setDiameter(36);

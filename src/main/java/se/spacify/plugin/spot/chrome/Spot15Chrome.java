@@ -11,9 +11,8 @@ import se.spacify.aspect.Aspect;
 import se.spacify.aspect.AspectManager;
 import se.spacify.controls.Panel;
 import se.spacify.controls.SplitPane;
-
-import se.spacify.plugin.spot.controls.SpotAppHeader;
-import se.spacify.ui.AppFooter;
+import se.spacify.plugin.spot.controls.Spot09AppFooter;
+import se.spacify.plugin.spot.controls.Spot09AppHeader;
 
 import se.spacify.ui.chrome.Chrome;
 
@@ -21,13 +20,13 @@ import se.spacify.ui.LeftLibraryMenu;
 import se.spacify.ui.LeftMenuPanel;
 import se.spacify.ui.NowPlayingPanel;
 
-public class SpotChrome extends Chrome {
+public class Spot15Chrome extends Chrome {
         private static final long serialVersionUID = 2766717544747588265L;
 
         @Override
         public String getId() {
                 // TODO Auto-generated method stub
-                return "spot";
+                return "spot15";
         }
         @Override
         public void onRegister(AspectManager<? extends Aspect> aspectManager) {
@@ -38,7 +37,7 @@ public class SpotChrome extends Chrome {
                 super.build();
                 setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
                 
-                appHeader = new SpotAppHeader(viewStack);
+                appHeader = new Spot09AppHeader(viewStack);
                 appHeader.setMaximumSize(new Dimension(Short.MAX_VALUE, 28));
                 appHeader.setMinimumSize(new Dimension(0, 28));
                 add(appHeader);
@@ -83,7 +82,7 @@ public class SpotChrome extends Chrome {
 
                 appPanel.add(mainSplit, BorderLayout.CENTER);
 
-                appFooter = new AppFooter();
+                appFooter = new Spot09AppFooter();
                 appPanel.add(appFooter);
                 appFooter.setMaximumSize(new Dimension(Short.MAX_VALUE, 18));
                 appFooter.setMinimumSize(new Dimension(0, 18));
