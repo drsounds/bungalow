@@ -12,8 +12,8 @@ import se.spacify.aspect.AspectManager;
 import se.spacify.controls.Panel;
 import se.spacify.controls.SplitPane;
 
+import se.spacify.plugin.wmp.controls.WMP1XAppHeader;
 import se.spacify.ui.AppFooter;
-import se.spacify.ui.AppHeader;
 import se.spacify.ui.chrome.Chrome;
 import se.spacify.ui.LeftLibraryMenu;
 import se.spacify.ui.LeftMenuPanel;
@@ -54,9 +54,11 @@ public class WMP1XChrome extends Chrome {
                 appPanel.add(topBar);
                 topBar.setMaximumSize(new Dimension(Short.MAX_VALUE, 18));
                 topBar.setMinimumSize(new Dimension(0, 18));
-                appHeader = new AppHeader(viewStack);
-                appHeader.setMaximumSize(new Dimension(Short.MAX_VALUE, 28));
-                appHeader.setMinimumSize(new Dimension(0, 28));
+                // The WMP header carries the nav buttons, the tab strip
+                // (Now Playing / Library / Media Guide) and the Stores dropdown.
+                appHeader = new WMP1XAppHeader(viewStack);
+                appHeader.setMaximumSize(new Dimension(Short.MAX_VALUE, 64));
+                appHeader.setMinimumSize(new Dimension(0, 56));
                 appPanel.add(appHeader);
 
                 // Reuse the shared sidebar (owned by MainWindow, populated by plugins) if set.

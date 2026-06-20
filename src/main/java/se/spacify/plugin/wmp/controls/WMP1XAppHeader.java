@@ -97,6 +97,10 @@ public class WMP1XAppHeader extends AppHeader {
     public WMP1XAppHeader(SPViewStack viewStack) {
         super(viewStack);
 
+		// Centre region carries the WMP tab strip along its bottom edge.
+		center = new Panel(new BorderLayout());
+		((Panel) center).setOpaque(false);
+
 		navButtons = new Panel(new FlowLayout(FlowLayout.LEFT, 4, 0));
 		navButtons.setOpaque(false);
 		// navButtons.add(sidebarToggle);
