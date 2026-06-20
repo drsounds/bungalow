@@ -5,7 +5,7 @@ import java.util.Collections;
 import javax.swing.tree.DefaultMutableTreeNode;
 
 import se.spacify.aspect.BaseAspectManager;
-import se.spacify.navigation.SPViewStack;
+import se.spacify.navigation.ViewStack;
 import se.spacify.navigation.SidebarNode;
 import se.spacify.ui.MainWindow;
 
@@ -37,7 +37,7 @@ public class FeatureManager extends BaseAspectManager<Feature> {
      * @param viewStack     the app's main view stack
      * @param sidebarRoot   root node of the sidebar JTree model
      */
-    public void activateFeatures(SPViewStack viewStack, DefaultMutableTreeNode sidebarRoot) {
+    public void activateFeatures(ViewStack viewStack, DefaultMutableTreeNode sidebarRoot) {
         for (Feature f : getNodes().values()) {
             f.getViews().forEach(viewStack::registerView);
             for (SidebarNode sn : f.getSidebarNodes()) {

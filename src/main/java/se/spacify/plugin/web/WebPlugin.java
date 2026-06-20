@@ -3,7 +3,7 @@ package se.spacify.plugin.web;
 import se.spacify.aspect.Aspect;
 import se.spacify.aspect.AspectManager;
 import se.spacify.db.entity.Bookmark;
-import se.spacify.navigation.SPViewStack;
+import se.spacify.navigation.ViewStack;
 import se.spacify.navigation.SidebarNode;
 import se.spacify.plugin.Plugin;
 import se.spacify.plugin.PluginContext;
@@ -30,7 +30,7 @@ public class WebPlugin extends Plugin {
 
     @Override
     public void onActivate(PluginContext ctx) {
-        SPViewStack vs = ctx.viewStack();
+        ViewStack vs = ctx.viewStack();
         ctx.registerView(new SPWebView(vs));
         ctx.registerView(new SPServiceWebView(vs));
 

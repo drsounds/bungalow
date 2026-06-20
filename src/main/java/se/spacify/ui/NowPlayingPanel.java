@@ -2,9 +2,9 @@ package se.spacify.ui;
 
 import se.spacify.controls.Table;
 import se.spacify.controls.ToolBar;
-import se.spacify.navigation.SPViewStack;
-import se.spacify.service.media.MediaService;
-import se.spacify.service.media.MediaServicePlayerComponent;
+import se.spacify.navigation.ViewStack;
+import se.spacify.plugin.media.service.MediaService;
+import se.spacify.plugin.media.service.MediaServicePlayerComponent;
 import se.spacify.service.media.PlaybackCoordinator;
 import se.spacify.service.media.PlayQueue;
 import se.spacify.service.media.PlayQueueItem;
@@ -39,7 +39,7 @@ public class NowPlayingPanel extends JPanel {
 	private final JPanel playerHost = new JPanel(new BorderLayout());
 	private MediaServicePlayerComponent currentPlayer;
 
-    public NowPlayingPanel(SPViewStack viewStack) {
+    public NowPlayingPanel(ViewStack viewStack) {
         setLayout(new BorderLayout(0, 0));
         setPreferredSize(new Dimension(220, 0));
         setBorder(new EmptyBorder(0, 0, 0, 0));

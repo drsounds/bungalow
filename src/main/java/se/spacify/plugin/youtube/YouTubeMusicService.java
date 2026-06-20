@@ -3,9 +3,8 @@ package se.spacify.plugin.youtube;
 import se.spacify.aspect.Aspect;
 import se.spacify.aspect.AspectManager;
 import se.spacify.db.entity.Recording;
-
-import se.spacify.service.media.MediaServicePlayerComponent;
-import se.spacify.service.media.MusicService;
+import se.spacify.plugin.media.service.MediaServicePlayerComponent;
+import se.spacify.plugin.music.service.MusicService;
 import se.spacify.service.media.PlaybackSupport;
 
 /**

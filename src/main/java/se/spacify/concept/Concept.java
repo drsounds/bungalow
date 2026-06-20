@@ -1,7 +1,16 @@
 package se.spacify.concept;
 
-import se.spacify.aspect.Aspect;
+import javax.swing.Icon;
 
-public abstract class Concept implements Aspect {
-    
+import se.spacify.aspect.Aspect;
+import se.spacify.plugin.Plugin;
+
+public interface Concept extends Aspect {
+    public void onActivate(ConceptContext ctx);
+    /** Release any resources acquired in {@link #onActivate}. */
+    public void onDeactivate();
+
+    /** Icon shown in the plugin manager; null falls back to a default. */
+    public Icon getIcon();
+    public Plugin getPlugin();
 }

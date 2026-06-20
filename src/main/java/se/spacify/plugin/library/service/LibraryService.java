@@ -1,4 +1,4 @@
-package se.spacify.service.library;
+package se.spacify.plugin.library.service;
 
 import se.spacify.db.entity.Artist;
 import se.spacify.db.entity.LocalFile;
@@ -14,9 +14,9 @@ import java.util.List;
  * Implemented by Services that expose such a collection — the local catalogue,
  * or a remote account's saved library — and discovered via
  * {@link se.spacify.service.ServiceManager#getServices(Class)}. A Service may
- * combine this with the streaming aspect ({@link se.spacify.service.media.MediaService})
+ * combine this with the streaming aspect ({@link se.spacify.plugin.media.service.MediaService})
  * to both browse and play, or with the discovery aspect
- * ({@link se.spacify.service.catalogue.MusicCatalogueService}).
+ * ({@link se.spacify.plugin.catalogue.service.MusicCatalogueService}).
  */
 public interface LibraryService extends Service {
 

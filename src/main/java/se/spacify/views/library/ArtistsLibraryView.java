@@ -2,7 +2,7 @@ package se.spacify.views.library;
 
 import se.spacify.db.DatabaseManager;
 import se.spacify.db.entity.Artist;
-import se.spacify.navigation.SPViewStack;
+import se.spacify.navigation.ViewStack;
 
 import javax.swing.*;
 import java.util.ArrayList;
@@ -11,7 +11,7 @@ import java.util.List;
 /** Library view listing artists (name, ISNI, MBID) with full CRUD. */
 public class ArtistsLibraryView extends AbstractLibraryView {
 
-    public ArtistsLibraryView(SPViewStack viewStack) {
+    public ArtistsLibraryView(ViewStack viewStack) {
         super(viewStack);
         //TODO Auto-generated constructor stub
     }

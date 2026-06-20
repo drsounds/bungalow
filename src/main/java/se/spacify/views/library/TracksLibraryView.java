@@ -6,7 +6,7 @@ import se.spacify.db.entity.Playable;
 import se.spacify.db.entity.Recording;
 import se.spacify.db.entity.Release;
 import se.spacify.db.entity.Track;
-import se.spacify.navigation.SPViewStack;
+import se.spacify.navigation.ViewStack;
 
 import se.spacify.service.media.PlayRequest;
 import se.spacify.service.playlist.Playlist;
@@ -26,7 +26,7 @@ import java.util.Map;
  */
 public class TracksLibraryView extends AbstractLibraryView {
 
-    public TracksLibraryView(SPViewStack viewStack) {
+    public TracksLibraryView(ViewStack viewStack) {
         super(viewStack);
         //TODO Auto-generated constructor stub
     }

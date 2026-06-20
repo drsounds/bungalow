@@ -6,7 +6,7 @@ import javax.swing.BoxLayout;
 import se.spacify.aspect.Aspect;
 import se.spacify.controls.Panel;
 import se.spacify.controls.SplitPane;
-import se.spacify.navigation.SPViewStack;
+import se.spacify.navigation.ViewStack;
 
 import se.spacify.ui.AppFooter;
 import se.spacify.ui.AppHeader;
@@ -22,8 +22,8 @@ public abstract class Chrome extends Panel implements Aspect {
 	public void onDestroy() {
 		
 	}
-	protected SPViewStack viewStack; 
-	public void setViewStack(SPViewStack value) {
+	protected ViewStack viewStack; 
+	public void setViewStack(ViewStack value) {
 		viewStack = value;
 	} 
     protected AppFooter appFooter;
@@ -33,7 +33,7 @@ public abstract class Chrome extends Panel implements Aspect {
 		leftLibraryMenu = value;
 	}
 
-    public SPViewStack getViewStack() { return viewStack; }
+    public ViewStack getViewStack() { return viewStack; }
     public AppFooter getAppFooter() { return appFooter; }
     public NowPlayingView getNowPlayingView() { return nowPlayingView; }
     public LeftLibraryMenu getLeftLibraryMenu() { return leftLibraryMenu; }

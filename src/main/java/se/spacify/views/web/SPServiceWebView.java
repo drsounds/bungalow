@@ -1,6 +1,6 @@
 package se.spacify.views.web;
 
-import se.spacify.navigation.SPViewStack;
+import se.spacify.navigation.ViewStack;
 import se.spacify.web.SiteUri;
 
 /**
@@ -12,7 +12,7 @@ import se.spacify.web.SiteUri;
  */
 public class SPServiceWebView extends SPWebView {
 
-    public SPServiceWebView(SPViewStack viewStack) {
+    public SPServiceWebView(ViewStack viewStack) {
         super(viewStack);
     }
 

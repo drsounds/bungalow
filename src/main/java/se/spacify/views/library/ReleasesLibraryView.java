@@ -4,7 +4,7 @@ import se.spacify.db.DatabaseManager;
 import se.spacify.db.LibraryRepository;
 import se.spacify.db.entity.Release;
 import se.spacify.db.entity.Release.ReleaseType;
-import se.spacify.navigation.SPViewStack;
+import se.spacify.navigation.ViewStack;
 
 import javax.swing.*;
 import java.util.ArrayList;
@@ -13,7 +13,7 @@ import java.util.List;
 /** Library view listing releases (name, artists, type, date) with full CRUD. */
 public class ReleasesLibraryView extends AbstractLibraryView {
 
-    public ReleasesLibraryView(SPViewStack viewStack) {
+    public ReleasesLibraryView(ViewStack viewStack) {
         super(viewStack);
         //TODO Auto-generated constructor stub
     }

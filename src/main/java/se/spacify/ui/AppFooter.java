@@ -2,13 +2,13 @@ package se.spacify.ui;
 
 import se.spacify.controls.GlassPanel;
 import se.spacify.controls.GlossyButton;
-import se.spacify.service.media.MediaService;
-import se.spacify.service.media.MediaService.PlaybackState;
 import se.spacify.service.media.PlaybackCoordinator;
 import se.spacify.service.media.PlayQueue;
 import se.spacify.ui.theme.ThemeManager;
 
 import se.spacify.controls.Slider;
+import se.spacify.plugin.media.service.MediaService;
+import se.spacify.plugin.media.service.MediaService.PlaybackState;
 import se.spacify.controls.Panel;
 
 import javax.swing.*;

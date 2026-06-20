@@ -23,7 +23,7 @@ import se.spacify.controls.GlassPanel;
 import se.spacify.controls.GlossyButton;
 import se.spacify.controls.Panel;
 import se.spacify.controls.TabButton;
-import se.spacify.navigation.SPViewStack;
+import se.spacify.navigation.ViewStack;
 import se.spacify.ui.AppHeader;
 import se.spacify.ui.MainWindow;
 import se.spacify.ui.theme.ThemeManager;
@@ -94,7 +94,7 @@ public class WMP1XAppHeader extends AppHeader {
 		}
 	}
 
-    public WMP1XAppHeader(SPViewStack viewStack) {
+    public WMP1XAppHeader(ViewStack viewStack) {
         super(viewStack);
 
 		// Centre region carries the WMP tab strip along its bottom edge.

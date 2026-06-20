@@ -3,8 +3,8 @@ package se.spacify.views.library;
 import se.spacify.db.DatabaseManager;
 import se.spacify.db.entity.Recording;
 import se.spacify.library.LibraryEvents;
-import se.spacify.navigation.SPViewStack;
-import se.spacify.service.catalogue.MusicCatalogueService;
+import se.spacify.navigation.ViewStack;
+import se.spacify.plugin.catalogue.service.MusicCatalogueService;
 import se.spacify.service.media.PlayRequest;
 
 import java.util.List;
@@ -20,7 +20,7 @@ public class RecordingsCatalogView extends AbstractCatalogView<Recording> {
     private static final String ADD = "＋";
     private static final String IN  = "✓";
 
-    public RecordingsCatalogView(SPViewStack viewStack) {
+    public RecordingsCatalogView(ViewStack viewStack) {
         super(viewStack);
         // Keep the toggle column tight — it holds just the ＋/✓ glyph.
         table.getColumnModel().getColumn(0).setMaxWidth(34);

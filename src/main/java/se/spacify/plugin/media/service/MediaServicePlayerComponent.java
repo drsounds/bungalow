@@ -1,6 +1,7 @@
-package se.spacify.service.media;
+package se.spacify.plugin.media.service;
 
 import se.spacify.controls.Panel;
+import se.spacify.service.media.PlaybackCoordinator;
 
 /**
  * The per-Service playback surface shown at the bottom of the right-hand

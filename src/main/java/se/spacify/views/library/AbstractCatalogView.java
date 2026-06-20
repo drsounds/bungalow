@@ -1,8 +1,7 @@
 package se.spacify.views.library;
 
-import se.spacify.navigation.SPViewStack;
-
-import se.spacify.service.catalogue.MusicCatalogueService;
+import se.spacify.navigation.ViewStack;
+import se.spacify.plugin.catalogue.service.MusicCatalogueService;
 
 import javax.swing.JComponent;
 import javax.swing.JTextField;
@@ -38,7 +37,7 @@ public abstract class AbstractCatalogView<T> extends AbstractLibraryView {
     private JTextField search;   // no initializer: assigned in toolbarAccessory() during super()
     private long requestSeq;
 
-    protected AbstractCatalogView(SPViewStack viewStack) {
+    protected AbstractCatalogView(ViewStack viewStack) {
         super(viewStack); 
     }
 

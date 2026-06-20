@@ -8,8 +8,8 @@ import se.spacify.aspect.Aspect;
  * Core contract for every Spacify Service: stable identity plus an
  * Android-style lifecycle. Capabilities a Service may additionally take on
  * (streaming, discovery, purchases, authentication, …) are modelled as separate
- * <em>aspect</em> interfaces ({@link se.spacify.service.media.MediaService},
- * {@link se.spacify.service.catalogue.MusicCatalogueService},
+ * <em>aspect</em> interfaces ({@link se.spacify.plugin.media.service.MediaService},
+ * {@link se.spacify.plugin.catalogue.service.MusicCatalogueService},
  * {@link AuthAspect}, …). Because these are interfaces, a single Service object
  * can implement any combination of them, and callers select Services by aspect
  * via {@link ServiceManager#getServices(Class)}.

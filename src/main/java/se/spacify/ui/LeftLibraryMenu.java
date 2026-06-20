@@ -5,7 +5,7 @@ import se.spacify.controls.ToolBar;
 import se.spacify.controls.ToolMenuItem;
 import se.spacify.library.LibraryEvents;
 import se.spacify.navigation.NavigationListener;
-import se.spacify.navigation.SPViewStack;
+import se.spacify.navigation.ViewStack;
 import se.spacify.navigation.SidebarNode;
 import se.spacify.ui.theme.ThemeManager;
 import se.spacify.views.library.LibraryScanAction;
@@ -31,9 +31,9 @@ public class LeftLibraryMenu extends Panel implements NavigationListener {
 	private MenuToolButton addToLibraryMenuButton;
 	@SuppressWarnings("unused")
 	private JPopupMenu addToLibraryMenu;
-    private SPViewStack viewStack;
+    private ViewStack viewStack;
 
-	public SPViewStack getViewStack() {
+	public ViewStack getViewStack() {
         return viewStack;
     }
 
@@ -45,7 +45,7 @@ public class LeftLibraryMenu extends Panel implements NavigationListener {
 		
 	}
 	
-    public LeftLibraryMenu(SPViewStack viewStack) {
+    public LeftLibraryMenu(ViewStack viewStack) {
         this.viewStack = viewStack;
         setLayout(new BorderLayout());
         setPreferredSize(new Dimension(220, 0));

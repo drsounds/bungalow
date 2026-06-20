@@ -1,21 +1,21 @@
 package se.spacify.views;
 
 import se.spacify.controls.Table;
-import se.spacify.navigation.SPView;
-import se.spacify.navigation.SPViewStack;
+import se.spacify.navigation.View;
+import se.spacify.navigation.ViewStack;
 import se.spacify.ui.theme.ThemeManager;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;
 import java.awt.*;
 
-public class LibraryView extends SPView {
+public class LibraryView extends View {
 
     private final JPanel     panel;
     private final Table     table;
     private final JScrollPane scroll;
 
-    public LibraryView(SPViewStack viewStack) {
+    public LibraryView(ViewStack viewStack) {
         super(viewStack);
         panel = new JPanel(new BorderLayout(0, 12));
         panel.setOpaque(false);

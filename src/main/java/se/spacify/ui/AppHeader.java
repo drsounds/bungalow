@@ -3,7 +3,7 @@ package se.spacify.ui;
 import se.spacify.controls.GlossyButton;
 
 import se.spacify.navigation.NavigationListener;
-import se.spacify.navigation.SPViewStack;
+import se.spacify.navigation.ViewStack;
 
 import javax.swing.*;
 import java.awt.*;
@@ -14,12 +14,12 @@ public class AppHeader extends JPanel implements NavigationListener {
 	protected static final Color CHROME_DARK = new Color(14, 14, 14);
 	protected static final Color HIGHLIGHT = new Color(255, 255, 255, 35);
 
-	protected final SPViewStack viewStack;
+	protected final ViewStack viewStack;
 	protected final GlossyButton backBtn;
 	protected final GlossyButton forwardBtn;
 	/** Cached store favicons, fetched off the EDT. */
 
-	public AppHeader(SPViewStack viewStack) {
+	public AppHeader(ViewStack viewStack) {
 		this.viewStack = viewStack;
 		setLayout(new BorderLayout(8, 0));
 		setPreferredSize(new Dimension(0, 56));

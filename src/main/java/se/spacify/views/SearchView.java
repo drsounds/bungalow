@@ -1,20 +1,20 @@
 package se.spacify.views;
 
-import se.spacify.navigation.SPView;
-import se.spacify.navigation.SPViewStack;
+import se.spacify.navigation.View;
+import se.spacify.navigation.ViewStack;
 
 import javax.swing.*;
 import java.awt.*;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 
-public class SearchView extends SPView {
+public class SearchView extends View {
 
     private final JPanel panel;
     private final JLabel queryLabel;
     private final JPanel resultsPanel;
 
-    public SearchView(SPViewStack viewStack) {
+    public SearchView(ViewStack viewStack) {
         super(viewStack);
         panel = new JPanel(new BorderLayout(0, 12));
         panel.setOpaque(false);

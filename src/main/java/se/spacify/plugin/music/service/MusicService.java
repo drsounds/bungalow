@@ -1,6 +1,7 @@
-package se.spacify.service.media;
+package se.spacify.plugin.music.service;
 
 import se.spacify.db.entity.Recording;
+import se.spacify.plugin.media.service.MediaService;
 
 /**
  * Music-streaming aspect: ISRC- and title-based loading on top of the generic

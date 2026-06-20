@@ -1,11 +1,14 @@
-package se.spacify.plugin.library;
+package se.spacify.plugin.media;
 
 import se.spacify.aspect.Aspect;
 import se.spacify.aspect.AspectManager;
+
 import se.spacify.library.LibraryEvents;
+
 import se.spacify.plugin.Plugin;
 import se.spacify.plugin.PluginContext;
-import se.spacify.plugin.library.concept.LibraryConcept;
+
+import se.spacify.plugin.media.concept.MediaConcept;
 
 /**
  * Built-in plugin providing the music library: the data-backed views (tracks,
@@ -14,7 +17,7 @@ import se.spacify.plugin.library.concept.LibraryConcept;
  * sidebar subtree with live Releases/Artists lists kept in sync via
  * {@link LibraryEvents}.
  */
-public class LibraryPlugin extends Plugin {
+public class MediaPlugin extends Plugin {
 
 
     @Override
@@ -36,6 +39,6 @@ public class LibraryPlugin extends Plugin {
     }
     @Override
     public void onActivate(PluginContext ctx) {
-        ctx.registerConcept(new LibraryConcept(this));
+        ctx.registerConcept(new MediaConcept(this));
     }
 }

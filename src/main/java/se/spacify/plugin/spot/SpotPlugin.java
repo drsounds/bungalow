@@ -10,7 +10,7 @@ import se.spacify.plugin.spot.skin.SpotSkin;
 /**
  * Built-in plugin contributing the YouTube streaming Service. Registers a
  * {@link YouTubeMusicService} (the streaming aspect,
- * {@link se.spacify.service.media.MediaService}); registered after the local
+ * {@link se.spacify.plugin.media.service.MediaService}); registered after the local
  * music plugin so YouTube acts as a fallback for tracks not available locally.
  */
 public class SpotPlugin extends Plugin {

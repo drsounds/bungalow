@@ -1,6 +1,7 @@
-package se.spacify.service.media;
+package se.spacify.plugin.media.service;
 
 import se.spacify.service.Service;
+import se.spacify.service.media.PlaybackSupport;
 
 /**
  * Streaming / playback aspect. A {@link Service} that can play media implements

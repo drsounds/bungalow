@@ -13,7 +13,7 @@ import javax.swing.JTextField;
 
 import se.spacify.controls.Panel;
 
-import se.spacify.navigation.SPViewStack;
+import se.spacify.navigation.ViewStack;
 import se.spacify.ui.AppHeader;
 
 public class SpotAppHeader extends AppHeader {
@@ -22,7 +22,7 @@ public class SpotAppHeader extends AppHeader {
 	protected JTextField searchField;
 
     private Panel center;
-    public SpotAppHeader(SPViewStack viewStack) {
+    public SpotAppHeader(ViewStack viewStack) {
         super(viewStack);
         setLayout(new BoxLayout(this, BoxLayout.LINE_AXIS));
 

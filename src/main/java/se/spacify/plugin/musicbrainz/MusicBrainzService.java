@@ -10,7 +10,7 @@ import se.spacify.aspect.AspectManager;
 import se.spacify.db.entity.Artist;
 import se.spacify.db.entity.Recording;
 import se.spacify.db.entity.Release;
-import se.spacify.service.catalogue.MusicCatalogueService;
+import se.spacify.plugin.catalogue.service.MusicCatalogueService;
 
 import java.net.URI;
 import java.net.URLEncoder;

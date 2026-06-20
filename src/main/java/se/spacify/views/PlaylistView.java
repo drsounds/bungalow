@@ -1,17 +1,17 @@
 package se.spacify.views;
 
-import se.spacify.navigation.SPView;
-import se.spacify.navigation.SPViewStack;
+import se.spacify.navigation.View;
+import se.spacify.navigation.ViewStack;
 
 import javax.swing.*;
 import java.awt.*;
 
-public class PlaylistView extends SPView {
+public class PlaylistView extends View {
 
     private final JPanel panel;
     private final JLabel titleLabel;
 
-    public PlaylistView(SPViewStack viewStack) {
+    public PlaylistView(ViewStack viewStack) {
         super(viewStack);
         panel = new JPanel(new BorderLayout(0, 12));
         panel.setOpaque(false);

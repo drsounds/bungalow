@@ -10,16 +10,16 @@ import java.util.ArrayList;
 import java.util.Deque;
 import java.util.List;
 
-public class SPViewStack extends Panel {
+public class ViewStack extends Panel {
 
     private static final long serialVersionUID = 6893909424664812987L;
-	private final List<SPView> registeredViews = new ArrayList<>();
+	private final List<View> registeredViews = new ArrayList<>();
     private final Deque<String> backStack = new ArrayDeque<>();
     private final Deque<String> forwardStack = new ArrayDeque<>();
     private final List<NavigationListener> listeners = new ArrayList<>();
 
     private String currentUri = null;
-    private SPView currentView = null;
+    private View currentView = null;
     
     public MainWindow getMainWindow() {
     	Component parent = getParent();
@@ -32,11 +32,11 @@ public class SPViewStack extends Panel {
     	return null;
     }
 
-    public SPViewStack() {
+    public ViewStack() {
         setLayout(new BorderLayout());
     }
 
-    public void registerView(SPView view) {
+    public void registerView(View view) {
         registeredViews.add(view);
     }
 
@@ -45,7 +45,7 @@ public class SPViewStack extends Panel {
      * is currently showing, navigate away to a safe default first so the stack
      * isn't left displaying an orphaned component.
      */
-    public void unregisterView(SPView view) {
+    public void unregisterView(View view) {
         registeredViews.remove(view);
         if (view == currentView) {
             currentView.onHide();
@@ -65,8 +65,8 @@ public class SPViewStack extends Panel {
     private void navigate(String uri, boolean pushHistory) {
         if (uri == null || uri.equals(currentUri)) return;
 
-        SPView matched = null;
-        for (SPView v : registeredViews) {
+        View matched = null;
+        for (View v : registeredViews) {
             if (v.acceptsUri(uri)) {
                 matched = v;
                 break;

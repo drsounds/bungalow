@@ -1,8 +1,8 @@
 package se.spacify.views.library;
 
 import se.spacify.db.entity.Release;
-import se.spacify.navigation.SPViewStack;
-import se.spacify.service.catalogue.MusicCatalogueService;
+import se.spacify.navigation.ViewStack;
+import se.spacify.plugin.catalogue.service.MusicCatalogueService;
 
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
@@ -15,7 +15,7 @@ import java.util.List;
  */
 public class ReleasesCatalogView extends AbstractCatalogView<Release> {
 
-    public ReleasesCatalogView(SPViewStack viewStack) { super(viewStack); }
+    public ReleasesCatalogView(ViewStack viewStack) { super(viewStack); }
 
     @Override protected String kind() { return "releases"; }
     @Override protected String searchHint() { return "Search releases…"; }

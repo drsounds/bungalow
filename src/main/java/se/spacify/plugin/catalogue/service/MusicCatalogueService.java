@@ -1,4 +1,4 @@
-package se.spacify.service.catalogue;
+package se.spacify.plugin.catalogue.service;
 
 import se.spacify.db.entity.Artist;
 import se.spacify.db.entity.Recording;
@@ -10,7 +10,7 @@ import java.util.List;
 /**
  * Discovery aspect: catalogue browsing and search. Implementations can connect
  * to Discogs, MusicBrainz, etc. A Service may combine this aspect with the
- * streaming aspect ({@link se.spacify.service.media.MediaService}) to both find
+ * streaming aspect ({@link se.spacify.plugin.media.service.MediaService}) to both find
  * and play music.
  */
 public interface MusicCatalogueService extends Service {

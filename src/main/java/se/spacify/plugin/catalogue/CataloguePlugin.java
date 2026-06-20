@@ -1,14 +1,13 @@
-package se.spacify.plugin.catalog;
+package se.spacify.plugin.catalogue;
 
 import se.spacify.aspect.Aspect;
 import se.spacify.aspect.AspectManager;
-import se.spacify.navigation.SPViewStack;
+import se.spacify.navigation.ViewStack;
 import se.spacify.navigation.SidebarNode;
 import se.spacify.plugin.Plugin;
 import se.spacify.plugin.PluginContext;
 import se.spacify.plugin.SidebarHandle;
-
-import se.spacify.service.catalogue.MusicCatalogueService;
+import se.spacify.plugin.catalogue.service.MusicCatalogueService;
 import se.spacify.views.library.ArtistsCatalogView;
 import se.spacify.views.library.RecordingsCatalogView;
 import se.spacify.views.library.ReleasesCatalogView;
@@ -21,11 +20,11 @@ import se.spacify.views.library.ReleasesCatalogView;
  * catalogue views — browsing remote data on background threads, in the spirit of
  * Windows Media Player 11's "Urge" online catalogue.
  */
-public class CatalogsPlugin extends Plugin {
+public class CataloguePlugin extends Plugin {
 
     @Override
     public void onActivate(PluginContext ctx) {
-        SPViewStack viewStack = ctx.viewStack();
+        ViewStack viewStack = ctx.viewStack();
         ctx.registerView(new ArtistsCatalogView(viewStack));
         ctx.registerView(new ReleasesCatalogView(viewStack));
         ctx.registerView(new RecordingsCatalogView(viewStack));

@@ -1,16 +1,16 @@
 package se.spacify.views;
 
-import se.spacify.navigation.SPView;
-import se.spacify.navigation.SPViewStack;
+import se.spacify.navigation.View;
+import se.spacify.navigation.ViewStack;
 
 import javax.swing.*;
 import java.awt.*;
 
-public class HomeView extends SPView {
+public class HomeView extends View {
 
     private final JPanel panel;
 
-    public HomeView(SPViewStack viewStack) {
+    public HomeView(ViewStack viewStack) {
         super(viewStack);
         panel = new JPanel(new BorderLayout());
         panel.setOpaque(false);

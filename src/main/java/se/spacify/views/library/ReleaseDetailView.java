@@ -5,7 +5,7 @@ import se.spacify.db.LibraryRepository;
 import se.spacify.db.entity.Recording;
 import se.spacify.db.entity.Release;
 import se.spacify.db.entity.Track;
-import se.spacify.navigation.SPViewStack;
+import se.spacify.navigation.ViewStack;
 import se.spacify.service.media.PlayRequest;
 
 import java.util.ArrayList;
@@ -19,7 +19,7 @@ import java.util.regex.Pattern;
  * resolves and plays a track across the registered music Services.
  */
 public class ReleaseDetailView extends AbstractLibraryView {
-    public ReleaseDetailView(SPViewStack viewStack) {
+    public ReleaseDetailView(ViewStack viewStack) {
         super(viewStack);
         //TODO Auto-generated constructor stub
     }

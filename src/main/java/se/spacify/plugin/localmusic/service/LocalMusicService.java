@@ -1,4 +1,4 @@
-package se.spacify.service.media;
+package se.spacify.plugin.localmusic.service;
 
 import se.spacify.aspect.Aspect;
 import se.spacify.aspect.AspectManager;
@@ -7,6 +7,9 @@ import se.spacify.db.entity.LocalFile;
 import se.spacify.db.entity.Recording;
 import se.spacify.db.entity.RecordingArtistCredit;
 import se.spacify.plugin.Plugin;
+import se.spacify.service.media.PlaybackSupport;
+
+import se.spacify.plugin.music.service.MusicService;
 
 import javax.sound.sampled.*;
 import javax.swing.*;

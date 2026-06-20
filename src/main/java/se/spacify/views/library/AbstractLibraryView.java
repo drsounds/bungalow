@@ -7,8 +7,8 @@ import se.spacify.controls.ToolBar;
 import se.spacify.controls.ToolButton;
 import se.spacify.graphics.GroupAvatar;
 import se.spacify.library.LibraryEvents;
-import se.spacify.navigation.SPView;
-import se.spacify.navigation.SPViewStack;
+import se.spacify.navigation.View;
+import se.spacify.navigation.ViewStack;
 import se.spacify.service.media.PlaybackCoordinator;
 import se.spacify.service.media.PlayQueue;
 import se.spacify.service.media.PlayQueueItem;
@@ -33,7 +33,7 @@ import java.util.Map;
  * Read-only views (see {@link #isEditable()}) keep just Refresh; mutating
  * actions broadcast via {@link LibraryEvents} so the sidebar stays in sync.
  */
-public abstract class AbstractLibraryView extends SPView {
+public abstract class AbstractLibraryView extends View {
 
 	protected final JPanel panel;
 	protected final JLabel headerLabel;
@@ -66,7 +66,7 @@ public abstract class AbstractLibraryView extends SPView {
 		GroupRef groupOf(int modelRow);
 	}
 
-	protected AbstractLibraryView(SPViewStack viewStack) {
+	protected AbstractLibraryView(ViewStack viewStack) {
 		super(viewStack);
 		panel = new JPanel(new BorderLayout(0, 8));
 		panel.setOpaque(false);

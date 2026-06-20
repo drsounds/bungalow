@@ -4,11 +4,10 @@ import se.spacify.controls.SplitPane;
 import se.spacify.design.Design;
 import se.spacify.design.DesignManager;
 import se.spacify.feature.FeatureManager;
-import se.spacify.navigation.SPViewStack;
+import se.spacify.navigation.ViewStack;
 import se.spacify.plugin.PluginManager;
-
+import se.spacify.plugin.media.service.MediaService;
 import se.spacify.service.ServiceManager;
-import se.spacify.service.media.MediaService;
 import se.spacify.service.media.PlaybackCoordinator;
 import se.spacify.service.media.PlayQueue;
 import se.spacify.concept.ConceptManager;
@@ -42,14 +41,14 @@ public class MainWindow extends JFrame {
 
     private Chrome chrome; 
 
-    private SPViewStack viewStack;
-    public SPViewStack getViewStack() { return viewStack; }
+    private ViewStack viewStack;
+    public ViewStack getViewStack() { return viewStack; }
     private NowPlayingView nowPlayingView;
     public NowPlayingView getNowPlayingView() { return nowPlayingView; }
     /** The footer is built and owned by the active Chrome. */
     public AppFooter getAppFooter() { return getChrome() != null ? getChrome().getAppFooter() : null; }
     public LeftLibraryMenu getLeftLibraryMenu() { return leftLibraryMenu; }
-    public void setViewStack(SPViewStack viewStack) {
+    public void setViewStack(ViewStack viewStack) {
         this.viewStack = viewStack;
     }
 
@@ -192,7 +191,7 @@ public class MainWindow extends JFrame {
         // 1. Core services that plugins register *into* must exist BEFORE any plugin
         //    activates — otherwise a plugin's onActivate would register into nulls,
         //    which is the start-up cycle (plugin → ServiceManager/SkinManager/…).
-        viewStack = new SPViewStack();
+        viewStack = new ViewStack();
         taste = new Taste();
         themeManager   = new ThemeManager(this);
         serviceManager = new ServiceManager(this);

@@ -1,8 +1,8 @@
 package se.spacify.plugin.ui;
 
 import se.spacify.controls.Table;
-import se.spacify.navigation.SPView;
-import se.spacify.navigation.SPViewStack;
+import se.spacify.navigation.View;
+import se.spacify.navigation.ViewStack;
 import se.spacify.plugin.PluginDescriptor;
 
 import se.spacify.plugin.PluginManager.ManagedPlugin;
@@ -21,7 +21,7 @@ import java.util.List;
  * (copied into {@code ~/Bungalow}) and removing them, and shows an
  * auto-generated settings editor for the selected plugin.
  */
-public class PluginManagerView extends SPView {
+public class PluginManagerView extends View {
 
     private final JPanel           panel;
     private final Table           table;
@@ -32,7 +32,7 @@ public class PluginManagerView extends SPView {
     private boolean refreshing = false;
 
     @SuppressWarnings("static-access")
-    public PluginManagerView(SPViewStack viewStack) {
+    public PluginManagerView(ViewStack viewStack) {
         super(viewStack);
         panel = new JPanel(new BorderLayout(0, 8));
         panel.setOpaque(true);

@@ -4,8 +4,8 @@ import org.cef.CefClient;
 import org.cef.browser.CefBrowser;
 import org.cef.browser.CefFrame;
 import org.cef.handler.CefDisplayHandlerAdapter;
-import se.spacify.navigation.SPView;
-import se.spacify.navigation.SPViewStack;
+import se.spacify.navigation.View;
+import se.spacify.navigation.ViewStack;
 import se.spacify.ui.theme.ThemeManager;
 import se.spacify.web.BookmarkEvents;
 import se.spacify.web.BookmarkManager;
@@ -21,13 +21,13 @@ import java.awt.*;
  * <p>Navigation is bilateral: a spacify URI is translated to https and loaded in
  * CEF; conversely, link clicks / in-page history inside CEF are translated back
  * to {@code spacify:site:} URIs and reflected into the address bar and nav
- * buttons via {@link SPViewStack}. While a site is open the app's back/forward
+ * buttons via {@link ViewStack}. While a site is open the app's back/forward
  * drive the browser's own history (see {@link #handlesHistory()}).
  *
  * <p>CEF is initialised lazily on first navigation (off the EDT, since the first
  * run downloads the native Chromium bundle).
  */
-public class SPWebView extends SPView {
+public class SPWebView extends View {
 
     private final JPanel      panel;
     private final JLabel      status;
@@ -43,7 +43,7 @@ public class SPWebView extends SPView {
     private String     currentUri;
     private String     currentTitle;
 
-    public SPWebView(SPViewStack viewStack) {
+    public SPWebView(ViewStack viewStack) {
         super(viewStack);
         panel = new JPanel(new BorderLayout());
         status = new JLabel("", SwingConstants.CENTER);

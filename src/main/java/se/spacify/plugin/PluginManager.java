@@ -2,7 +2,7 @@ package se.spacify.plugin;
 
 import se.spacify.design.Design;
 import se.spacify.feature.Feature;
-import se.spacify.navigation.SPView;
+import se.spacify.navigation.View;
 import se.spacify.navigation.SidebarNode;
 import se.spacify.service.Service;
 import se.spacify.skinning.Skin;
@@ -11,7 +11,8 @@ import se.spacify.ui.LeftLibraryMenu;
 import se.spacify.ui.MainWindow;
 import se.spacify.ui.theme.Theme;
 import se.spacify.ui.chrome.Chrome;
-import se.spacify.navigation.SPViewStack;
+import se.spacify.concept.Concept;
+import se.spacify.navigation.ViewStack;
 
 import javax.swing.Icon;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -62,13 +63,13 @@ public final class PluginManager {
     private final Properties state = new Properties();
     private final List<Runnable> listeners = new ArrayList<>();
 
-    private SPViewStack viewStack;
+    private ViewStack viewStack;
     private LeftLibraryMenu     leftLibraryMenu;
 
     // ── Lifecycle ─────────────────────────────────────────────────────────────
 
     /** Wire the manager to the live UI; call once before {@link #start()}. */
-    public void init(SPViewStack viewStack, LeftLibraryMenu leftLibraryMenu) {
+    public void init(ViewStack viewStack, LeftLibraryMenu leftLibraryMenu) {
         this.viewStack = viewStack;
         this.leftLibraryMenu = leftLibraryMenu;
         loadState();
@@ -256,12 +257,13 @@ public final class PluginManager {
         private final ManagedPlugin owner;
         private final List<Service>                services = new ArrayList<>();
         private final List<Feature>                features = new ArrayList<>();
-        private final List<SPView>                 views    = new ArrayList<>();
+        private final List<View>                 views    = new ArrayList<>();
         private final List<DefaultMutableTreeNode> nodes    = new ArrayList<>();
         private final List<Chrome> 				   chromes = new ArrayList<>();
         private final List<Skin> 				   skins = new ArrayList<>();
         private final List<Design> 				   designs = new ArrayList<>();
         private final List<Theme> 				   themes = new ArrayList<>();
+        private final List<Concept>                concepts = new ArrayList<>();
       
         Recorder(ManagedPlugin owner) { this.owner = owner; }
 
@@ -269,7 +271,7 @@ public final class PluginManager {
 
         @Override public PluginSettings settings() { return owner.settings; }
 
-        @Override public SPViewStack viewStack() { return viewStack; }
+        @Override public ViewStack viewStack() { return viewStack; }
 
         @Override public void registerService(Service s) {
             getMainWindow().getServiceManager().register(s);
@@ -289,7 +291,13 @@ public final class PluginManager {
 			// TODO Auto-generated method stub
             designs.add(c);
 		}
-        @Override public void registerView(SPView v) {
+		@Override
+		public void registerConcept(Concept c) {
+            getMainWindow().getConceptManager().register(c);
+			// TODO Auto-generated method stub
+            concepts.add(c);
+		}
+        @Override public void registerView(View v) {
             if (viewStack != null) viewStack.registerView(v);
             views.add(v);
         }
@@ -316,7 +324,7 @@ public final class PluginManager {
         /** Replay registrations in reverse, removing every contribution. */
         void undo() {
             for (DefaultMutableTreeNode n : nodes) if (leftLibraryMenu != null) leftLibraryMenu.removeSidebarNode(n);
-            for (SPView v : views) if (viewStack != null) viewStack.unregisterView(v);
+            for (View v : views) if (viewStack != null) viewStack.unregisterView(v);
             for (Service s : services) getMainWindow().getServiceManager().unregister(s);
              for (Skin s : skins) getMainWindow().getSkinManager().unregister(s);
             for (Feature f : features) getMainWindow().getFeatureManager().unregister(f);

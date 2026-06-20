@@ -2,15 +2,15 @@ package se.spacify.navigation;
 
 import javax.swing.JComponent;
 
-public abstract class SPView {
+public abstract class View {
     
-    private SPViewStack viewStack;
+    private ViewStack viewStack;
     
-    public SPViewStack getViewStack() {
+    public ViewStack getViewStack() {
         return viewStack;
     }
 
-    public SPView(SPViewStack viewStack) {
+    public View(ViewStack viewStack) {
         this.viewStack = viewStack;
     }
 
@@ -30,7 +30,7 @@ public abstract class SPView {
 
     /**
      * Whether this view manages its own internal navigation history (e.g. an
-     * embedded browser). When true, {@link SPViewStack}'s back/forward delegate
+     * embedded browser). When true, {@link ViewStack}'s back/forward delegate
      * to {@link #goBack()}/{@link #goForward()} before touching the view stack.
      */
     public boolean handlesHistory() { return false; }

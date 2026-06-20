@@ -3,7 +3,7 @@ package se.spacify.views.library;
 import se.spacify.db.DatabaseManager;
 import se.spacify.db.LibraryRepository;
 import se.spacify.db.entity.Recording;
-import se.spacify.navigation.SPViewStack;
+import se.spacify.navigation.ViewStack;
 import se.spacify.service.media.PlayRequest;
 
 import javax.swing.*;
@@ -13,7 +13,7 @@ import java.util.List;
 /** Library view listing recordings (name, artists) with full CRUD. */
 public class RecordingsLibraryView extends AbstractLibraryView {
 
-    public RecordingsLibraryView(SPViewStack viewStack) {
+    public RecordingsLibraryView(ViewStack viewStack) {
         super(viewStack);
         //TODO Auto-generated constructor stub
     }

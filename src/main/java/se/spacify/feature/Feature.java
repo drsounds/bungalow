@@ -1,7 +1,7 @@
 package se.spacify.feature;
 
 import se.spacify.aspect.Aspect;
-import se.spacify.navigation.SPView;
+import se.spacify.navigation.View;
 import se.spacify.navigation.SidebarNode;
 
 import java.util.Collections;
@@ -17,7 +17,7 @@ public abstract class Feature implements Aspect {
     public abstract String getName();
 
     /** SPView instances to register with the view stack at activation time. */
-    public List<SPView> getViews() { return Collections.emptyList(); }
+    public List<View> getViews() { return Collections.emptyList(); }
 
     /** SidebarNode trees to append to the sidebar at activation time. */
     public List<SidebarNode> getSidebarNodes() { return Collections.emptyList(); }

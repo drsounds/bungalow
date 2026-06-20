@@ -14,7 +14,8 @@ import org.cef.misc.IntRef;
 import org.cef.misc.StringRef;
 import org.cef.network.CefRequest;
 import org.cef.network.CefResponse;
-import se.spacify.service.media.MediaServicePlayerComponent;
+
+import se.spacify.plugin.media.service.MediaServicePlayerComponent;
 import se.spacify.ui.theme.ThemeManager;
 import se.spacify.web.CefRuntime;
 

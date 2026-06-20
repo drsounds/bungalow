@@ -4,7 +4,7 @@ import se.spacify.aspect.Aspect;
 import se.spacify.aspect.AspectManager;
 import se.spacify.plugin.Plugin;
 import se.spacify.plugin.PluginContext;
-import se.spacify.service.media.LocalMusicService;
+import se.spacify.plugin.localmusic.service.LocalMusicService;
 
 /**
  * Built-in plugin providing local file playback. Registers the

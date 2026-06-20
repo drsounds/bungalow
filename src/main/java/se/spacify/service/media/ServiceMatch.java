@@ -1,6 +1,7 @@
 package se.spacify.service.media;
 
 import se.spacify.db.entity.Recording;
+import se.spacify.plugin.music.service.MusicService;
 
 import javax.swing.ImageIcon;
 

@@ -2,7 +2,7 @@ package se.spacify.views.library;
 
 import se.spacify.db.DatabaseManager;
 import se.spacify.db.entity.LocalFile;
-import se.spacify.navigation.SPViewStack;
+import se.spacify.navigation.ViewStack;
 import se.spacify.service.media.PlaybackCoordinator;
 
 import se.spacify.service.media.PlayQueueItem;
@@ -20,7 +20,7 @@ import java.util.List;
  */
 public class LocalFileLibraryView extends AbstractLibraryView {
 
-    public LocalFileLibraryView(SPViewStack viewStack) {
+    public LocalFileLibraryView(ViewStack viewStack) {
         super(viewStack);
     }
     private final List<LocalFile> rows = new ArrayList<>();

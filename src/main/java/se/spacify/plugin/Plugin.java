@@ -3,7 +3,7 @@ package se.spacify.plugin;
 import javax.swing.Icon;
 
 import se.spacify.aspect.Aspect;
-import se.spacify.navigation.SPViewStack;
+import se.spacify.navigation.ViewStack;
 
 import java.util.List;
 
@@ -15,7 +15,7 @@ import java.util.List;
  * registration logic.
  *
  * <p>A plugin may contribute any mix of {@link se.spacify.service.Service}s,
- * {@link se.spacify.feature.Feature}s, {@link se.spacify.navigation.SPView}s
+ * {@link se.spacify.feature.Feature}s, {@link se.spacify.navigation.View}s
  * (each accepting a {@code spacify:} URI) and sidebar nodes — all wired through
  * the {@link PluginContext} so they can be cleanly removed again on disable.
  */
@@ -27,7 +27,7 @@ public abstract class Plugin implements Aspect {
     public Plugin() {
         super();
     }
-    public SPViewStack getViewStack() {
+    public ViewStack getViewStack() {
         return manager.getMainWindow().getViewStack();
     }
     /** Register Services, features, views and sidebar nodes via {@code ctx}. */
