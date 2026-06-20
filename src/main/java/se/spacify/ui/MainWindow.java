@@ -251,7 +251,7 @@ public class MainWindow extends JFrame {
             wireMediaService(ms);
         }
 
-        if (getChrome() != null) applySidebar(false);
+        if (getChrome() != null) applySidebar(userWantsSidebar);
         // Glass-pane resize handler — intercepts edge events, redispatches others
         WindowResizer.install(this);
 
