@@ -1,10 +1,6 @@
 package se.spacify.controls;
 
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.RenderingHints;
-
-import javax.swing.JToolBar;
+import javax.swing.JSlider;
 import javax.swing.SwingUtilities;
 
 import se.spacify.design.Design;
@@ -12,10 +8,14 @@ import se.spacify.skinning.Skin;
 import se.spacify.ui.MainWindow;
 import se.spacify.ui.theme.Taste;
 import se.spacify.ui.theme.Theme;
-import se.spacify.ui.theme.ThemeManager;
 
-public class ToolBar extends JToolBar implements Control {
-
+public class Slider extends JSlider implements Control {
+    public Slider(int x, int y, int z) {
+        super(x, y, z);
+    }
+    public Slider() {
+        
+    }
 	public Skin getSkin() {
 		return getMainWindow().getSkin();
 	}
@@ -62,20 +62,4 @@ public class ToolBar extends JToolBar implements Control {
 		}
 		return getMainWindow().getTaste();
 	}
-	private static final long serialVersionUID = -3117479158547825878L;
- 
-	public ToolBar() {
-		super();
-		setFloatable(false);
-		setOpaque(true);
-		setBackground(ThemeManager.getTintColor());
-	}
-	@Override
-	protected void paintComponent(Graphics g) {
-		Graphics2D g2 = (Graphics2D) g.create();
-		g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-		getSkin().paintToolBar(this, g2);
-		g2.dispose();
-	}
-
 }

@@ -1,31 +1,41 @@
 package se.spacify.controls;
 
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.RenderingHints;
-
-import javax.swing.JToolBar;
-import javax.swing.SwingUtilities;
+import javax.swing.JLabel;
 
 import se.spacify.design.Design;
 import se.spacify.skinning.Skin;
 import se.spacify.ui.MainWindow;
 import se.spacify.ui.theme.Taste;
 import se.spacify.ui.theme.Theme;
-import se.spacify.ui.theme.ThemeManager;
 
-public class ToolBar extends JToolBar implements Control {
-
-	public Skin getSkin() {
-		return getMainWindow().getSkin();
-	}
+public class Label extends JLabel implements Control {
+ 
+    @Override
+    public MainWindow getMainWindow() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'getMainWindow'");
+    }
 	private Theme theme;
-	public MainWindow getMainWindow() {
-		// While a panel is still being constructed it has no window ancestor yet,
-		// so fall back to the live MainWindow so theme/skin/taste stay resolvable.
-		java.awt.Window w = SwingUtilities.getWindowAncestor(this);
-		if (w instanceof MainWindow) return (MainWindow) w;
-		return MainWindow.getInstance();
+	public void setTheme(Theme theme) {
+		this.theme = theme;
+	}
+	public void setDesign(Design design) {
+		this.design = design;
+	}
+	private Skin skin;
+	public void setSkin(Skin skin) {
+		this.skin = skin;
+	}
+	public Skin getSkin() {
+		if (skin != null) {
+			return skin;
+		}
+		if (getParent() != null && getParent() instanceof Panel) {
+			if (((Panel)getParent()).getSkin() != null) {
+				return ((Panel)getParent()).getSkin();
+			}		
+		}
+		return getMainWindow().getSkin();
 	}
 	public Theme getTheme() {
 		if (theme != null) {
@@ -62,20 +72,4 @@ public class ToolBar extends JToolBar implements Control {
 		}
 		return getMainWindow().getTaste();
 	}
-	private static final long serialVersionUID = -3117479158547825878L;
- 
-	public ToolBar() {
-		super();
-		setFloatable(false);
-		setOpaque(true);
-		setBackground(ThemeManager.getTintColor());
-	}
-	@Override
-	protected void paintComponent(Graphics g) {
-		Graphics2D g2 = (Graphics2D) g.create();
-		g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-		getSkin().paintToolBar(this, g2);
-		g2.dispose();
-	}
-
 }

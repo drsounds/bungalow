@@ -8,6 +8,9 @@ import se.spacify.service.media.PlaybackCoordinator;
 import se.spacify.service.media.PlayQueue;
 import se.spacify.ui.theme.ThemeManager;
 
+import se.spacify.controls.Slider;
+import se.spacify.controls.Panel;
+
 import javax.swing.*;
 import java.awt.*;
 
@@ -19,13 +22,13 @@ public class AppFooter extends JPanel {
     private final JLabel  trackNameLabel;
     private final JLabel  artistLabel;
     private final GlossyButton playPauseBtn;
-	private JPanel mainBar;
+	private Panel mainBar;
 	private GlassPanel leftPanel;
-	private JPanel controls;
-	private JPanel buttons;
+	private Panel controls;
+	private Panel buttons;
 	private GlassPanel rightPanel;
-	private JSlider progress;
-	private JPanel progressPanel;
+	private Slider progress;
+	private Panel progressPanel;
 	private GlossyButton backwardButton;
 	private GlossyButton forwardButton;
 
@@ -35,7 +38,7 @@ public class AppFooter extends JPanel {
         setPreferredSize(new Dimension(0, 90));
         setOpaque(true);
   
-        progressPanel = new JPanel(new BorderLayout());
+        progressPanel = new Panel(new BorderLayout());
         progressPanel.setMinimumSize(new Dimension(0, 18));
         progressPanel.setMaximumSize(new Dimension(Short.MAX_VALUE, 18));
         progressPanel.setOpaque(false);
@@ -43,12 +46,12 @@ public class AppFooter extends JPanel {
        
         backwardButton = makeControlButton("⏪");
         progressPanel.add(backwardButton, BorderLayout.WEST);
-        progress = new JSlider(0, 1000, 0);
+        progress = new Slider(0, 1000, 0);
         progress.setOpaque(false); 
         progressPanel.add(progress, BorderLayout.CENTER);
         forwardButton = makeControlButton("⏩");
         progressPanel.add(forwardButton, BorderLayout.EAST);
-        mainBar = new JPanel();
+        mainBar = new Panel();
         mainBar.setLayout(new BoxLayout(mainBar, BoxLayout.LINE_AXIS));
         mainBar.setPreferredSize(new Dimension(0, 28));
         mainBar.setOpaque(false);
@@ -72,11 +75,11 @@ public class AppFooter extends JPanel {
         leftPanel.add(artistLabel);
 
         // Center: playback controls + progress
-        controls = new JPanel();
+        controls = new Panel();
         controls.setLayout(new BoxLayout(controls, BoxLayout.Y_AXIS));
         controls.setOpaque(false);
 
-        buttons = new JPanel(new FlowLayout(FlowLayout.CENTER, 6, 0));
+        buttons = new Panel(new FlowLayout(FlowLayout.CENTER, 6, 0));
         buttons.setOpaque(false);
         GlossyButton prevBtn = makeControlButton("⏮");
         prevBtn.addActionListener(e -> PlayQueue.getInstance().previous());

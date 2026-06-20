@@ -33,7 +33,7 @@ import java.util.List;
  * <p>Used as the alternative viewport content for the library views when the
  * user switches a view into its grouped mode.
  */
-public class GroupedListPanel extends JPanel {
+public class GroupedListPanel extends Panel {
 
     private static final long serialVersionUID = 1L;
     private static final int IMAGE_SIZE = 64;
