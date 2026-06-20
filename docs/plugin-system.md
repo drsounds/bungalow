@@ -115,6 +115,7 @@ from the schema. The values are reachable at runtime via `ctx.settings()`.
    an external jar into `~/Bungalow` and activates it immediately.
 3. For a built-in: add a `builtin(...)` line to `BuiltinPluginRegistry`.
 
-> See [Status & roadmap](status-and-roadmap.md) for the one current caveat:
-> `registerConcept` registers the Concept but does not yet call its
-> `onActivate(ConceptContext)`, so Concept-based plugins are only partially wired.
+`registerConcept(c)` also calls `c.onActivate(ConceptContext)` (the recorder
+implements `ConceptContext`), so a Concept-based plugin's contributions are wired
+and recorded for clean teardown just like a Feature's. See
+[Status & roadmap](status-and-roadmap.md) for the migration state.

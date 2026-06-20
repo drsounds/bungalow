@@ -19,24 +19,23 @@ This page is the honest map of what's wired, what isn't, and where it's going.
 
 ## Known gaps / seams (in-progress refactor)
 
-### 1. Concept activation is not yet wired ⚠️
+### 1. Concept activation — ✅ wired
 
-`PluginContext.registerConcept(c)` registers the Concept into `ConceptManager`
-but **does not call `Concept.onActivate(ConceptContext)`**. No `ConceptContext`
-is ever constructed or passed. So a Concept-based plugin's actual contributions
-don't happen.
+`PluginManager.Recorder` implements `ConceptContext`, so
+`registerConcept(c)` registers the Concept **and** calls
+`c.onActivate(this)`; the views/services/sidebar the Concept contributes are
+recorded against the owning plugin and removed on `undo()` (which also calls
+`Concept.onDeactivate()`). This mirrors how `registerFeature` wires a Feature.
 
-Concretely: `LibraryPlugin.onActivate` now only does
+Concretely: `LibraryPlugin.onActivate` does
 `ctx.registerConcept(new LibraryConcept(this))`, and `LibraryConcept.onActivate`
-(which registers the tracks/recordings/releases/artists views and the "Your
-Library" sidebar) is never invoked — so those library views/sidebar are **not
-registered** at runtime in the current state.
+now runs at activation, registering the tracks/recordings/releases/artists views
+and the "Your Library" sidebar. (Verified: navigating to
+`spacify:library:tracks` resolves.)
 
-**To finish:** have `PluginManager.Recorder.registerConcept` (or `ConceptManager`)
-build a `ConceptContext` and call `concept.onActivate(ctx)`, recording the
-contributions for undo — mirroring how `registerFeature` already wires a
-Feature's views and nodes. The `ConceptContext` interface already exists with the
-right surface; it just needs an implementation and the call site.
+The migration toward "a plugin registers one Concept and the Concept contributes
+everything" is the standard plugin shape going forward; `MediaConcept`,
+`SearchConcept`, `PlaylistConcept` and `WebConcept` follow it.
 
 ### 2. Two colour holders: `Taste` and `ThemeManager`
 
@@ -64,8 +63,9 @@ settling.
 The architecture is the foundation for a vendor-neutral ecosystem. Natural next
 steps, in rough priority:
 
-1. **Finish the Concept layer** (gap #1) so "a plugin registers one Concept and
-   the Concept contributes everything" becomes the standard plugin shape.
+1. **Migrate the remaining plugins onto Concepts** (the activation plumbing is
+   done) so "a plugin registers one Concept and the Concept contributes
+   everything" is the uniform plugin shape.
 2. **A purchase/store aspect** — formalise buying as a Service capability +
    `AuthAspect`, beyond today's web-view storefronts, so multiple stores compete
    for the same track the way streamers already do via "Play with…".

@@ -101,4 +101,6 @@ Two coarser-grained contributions sit above raw Services:
 
 > Concept is the newest layer and the direction the codebase is migrating
 > toward (plugins → register one Concept → the Concept contributes everything).
-> Its activation is **not yet wired** — see [Status & roadmap](status-and-roadmap.md).
+> Activation is wired: `registerConcept` calls `Concept.onActivate(ConceptContext)`
+> and records the contributions for clean teardown — see
+> [Status & roadmap](status-and-roadmap.md).
