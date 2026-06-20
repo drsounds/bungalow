@@ -80,16 +80,22 @@ public class Taste {
     public Color getNowPlayingBackground() { return NOW_PLAYING_BG; }
     public Color getNowPlayingForeground() { return NOW_PLAYING_FG; }
 
-    public void setHue(float h)           { hue = h;  }
-    public void setSaturation(float s)    { saturation = s; }
-    public void setLightness(float l)     { lightness = l; }
-    public void setDarkMode(boolean d)    { darkMode = d; }
-    public void setAccentColor(Color c)   { accentColor = c; }
+    // The Taste is the model the UI (sliders, config) writes to, but the whole
+    // app renders from ThemeManager's cached colours and its change listeners.
+    // Forward every change into ThemeManager (which recomputes the palette and
+    // repaints all listeners) and then fire our own listeners (theme rebuild,
+    // config save) — otherwise a tint change would reach only the few elements
+    // that read the Taste directly.
+    public void setHue(float h)           { hue = h;           ThemeManager.setHue(h);           notify_(); }
+    public void setSaturation(float s)    { saturation = s;    ThemeManager.setSaturation(s);    notify_(); }
+    public void setLightness(float l)     { lightness = l;     ThemeManager.setLightness(l);     notify_(); }
+    public void setDarkMode(boolean d)    { darkMode = d;      ThemeManager.setDarkMode(d);      notify_(); }
+    public void setAccentColor(Color c)   { accentColor = c;   ThemeManager.setAccentColor(c);   notify_(); }
 
-    public void setStripedRows(boolean v)          { stripedRows = v; }
-    public void setHighContrast(boolean v)         { highContrast = v; }
-    public void setHighContrastInverted(boolean v) { highContrastInverted = v; }
-    public void setTintText(boolean v)             { tintText = v; }
+    public void setStripedRows(boolean v)          { stripedRows = v;          ThemeManager.setStripedRows(v);          notify_(); }
+    public void setHighContrast(boolean v)         { highContrast = v;         ThemeManager.setHighContrast(v);         notify_(); }
+    public void setHighContrastInverted(boolean v) { highContrastInverted = v; ThemeManager.setHighContrastInverted(v); notify_(); }
+    public void setTintText(boolean v)             { tintText = v;             ThemeManager.setTintText(v);             notify_(); }
 
     public float   getHue()          { return hue; }
     public float   getSaturation()   { return saturation; }

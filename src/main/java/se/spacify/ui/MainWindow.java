@@ -220,6 +220,10 @@ public class MainWindow extends JFrame {
         // 5. Establish the active Design — this builds and installs the Chrome
         //    (footer, splits, the shared sidebar), so getChrome() is valid afterwards.
         nowPlayingView = new NowPlayingView(viewStack);
+        // The now-playing view is owned here (not by a plugin), so register it with
+        // the stack ourselves — otherwise navigate("spacify:now-playing") matches
+        // nothing and the main view stays blank.
+        viewStack.registerView(nowPlayingView);
         setDesign(pickInitialDesign());
 
         setUndecorated(true);  // remove native title bar + border on all platforms
