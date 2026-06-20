@@ -8,7 +8,6 @@ import se.spacify.library.LibraryEvents;
 import se.spacify.plugin.Plugin;
 import se.spacify.plugin.PluginContext;
 
-import se.spacify.plugin.media.concept.MediaConcept;
 import se.spacify.plugin.music.concept.MusicConcept;
 
 /**
