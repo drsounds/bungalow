@@ -5,9 +5,11 @@ name: Build
 #   - AppImage : a self-contained Linux .AppImage
 #   - exe      : a portable Windows app image containing Bungalow.exe
 #
-# Runs on pushes/PRs to main (artifacts only) and on version tags (also
-# attached to the GitHub Release). jpackage requires the first version
-# component to be >= 1, so tag releases like v1.0.0.
+# The build jobs run on pushes/PRs to main and on version tags. The release job
+# then publishes a GitHub Release with all three artifacts:
+#   - on a v* tag  -> a normal Release named after the tag
+#   - on main push -> a rolling "nightly" prerelease (re-pointed each build)
+# jpackage requires the first version component to be >= 1, so tag like v1.0.0.
 on:
   push:
     branches: [ main ]
@@ -57,12 +59,6 @@ jobs:
         with:
           name: bungalow-jar
           path: Bungalow-*-jar.zip
-
-      - name: Attach to release
-        if: github.ref_type == 'tag'
-        uses: softprops/action-gh-release@v2
-        with:
-          files: Bungalow-*-jar.zip
 
   # ── Linux .AppImage ──────────────────────────────────────────────────────────
   appimage:
@@ -139,12 +135,6 @@ jobs:
           name: bungalow-appimage
           path: Bungalow-*-x86_64.AppImage
 
-      - name: Attach to release
-        if: github.ref_type == 'tag'
-        uses: softprops/action-gh-release@v2
-        with:
-          files: Bungalow-*-x86_64.AppImage
-
   # ── Windows exe (portable app image) ─────────────────────────────────────────
   exe:
     runs-on: windows-latest
@@ -192,8 +182,44 @@ jobs:
           name: bungalow-windows-exe
           path: Bungalow-*-windows-x64.zip
 
-      - name: Attach to release
+  # ── Publish a GitHub Release with all three artifacts ────────────────────────
+  release:
+    needs: [ jar, appimage, exe ]
+    runs-on: ubuntu-latest
+    # Never publish from pull requests (no write token / not wanted).
+    if: github.event_name != 'pull_request'
+    steps:
+      - name: Download all build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: dist
+          merge-multiple: true
+
+      - name: List artifacts
+        run: ls -lR dist
+
+      # Tagged build -> a normal, named Release.
+      - name: Publish tagged release
         if: github.ref_type == 'tag'
         uses: softprops/action-gh-release@v2
         with:
-          files: Bungalow-*-windows-x64.zip
+          files: dist/**
+          generate_release_notes: true
+
+      # main build -> refresh the rolling "nightly" prerelease so its tag and
+      # assets point at the latest commit.
+      - name: Remove previous nightly
+        if: github.ref_type == 'branch'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release delete nightly --repo "$GITHUB_REPOSITORY" --yes --cleanup-tag || true
+
+      - name: Publish nightly prerelease
+        if: github.ref_type == 'branch'
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: nightly
+          name: Nightly (latest main)
+          prerelease: true
+          target_commitish: ${{ github.sha }}
+          files: dist/**
