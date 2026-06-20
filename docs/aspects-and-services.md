@@ -1,7 +1,7 @@
 # Aspects & Services
 
 This is the layer that replaces the monolith. Instead of one object that "is
-Spotify", Spacify has **Services** (back-ends with a lifecycle) that opt into
+Spotify", Bungalow has **Services** (back-ends with a lifecycle) that opt into
 **aspects** (capability interfaces). Callers find back-ends *by capability*.
 
 ## The Service contract

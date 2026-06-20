@@ -2,7 +2,7 @@
 
 ## The layers
 
-Spacify is organised as a thin application shell around a registry of pluggable
+Bungalow is organised as a thin application shell around a registry of pluggable
 contributions. Nothing in the "content" layers knows about a specific vendor;
 they only know **aspects** (capability interfaces).
 

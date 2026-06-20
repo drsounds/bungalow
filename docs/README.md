@@ -1,17 +1,23 @@
-# Spacify Architecture Documentation
+# Bungalow Architecture Documentation
 
-Spacify is a **Java / Swing desktop media player** built as a small **plugin
+Bungalow is a **Java / Swing desktop media player** built as a small **plugin
 operating system for music**. Where Spotify or Apple Music bundle *discovery,
 catalogue lookup, purchase, streaming, listening history and the entire UI* into
-one closed vertical, Spacify breaks each of those into an independently
+one closed vertical, Bungalow breaks each of those into an independently
 swappable contribution that a plugin can provide, replace, or extend.
 
 The goal is an **open, Frutiger-Aero–inspired music ecosystem**: the app is the
 "OS", and the catalogues, stores, streaming back-ends, playlist providers and
 even the whole look-and-feel are "apps" that plug in.
 
+> **Naming.** *Bungalow* is the product/brand name. *Spacify* is the internal
+> **code name** — you'll still see it throughout the source (the `se.spacify.*`
+> packages, the `spacify:` navigation URIs, the `~/.spacify/` config directory,
+> the `SpacifyApp` entry point). Those are technical identifiers and are left
+> as-is; only the brand wording in these docs is "Bungalow".
+
 ```
-        Spotify / Apple Music                         Spacify
+        Spotify / Apple Music                         Bungalow
    ┌──────────────────────────────┐      ┌──────────────────────────────────┐
    │  discovery                   │      │  discovery   → MusicCatalogueService
    │  lookup / resolution         │      │  resolution  → MusicService + PlaybackCoordinator

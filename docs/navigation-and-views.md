@@ -1,6 +1,6 @@
 # Navigation & Views
 
-Every screen in Spacify is a **View** bound to a **`spacify:` URI**. Navigation
+Every screen in Bungalow is a **View** bound to a **`spacify:` URI**. Navigation
 is a single-stack router: ask to go to a URI, and the first registered view that
 accepts it is shown. This keeps screens decoupled — a plugin contributes a view
 and a URI, and anything (sidebar, header, another view, a deep link) can navigate

@@ -3,12 +3,12 @@
 > *Why build a desktop music player in the 2020s, as a plugin operating system,
 > styled after software that was cancelled twenty years ago?*
 
-Spacify is a thesis in the form of an application. It argues that the dominant
+Bungalow is a thesis in the form of an application. It argues that the dominant
 shape of music software today — one company owning discovery, the catalogue,
 browsing, your library, the stream, and the checkout, all welded into a single
 account — is not a law of nature. It is a business decision, and it has costs:
 for listeners (worse software), for independent artists (worse economics), and
-for the medium itself (worse discovery). Spacify is an existence proof that the
+for the medium itself (worse discovery). Bungalow is an existence proof that the
 *other* model — the composable, open, "platform" model the industry was actually
 heading toward in the mid-2000s — can still be built.
 
@@ -34,7 +34,7 @@ Because they're fused, you cannot keep your library and swap the streaming
 back-end. You cannot use a better discovery tool against the same catalogue. You
 cannot browse one service and buy from another. The bundle is the lock-in.
 
-Spacify **unbundles every one of these into a separate, swappable contribution**
+Bungalow **unbundles every one of these into a separate, swappable contribution**
 — a plugin or a capability *aspect* — so the same library row can be discovered
 in one place, resolved to whichever back-end can play it, and purchased from a
 third. See [Aspects & Services](aspects-and-services.md) and
@@ -60,7 +60,7 @@ tail. For an independent artist this is a race to the bottom — make *more*,
 > These figures are drawn from public reporting and industry disclosures and are
 > approximate and illustrative; exact rates are deal-specific and not published.
 
-Spacify doesn't fix royalties — software can't legislate a fairer rate. But by
+Bungalow doesn't fix royalties — software can't legislate a fairer rate. But by
 **separating "where you discover/own" from "who you pay"**, it removes the
 structural reason a listener is forced through one revenue funnel, and makes room
 for direct-support and purchase models (Bandcamp-style) to sit *beside* streaming
@@ -91,7 +91,7 @@ pays.
 > payouts has an irreducible conflict of interest.** Whoever owns the playlist
 > owns the outcome.
 
-Spacify's answer is structural: **discovery is a plugin, not the platform.** Any
+Bungalow's answer is structural: **discovery is a plugin, not the platform.** Any
 number of `MusicCatalogueService`s (MusicBrainz today; Discogs, Bandcamp, a
 community catalogue tomorrow) can be installed side by side, and the app browses
 all of them. No single curator sits between you and the catalogue.
@@ -105,7 +105,7 @@ company's account, leaving means losing all three. That's not an accident; it's
 the retention mechanism. The catalogue you "have" is a set of licences that can
 lapse; the track that played yesterday can grey out tomorrow.
 
-Spacify keeps the things that should be *yours* — your library, your playlists,
+Bungalow keeps the things that should be *yours* — your library, your playlists,
 and **your resolution choices** ("play this track from here") — in a local store
 you own, expressed in vendor-neutral terms (ISRC, title/artist, URIs). Back-ends
 are interchangeable under that. See
@@ -128,7 +128,7 @@ same arc played out across the industry: native craft traded for cross-platform
 convenience and a surface optimised for engagement metrics rather than for the
 person trying to play a song.
 
-Spacify is, deliberately, a **native Java/Swing desktop app** with a custom,
+Bungalow is, deliberately, a **native Java/Swing desktop app** with a custom,
 GPU-cheap rendering layer — fast to open, keyboard-driven, dense where density
 helps. It treats the player as a *tool*, not a storefront.
 
@@ -136,7 +136,7 @@ helps. It treats the player as a *tool*, not a storefront.
 
 ## 6. The road not taken: Longhorn, WinFS, Aero, and Windows Media Player
 
-Here's the part that makes Spacify a period piece on purpose.
+Here's the part that makes Bungalow a period piece on purpose.
 
 Around 2003–2006, Microsoft's **"Longhorn"** project sketched a different future
 for media on the desktop:
@@ -153,11 +153,11 @@ for media on the desktop:
 
 That architecture — **a media OS where catalogues and stores are plugins around a
 neutral player and a library you own** — is almost exactly the composable model
-Spacify implements. Longhorn was gutted and shipped as Vista; WinFS never
+Bungalow implements. Longhorn was gutted and shipped as Vista; WinFS never
 landed; PlaysForSure was undercut and abandoned; and the industry took the *other*
 fork — the closed streaming monolith.
 
-**Spacify is what that fork might have grown into had it survived.** Its default
+**Bungalow is what that fork might have grown into had it survived.** Its default
 look is a Windows-Media-Player-style "Chrome" (`WMP1XDesign`), its accent is
 unapologetically Frutiger Aero glass, and its plugin model is the
 "stores-and-catalogues-plug-into-the-player" idea, brought forward to a world of
@@ -166,7 +166,7 @@ proposal.
 
 ---
 
-## 7. What Spacify proposes
+## 7. What Bungalow proposes
 
 Concretely, the architecture turns each grievance above into a seam you can open:
 
