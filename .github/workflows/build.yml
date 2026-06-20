@@ -203,8 +203,13 @@ jobs:
         if: github.ref_type == 'tag'
         uses: softprops/action-gh-release@v2
         with:
-          files: dist/**
+          # merge-multiple flattens every artifact into dist/, so match dist/* .
+          files: dist/*
+          tag_name: ${{ github.ref_name }}
+          name: ${{ github.ref_name }}
           generate_release_notes: true
+          make_latest: true
+          fail_on_unmatched_files: true
 
       # main build -> refresh the rolling "nightly" prerelease so its tag and
       # assets point at the latest commit.
@@ -222,4 +227,5 @@ jobs:
           name: Nightly (latest main)
           prerelease: true
           target_commitish: ${{ github.sha }}
-          files: dist/**
+          files: dist/*
+          fail_on_unmatched_files: true
