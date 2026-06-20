@@ -7,6 +7,7 @@ import se.spacify.feature.FeatureManager;
 import se.spacify.navigation.ViewStack;
 import se.spacify.plugin.PluginManager;
 import se.spacify.plugin.media.service.MediaService;
+import se.spacify.plugin.media.views.NowPlayingView;
 import se.spacify.service.ServiceManager;
 import se.spacify.service.media.PlaybackCoordinator;
 import se.spacify.service.media.PlayQueue;
@@ -20,7 +21,6 @@ import se.spacify.ui.chrome.ChromeManager;
 import se.spacify.ui.theme.Taste;
 import se.spacify.ui.theme.Theme;
 import se.spacify.ui.theme.ThemeManager;
-import se.spacify.views.*;
 
 import javax.swing.*;
 import java.awt.*;

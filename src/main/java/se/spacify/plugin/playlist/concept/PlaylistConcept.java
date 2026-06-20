@@ -1,4 +1,4 @@
-package se.spacify.plugin.media.concept;
+package se.spacify.plugin.playlist.concept;
 
 
 import javax.swing.Icon;
@@ -9,9 +9,9 @@ import se.spacify.concept.Concept;
 import se.spacify.concept.ConceptContext;
 import se.spacify.navigation.ViewStack;
 import se.spacify.plugin.Plugin;
-import se.spacify.plugin.media.views.NowPlayingView;
+import se.spacify.plugin.playlist.views.PlaylistView;
 
-public class MediaConcept implements Concept {
+public class PlaylistConcept implements Concept {
     private Plugin plugin;
     public Plugin getPlugin() {
         return plugin;
@@ -21,13 +21,13 @@ public class MediaConcept implements Concept {
         return plugin.getViewStack();
     }
 
-    public MediaConcept(Plugin plugin) {
+    public PlaylistConcept(Plugin plugin) {
         this.plugin = plugin;
     }
  
     @Override
     public void onActivate(ConceptContext ctx) {
-        ctx.registerView(new NowPlayingView(getViewStack()));
+        ctx.registerView(new PlaylistView(getViewStack()));
     }
 
     @Override
@@ -42,13 +42,13 @@ public class MediaConcept implements Concept {
     @Override
     public String getId() {
         // TODO Auto-generated method stub
-        return "library";
+        return "playlist";
     }
 
     @Override
     public String getName() {
         // TODO Auto-generated method stub
-        return "Library";
+        return "Playlist";
     }
 
     @Override
