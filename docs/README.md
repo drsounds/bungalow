@@ -26,6 +26,9 @@ even the whole look-and-feel are "apps" that plug in.
 
 ## Read in this order
 
+0. [Introduction & background](introduction.md) — *why* this exists: the monolith
+   problem, streaming economics, gatekeeping, vendor lock-in, the UX regression,
+   and the Longhorn / Windows Media Player road not taken.
 1. [Architecture overview](architecture.md) — the layers, the boot sequence, and
    how a play request flows end to end.
 2. [The plugin system](plugin-system.md) — how plugins are discovered, activated,
