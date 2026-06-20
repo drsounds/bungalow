@@ -8,8 +8,8 @@ import se.spacify.navigation.SidebarNode;
 import se.spacify.plugin.Plugin;
 import se.spacify.plugin.PluginContext;
 import se.spacify.plugin.SidebarHandle;
-import se.spacify.views.web.SPServiceWebView;
-import se.spacify.views.web.SPWebView;
+import se.spacify.plugin.web.views.SPServiceWebView;
+import se.spacify.plugin.web.views.SPWebView;
 import se.spacify.web.BookmarkEvents;
 import se.spacify.web.BookmarkManager;
 

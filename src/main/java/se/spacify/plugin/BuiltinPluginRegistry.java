@@ -31,8 +31,8 @@ final class BuiltinPluginRegistry {
             "se.spacify.plugin.musicbrainz.MusicBrainzPlugin", cl));
         // After MusicBrainz so the catalogue Services it registers are present
         // when the Catalogs sidebar folder is built.
-        list.add(builtin("se.spacify.plugin.catalog", "Catalogs", "1.0.0",
-            "se.spacify.plugin.catalog.CatalogsPlugin", cl));
+        list.add(builtin("se.spacify.plugin.catalogue", "Catalogs", "1.0.0",
+            "se.spacify.plugin.catalogue.CataloguePlugin", cl));
         // After local music so YouTube resolves as a fallback for tracks not held locally.
         list.add(builtin("se.spacify.plugin.youtube", "YouTube", "1.0.0",
             "se.spacify.plugin.youtube.YouTubePlugin", cl));

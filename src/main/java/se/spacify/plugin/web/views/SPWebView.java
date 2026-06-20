@@ -1,4 +1,4 @@
-package se.spacify.views.web;
+package se.spacify.plugin.web.views;
 
 import org.cef.CefClient;
 import org.cef.browser.CefBrowser;

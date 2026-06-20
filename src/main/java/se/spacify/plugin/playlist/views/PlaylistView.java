@@ -1,4 +1,4 @@
-package se.spacify.views;
+package se.spacify.plugin.playlist.views;
 
 import se.spacify.navigation.View;
 import se.spacify.navigation.ViewStack;

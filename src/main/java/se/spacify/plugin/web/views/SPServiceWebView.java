@@ -1,4 +1,4 @@
-package se.spacify.views.web;
+package se.spacify.plugin.web.views;
 
 import se.spacify.navigation.ViewStack;
 import se.spacify.web.SiteUri;

@@ -1,6 +1,7 @@
-package se.spacify.views;
+package se.spacify.plugin.media.views;
 
 import se.spacify.controls.ToolBar;
+import se.spacify.views.DefaultPlayerView;
 import se.spacify.navigation.PlayerView;
 import se.spacify.navigation.View;
 import se.spacify.navigation.ViewStack;

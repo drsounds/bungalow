@@ -12,6 +12,7 @@ import se.spacify.ui.MainWindow;
 import se.spacify.ui.theme.Theme;
 import se.spacify.ui.chrome.Chrome;
 import se.spacify.concept.Concept;
+import se.spacify.concept.ConceptContext;
 import se.spacify.navigation.ViewStack;
 
 import javax.swing.Icon;
@@ -253,7 +254,7 @@ public final class PluginManager {
 
     // ── Recording context: wires contributions and can undo them ────────────────
 
-    private final class Recorder implements PluginContext {
+    private final class Recorder implements PluginContext, ConceptContext {
         private final ManagedPlugin owner;
         private final List<Service>                services = new ArrayList<>();
         private final List<Feature>                features = new ArrayList<>();
@@ -294,8 +295,11 @@ public final class PluginManager {
 		@Override
 		public void registerConcept(Concept c) {
             getMainWindow().getConceptManager().register(c);
-			// TODO Auto-generated method stub
             concepts.add(c);
+            // Activate the concept through this same recorder, so the views,
+            // services and sidebar nodes it contributes are recorded against the
+            // owning plugin and torn down with it on undo().
+            c.onActivate(this);
 		}
         @Override public void registerView(View v) {
             if (viewStack != null) viewStack.registerView(v);
@@ -323,12 +327,15 @@ public final class PluginManager {
 
         /** Replay registrations in reverse, removing every contribution. */
         void undo() {
+            // Let concepts release their own resources first (e.g. event listeners),
+            // then drop the views/services/nodes they (and the plugin) registered.
+            for (Concept c : concepts) { c.onDeactivate(); getMainWindow().getConceptManager().unregister(c); }
             for (DefaultMutableTreeNode n : nodes) if (leftLibraryMenu != null) leftLibraryMenu.removeSidebarNode(n);
             for (View v : views) if (viewStack != null) viewStack.unregisterView(v);
             for (Service s : services) getMainWindow().getServiceManager().unregister(s);
              for (Skin s : skins) getMainWindow().getSkinManager().unregister(s);
             for (Feature f : features) getMainWindow().getFeatureManager().unregister(f);
-            nodes.clear(); views.clear(); services.clear(); features.clear(); chromes.clear(); skins.clear();
+            nodes.clear(); views.clear(); services.clear(); features.clear(); chromes.clear(); skins.clear(); concepts.clear();
         }
 
         @Override

@@ -14,7 +14,7 @@ import se.spacify.ui.LeftLibraryMenu;
 import se.spacify.ui.LeftMenuPanel;
 
 import se.spacify.ui.TopBar;
-import se.spacify.views.NowPlayingView;
+import se.spacify.plugin.media.views.NowPlayingView;
 	
 public abstract class Chrome extends Panel implements Aspect {
 	
