@@ -9,6 +9,7 @@ import se.spacify.plugin.PluginManager;
 
 import se.spacify.service.ServiceManager;
 import se.spacify.service.media.MediaService;
+import se.spacify.service.media.PlaybackCoordinator;
 import se.spacify.service.media.PlayQueue;
 import se.spacify.concept.ConceptManager;
 import se.spacify.config.ConfigManager;
@@ -216,6 +217,10 @@ public class MainWindow extends JFrame {
         config.load();
 
         serviceManager.startAll();
+
+        // Wire the playback coordinator to this window so its static play/resolve
+        // entry points (used by double-click and "Play with…") can reach Services.
+        PlaybackCoordinator.init(this);
 
         // 5. Establish the active Design — this builds and installs the Chrome
         //    (footer, splits, the shared sidebar), so getChrome() is valid afterwards.

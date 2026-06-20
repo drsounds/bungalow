@@ -40,6 +40,16 @@ public final class PlaybackCoordinator {
         staticMainWindow = mainWindow;
     }
 
+    /**
+     * Wire the coordinator to the live window. Must be called once during start-up:
+     * the static play/resolve entry points reach the Services through this window,
+     * and without it {@link #resolveAndPlay} can't gather matches (so the
+     * "Play with…" resolution dialog never appears).
+     */
+    public static void init(MainWindow mainWindow) {
+        staticMainWindow = mainWindow;
+    }
+
     private static MediaService activeService;
     private static final List<Consumer<MediaService>> activeListeners = new ArrayList<>();
 
