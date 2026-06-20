@@ -19,6 +19,8 @@ public class Taste {
     }
     public void setDesign(Design design) {
         this.design = design;
+        // Notify so the config::save listener persists the chosen Design.
+        notify_();
     }
     private Skin skin;
     public Skin getSkin() {

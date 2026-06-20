@@ -18,7 +18,7 @@ import se.spacify.ui.AppFooter;
 import se.spacify.ui.chrome.Chrome;
 
 import se.spacify.ui.LeftLibraryMenu;
-
+import se.spacify.ui.LeftMenuPanel;
 import se.spacify.ui.NowPlayingPanel;
 
 public class SpotChrome extends Chrome {
@@ -36,7 +36,13 @@ public class SpotChrome extends Chrome {
         @Override
         public void build() {
                 super.build();
-                setLayout(new BoxLayout(this, BoxLayout.LINE_AXIS));
+                setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
+                
+                appHeader = new SpotAppHeader(viewStack);
+                appHeader.setMaximumSize(new Dimension(Short.MAX_VALUE, 28));
+                appHeader.setMinimumSize(new Dimension(0, 28));
+                add(appHeader);
+                leftMenuPanel = new LeftMenuPanel();
                 leftMenuPanel.setMinimumSize(new Dimension(100, 0));
                 leftMenuPanel.setMaximumSize(new Dimension(100, Short.MAX_VALUE));
                 leftMenuPanel.setPreferredSize(new Dimension(100, Short.MAX_VALUE));
@@ -49,10 +55,6 @@ public class SpotChrome extends Chrome {
                 appPanel.setOpaque(false);
                 leftMenuPanel.setLayout(new BoxLayout(leftMenuPanel, BoxLayout.PAGE_AXIS));
                 appPanel.setLayout(new BoxLayout(appPanel, BoxLayout.PAGE_AXIS));
-
-                appHeader = new SpotAppHeader(viewStack);
-                appHeader.setMaximumSize(new Dimension(Short.MAX_VALUE, 28));
-                appHeader.setMinimumSize(new Dimension(0, 28));
 
                 // Reuse the shared sidebar (owned by MainWindow, populated by plugins) if set.
                 if (leftLibraryMenu == null) leftLibraryMenu = new LeftLibraryMenu(viewStack);

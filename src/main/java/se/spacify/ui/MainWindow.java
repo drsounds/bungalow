@@ -278,6 +278,8 @@ public class MainWindow extends JFrame {
      * window still opens, just without the themed layout).
      */
     private Design pickInitialDesign() {
+        Design saved = getTaste().getDesign();      // restored by ConfigManager.load()
+        if (saved != null) return saved;
         Design d = designManager.get("wmp1x");      // default look and feel
         if (d == null) d = designManager.get("spot");
         if (d != null) return d;

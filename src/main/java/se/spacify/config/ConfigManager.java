@@ -42,7 +42,14 @@ public class ConfigManager {
              Theme theme = mainWindow.getThemeManager().get(themeId);
              if (theme != null) {
                  taste.setTheme(theme);
-             } 
+             }
+            // Restore the saved Design (Chrome + Skin premix); MainWindow installs
+            // it after plugins register, via pickInitialDesign().
+            String designId = p.getProperty("design.id", "");
+            if (!designId.isBlank()) {
+                se.spacify.design.Design design = mainWindow.getDesignManager().get(designId);
+                if (design != null) taste.setDesign(design);
+            }
             taste.setHue(        Float.parseFloat(p.getProperty("taste.hue",        "0.0")));
             taste.setSaturation( Float.parseFloat(p.getProperty("taste.saturation", "0.0")));
             taste.setLightness(  Float.parseFloat(p.getProperty("taste.lightness",  "0.5")));
@@ -74,6 +81,9 @@ public class ConfigManager {
         p.setProperty("theme.highContrast",         String.valueOf(getTaste().isHighContrast()));
         p.setProperty("theme.highContrastInverted", String.valueOf(getTaste().isHighContrastInverted()));
         p.setProperty("theme.tintText",             String.valueOf(getTaste().isTintText()));
+        if (getTaste().getDesign() != null) {
+            p.setProperty("design.id", getTaste().getDesign().getId());
+        }
         try {
             Files.createDirectories(CONFIG_FILE.getParent());
             try (OutputStream out = Files.newOutputStream(CONFIG_FILE)) {

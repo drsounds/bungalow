@@ -4,7 +4,7 @@ import se.spacify.aspect.Aspect;
 import se.spacify.aspect.AspectManager;
 import se.spacify.design.Design;
 import se.spacify.plugin.wmp.chrome.WMP1XChrome;
-import se.spacify.plugin.wmp.skin.WMP9Skin;
+import se.spacify.plugin.wmp.skin.WMP10Skin;
 import se.spacify.skinning.Skin;
 import se.spacify.ui.chrome.Chrome;
 
@@ -14,7 +14,7 @@ public class WMP1XDesign implements Design {
 
     public WMP1XDesign() {
         chrome = new WMP1XChrome();
-        skin = new WMP9Skin();
+        skin = new WMP10Skin();
     }
 
     @Override
