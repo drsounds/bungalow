@@ -2,13 +2,16 @@ package se.spacify.aspect;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import se.spacify.ui.MainWindow;
 
 public abstract class BaseAspectManager<T extends Aspect> implements AspectManager<T> {
     protected MainWindow mainWindow;
-    private Map<String, T> nodes = Collections.emptyMap();
+    // Mutable, insertion-ordered: register() puts into this map. An immutable
+    // emptyMap() here would make every registration throw.
+    private Map<String, T> nodes = new LinkedHashMap<>();
     public MainWindow getMainWindow() {
         return mainWindow;
     }

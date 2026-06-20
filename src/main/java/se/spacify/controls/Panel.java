@@ -84,6 +84,10 @@ public class Panel extends JPanel implements Control {
 	}
 
 	public MainWindow getMainWindow() {
-		return ((MainWindow)(SwingUtilities.getWindowAncestor(this)));
+		// While a panel is still being constructed it has no window ancestor yet,
+		// so fall back to the live MainWindow so theme/skin/taste stay resolvable.
+		java.awt.Window w = SwingUtilities.getWindowAncestor(this);
+		if (w instanceof MainWindow) return (MainWindow) w;
+		return MainWindow.getInstance();
 	}
 }

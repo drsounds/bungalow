@@ -28,6 +28,10 @@ import java.awt.*;
 public class MainWindow extends JFrame {
     private static final long serialVersionUID = 2144395787232553079L;
 
+    /** The live window, so panels can resolve theme/skin/taste before they are attached. */
+    private static MainWindow instance;
+    public static MainWindow getInstance() { return instance; }
+
     private Taste taste;
     
     private LeftLibraryMenu leftLibraryMenu;
@@ -39,10 +43,10 @@ public class MainWindow extends JFrame {
 
     private SPViewStack viewStack;
     public SPViewStack getViewStack() { return viewStack; }
-    private AppFooter appFooter;
-    public AppFooter getAppFooter() { return appFooter; }
     private NowPlayingView nowPlayingView;
     public NowPlayingView getNowPlayingView() { return nowPlayingView; }
+    /** The footer is built and owned by the active Chrome. */
+    public AppFooter getAppFooter() { return getChrome() != null ? getChrome().getAppFooter() : null; }
     public LeftLibraryMenu getLeftLibraryMenu() { return leftLibraryMenu; }
     public void setViewStack(SPViewStack viewStack) {
         this.viewStack = viewStack;
@@ -116,16 +120,25 @@ public class MainWindow extends JFrame {
         return getTaste().getDesign();
     }
     public void setDesign(Design design) {
+        if (design == null) return;
         getTaste().setDesign(design);
         setSkin(design.getSkin());
-        setChrome(design.getChrome());
-        design.getChrome().setViewStack(viewStack);
-        design.getChrome().setLeftLibraryMenu(leftLibraryMenu);
+
+        Chrome next = design.getChrome();
+        next.setViewStack(viewStack);
+        // Hand the Chrome the shared sidebar so the plugin-contributed nodes show.
+        next.setLeftLibraryMenu(leftLibraryMenu);
+        installChrome(next);
     }
-     
-    private void setChrome(Chrome value) {
-        // TODO Auto-generated method stub
-        chrome = value;
+
+    /** Build the Chrome's UI tree and swap it into the window's CENTER. */
+    private void installChrome(Chrome next) {
+        if (chrome != null) remove(chrome);
+        chrome = next;
+        chrome.build();
+        add(chrome, BorderLayout.CENTER);
+        revalidate();
+        repaint();
     }
     public Skin getSkin() {
         return getTaste().getSkin();
@@ -171,25 +184,44 @@ public class MainWindow extends JFrame {
     }
     public MainWindow() {
         super("Spacify");
-        // Discover and activate plugins (built-in bundle, <app>/plugins, ~/Bungalow).
-        // The Local Music plugin registers the media Service, so wire it afterwards.
+        // Expose this window before anything else so panels constructed during
+        // start-up (and not yet attached) can still resolve theme/skin/taste.
+        instance = this;
+
+        // 1. Core services that plugins register *into* must exist BEFORE any plugin
+        //    activates — otherwise a plugin's onActivate would register into nulls,
+        //    which is the start-up cycle (plugin → ServiceManager/SkinManager/…).
         viewStack = new SPViewStack();
-        
+        taste = new Taste();
+        themeManager   = new ThemeManager(this);
+        serviceManager = new ServiceManager(this);
+        conceptManager = new ConceptManager(this);
+        chromeManager  = new ChromeManager(this);
+        designManager  = new DesignManager(this);
+        featureManager = new FeatureManager(this);
+        skinManager    = new SkinManager(this);
+
+        // 2. The sidebar is owned here (not by the Chrome) and created before plugins
+        //    so plugin-contributed nodes land in the menu the Chrome later embeds.
+        leftLibraryMenu = new LeftLibraryMenu(viewStack);
+
+        // 3. Now activate plugins: they register Services, Designs, Chromes, Skins,
+        //    Themes and sidebar nodes into the managers created above.
         pluginManager = new PluginManager(this);
         pluginManager.init(getViewStack(), getLeftLibraryMenu());
         pluginManager.start();
-        themeManager = new ThemeManager(this);
+
+        // 4. Apply persisted taste (theme/accent), now that themes are registered.
         config = new ConfigManager(this);
         config.load();
-        serviceManager = new ServiceManager(this);
-        conceptManager = new ConceptManager(this);
+
         serviceManager.startAll();
-        chromeManager = new ChromeManager(this);
-        designManager = new DesignManager(this);
-        featureManager = new FeatureManager(this);
-        skinManager = new SkinManager(this);
-        leftLibraryMenu = new LeftLibraryMenu(viewStack);
+
+        // 5. Establish the active Design — this builds and installs the Chrome
+        //    (footer, splits, the shared sidebar), so getChrome() is valid afterwards.
         nowPlayingView = new NowPlayingView(viewStack);
+        setDesign(pickInitialDesign());
+
         setUndecorated(true);  // remove native title bar + border on all platforms
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(1100, 700);
@@ -219,14 +251,28 @@ public class MainWindow extends JFrame {
             wireMediaService(ms);
         }
 
-        applySidebar(false);
+        if (getChrome() != null) applySidebar(false);
         // Glass-pane resize handler — intercepts edge events, redispatches others
         WindowResizer.install(this);
-        
+
         // Store pages browse full-width with the side panels collapsed.
-        getChrome().getViewStack().addNavigationListener((uri, b, f) ->
-            applyImmersive(uri != null && uri.startsWith("spacify:store:")));
+        if (getChrome() != null) {
+            getChrome().getViewStack().addNavigationListener((uri, b, f) ->
+                applyImmersive(uri != null && uri.startsWith("spacify:store:")));
+        }
         navigate("spacify:now-playing");
+    }
+
+    /**
+     * Pick the Design to start with: the persisted/"spot" default if registered,
+     * else the first Design any plugin contributed, else null (no Chrome — the
+     * window still opens, just without the themed layout).
+     */
+    private Design pickInitialDesign() {
+        Design d = designManager.get("spot");
+        if (d != null) return d;
+        var all = designManager.all();
+        return all.isEmpty() ? null : all.iterator().next();
     }
 
     /** Toggle the left leftLibraryMenu; remembers the user's preference. */
@@ -284,8 +330,8 @@ public class MainWindow extends JFrame {
 
     /** Connects a MediaService to AppFooter and NowPlayingView. */
     public void wireMediaService(MediaService ms) {
-        getAppFooter().setMediaService(ms);
-        getNowPlayingView().setMediaService(ms);
+        if (getAppFooter() != null) getAppFooter().setMediaService(ms);
+        if (getNowPlayingView() != null) getNowPlayingView().setMediaService(ms);
         // Auto-advance the play queue when a track reaches its natural end.
         ms.addPlaybackListener(new MediaService.PlaybackListener() {
             @Override public void onCompleted() {

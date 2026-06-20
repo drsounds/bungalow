@@ -166,6 +166,9 @@ public final class PluginManager {
         try {
             Class<?> c = Class.forName(d.getMainClass(), true, d.getClassLoader());
             Plugin p = (Plugin) c.getDeclaredConstructor().newInstance();
+            // Inject the manager so the plugin can reach the live app (MainWindow,
+            // ServiceManager, …) from onActivate and beyond.
+            p.manager = this;
             return new ManagedPlugin(d, p);
         } catch (Throwable e) {
             System.err.println("Failed to load plugin " + d.getId() + ": " + e);

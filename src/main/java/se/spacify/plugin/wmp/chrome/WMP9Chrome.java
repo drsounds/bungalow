@@ -56,7 +56,8 @@ public class WMP9Chrome extends Chrome {
                 appHeader.setMaximumSize(new Dimension(Short.MAX_VALUE, 28));
                 appHeader.setMinimumSize(new Dimension(0, 28));
 
-                leftLibraryMenu = new LeftLibraryMenu(viewStack);
+                // Reuse the shared sidebar (owned by MainWindow, populated by plugins) if set.
+                if (leftLibraryMenu == null) leftLibraryMenu = new LeftLibraryMenu(viewStack);
 
                 centerPanel = new Panel(new BorderLayout());
                 centerPanel.add(viewStack);
