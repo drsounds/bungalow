@@ -1,5 +1,6 @@
 package se.spacify.ui;
 
+import se.spacify.design.Design;
 import se.spacify.skinning.Skin;
 import se.spacify.controls.Panel;
 
@@ -40,6 +41,39 @@ public class SettingsPanel extends Panel {
         addRow(tintSection, c, 0, "Hue",        hueSlider);
         addRow(tintSection, c, 1, "Saturation", satSlider);
         addRow(tintSection, c, 2, "Lightness",  lightSlider);
+
+        // ── Design selector ───────────────────────────────────────────────────
+        // A Design is a premix of Chrome + Skin contributed by an installed plugin
+        // (WMP, Spot, …); selecting one rebuilds the window in that look and feel.
+        JPanel designSection = new JPanel() {
+            @Override public void updateUI() { super.updateUI(); setOpaque(false); }
+        };
+        designSection.setLayout(new BoxLayout(designSection, BoxLayout.Y_AXIS));
+        designSection.setOpaque(false);
+        designSection.setBorder(titledBorder("Design"));
+
+        Design[] designs = getMainWindow().getDesignManager().all().toArray(new Design[0]);
+        JComboBox<Design> designCombo = new JComboBox<>(designs);
+        designCombo.setMaximumSize(new Dimension(200, 24));
+        designCombo.setAlignmentX(Component.LEFT_ALIGNMENT);
+        designCombo.setRenderer(new DefaultListCellRenderer() {
+            @Override public Component getListCellRendererComponent(JList<?> list, Object value,
+                    int index, boolean sel, boolean focus) {
+                super.getListCellRendererComponent(list, value, index, sel, focus);
+                if (value instanceof Design d) setText(d.getName());
+                return this;
+            }
+        });
+        // Select the active Design first, then attach the listener so wiring up the
+        // combo doesn't trigger a (recursive) rebuild during start-up.
+        designCombo.setSelectedItem(getMainWindow().getTaste().getDesign());
+        designCombo.addActionListener(e -> {
+            Design sel = (Design) designCombo.getSelectedItem();
+            if (sel != null) getMainWindow().setDesign(sel);
+        });
+        designSection.add(Box.createVerticalGlue());
+        designSection.add(designCombo);
+        designSection.add(Box.createVerticalGlue());
 
         // ── Skin selector ─────────────────────────────────────────────────────
         JPanel skinSection = new JPanel() {
@@ -153,6 +187,8 @@ public class SettingsPanel extends Panel {
         };
         right.setLayout(new BoxLayout(right, BoxLayout.X_AXIS));
         right.setOpaque(false);
+        right.add(designSection);
+        right.add(Box.createHorizontalStrut(8));
         right.add(skinSection);
         right.add(Box.createHorizontalStrut(8));
         right.add(optionsSection);

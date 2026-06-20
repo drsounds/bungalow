@@ -15,6 +15,12 @@ final class BuiltinPluginRegistry {
     static List<PluginDescriptor> descriptors() {
         ClassLoader cl = BuiltinPluginRegistry.class.getClassLoader();
         List<PluginDescriptor> list = new ArrayList<>();
+        // Look-and-feel plugins: each contributes Designs (Chrome + Skin premixes)
+        // selectable in Settings. Both enabled by default; WMP is the default Design.
+        list.add(builtin("se.spacify.plugin.wmp", "Windows Media Player", "1.0.0",
+            "se.spacify.plugin.wmp.WMPPlugin", cl));
+        list.add(builtin("se.spacify.plugin.spot", "Spot", "1.0.0",
+            "se.spacify.plugin.spot.SpotPlugin", cl));
         list.add(builtin("se.spacify.plugin.localmusic", "Local Music", "1.0.0",
             "se.spacify.plugin.localmusic.LocalMusicPlugin", cl));
         list.add(builtin("se.spacify.plugin.library", "Music Library", "1.0.0",

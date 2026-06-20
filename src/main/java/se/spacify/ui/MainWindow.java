@@ -269,7 +269,8 @@ public class MainWindow extends JFrame {
      * window still opens, just without the themed layout).
      */
     private Design pickInitialDesign() {
-        Design d = designManager.get("spot");
+        Design d = designManager.get("wmp1x");      // default look and feel
+        if (d == null) d = designManager.get("spot");
         if (d != null) return d;
         var all = designManager.all();
         return all.isEmpty() ? null : all.iterator().next();
