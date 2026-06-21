@@ -41,6 +41,9 @@ public class SpacifyApp {
         } catch (Exception e) {
             // fall back to default L&F
         }
+        // Seed colours + the app-wide 11px Tahoma font into UIDefaults before any
+        // component is built, so trees/tables/labels pick it up from the start.
+        se.spacify.ui.theme.ThemeManager.applyToDefaults();
 
 
         // ── Database ──────────────────────────────────────────────────────────

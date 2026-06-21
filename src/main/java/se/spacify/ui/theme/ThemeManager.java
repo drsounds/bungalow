@@ -164,6 +164,37 @@ public class ThemeManager extends BaseAspectManager<Theme> {
         put(d, "EditorPane.foreground",      currentFg);
         put(d, "TextArea.background",        currentBg);
         put(d, "TextArea.foreground",        currentFg);
+
+        applyUiFont(d);
+    }
+
+    /** The app-wide UI font: Tahoma 11 where available, else a sans-serif fallback. */
+    private static Font uiFont;
+    public static Font getUiFont() {
+        if (uiFont == null) {
+            boolean hasTahoma = false;
+            for (String fam : GraphicsEnvironment.getLocalGraphicsEnvironment().getAvailableFontFamilyNames()) {
+                if (fam.equalsIgnoreCase("Tahoma")) { hasTahoma = true; break; }
+            }
+            uiFont = new Font(hasTahoma ? "Tahoma" : Font.SANS_SERIF, Font.PLAIN, 11);
+        }
+        return uiFont;
+    }
+
+    /**
+     * Force every component's font to {@link #getUiFont()} (11px Tahoma). Sets
+     * Nimbus's {@code defaultFont} and every {@code *.font} default — so trees,
+     * tables, their headers, lists and everything else share one font. Re-run on
+     * each {@link #applyToDefaults()} because reinstalling Nimbus resets fonts.
+     */
+    private static void applyUiFont(UIDefaults d) {
+        javax.swing.plaf.FontUIResource f = new javax.swing.plaf.FontUIResource(getUiFont());
+        put(d, "defaultFont", f);                 // Nimbus applies this everywhere
+        for (Object key : new ArrayList<>(d.keySet())) {
+            if (key instanceof String s && s.endsWith(".font")) {
+                put(d, s, f);                     // explicit per-component fonts (Table.font, Tree.font, …)
+            }
+        }
     }
 
     /** Scale a colour's RGB channels by {@code factor} (1.0 = unchanged), preserving alpha. */

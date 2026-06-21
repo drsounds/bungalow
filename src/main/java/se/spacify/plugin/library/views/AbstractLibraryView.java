@@ -67,7 +67,7 @@ public abstract class AbstractLibraryView extends View {
 
 	protected AbstractLibraryView(ViewStack viewStack) {
 		super(viewStack);
-		setLayout(new BorderLayout(0, 8));
+		setLayout(new BorderLayout(0, 0));
 		setOpaque(false);
 
 		headerLabel = new JLabel();
@@ -197,10 +197,11 @@ public abstract class AbstractLibraryView extends View {
 			toolbar.add(accessory);
 		}
 
-		JPanel north = new JPanel(new BorderLayout());
+		JPanel north = new JPanel();
+		north.setLayout(new BoxLayout(north, BoxLayout.PAGE_AXIS));  
 		north.setOpaque(false);
 		north.add(toolbar, BorderLayout.CENTER);
-		add(headerLabel, BorderLayout.NORTH);
+		//add(headerLabel, BorderLayout.NORTH);
 
 		add(north, BorderLayout.NORTH);
 		add(scroll, BorderLayout.CENTER);

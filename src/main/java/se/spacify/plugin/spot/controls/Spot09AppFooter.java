@@ -33,8 +33,9 @@ public class Spot09AppFooter extends AppFooter {
         buttons.add(nextBtn);
         add(buttons);
 
-        progressPanel = new Panel(new BorderLayout()); 
-        progress = new Slider(0,  10, 0);
+        progressPanel = new Panel(new BorderLayout());
+        progressPanel.setOpaque(false); 
+        progress = new Slider(0,  5, 0);
         add(progressPanel);
         progressPanel.add(progress);
         progress.setOpaque(false); 

@@ -12,7 +12,8 @@ public abstract class TabBarView extends View {
     public TabBarView(ViewStack viewStack) {
         super(viewStack);        
         this.tabbedPane = new TabbedPane();
-
+        add(this.tabbedPane);
+        
     }
 
   
