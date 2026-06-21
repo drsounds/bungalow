@@ -13,12 +13,16 @@ Types: [`View`](../src/main/java/se/spacify/navigation/View.java),
 
 ## The `View` contract
 
+A View **is** a [`Panel`](../src/main/java/se/spacify/controls/Panel.java) (a Swing
+component), so the stack mounts and shows/hides the View itself — no manual
+component swapping:
+
 ```java
-public abstract class View {
-    public View(ViewStack viewStack) { … }
+public abstract class View extends Panel {
+    public View(ViewStack viewStack) { … }           // sets a BorderLayout
     public abstract boolean acceptsUri(String uri);   // "is this URI mine?"
     public abstract void    navigate(String uri);     // "render this URI"
-    public abstract JComponent getComponent();        // the Swing component shown
+    public JComponent getComponent() { return this; } // the View itself by default
     public String getTitle() { return ""; }
     public void onShow() {}  public void onHide() {}
 
@@ -28,22 +32,32 @@ public abstract class View {
 }
 ```
 
+Render directly into `this`. Legacy views that build an internal panel may still
+override `getComponent()` to return it — the ViewStack wraps that panel inside the
+View on first show (`View.mount()`), so the View is always the thing mounted.
+
 `acceptsUri` is typically a regex or prefix test, so one view can serve a family
 of URIs (e.g. `ReleaseDetailView` accepts `spacify:library:release:<id>`).
 
 ## The `ViewStack` router
 
 [`ViewStack`](../src/main/java/se/spacify/navigation/ViewStack.java) is a `Panel`
-that holds the registered views and the current one, plus back/forward history.
+using a **`CardLayout`**: each view is mounted once as a card, and the layout
+shows exactly one and hides the rest — so show/hide is automatic. It also keeps
+the current view, the registered views, and back/forward history.
 
 `navigate(uri)`:
 
 1. Find the first registered view with `acceptsUri(uri) == true` (no match → no-op).
 2. If it's the **same** view (different URI) → retarget it in place via
-   `view.navigate(uri)` (important for heavyweight views like the JCEF browser —
-   no component swap).
-3. Otherwise hide the old view, swap in `view.getComponent()`, call
-   `navigate` + `onShow`, push history, and notify `NavigationListener`s.
+   `view.navigate(uri)` (no card switch).
+3. Otherwise `onHide()` the old view, mount the matched view as a card if needed,
+   `navigate` + `onShow()` it, `CardLayout.show` it (which hides the previous),
+   push history, and notify `NavigationListener`s.
+
+Because every view stays mounted as its own card, heavyweight views (the JCEF
+browser, the now-playing view) keep their state across navigation instead of
+being rebuilt.
 
 Back/forward first defer to a view that `handlesHistory()` (the browser consumes
 its own back), then fall back to the URI history stacks. `NavigationListener`s

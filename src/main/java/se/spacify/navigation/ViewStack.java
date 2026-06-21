@@ -3,14 +3,16 @@ package se.spacify.navigation;
 import se.spacify.ui.MainWindow;
 import se.spacify.controls.Panel;
 
-import java.awt.BorderLayout;
+import java.awt.CardLayout;
 import java.awt.Component;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Deque;
+import java.util.IdentityHashMap;
 import java.util.List;
+import java.util.Map;
 
 public class ViewStack extends Panel {
 
@@ -20,9 +22,15 @@ public class ViewStack extends Panel {
     private final Deque<String> forwardStack = new ArrayDeque<>();
     private final List<NavigationListener> listeners = new ArrayList<>();
 
+    // Every view is mounted once as a card; CardLayout shows exactly one and
+    // hides the rest, so view show/hide is handled here automatically.
+    private final CardLayout cards = new CardLayout();
+    private final Map<View, String> cardKeys = new IdentityHashMap<>();
+    private int cardSeq = 0;
+
     private String currentUri = null;
     private View currentView = null;
-    
+
     public MainWindow getMainWindow() {
     	Component parent = getParent();
     	while (parent != null && parent != this) {
@@ -35,11 +43,20 @@ public class ViewStack extends Panel {
     }
 
     public ViewStack() {
-        setLayout(new BorderLayout());
+        setLayout(cards);
     }
 
     public void registerView(View view) {
         registeredViews.add(view);
+    }
+
+    /** Mount a view as a card the first time it is shown. */
+    private void ensureCard(View view) {
+        if (cardKeys.containsKey(view)) return;
+        view.mount();
+        String key = "view-" + (cardSeq++);
+        cardKeys.put(view, key);
+        add(view, key);
     }
 
     /**
@@ -49,9 +66,10 @@ public class ViewStack extends Panel {
      */
     public void unregisterView(View view) {
         registeredViews.remove(view);
+        String key = cardKeys.remove(view);
+        if (key != null) remove(view);
         if (view == currentView) {
             currentView.onHide();
-            remove(currentView.getComponent());
             currentView = null;
             currentUri = null;
             revalidate();
@@ -93,15 +111,16 @@ public class ViewStack extends Panel {
 
         if (currentView != null) {
             currentView.onHide();
-            remove(currentView.getComponent());
         }
 
         currentUri = uri;
         currentView = matched;
+        ensureCard(currentView);
         currentView.navigate(uri);
         currentView.onShow();
 
-        add(currentView.getComponent(), BorderLayout.CENTER);
+        // CardLayout reveals this view and hides whichever was showing.
+        cards.show(this, cardKeys.get(currentView));
         revalidate();
         repaint();
 
