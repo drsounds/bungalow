@@ -5,11 +5,14 @@ import se.spacify.controls.GlossyButton;
 import se.spacify.navigation.NavigationListener;
 import se.spacify.navigation.ViewStack;
 
+import se.spacify.controls.Panel;
+import se.spacify.controls.Button;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 
-public class AppHeader extends JPanel implements NavigationListener {
+public class AppHeader extends Panel implements NavigationListener {
 
 	protected static final Color CHROME_DARK = new Color(14, 14, 14);
 	protected static final Color HIGHLIGHT = new Color(255, 255, 255, 35);
@@ -17,6 +20,7 @@ public class AppHeader extends JPanel implements NavigationListener {
 	protected ViewStack viewStack;
 	protected GlossyButton backBtn;
 	protected GlossyButton forwardBtn;
+	protected Button sidebarToggle;
 	/** Cached store favicons, fetched off the EDT. */
 
 	public void build() {
@@ -25,7 +29,7 @@ public class AppHeader extends JPanel implements NavigationListener {
 		setPreferredSize(new Dimension(0, 56));
 		setOpaque(true);
 
-		JButton sidebarToggle = makeNavButton("☰");
+		sidebarToggle = makeNavButton("☰");
 		sidebarToggle.setToolTipText("Show/hide the sidebar");
 		sidebarToggle.addActionListener(e -> {
 			if (viewStack.getMainWindow() != null)

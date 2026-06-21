@@ -28,7 +28,7 @@ public class ThemedTableCellRenderer extends DefaultTableCellRenderer {
             setForeground(taste.getAccentForegroundColor());
         } else {
             setBackground(row % 2 == 0
-                ? skin.getColorValue(this, "table.alternateBackground", new Color(0, 0, 0, 11))
+                ? skin.getColorValue(table, "table.alternateBackground", new Color(0, 0, 0, 11))
                 : table.getBackground());
             setForeground(table.getForeground());
         }

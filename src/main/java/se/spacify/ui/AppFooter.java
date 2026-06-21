@@ -6,15 +6,15 @@ import se.spacify.service.media.PlaybackCoordinator;
 import se.spacify.service.media.PlayQueue;
 import se.spacify.ui.theme.ThemeManager;
 
+import se.spacify.controls.Panel;
 import se.spacify.controls.Slider;
 import se.spacify.plugin.media.service.MediaService;
 import se.spacify.plugin.media.service.MediaService.PlaybackState;
-import se.spacify.controls.Panel;
 
 import javax.swing.*;
 import java.awt.*;
 
-public class AppFooter extends JPanel {
+public class AppFooter extends Panel {
 
     private static Color HIGHLIGHT = new Color(255, 255, 255, 35);
 

@@ -7,6 +7,7 @@ import java.awt.Point;
 import javax.swing.JPanel;
 import javax.swing.JTable;
 
+import se.spacify.controls.Panel;
 import se.spacify.controls.SplitPane.SplitPaneDivider;
 import se.spacify.controls.Table;
 import se.spacify.controls.TextField;
@@ -14,7 +15,8 @@ import se.spacify.controls.ToolBar;
 import se.spacify.controls.Tree;
 
 import se.spacify.navigation.ViewStack;
-
+import se.spacify.plugin.spot.controls.Spot09AppFooter;
+import se.spacify.plugin.spot.controls.Spot09AppHeader;
 import se.spacify.ui.LeftLibraryMenu;
 import se.spacify.ui.LeftMenuPanel;
 import se.spacify.ui.theme.ColorUtils;
@@ -31,8 +33,13 @@ public class Spot09Skin extends SpotSkin {
     @Override
     public void paintHeader(JPanel header, Graphics2D g2) {
         // TODO Auto-generated method stub
+        Spot09AppHeader panel = (Spot09AppHeader)header;
         int w = header.getWidth(), h = header.getHeight();
-        g2.setPaint(new LinearGradientPaint(new Point(0, 0), new Point(0, h), new float[] {0, 1}, new Color[] { ColorUtils.darken(header.getBackground(), 3.3f), ColorUtils.darken(header.getBackground(), 2.1f) }));
+        if (panel.getTaste().isDarkMode()) {
+            g2.setPaint(new LinearGradientPaint(new Point(0, 0), new Point(0, h), new float[] {0, 1}, new Color[] { ColorUtils.darken(header.getBackground(), 3.3f), ColorUtils.darken(header.getBackground(), 2.1f) }));
+        } else {
+            g2.setPaint(new LinearGradientPaint(new Point(0, 0), new Point(0, h), new float[] {0, 1}, new Color[] { ColorUtils.darken(header.getBackground(), 0.8f), ColorUtils.darken(header.getBackground(), 0.5f) }));
+        }
         g2.fillRect(0, 0, w, h);
         g2.setColor(ColorUtils.darken(header.getBackground(), 1.1f));
         g2.drawLine(0, h - 1, w, h - 1);
@@ -74,8 +81,14 @@ public class Spot09Skin extends SpotSkin {
     @Override
     public void paintFooter(JPanel footer, Graphics2D g2) {
         // TODO Auto-generated method stub
+         Spot09AppFooter panel = (Spot09AppFooter)footer;
         int w = footer.getWidth(), h = footer.getHeight();
-        g2.setPaint(new LinearGradientPaint(new Point(0, 0), new Point(0, h), new float[] {0, 1}, new Color[] { ColorUtils.darken(footer.getBackground(), 1.9f), ColorUtils.darken(footer.getBackground(), 1.1f) }));
+        if (panel.getTaste().isDarkMode()) {
+       
+            g2.setPaint(new LinearGradientPaint(new Point(0, 0), new Point(0, h), new float[] {0, 1}, new Color[] { ColorUtils.darken(footer.getBackground(), 1.9f), ColorUtils.darken(footer.getBackground(), 1.1f) }));
+        } else {
+            g2.setPaint(new LinearGradientPaint(new Point(0, 0), new Point(0, h), new float[] {0, 1}, new Color[] { ColorUtils.darken(footer.getBackground(), 0.8f), ColorUtils.darken(footer.getBackground(), 0.5f) }));
+        }
         g2.fillRect(0, 0, w, h);
         g2.setColor(ColorUtils.darken(footer.getBackground(), 1.1f));
         g2.drawLine(0, 0, w, 0);

@@ -5,8 +5,8 @@ import java.awt.Paint;
 
 import javax.swing.JComponent;
 
+import se.spacify.controls.Table;
 import se.spacify.skinning.Skin;
-import se.spacify.ui.theme.ColorUtils;
 
 public class SpotSkin extends Skin {
 
@@ -17,10 +17,18 @@ public class SpotSkin extends Skin {
     }
 
     @Override
-    public Color getColorValue(JComponent control, String key, Color defaultValue) {
+    public Color getColorValue(JComponent comp, String key, Color defaultValue) {
         if (key.equals( "table.alternateBackground")) {
             System.out.println("table.alternateBackground");
-            return new Color(0, 0, 0, 61);
+            if (comp instanceof Table) {
+                Table table = (Table)comp;
+                if (table.getTaste().isDarkMode()) {                
+                    return new Color(0, 0, 0, 61);
+                } else {
+                    return new Color(0, 0, 0,  11);
+
+                }
+            }
         }
         return defaultValue;
     }

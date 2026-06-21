@@ -10,10 +10,16 @@ import java.nio.charset.StandardCharsets;
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 
+import se.spacify.controls.Control;
 import se.spacify.controls.Panel;
 import se.spacify.controls.TextField;
+import se.spacify.design.Design;
 import se.spacify.navigation.ViewStack;
+import se.spacify.skinning.Skin;
 import se.spacify.ui.AppHeader;
+import se.spacify.ui.MainWindow;
+import se.spacify.ui.theme.Taste;
+import se.spacify.ui.theme.Theme;
 
 public class Spot09AppHeader extends AppHeader {
     protected TextField uriField;
