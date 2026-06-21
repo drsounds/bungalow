@@ -84,7 +84,6 @@ public abstract class AbstractLibraryView extends View {
 		};
 		table = new Table(model);
 		table.setFillsViewportHeight(true);
-		table.setRowHeight(28);
 		table.setShowGrid(false);
 		table.setIntercellSpacing(new Dimension(0, 0));
 		table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);

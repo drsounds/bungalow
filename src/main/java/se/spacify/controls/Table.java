@@ -19,14 +19,20 @@ public class Table extends JTable implements Control {
 	public MainWindow getMainWindow() {
 		return ((MainWindow)(SwingUtilities.getWindowAncestor(this)));
 	}
+	/** Row height in pixels, matching the Windows ListView default. */
+	public static final int ROW_HEIGHT = 24;
+
 	public Table() {
+		setRowHeight(ROW_HEIGHT);
 		this.getTableHeader().setDefaultRenderer(new TableHeaderRenderer(this));
 	}
 	public Table(Object[][] data, String[] columns) {
 		super(data, columns);
+		setRowHeight(ROW_HEIGHT);
 	}
 	public Table(TableModel model) {
 		super(model);
+		setRowHeight(ROW_HEIGHT);
 		this.getTableHeader().setDefaultRenderer(new TableHeaderRenderer(this));
 	}
 

@@ -63,7 +63,6 @@ public class PluginManagerView extends View {
             @Override public Class<?> getColumnClass(int c) { return c == 0 ? Boolean.class : String.class; }
         };
         table = new Table(model);
-        table.setRowHeight(26);
         table.setShowGrid(false);
         table.getColumnModel().getColumn(0).setMaxWidth(32);
         table.getSelectionModel().addListSelectionListener(e -> { if (!e.getValueIsAdjusting()) showSelected(); });

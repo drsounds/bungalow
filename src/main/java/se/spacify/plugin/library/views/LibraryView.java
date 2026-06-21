@@ -27,7 +27,6 @@ public class LibraryView extends View {
 
         table = new Table(data, columns);
         table.setFillsViewportHeight(true);
-        table.setRowHeight(28);
         table.setOpaque(true);
         table.setShowGrid(false);
         table.setIntercellSpacing(new Dimension(0, 0));

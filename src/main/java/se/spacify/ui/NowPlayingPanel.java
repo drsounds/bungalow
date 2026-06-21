@@ -60,7 +60,6 @@ public class NowPlayingPanel extends JPanel {
         };
         table = new Table(model);
         table.setFillsViewportHeight(true);
-        table.setRowHeight(24);
         table.setShowGrid(false);
         table.setIntercellSpacing(new Dimension(0, 0));
         table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);

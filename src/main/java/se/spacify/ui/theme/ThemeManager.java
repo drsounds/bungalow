@@ -152,6 +152,7 @@ public class ThemeManager extends BaseAspectManager<Theme> {
         put(d, "Table.selectionBackground",  accentColor);
         put(d, "Table.selectionForeground",  Color.WHITE);
         put(d, "Table.gridColor",            currentGrid);
+        put(d, "Table.rowHeight",            24);   // Windows ListView-style row height
         put(d, "TableHeader.background",     new Color(235, 234, 219));
         put(d, "TableHeader.foreground",     new Color(0, 0, 0));
         put(d, "List.background",            currentBg);
