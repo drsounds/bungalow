@@ -49,7 +49,7 @@ public class RecordingsLibraryView extends AbstractLibraryView {
         JTextField isrc     = new JTextField();
         JTextField duration = new JTextField();
         JTextField filePath = new JTextField();
-        if (!FormDialog.show(panel, "New Recording",
+        if (!FormDialog.show(this, "New Recording",
                 new String[]{"Title", "Artists (comma-separated)", "ISRC", "Duration (m:ss)", "File path"},
                 new JComponent[]{title, artists, isrc, duration, filePath})) return;
         if (title.getText().isBlank()) return;
@@ -73,7 +73,7 @@ public class RecordingsLibraryView extends AbstractLibraryView {
         JTextField isrc     = new JTextField(r.getIsrc());
         JTextField duration = new JTextField(fmtDuration(r.getDurationMs()));
         JTextField filePath = new JTextField(r.getFilePath());
-        if (!FormDialog.show(panel, "Edit Recording",
+        if (!FormDialog.show(this, "Edit Recording",
                 new String[]{"Title", "Artists (comma-separated)", "ISRC", "Duration (m:ss)", "File path"},
                 new JComponent[]{title, artists, isrc, duration, filePath})) return;
         if (title.getText().isBlank()) return;

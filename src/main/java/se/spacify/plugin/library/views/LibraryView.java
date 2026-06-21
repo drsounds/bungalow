@@ -11,15 +11,14 @@ import java.awt.*;
 
 public class LibraryView extends View {
 
-    private final JPanel     panel;
     private final Table     table;
     private final JScrollPane scroll;
 
     public LibraryView(ViewStack viewStack) {
         super(viewStack);
-        panel = new JPanel(new BorderLayout(0, 12));
-        panel.setOpaque(false);
-        panel.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
+        setLayout(new BorderLayout(0, 12));
+        setOpaque(false);
+        setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
 
         String[] columns = {"Title", "Artist", "Album"};
         Object[][] data = {
@@ -42,7 +41,7 @@ public class LibraryView extends View {
         scroll.setOpaque(true);
         scroll.getViewport().setOpaque(true);
 
-        panel.add(scroll, BorderLayout.CENTER);
+        add(scroll, BorderLayout.CENTER);
 
         updateColors();
         ThemeManager.addChangeListener(this::updateColors);
@@ -63,6 +62,5 @@ public class LibraryView extends View {
 
     @Override public boolean acceptsUri(String uri) { return uri != null && uri.matches("spacify:library.*"); }
     @Override public void navigate(String uri) {}
-    @Override public JComponent getComponent() { return panel; }
     @Override public String getTitle() { return "Your Library"; }
 }

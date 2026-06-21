@@ -23,7 +23,6 @@ import java.util.List;
  */
 public class PluginManagerView extends View {
 
-    private final JPanel           panel;
     private final Table           table;
     private final DefaultTableModel model;
     private final JScrollPane      detail;
@@ -34,9 +33,9 @@ public class PluginManagerView extends View {
     @SuppressWarnings("static-access")
     public PluginManagerView(ViewStack viewStack) {
         super(viewStack);
-        panel = new JPanel(new BorderLayout(0, 8));
-        panel.setOpaque(true);
-        panel.setBorder(BorderFactory.createEmptyBorder(16, 16, 16, 16));
+        setLayout(new BorderLayout(0, 8));
+        setOpaque(true);
+        setBorder(BorderFactory.createEmptyBorder(16, 16, 16, 16));
 
         // ── Header + toolbar ─────────────────────────────────────────────────
         JLabel title = new JLabel("Plugins");
@@ -56,7 +55,7 @@ public class PluginManagerView extends View {
         header.setOpaque(false);
         header.add(title, BorderLayout.WEST);
         header.add(buttons, BorderLayout.EAST);
-        panel.add(header, BorderLayout.NORTH);
+        add(header, BorderLayout.NORTH);
 
         // ── Plugin table ─────────────────────────────────────────────────────
         model = new DefaultTableModel(new String[]{"On", "Name", "Version", "Source"}, 0) {
@@ -87,7 +86,7 @@ public class PluginManagerView extends View {
         split.setDividerLocation(360);
         split.setBorder(BorderFactory.createEmptyBorder());
         split.setOpaque(false);
-        panel.add(split, BorderLayout.CENTER);
+        add(split, BorderLayout.CENTER);
 
         refresh();
         applyTheme();
@@ -100,11 +99,11 @@ public class PluginManagerView extends View {
     private void onAdd() {
         JFileChooser chooser = new JFileChooser();
         chooser.setFileFilter(new javax.swing.filechooser.FileNameExtensionFilter("Plugin jar (*.jar)", "jar"));
-        if (chooser.showOpenDialog(panel) != JFileChooser.APPROVE_OPTION) return;
+        if (chooser.showOpenDialog(this) != JFileChooser.APPROVE_OPTION) return;
         File jar = chooser.getSelectedFile();
         boolean ok = getViewStack().getMainWindow().getPluginManager().install(jar);
         if (!ok) {
-            JOptionPane.showMessageDialog(panel,
+            JOptionPane.showMessageDialog(this,
                 "Not a valid Spacify plugin jar (missing Spacify-Plugin-Id / -Class manifest headers).",
                 "Install failed", JOptionPane.ERROR_MESSAGE);
         }
@@ -114,12 +113,12 @@ public class PluginManagerView extends View {
         ManagedPlugin m = selected();
         if (m == null) return;
         if (!m.getDescriptor().isRemovable()) {
-            JOptionPane.showMessageDialog(panel,
+            JOptionPane.showMessageDialog(this,
                 "Built-in plugins can't be removed — disable it with the checkbox instead.",
                 "Remove", JOptionPane.INFORMATION_MESSAGE);
             return;
         }
-        int ans = JOptionPane.showConfirmDialog(panel,
+        int ans = JOptionPane.showConfirmDialog(this,
             "Remove plugin \"" + m.getDescriptor().getName() + "\"?",
             "Remove plugin", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
         if (ans == JOptionPane.YES_OPTION) {
@@ -189,7 +188,7 @@ public class PluginManagerView extends View {
     private void applyTheme() {
         Color bg = ThemeManager.getBackground();
         Color fg = ThemeManager.getForeground();
-        panel.setBackground(bg);
+        setBackground(bg);
         table.setBackground(bg);
         table.setForeground(fg);
         table.setGridColor(ThemeManager.getGridColor());
@@ -197,14 +196,13 @@ public class PluginManagerView extends View {
         table.setSelectionForeground(Color.WHITE);
         detail.getViewport().setBackground(bg);
         detail.setBackground(bg);
-        panel.repaint();
+        repaint();
     }
 
     // ── SPView ───────────────────────────────────────────────────────────────
 
     @Override public boolean acceptsUri(String uri) { return "spacify:plugins".equals(uri); }
     @Override public void navigate(String uri) {}
-    @Override public JComponent getComponent() { return panel; }
     @Override public String getTitle() { return "Plugins"; }
     @Override public void onShow() { refresh(); }
 }

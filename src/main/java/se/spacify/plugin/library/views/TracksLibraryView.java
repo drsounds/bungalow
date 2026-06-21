@@ -124,7 +124,7 @@ public class TracksLibraryView extends AbstractLibraryView {
             List<Recording> recordings = DatabaseManager.getInstance().recordingDao().queryForAll();
             List<Release>   releases   = DatabaseManager.getInstance().releaseDao().queryForAll();
             if (recordings.isEmpty() || releases.isEmpty()) {
-                JOptionPane.showMessageDialog(panel,
+                JOptionPane.showMessageDialog(this,
                     "Add at least one recording and one release first.",
                     "Cannot add track", JOptionPane.INFORMATION_MESSAGE);
                 return;
@@ -134,7 +134,7 @@ public class TracksLibraryView extends AbstractLibraryView {
             JTextField duration = new JTextField();
             JComboBox<Recording> recCombo = new JComboBox<>(recordings.toArray(new Recording[0]));
             JComboBox<Release>   relCombo = new JComboBox<>(releases.toArray(new Release[0]));
-            if (!FormDialog.show(panel, "New Track",
+            if (!FormDialog.show(this, "New Track",
                     new String[]{"Track number", "Side", "Duration (m:ss)", "Recording", "Release"},
                     new JComponent[]{number, side, duration, recCombo, relCombo})) return;
 
@@ -163,7 +163,7 @@ public class TracksLibraryView extends AbstractLibraryView {
             JComboBox<Release>   relCombo = new JComboBox<>(releases.toArray(new Release[0]));
             selectById(recCombo, t.getRecording() != null ? t.getRecording().getId() : -1);
             selectReleaseById(relCombo, t.getRelease() != null ? t.getRelease().getId() : -1);
-            if (!FormDialog.show(panel, "Edit Track",
+            if (!FormDialog.show(this, "Edit Track",
                     new String[]{"Track number", "Side", "Duration (m:ss)", "Recording", "Release"},
                     new JComponent[]{number, side, duration, recCombo, relCombo})) return;
 

@@ -10,20 +10,19 @@ import java.nio.charset.StandardCharsets;
 
 public class SearchView extends View {
 
-    private final JPanel panel;
     private final JLabel queryLabel;
     private final JPanel resultsPanel;
 
     public SearchView(ViewStack viewStack) {
         super(viewStack);
-        panel = new JPanel(new BorderLayout(0, 12));
-        panel.setOpaque(false);
-        panel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+        setLayout(new BorderLayout(0, 12));
+        setOpaque(false);
+        setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 
         queryLabel = new JLabel("Search");
         queryLabel.setFont(queryLabel.getFont().deriveFont(Font.BOLD, 20f));
         queryLabel.setForeground(Color.WHITE);
-        panel.add(queryLabel, BorderLayout.NORTH);
+        add(queryLabel, BorderLayout.NORTH);
 
         resultsPanel = new JPanel();
         resultsPanel.setLayout(new BoxLayout(resultsPanel, BoxLayout.Y_AXIS));
@@ -33,7 +32,7 @@ public class SearchView extends View {
         scroll.setOpaque(false);
         scroll.getViewport().setOpaque(false);
         scroll.setBorder(BorderFactory.createEmptyBorder());
-        panel.add(scroll, BorderLayout.CENTER);
+        add(scroll, BorderLayout.CENTER);
     }
 
     @Override
@@ -63,8 +62,6 @@ public class SearchView extends View {
         resultsPanel.repaint();
     }
 
-    @Override
-    public JComponent getComponent() { return panel; }
 
     @Override
     public String getTitle() { return "Search"; }

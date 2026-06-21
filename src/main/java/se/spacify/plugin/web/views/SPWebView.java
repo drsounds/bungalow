@@ -29,7 +29,6 @@ import java.awt.*;
  */
 public class SPWebView extends View {
 
-    private final JPanel      panel;
     private final JLabel      status;
 
     private CefClient  client;
@@ -45,10 +44,10 @@ public class SPWebView extends View {
 
     public SPWebView(ViewStack viewStack) {
         super(viewStack);
-        panel = new JPanel(new BorderLayout());
+        setLayout(new BorderLayout());
         status = new JLabel("", SwingConstants.CENTER);
         status.setBorder(BorderFactory.createEmptyBorder(24, 24, 24, 24));
-        panel.add(status, BorderLayout.CENTER);
+        add(status, BorderLayout.CENTER);
         updateColors();
         ThemeManager.addChangeListener(this::updateColors);
     }
@@ -80,7 +79,6 @@ public class SPWebView extends View {
         }
     }
 
-    @Override public JComponent getComponent() { return panel; }
     @Override public String getTitle() { return "Web"; }
 
     // ── History delegation (app ◄ ► drive the browser) ───────────────────────────
@@ -135,7 +133,7 @@ public class SPWebView extends View {
         });
 
         browser = client.createBrowser(url, false, false);
-        panel.remove(status);
+        remove(status);
 
         toolbar = new JToolBar();
         toolbar.setFloatable(false);
@@ -158,10 +156,10 @@ public class SPWebView extends View {
         btnRefresh.addActionListener(e -> { if (browser != null) browser.reload(); });
         toolbar.add(btnRefresh);
 
-        panel.add(toolbar, BorderLayout.NORTH);
-        panel.add(browser.getUIComponent(), BorderLayout.CENTER);
-        panel.revalidate();
-        panel.repaint();
+        add(toolbar, BorderLayout.NORTH);
+        add(browser.getUIComponent(), BorderLayout.CENTER);
+        revalidate();
+        repaint();
         updateStar();
         getViewStack().refreshNavState();
     }
@@ -192,8 +190,8 @@ public class SPWebView extends View {
 
     private void updateColors() {
         Color bg = ThemeManager.getBackground();
-        panel.setBackground(bg);
+        setBackground(bg);
         status.setForeground(ThemeManager.getForeground());
-        panel.repaint();
+        repaint();
     }
 }

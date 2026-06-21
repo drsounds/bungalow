@@ -35,7 +35,6 @@ import java.util.Map;
  */
 public abstract class AbstractLibraryView extends View {
 
-	protected final JPanel panel;
 	protected final JLabel headerLabel;
 	protected final Table table;
 	protected final JScrollPane scroll;
@@ -68,8 +67,8 @@ public abstract class AbstractLibraryView extends View {
 
 	protected AbstractLibraryView(ViewStack viewStack) {
 		super(viewStack);
-		panel = new JPanel(new BorderLayout(0, 8));
-		panel.setOpaque(false);
+		setLayout(new BorderLayout(0, 8));
+		setOpaque(false);
 
 		headerLabel = new JLabel();
 		headerLabel.setFont(headerLabel.getFont().deriveFont(Font.BOLD, 18f));
@@ -130,7 +129,7 @@ public abstract class AbstractLibraryView extends View {
 			ToolButton deleteBtn = new ToolButton("Delete");
 			ToolButton scanBtn = new ToolButton("Scan…");
 
-			scanBtn.addActionListener(e -> LibraryScanAction.run(panel, () -> {
+			scanBtn.addActionListener(e -> LibraryScanAction.run(this, () -> {
 				reloadAndRegroup();
 				LibraryEvents.fireChanged();
 			}));
@@ -201,14 +200,14 @@ public abstract class AbstractLibraryView extends View {
 		JPanel north = new JPanel(new BorderLayout());
 		north.setOpaque(false);
 		north.add(toolbar, BorderLayout.CENTER);
-		panel.add(headerLabel, BorderLayout.NORTH);
+		add(headerLabel, BorderLayout.NORTH);
 
-		panel.add(north, BorderLayout.NORTH);
-		panel.add(scroll, BorderLayout.CENTER);
+		add(north, BorderLayout.NORTH);
+		add(scroll, BorderLayout.CENTER);
 
 		bottomToolbar = new ToolBar();
 		bottomToolbar.add(new JButton("Test"));
-		panel.add(bottomToolbar, BorderLayout.SOUTH);
+		add(bottomToolbar, BorderLayout.SOUTH);
 
 		updateColors();
 		ThemeManager.addChangeListener(this::updateColors);
@@ -448,11 +447,11 @@ public abstract class AbstractLibraryView extends View {
 	}
 
 	protected void showError(Exception e) {
-		JOptionPane.showMessageDialog(panel, e.getMessage(), "Library error", JOptionPane.ERROR_MESSAGE);
+		JOptionPane.showMessageDialog(this, e.getMessage(), "Library error", JOptionPane.ERROR_MESSAGE);
 	}
 
 	protected boolean confirmDelete(String what) {
-		return JOptionPane.showConfirmDialog(panel, "Delete " + what + "?", "Confirm delete", JOptionPane.YES_NO_OPTION,
+		return JOptionPane.showConfirmDialog(this, "Delete " + what + "?", "Confirm delete", JOptionPane.YES_NO_OPTION,
 				JOptionPane.WARNING_MESSAGE) == JOptionPane.YES_OPTION;
 	}
 
@@ -476,10 +475,6 @@ public abstract class AbstractLibraryView extends View {
 	public void navigate(String uri) {
 	}
 
-	@Override
-	public JComponent getComponent() {
-		return panel;
-	}
 
 	@Override
 	public void onShow() {

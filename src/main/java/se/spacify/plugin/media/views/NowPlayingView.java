@@ -15,7 +15,6 @@ import java.util.List;
 
 public class NowPlayingView extends View {
 
-    private final JPanel panel;
     private final JPanel playerContainer;
     private final JComboBox<String> viewSelector;
     private final List<PlayerView> playerViews = new ArrayList<>();
@@ -24,15 +23,15 @@ public class NowPlayingView extends View {
 
     public NowPlayingView(ViewStack viewStack) {
         super(viewStack);
-        panel = new JPanel(new BorderLayout());
-        panel.setOpaque(true);
-        panel.setBackground(Color.BLACK);
+        setLayout(new BorderLayout());
+        setOpaque(true);
+        setBackground(Color.BLACK);
 
         topToolbar = new ToolBar();
         topToolbar.setFloatable(false);
         topToolbar.setOpaque(true);
         topToolbar.setBackground(ThemeManager.getTintColor());
-        panel.add(topToolbar, BorderLayout.NORTH);
+        add(topToolbar, BorderLayout.NORTH);
         topToolbar.add(new JButton("<"));
         // ── Player area ──────────────────────────────────────────────────────
         playerContainer = new JPanel(new BorderLayout());
@@ -61,8 +60,8 @@ public class NowPlayingView extends View {
         // ── Settings strip ───────────────────────────────────────────────────
         SettingsPanel settings = new SettingsPanel();
 
-        panel.add(playerWrapper, BorderLayout.CENTER);
-        panel.add(settings,      BorderLayout.SOUTH);
+        add(playerWrapper, BorderLayout.CENTER);
+        add(settings,      BorderLayout.SOUTH);
 
         // Default view
         addPlayerView(new DefaultPlayerView());
@@ -95,8 +94,6 @@ public class NowPlayingView extends View {
     @Override
     public void navigate(String uri) {}
 
-    @Override
-    public JComponent getComponent() { return panel; }
 
     /** Wire a MediaService so track-change events propagate to the active PlayerView. */
     public void setMediaService(MediaService ms) {
