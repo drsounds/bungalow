@@ -11,8 +11,6 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.plaf.basic.BasicSplitPaneDivider;
 import javax.swing.plaf.basic.BasicSplitPaneUI;
 
-import java.awt.Rectangle;
-
 import se.spacify.design.Design;
 import se.spacify.skinning.Skin;
 import se.spacify.ui.MainWindow;

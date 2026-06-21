@@ -7,7 +7,6 @@ import se.spacify.ui.theme.ThemeManager;
 import se.spacify.ui.theme.ThemedTableCellRenderer;
 
 import javax.swing.*;
-import javax.swing.table.DefaultTableCellRenderer;
 import java.awt.*;
 
 public class LibraryView extends View {
