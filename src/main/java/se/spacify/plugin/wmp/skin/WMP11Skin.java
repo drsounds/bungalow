@@ -26,11 +26,11 @@ import se.spacify.controls.ToolButton;
 import se.spacify.controls.Tree;
 import se.spacify.controls.VerticalPanel;
 import se.spacify.graphics.StretchableRadialGradient;
-import se.spacify.skinning.Skin;
+
 import se.spacify.ui.theme.ColorUtils;
 import se.spacify.ui.theme.ThemeManager;
 
-public class WMP11Skin extends Skin {
+public class WMP11Skin extends WMPSkin {
 
 	private static final int ARC = 12;
 	@Override

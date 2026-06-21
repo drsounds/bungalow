@@ -24,12 +24,10 @@ import se.spacify.controls.ToolButton;
 
 import se.spacify.controls.VerticalPanel;
 
-import se.spacify.skinning.Skin;
-
 import se.spacify.ui.theme.ColorUtils;
 import se.spacify.ui.theme.ThemeManager;
 
-public class WMP8Skin extends Skin {
+public class WMP8Skin extends WMPSkin {
 
 	private static final int ARC = 12;
 	@Override

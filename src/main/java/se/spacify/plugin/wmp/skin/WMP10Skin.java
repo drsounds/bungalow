@@ -3,6 +3,8 @@ package se.spacify.plugin.wmp.skin;
 import java.awt.Color;
 import java.awt.GradientPaint;
 import java.awt.Graphics2D;
+import java.awt.LinearGradientPaint;
+import java.awt.Point;
 import java.awt.RadialGradientPaint;
 import java.awt.Shape;
 import java.awt.geom.Ellipse2D;
@@ -21,11 +23,11 @@ import se.spacify.controls.TabButton;
 import se.spacify.controls.ToolBar;
 import se.spacify.controls.ToolButton;
 import se.spacify.controls.VerticalPanel;
-import se.spacify.skinning.Skin;
+
 import se.spacify.ui.theme.ColorUtils;
 import se.spacify.ui.theme.ThemeManager;
 
-public class WMP10Skin extends Skin {
+public class WMP10Skin extends WMPSkin {
 
 	private static final int ARC = 12;
 
@@ -245,10 +247,8 @@ public class WMP10Skin extends Skin {
 	}
 	@Override
 	public void paintTableHeader(JTable table, int width, int height, Graphics2D g2) {
-		// TODO Auto-generated method stub
-		g2.setPaint(new Color(235, 234, 219));
-		g2.fillRect(0, 0, width, height);
-		
+		g2.setPaint(new LinearGradientPaint(new Point(0, height - height / 4), new Point(0, height), new float[] { 0, 1 }, new Color[] { new Color(235, 234, 219), new Color (203, 199, 184) }));
+		g2.fillRect(0, 0, width, height);		
 	}
 	
 	@Override

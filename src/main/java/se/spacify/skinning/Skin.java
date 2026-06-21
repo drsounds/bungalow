@@ -9,6 +9,7 @@ import javax.swing.JPanel;
 import javax.swing.JTable;
 
 import se.spacify.aspect.Aspect;
+import se.spacify.aspect.AspectManager;
 import se.spacify.controls.GlassPanel;
 import se.spacify.controls.GlossyButton;
 import se.spacify.controls.SplitPane.SplitPaneDivider;
@@ -28,19 +29,19 @@ public abstract class Skin implements Aspect {
 	public Plugin getPlugin() {
 		return plugin;
 	}
-	public float getFloatValue(String key, float defaultValue) {
+	public float getFloatValue(JComponent control, String key, float defaultValue) {
 		return defaultValue;
 	}
-	public int getIntValue(String key, int defaultValue) {
+	public int getIntValue(JComponent control, String key, int defaultValue) {
 		return defaultValue;
 	}
-	public String getStringValue(String key, String defaultValue) {
+	public String getStringValue(JComponent control, String key, String defaultValue) {
 		return defaultValue;
 	}
-	public Color getColorValue(String key, Color defaultValue) {
+	public Color getColorValue(JComponent control, String key, Color defaultValue) {
 		return defaultValue;
 	}
-	public Paint getPaintValue(String key, Paint defaultValue) {
+	public Paint getPaintValue(JComponent control, String key, Paint defaultValue) {
 		return defaultValue;
 	}
 
@@ -66,4 +67,8 @@ public abstract class Skin implements Aspect {
 	public void paintLeftMenuPanel(LeftMenuPanel control, Graphics2D g2) {}
 	public void paintTree(Tree tree, Graphics2D g2) {}
 	public void paintControl(JComponent control, Graphics2D g2) {}
+
+	public void onRegister(AspectManager<? extends Aspect> aspectManager) {
+	
+	}
 }

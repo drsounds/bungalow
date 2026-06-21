@@ -6,9 +6,6 @@ import java.awt.LinearGradientPaint;
 import java.awt.Point;
 import javax.swing.JPanel;
 
-import se.spacify.aspect.Aspect;
-import se.spacify.aspect.AspectManager;
-
 import se.spacify.controls.SplitPane.SplitPaneDivider;
 
 import se.spacify.controls.TextField;
@@ -16,13 +13,13 @@ import se.spacify.controls.ToolBar;
 import se.spacify.controls.Tree;
 
 import se.spacify.navigation.ViewStack;
-import se.spacify.skinning.Skin;
+
 import se.spacify.ui.LeftLibraryMenu;
 import se.spacify.ui.LeftMenuPanel;
 import se.spacify.ui.theme.ColorUtils;
 import se.spacify.ui.theme.ThemeManager;
 
-public class Spot09Skin extends Skin {
+public class Spot09Skin extends SpotSkin {
 
     @Override
     public String getId() {
@@ -117,10 +114,5 @@ public class Spot09Skin extends Skin {
     public String getName() {
         // TODO Auto-generated method stub
         return "Spot 09";
-    }
-
-    @Override
-    public void onRegister(AspectManager<? extends Aspect> aspectManager) {
-        // TODO Auto-generated method stub
     }
 }

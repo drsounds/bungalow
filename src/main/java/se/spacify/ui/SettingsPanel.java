@@ -156,7 +156,7 @@ public class SettingsPanel extends Panel {
         accentSection.setBorder(titledBorder("Accent Color"));
 
         JButton accentBtn = new JButton();
-        accentBtn.setBackground(getTaste().getAccentColor());
+        accentBtn.setBackground(getTaste().getAccentBackgroundColor());
         accentBtn.setPreferredSize(new Dimension(48, 48));
         accentBtn.setMaximumSize(new Dimension(48, 48));
         accentBtn.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -165,9 +165,9 @@ public class SettingsPanel extends Panel {
         accentBtn.addActionListener(e -> {
             Color chosen = JColorChooser.showDialog(
                 SwingUtilities.getWindowAncestor(this), "Accent Color",
-                getTaste().getAccentColor());
+                getTaste().getAccentBackgroundColor());
             if (chosen != null) {
-                getTaste().setAccentColor(chosen);
+                getTaste().setAccentBackgroundColor(chosen);
                 accentBtn.setBackground(chosen);
             }
         });

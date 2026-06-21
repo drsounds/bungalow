@@ -57,7 +57,7 @@ public class ConfigManager {
             taste.setSaturation( Float.parseFloat(p.getProperty("theme.saturation", "0.0")));
             taste.setLightness(  Float.parseFloat(p.getProperty("theme.lightness",  "0.5")));
             taste.setDarkMode(  Boolean.parseBoolean(p.getProperty("theme.darkMode", "true")));
-            taste.setAccentColor(new Color(
+            taste.setAccentBackgroundColor(new Color(
                 Integer.parseInt(p.getProperty("theme.accentColor",
                     String.valueOf(new Color(30, 215, 96).getRGB()))), true));
             taste.setStripedRows(         Boolean.parseBoolean(p.getProperty("theme.stripedRows",          "true")));
@@ -76,7 +76,7 @@ public class ConfigManager {
         p.setProperty("theme.saturation",  String.valueOf(getTaste().getSaturation()));
         p.setProperty("theme.lightness",   String.valueOf(getTaste().getLightness()));
         p.setProperty("theme.darkMode",    String.valueOf(getTaste().isDarkMode()));
-        p.setProperty("theme.accentColor", String.valueOf(getTaste().getAccentColor().getRGB()));
+        p.setProperty("theme.accentColor", String.valueOf(getTaste().getAccentBackgroundColor().getRGB()));
         p.setProperty("theme.stripedRows",          String.valueOf(getTaste().isStripedRows()));
         p.setProperty("theme.highContrast",         String.valueOf(getTaste().isHighContrast()));
         p.setProperty("theme.highContrastInverted", String.valueOf(getTaste().isHighContrastInverted()));

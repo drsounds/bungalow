@@ -55,8 +55,8 @@ public class Taste {
     private float saturation = 0.0f;  // 0-1  (background tint)
     private float lightness  = 0.5f;  // 0-1  (background tint)
     private boolean darkMode = true;
-    private Color accentColor = new Color(30, 215, 96);  // Spotify green default
-
+    private Color accentBackgroundColor = new Color(30, 215, 96);  // Spotify green default
+    private Color accentForegroundColor = new Color(0, 0, 0, 0);
 
     public float getAlternateBackgroundShade() {
         return currentAltBgShade;
@@ -104,7 +104,7 @@ public class Taste {
     public void setSaturation(float s)    { saturation = s;    ThemeManager.setSaturation(s);    notify_(); }
     public void setLightness(float l)     { lightness = l;     ThemeManager.setLightness(l);     notify_(); }
     public void setDarkMode(boolean d)    { darkMode = d;      ThemeManager.setDarkMode(d);      notify_(); }
-    public void setAccentColor(Color c)   { accentColor = c;   ThemeManager.setAccentColor(c);   notify_(); }
+    public void setAccentBackgroundColor(Color c)   { accentBackgroundColor = c;   ThemeManager.setAccentColor(c);   notify_(); }
 
     public void setStripedRows(boolean v)          { stripedRows = v;          ThemeManager.setStripedRows(v);          notify_(); }
     public void setHighContrast(boolean v)         { highContrast = v;         ThemeManager.setHighContrast(v);         notify_(); }
@@ -115,7 +115,8 @@ public class Taste {
     public float   getSaturation()   { return saturation; }
     public float   getLightness()    { return lightness; }
     public boolean isDarkMode()      { return darkMode; }
-    public Color   getAccentColor()  { return accentColor; }
+    public Color   getAccentBackgroundColor()  { return accentBackgroundColor; }
+    public Color   getAccentForegroundColor() { return accentForegroundColor; }
 
     public boolean isStripedRows()          { return stripedRows; }
     public boolean isHighContrast()         { return highContrast; }

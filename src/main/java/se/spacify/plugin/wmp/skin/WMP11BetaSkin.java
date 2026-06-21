@@ -13,11 +13,11 @@ import se.spacify.aspect.AspectManager;
 import se.spacify.controls.SplitPane.SplitPaneDivider;
 import se.spacify.controls.ToolBar;
 import se.spacify.controls.ToolButton;
-import se.spacify.skinning.Skin;
+
 import se.spacify.ui.theme.ColorUtils;
 import se.spacify.ui.theme.ThemeManager;
 
-public class WMP11BetaSkin extends Skin {
+public class WMP11BetaSkin extends WMPSkin {
 	@Override
 	public void paintHeader(JPanel control, Graphics2D g2) {
         int w = control.getWidth(), h = control.getHeight();

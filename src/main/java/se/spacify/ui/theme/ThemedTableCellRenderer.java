@@ -22,14 +22,15 @@ public class ThemedTableCellRenderer extends DefaultTableCellRenderer {
         Taste taste = table.getTaste();
         Skin skin = taste.getSkin();
         super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+
         if (isSelected) {
-            setBackground(taste.getAccentColor());
-            setForeground(Color.WHITE);
+            setBackground(taste.getAccentBackgroundColor());
+            setForeground(taste.getAccentForegroundColor());
         } else {
             setBackground(row % 2 == 0
-                ? skin.getColorValue("alternateBackground", taste.getAlternateBackground())
-                : taste.getBackground());
-            setForeground(taste.getForeground());
+                ? skin.getColorValue(this, "table.alternateBackground", new Color(0, 0, 0, 11))
+                : table.getBackground());
+            setForeground(table.getForeground());
         }
         setBorder(BorderFactory.createEmptyBorder(0, 6, 0, 6));
         return this;

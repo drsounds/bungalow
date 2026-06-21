@@ -69,7 +69,7 @@ public class WMP1XChrome extends Chrome {
 
                 leftSplit = new SplitPane(SplitPane.HORIZONTAL_SPLIT, leftLibraryMenu, centerPanel);
                 leftSplit.setDividerLocation(220);
-                leftSplit.setDividerSize(6);
+                leftSplit.setDividerSize(1);
                 // Keep the leftLibraryMenu at its width and let the centre view absorb resizes.
                 leftSplit.setResizeWeight(0.0);
                 // Empty (non-UIResource) border survives the Nimbus reinstall in
@@ -79,7 +79,7 @@ public class WMP1XChrome extends Chrome {
 
                 mainSplit = new SplitPane(SplitPane.HORIZONTAL_SPLIT, leftSplit, new NowPlayingPanel(viewStack));
                 mainSplit.setDividerLocation(880);
-                mainSplit.setDividerSize(6);
+                mainSplit.setDividerSize(1);
                 // Give all extra width to the left (leftLibraryMenu + centre); the right
                 // Now Playing / queue panel keeps its width as the window resizes.
                 mainSplit.setResizeWeight(1.0);

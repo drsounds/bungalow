@@ -3,13 +3,14 @@ package se.spacify.plugin.wmp.skin;
 import java.awt.Color;
 import java.awt.GradientPaint;
 import java.awt.Graphics2D;
-import java.awt.Paint;
+
 import java.awt.RadialGradientPaint;
 import java.awt.Shape;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Path2D;
 
 import javax.swing.ButtonModel;
+
 import javax.swing.JPanel;
 import javax.swing.JTable;
 
@@ -25,12 +26,11 @@ import se.spacify.controls.ToolButton;
 import se.spacify.controls.VerticalPanel;
 
 import se.spacify.controls.SplitPane.SplitPaneDivider;
-import se.spacify.skinning.Skin;
 
 import se.spacify.ui.theme.ColorUtils;
 import se.spacify.ui.theme.ThemeManager;
 
-public class WMP9Skin extends Skin {
+public class WMP9Skin extends WMPSkin {
 
 	private static final int ARC = 12;
 	
@@ -266,14 +266,6 @@ public class WMP9Skin extends Skin {
 		g2.setStroke(new java.awt.BasicStroke(1f));
 		g2.setColor(new Color(255, 255, 255, 60));
 		g2.draw(new Ellipse2D.Float(x + 0.5f, y + 0.5f, width - 1, height - 1));
-	}
-
-	@Override
-	public Paint getPaintValue(String key, Paint defaultValue) {
-		if (key == "table.alternateBackground") {
-			return new Color(255, 255, 255, 255);
-		}
-		return super.getPaintValue(key, defaultValue);
 	}
 
 	@Override
