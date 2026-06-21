@@ -1,7 +1,9 @@
 package se.spacify.controls;
 
+import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Rectangle;
 
 import javax.swing.JTree;
 import javax.swing.SwingUtilities;
@@ -13,6 +15,7 @@ import se.spacify.skinning.Skin;
 import se.spacify.ui.MainWindow;
 import se.spacify.ui.theme.Taste;
 import se.spacify.ui.theme.Theme;
+import se.spacify.ui.theme.ThemeManager;
 
 public class Tree extends JTree implements Control {
 
@@ -21,6 +24,16 @@ public class Tree extends JTree implements Control {
         Graphics2D g2 = (Graphics2D)g.create();
         getMainWindow().getSkin().paintTree(this, g2);
         g2.dispose();
+        // Selection highlight spanning the full row width (a plain JTree only
+        // fills behind the label). The cell renderer paints transparently on top.
+        int[] selected = getSelectionRows();
+        if (selected != null) {
+            g.setColor(ThemeManager.getAccentColor());
+            for (int row : selected) {
+                Rectangle b = getRowBounds(row);
+                if (b != null) g.fillRect(0, b.y, getWidth(), b.height);
+            }
+        }
         super.paintComponent(g);
     }
 

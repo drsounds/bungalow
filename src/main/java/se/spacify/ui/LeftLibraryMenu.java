@@ -103,14 +103,24 @@ public class LeftLibraryMenu extends Panel implements NavigationListener {
         tree.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                int row = tree.getRowForLocation(e.getX(), e.getY());
+                // Resolve the row from the y-position only, so a click anywhere along
+                // the row width counts — not just on the label text.
+                int row = tree.getClosestRowForLocation(e.getX(), e.getY());
                 if (row < 0) return;
+                Rectangle bounds = tree.getRowBounds(row);
+                if (bounds == null || e.getY() < bounds.y || e.getY() >= bounds.y + bounds.height) {
+                    return;   // clicked in the empty area below the last row
+                }
+                tree.setSelectionRow(row);
                 TreePath path = tree.getPathForRow(row);
                 DefaultMutableTreeNode node = (DefaultMutableTreeNode) path.getLastPathComponent();
                 if (node.getUserObject() instanceof SidebarNode sn && sn.getUri() != null) {
                     suppressSelection = true;
                     viewStack.navigate(sn.getUri());
                     suppressSelection = false;
+                } else if (!node.isLeaf()) {
+                    // A folder row (no URI): toggle it across the whole width.
+                    if (tree.isExpanded(row)) tree.collapseRow(row); else tree.expandRow(row);
                 }
             }
         });
@@ -167,15 +177,13 @@ public class LeftLibraryMenu extends Panel implements NavigationListener {
         public Component getTreeCellRendererComponent(JTree tree, Object value,
                 boolean sel, boolean expanded, boolean leaf, int row, boolean hasFocus) {
             super.getTreeCellRendererComponent(tree, value, sel, expanded, leaf, row, hasFocus);
-            setOpaque(true);
-            if (sel) {
-                setBackground(ThemeManager.getAccentColor());
-                setForeground(Color.WHITE);
-            } else {
-                setBackground(ThemeManager.getBackground());
-                setForeground(ThemeManager.getForeground());
-            }
-            setBorderSelectionColor(ThemeManager.getAccentColor());
+            // Transparent: the full-width selection band is painted by the Tree, so the
+            // renderer must not paint its own label-width background box or focus border.
+            setOpaque(false);
+            setBackgroundSelectionColor(null);
+            setBackgroundNonSelectionColor(null);
+            setBorderSelectionColor(null);
+            setForeground(sel ? Color.WHITE : ThemeManager.getForeground());
             // Per-node favicon (bookmarks); falls back to the default tree icon.
             if (value instanceof DefaultMutableTreeNode n
                     && n.getUserObject() instanceof SidebarNode sn && sn.getIcon() != null) {
