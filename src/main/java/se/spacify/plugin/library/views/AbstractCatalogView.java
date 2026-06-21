@@ -1,4 +1,4 @@
-package se.spacify.views.library;
+package se.spacify.plugin.library.views;
 
 import se.spacify.navigation.ViewStack;
 import se.spacify.plugin.catalogue.service.MusicCatalogueService;

@@ -1,4 +1,4 @@
-package se.spacify.views.library;
+package se.spacify.plugin.library.views;
 
 import se.spacify.library.MusicScanner;
 import se.spacify.library.ScanResult;

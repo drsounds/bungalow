@@ -17,6 +17,11 @@ public class Taste {
         }
         return design;
     }
+    @SuppressWarnings("unused")
+    public Color getTintColor() {
+        float l = false ? (0.28f + lightness * 0.10f) : (0.42f + lightness * 0.10f);
+        return ColorUtils.hsl(hue, saturation, l);
+    }
     public void setDesign(Design design) {
         this.design = design;
         // Notify so the config::save listener persists the chosen Design.

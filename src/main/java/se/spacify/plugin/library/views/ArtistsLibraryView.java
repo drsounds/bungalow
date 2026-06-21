@@ -1,4 +1,4 @@
-package se.spacify.views.library;
+package se.spacify.plugin.library.views;
 
 import se.spacify.db.DatabaseManager;
 import se.spacify.db.entity.Artist;

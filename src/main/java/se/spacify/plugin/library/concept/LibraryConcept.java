@@ -17,15 +17,15 @@ import se.spacify.navigation.ViewStack;
 import se.spacify.navigation.SidebarNode;
 import se.spacify.plugin.Plugin;
 import se.spacify.plugin.SidebarHandle;
+import se.spacify.plugin.library.views.ArtistDetailView;
+import se.spacify.plugin.library.views.ArtistsLibraryView;
+import se.spacify.plugin.library.views.LocalFileLibraryView;
+import se.spacify.plugin.library.views.RecordingsLibraryView;
+import se.spacify.plugin.library.views.ReleaseDetailView;
+import se.spacify.plugin.library.views.ReleasesLibraryView;
+import se.spacify.plugin.library.views.TracksLibraryView;
 import se.spacify.plugin.playlist.views.PlaylistView;
 import se.spacify.plugin.search.views.SearchView;
-import se.spacify.views.library.ArtistDetailView;
-import se.spacify.views.library.ArtistsLibraryView;
-import se.spacify.views.library.LocalFileLibraryView;
-import se.spacify.views.library.RecordingsLibraryView;
-import se.spacify.views.library.ReleaseDetailView;
-import se.spacify.views.library.ReleasesLibraryView;
-import se.spacify.views.library.TracksLibraryView;
 
 public class LibraryConcept implements Concept {
     private Plugin plugin;

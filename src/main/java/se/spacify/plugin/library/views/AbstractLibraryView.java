@@ -1,4 +1,4 @@
-package se.spacify.views.library;
+package se.spacify.plugin.library.views;
 
 import se.spacify.controls.GroupedListPanel;
 import se.spacify.controls.Table;

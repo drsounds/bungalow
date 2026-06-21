@@ -1,4 +1,4 @@
-package se.spacify.views.library;
+package se.spacify.plugin.library.views;
 
 import javax.swing.*;
 import java.awt.*;

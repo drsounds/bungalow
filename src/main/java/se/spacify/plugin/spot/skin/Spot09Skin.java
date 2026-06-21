@@ -5,9 +5,10 @@ import java.awt.Graphics2D;
 import java.awt.LinearGradientPaint;
 import java.awt.Point;
 import javax.swing.JPanel;
+import javax.swing.JTable;
 
 import se.spacify.controls.SplitPane.SplitPaneDivider;
-
+import se.spacify.controls.Table;
 import se.spacify.controls.TextField;
 import se.spacify.controls.ToolBar;
 import se.spacify.controls.Tree;
@@ -85,13 +86,20 @@ public class Spot09Skin extends SpotSkin {
     @Override
     public void paintToolBar(ToolBar control, Graphics2D g2) {
         int w = control.getWidth(), h = control.getHeight();
-        g2.setPaint(new LinearGradientPaint(new Point(0, 0), new Point(0, h), new float[] {0, 1}, new Color[] { ColorUtils.darken(control.getBackground(),1f), ColorUtils.darken(control.getBackground(), 0.9f) }));
+        g2.setPaint(new LinearGradientPaint(new Point(0, 0), new Point(0, h), new float[] {0, 1}, new Color[] { ColorUtils.darken(control.getTaste().getTintColor(),1f), ColorUtils.darken(control.getTaste().getTintColor(), 0.9f) }));
         g2.fillRect(0, 0, w, h);
         g2.setColor(ColorUtils.darken(control.getBackground(), 1.1f));
         g2.drawLine(0, h - 1, w, h - 1);
         g2.setColor(ColorUtils.lighten(control.getBackground(), 7.1f));
         g2.drawLine(0, h - 2, w, h - 2);
     }
+
+	@Override
+	public void paintTableHeader(JTable jTable, int width, int height, Graphics2D g2) {
+        Table table = (Table)jTable;
+		g2.setPaint(new LinearGradientPaint(new Point(0, 0), new Point(0, height), new float[] {0, 1}, new Color[] { ColorUtils.darken(table.getTaste().getTintColor(),1f), ColorUtils.darken(table.getTaste().getTintColor(), 0.9f) }));
+        g2.fillRect(0, 0, width, height);		
+	}
 
     @Override
     public void paintTextField(TextField control, Graphics2D g2) {

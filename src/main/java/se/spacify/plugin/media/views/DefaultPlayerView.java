@@ -1,4 +1,4 @@
-package se.spacify.views;
+package se.spacify.plugin.media.views;
 
 import se.spacify.navigation.PlayerView;
 
