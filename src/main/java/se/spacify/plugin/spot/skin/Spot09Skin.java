@@ -7,7 +7,6 @@ import java.awt.Point;
 import javax.swing.JPanel;
 import javax.swing.JTable;
 
-import se.spacify.controls.Panel;
 import se.spacify.controls.SplitPane.SplitPaneDivider;
 import se.spacify.controls.Table;
 import se.spacify.controls.TextField;
