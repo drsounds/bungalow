@@ -3,6 +3,7 @@ package se.spacify.plugin.wmp.skin;
 import java.awt.Color;
 import java.awt.GradientPaint;
 import java.awt.Graphics2D;
+import java.awt.Paint;
 import java.awt.RadialGradientPaint;
 import java.awt.Shape;
 import java.awt.geom.Ellipse2D;
@@ -17,11 +18,15 @@ import se.spacify.aspect.AspectManager;
 import se.spacify.controls.GlassPanel;
 import se.spacify.controls.GlossyButton;
 import se.spacify.controls.TabButton;
-import se.spacify.controls.TextField;
+
 import se.spacify.controls.ToolBar;
 import se.spacify.controls.ToolButton;
+
 import se.spacify.controls.VerticalPanel;
+
+import se.spacify.controls.SplitPane.SplitPaneDivider;
 import se.spacify.skinning.Skin;
+
 import se.spacify.ui.theme.ColorUtils;
 import se.spacify.ui.theme.ThemeManager;
 
@@ -264,8 +269,20 @@ public class WMP9Skin extends Skin {
 	}
 
 	@Override
-	public void paintTextField(TextField control, Graphics2D g2) {
+	public Paint getPaintValue(String key, Paint defaultValue) {
+		if (key == "table.alternateBackground") {
+			return new Color(255, 255, 255, 255);
+		}
+		return super.getPaintValue(key, defaultValue);
+	}
 
+	@Override
+	public void paintSplitPaneDivider(SplitPaneDivider control, Graphics2D g2) {
+		int w = control.getWidth(), h = control.getHeight();
+		if (ThemeManager.isDarkMode()) {
+			g2.setPaint(new Color(235, 234, 219));
+			g2.fillRect(0, 0, w, h);
+		}
 	}
 
 	@Override

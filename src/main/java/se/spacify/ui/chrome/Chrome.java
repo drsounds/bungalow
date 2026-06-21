@@ -116,6 +116,7 @@ public abstract class Chrome extends Panel implements Aspect {
         leftLibraryMenu.setVisible(visible);
         leftSplit.setDividerLocation(visible ? 220 : 0);
         leftSplit.revalidate();
+		leftSplit.setDividerSize(1);
         leftSplit.repaint();
     }
 

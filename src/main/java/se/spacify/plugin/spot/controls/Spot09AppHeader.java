@@ -42,7 +42,6 @@ public class Spot09AppHeader extends AppHeader {
 		uriField.setFont(uriField.getFont().deriveFont(12f));
 		uriField.setPreferredSize(new Dimension(260, 28));
 		uriField.addActionListener(e -> viewStack.navigate(uriField.getText().trim()));
-        add(uriField);
 
 		searchField = new TextField();
 		searchField.putClientProperty("JTextField.placeholderText", "Search...");
@@ -58,6 +57,7 @@ public class Spot09AppHeader extends AppHeader {
 
 		center = new Panel(new BorderLayout());
 		center.setOpaque(false);
+		add(center);
 
 		uriField.setVisible(false);
 

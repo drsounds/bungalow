@@ -8,6 +8,7 @@ import java.awt.RenderingHints;
 import java.awt.geom.Path2D;
 
 import javax.swing.ButtonModel;
+
 import javax.swing.JPanel;
 import javax.swing.JTable;
 
@@ -15,12 +16,16 @@ import se.spacify.aspect.Aspect;
 import se.spacify.aspect.AspectManager;
 import se.spacify.controls.GlassPanel;
 import se.spacify.controls.GlossyButton;
+import se.spacify.controls.SplitPane.SplitPaneDivider;
 import se.spacify.controls.TabButton;
-import se.spacify.controls.TextField;
+
 import se.spacify.controls.ToolBar;
 import se.spacify.controls.ToolButton;
+
 import se.spacify.controls.VerticalPanel;
+
 import se.spacify.skinning.Skin;
+
 import se.spacify.ui.theme.ColorUtils;
 import se.spacify.ui.theme.ThemeManager;
 
@@ -156,15 +161,10 @@ public class WMP8Skin extends Skin {
 	@Override
 	public void paintPlaylist(JPanel control, Graphics2D g2) {
 		// TODO Auto-generated method stub
-		Color tintColor = ThemeManager.getTintColor();
+		Color tintColor = ThemeManager.getTintColor(); 
         g2.setPaint(tintColor);
         g2.fillRect(0, 0, control.getWidth(), control.getHeight());
 		
-	}
-
-	@Override
-	public void paintTextField(TextField control, Graphics2D g2) {
-
 	}
 
 	@Override
@@ -175,6 +175,16 @@ public class WMP8Skin extends Skin {
 		Color tintColor = ThemeManager.getTintColor();
 		g2.setPaint(new GradientPaint(0, 0, ThemeManager.accentLight(2f), w, 0, tintColor));
 	}
+
+	@Override
+	public void paintSplitPaneDivider(SplitPaneDivider control, Graphics2D g2) {
+		int w = control.getWidth(), h = control.getHeight();
+		if (ThemeManager.isDarkMode()) {
+			g2.setPaint(new Color(235, 234, 219));
+			g2.fillRect(0, 0, w, h);
+		}
+	}
+
 	@Override
 	public String getId() {
 		// TODO Auto-generated method stub

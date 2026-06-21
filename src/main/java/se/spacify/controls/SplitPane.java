@@ -1,6 +1,5 @@
 package se.spacify.controls;
 
-import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 
@@ -12,15 +11,16 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.plaf.basic.BasicSplitPaneDivider;
 import javax.swing.plaf.basic.BasicSplitPaneUI;
 
+import java.awt.Rectangle;
+
 import se.spacify.design.Design;
 import se.spacify.skinning.Skin;
 import se.spacify.ui.MainWindow;
 import se.spacify.ui.theme.Taste;
 import se.spacify.ui.theme.Theme;
-import se.spacify.ui.theme.ThemeManager;
 
 public class SplitPane extends JSplitPane implements Control {
-
+	 
 	public Skin getSkin() {
 		return getMainWindow().getSkin();
 	}
@@ -67,7 +67,7 @@ public class SplitPane extends JSplitPane implements Control {
 		}
 		return getMainWindow().getTaste();
 	}
-	private class SplitPaneDivider extends BasicSplitPaneDivider {
+	public class SplitPaneDivider extends BasicSplitPaneDivider {
         public SplitPaneDivider( BasicSplitPaneUI ui ) {
             super( ui );
             super.setBorder( null );
@@ -81,11 +81,8 @@ public class SplitPane extends JSplitPane implements Control {
         @Override
         public void paint( Graphics g ) {
         	Graphics2D g2 = (Graphics2D)g.create();
-    		int w = getWidth(), h = getHeight();
-    		if (ThemeManager.isDarkMode()) {
-    			g2.setPaint(new Color(235, 234, 219));
-    			g2.fillRect(0, 0, w, h);
-    		}
+			getTaste().getSkin().paintSplitPaneDivider(this, g2);
+    		
     		g2.dispose();
         }
 
@@ -107,7 +104,7 @@ public class SplitPane extends JSplitPane implements Control {
     }
 	private static final long serialVersionUID = -5587739050405239941L;
 	public SplitPane() {
-		
+		setOpaque(false);
 		getDivider().setBorder(new EmptyBorder(0, 0, 0, 0));
 	}
 	public BasicSplitPaneDivider getDivider() {
@@ -119,6 +116,7 @@ public class SplitPane extends JSplitPane implements Control {
 	public SplitPane(int horizontalSplit, JComponent leftSplit, JComponent c) {
 		super(horizontalSplit, leftSplit, c);
 		setUI(new SplitPaneDividerUI());
+		getDivider().setBorder(new EmptyBorder(0, 0, 0, 0));
 	}
 	@Override
 	public void paintComponent(Graphics g) {

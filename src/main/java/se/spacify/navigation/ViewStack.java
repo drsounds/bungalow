@@ -5,6 +5,8 @@ import se.spacify.controls.Panel;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Deque;
@@ -163,6 +165,12 @@ public class ViewStack extends Panel {
 
     public void addNavigationListener(NavigationListener l) {
         listeners.add(l);
+    }
+
+    @Override
+    protected void paintComponent(Graphics g) {
+        Graphics2D g2 = (Graphics2D)g.create();
+        getMainWindow().getSkin().paintViewStack(this, g2);
     }
 
     private void notifyListeners() {

@@ -3,6 +3,7 @@ package se.spacify.plugin.spot.skin;
 import java.awt.Color;
 import java.awt.Graphics2D;
 
+import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.JTable;
 
@@ -10,12 +11,18 @@ import se.spacify.aspect.Aspect;
 import se.spacify.aspect.AspectManager;
 import se.spacify.controls.GlassPanel;
 import se.spacify.controls.GlossyButton;
+import se.spacify.controls.SplitPane.SplitPaneDivider;
 import se.spacify.controls.TabButton;
 import se.spacify.controls.TextField;
 import se.spacify.controls.ToolBar;
 import se.spacify.controls.ToolButton;
+import se.spacify.controls.Tree;
 import se.spacify.controls.VerticalPanel;
+import se.spacify.navigation.ViewStack;
 import se.spacify.skinning.Skin;
+import se.spacify.ui.LeftLibraryMenu;
+import se.spacify.ui.LeftMenuPanel;
+import se.spacify.ui.theme.ThemeManager;
 
 public class Spot15Skin extends Skin {
 
@@ -67,6 +74,42 @@ public class Spot15Skin extends Skin {
     public void paintTableHeader(JTable table, int width, int height, Graphics2D g2) {
         
     }
+
+	@Override
+	public void paintViewStack(ViewStack control, Graphics2D g2) {
+        if (control.getTaste().isDarkMode()) {
+            control.setBackground(control.getBackground().brighter());
+        }
+	}
+
+	@Override
+	public void paintControl(JComponent tree, Graphics2D g2) {
+
+	}
+
+	@Override
+	public void paintTree(Tree tree, Graphics2D g2) {
+
+	}
+
+	@Override
+	public void paintLeftLibraryMenu(LeftLibraryMenu control, Graphics2D g2) {
+
+	}
+
+	@Override
+	public void paintLeftMenuPanel(LeftMenuPanel control, Graphics2D g2) {
+
+	}
+
+	@Override
+	public void paintSplitPaneDivider(SplitPaneDivider control, Graphics2D g2) {
+		int w = control.getWidth(), h = control.getHeight();
+		if (ThemeManager.isDarkMode()) {
+			g2.setPaint(control.getBackground().darker());
+			g2.fillRect(0, 0, w, h);
+		}
+	}
 
     @Override
     public void paintTextField(TextField control, Graphics2D g2) {

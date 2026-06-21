@@ -33,6 +33,8 @@ public class SpacifyApp {
             for (UIManager.LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
                 if ("Nimbus".equals(info.getName())) {
                     UIManager.setLookAndFeel(info.getClassName());
+                    UIManager.put("SplitPane.dividerSize", 1); 
+
                     break;
                 }
             }

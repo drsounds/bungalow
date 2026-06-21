@@ -11,7 +11,12 @@ import se.spacify.ui.theme.ThemeManager;
 import se.spacify.views.library.LibraryScanAction;
 import se.spacify.controls.Panel;
 import javax.swing.*;
-import javax.swing.tree.*;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeCellRenderer;
+import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.TreePath;
+
+import se.spacify.controls.Tree;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -21,7 +26,7 @@ import java.util.List;
 
 public class LeftLibraryMenu extends Panel implements NavigationListener {
 
-    private final JTree tree;
+    private final Tree tree;
     private final JScrollPane scroll;
     private final DefaultMutableTreeNode root;
     private boolean suppressSelection = false;
@@ -36,6 +41,15 @@ public class LeftLibraryMenu extends Panel implements NavigationListener {
 	public ViewStack getViewStack() {
         return viewStack;
     }
+
+    @Override
+    protected void paintComponent(Graphics g) {
+        Graphics2D g2 = (Graphics2D)g.create();
+        getMainWindow().getSkin().paintLeftLibraryMenu(this, g2);
+        g2.dispose();
+        super.paintComponent(g);
+    }
+    
 
     public void reload() {
 		
@@ -78,12 +92,12 @@ public class LeftLibraryMenu extends Panel implements NavigationListener {
         toolbar.add(searchField);
 
 
-        tree = new JTree(root);
+        tree = new Tree(root);
+        tree.setOpaque(false);
         tree.setRootVisible(false);
         tree.setShowsRootHandles(true);
         tree.setBorder(BorderFactory.createEmptyBorder(8, 4, 8, 4));
         tree.setRowHeight(28);
-        tree.setOpaque(true);
         tree.setCellRenderer(new ThemedTreeCellRenderer());
 
         tree.addMouseListener(new MouseAdapter() {

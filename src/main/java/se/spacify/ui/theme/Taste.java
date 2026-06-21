@@ -57,6 +57,14 @@ public class Taste {
     private boolean darkMode = true;
     private Color accentColor = new Color(30, 215, 96);  // Spotify green default
 
+
+    public float getAlternateBackgroundShade() {
+        return currentAltBgShade;
+    }
+    public void setAlternateBackgroundShade(float value) {
+        this.currentAltBgShade = value;
+        this.setAlternateBackground(ColorUtils.lighten(currentAltBg, value));
+    }
     // ── Display toggles (saved alongside the HSL / dark-light / accent settings) ──
     private boolean stripedRows          = true;   // alternate row shading
     private boolean highContrast         = false;  // plain B/W background (WMP-style)
@@ -68,9 +76,13 @@ public class Taste {
     private Color currentAltBg = new Color(30, 30, 30);
     private Color currentFg    = new Color(210, 210, 210);
     private Color currentGrid  = new Color(35, 35, 35);
+    private float currentAltBgShade = 1.1f;
 
     public Color getBackground()          { return currentBg; }
     public Color getAlternateBackground() { return currentAltBg; }
+    public void setAlternateBackground(Color value) {
+        currentAltBg = value;
+    }
     public Color getForeground()           { return currentFg; }
     public Color getGridColor()            { return currentGrid; }
 

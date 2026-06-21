@@ -16,8 +16,8 @@ import se.spacify.aspect.Aspect;
 import se.spacify.aspect.AspectManager;
 import se.spacify.controls.GlassPanel;
 import se.spacify.controls.GlossyButton;
+import se.spacify.controls.SplitPane.SplitPaneDivider;
 import se.spacify.controls.TabButton;
-import se.spacify.controls.TextField;
 import se.spacify.controls.ToolBar;
 import se.spacify.controls.ToolButton;
 import se.spacify.controls.VerticalPanel;
@@ -234,11 +234,15 @@ public class WMP10Skin extends Skin {
 		}
 	}
 
+
 	@Override
-	public void paintTextField(TextField control, Graphics2D g2) {
-
+	public void paintSplitPaneDivider(SplitPaneDivider control, Graphics2D g2) {
+		int w = control.getWidth(), h = control.getHeight();
+		if (ThemeManager.isDarkMode()) {
+			g2.setPaint(new Color(235, 234, 219));
+			g2.fillRect(0, 0, w, h);
+		}
 	}
-
 	@Override
 	public void paintTableHeader(JTable table, int width, int height, Graphics2D g2) {
 		// TODO Auto-generated method stub

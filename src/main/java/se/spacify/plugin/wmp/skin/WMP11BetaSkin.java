@@ -10,13 +10,9 @@ import javax.swing.JTable;
 
 import se.spacify.aspect.Aspect;
 import se.spacify.aspect.AspectManager;
-import se.spacify.controls.GlassPanel;
-import se.spacify.controls.GlossyButton;
-import se.spacify.controls.TabButton;
-import se.spacify.controls.TextField;
+import se.spacify.controls.SplitPane.SplitPaneDivider;
 import se.spacify.controls.ToolBar;
 import se.spacify.controls.ToolButton;
-import se.spacify.controls.VerticalPanel;
 import se.spacify.skinning.Skin;
 import se.spacify.ui.theme.ColorUtils;
 import se.spacify.ui.theme.ThemeManager;
@@ -35,29 +31,6 @@ public class WMP11BetaSkin extends Skin {
 		g2.fillRect(0, h / 2, w, (h / 2));
 	}
 
-	@Override
-	public void paintTopBar(JPanel control, Graphics2D g2) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void paintFooter(JPanel footer, Graphics2D g2) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void paintTabButton(TabButton button, Graphics2D g2) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void paintGlossyButton(GlossyButton control, Graphics2D g2, int x, int y, int d) {
-		// TODO Auto-generated method stub
-		
-	}
 	@Override
 	public void paintPlaylist(JPanel control, Graphics2D g2) {
 		// TODO Auto-generated method stub
@@ -118,17 +91,6 @@ public class WMP11BetaSkin extends Skin {
 	}
 
 	@Override
-	public void paintGlassPanel(GlassPanel control, Graphics2D g2) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void paintVerticalPanel(VerticalPanel verticalPanel, Graphics2D g2) {
-		// TODO Auto-generated method stub
-		
-	}
-	@Override
 	public String getId() {
 		// TODO Auto-generated method stub
 		return "wmp11";
@@ -141,8 +103,12 @@ public class WMP11BetaSkin extends Skin {
 	}
 
 	@Override
-	public void paintTextField(TextField control, Graphics2D g2) {
-
+	public void paintSplitPaneDivider(SplitPaneDivider control, Graphics2D g2) {
+		int w = control.getWidth(), h = control.getHeight();
+		if (ThemeManager.isDarkMode()) {
+			g2.setPaint(new Color(235, 234, 219));
+			g2.fillRect(0, 0, w, h);
+		}
 	}
 
 	@Override

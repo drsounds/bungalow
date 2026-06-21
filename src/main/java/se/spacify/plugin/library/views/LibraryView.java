@@ -4,6 +4,7 @@ import se.spacify.controls.Table;
 import se.spacify.navigation.View;
 import se.spacify.navigation.ViewStack;
 import se.spacify.ui.theme.ThemeManager;
+import se.spacify.ui.theme.ThemedTableCellRenderer;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;
@@ -59,29 +60,6 @@ public class LibraryView extends View {
         scroll.setBackground(bg);
         scroll.getViewport().setBackground(bg);
         table.repaint();
-    }
-
-    // ── Custom renderer ───────────────────────────────────────────────────────
-
-    private static final class ThemedTableCellRenderer extends DefaultTableCellRenderer {
-        private static final long serialVersionUID = 6139658182597024812L;
-
-		@Override
-        public Component getTableCellRendererComponent(JTable table, Object value,
-                boolean isSelected, boolean hasFocus, int row, int column) {
-            super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
-            if (isSelected) {
-                setBackground(ThemeManager.getAccentColor());
-                setForeground(Color.WHITE);
-            } else {
-                setBackground(row % 2 == 0
-                    ? ThemeManager.getBackground()
-                    : ThemeManager.getAlternateBackground());
-                setForeground(ThemeManager.getForeground());
-            }
-            setBorder(BorderFactory.createEmptyBorder(0, 6, 0, 6));
-            return this;
-        }
     }
 
     @Override public boolean acceptsUri(String uri) { return uri != null && uri.matches("spacify:library.*"); }

@@ -15,6 +15,7 @@ import se.spacify.service.media.PlayQueueItem;
 import se.spacify.service.media.PlayRequest;
 
 import se.spacify.ui.theme.ThemeManager;
+import se.spacify.ui.theme.ThemedTableCellRenderer;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;
@@ -468,30 +469,6 @@ public abstract class AbstractLibraryView extends View {
 		scroll.setBackground(bg);
 		scroll.getViewport().setBackground(bg);
 		table.repaint();
-	}
-
-	private final class ThemedTableCellRenderer extends DefaultTableCellRenderer {
-		private static final long serialVersionUID = -8803742448587818781L;
-
-		@Override
-		public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus,
-				int row, int column) {
-			super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
-			PlayQueueItem item = queueItemAt(row);
-			if (item != null && PlayQueue.getInstance().isCurrentKey(item.getKey())) {
-				// Row matches the currently-playing track.
-				setBackground(ThemeManager.getNowPlayingBackground());
-				setForeground(ThemeManager.getNowPlayingForeground());
-			} else if (isSelected) {
-				setBackground(ThemeManager.getAccentColor());
-				setForeground(Color.WHITE);
-			} else {
-				setBackground(row % 2 == 0 ? ThemeManager.getBackground() : ThemeManager.getAlternateBackground());
-				setForeground(ThemeManager.getForeground());
-			}
-			setBorder(BorderFactory.createEmptyBorder(0, 6, 0, 6));
-			return this;
-		}
 	}
 
 	// ── SPView ──────────────────────────────────────────────────────────────────
