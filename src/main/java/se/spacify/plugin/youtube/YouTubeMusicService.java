@@ -3,6 +3,7 @@ package se.spacify.plugin.youtube;
 import se.spacify.aspect.Aspect;
 import se.spacify.aspect.AspectManager;
 import se.spacify.db.entity.Recording;
+import se.spacify.plugin.PluginSettings;
 import se.spacify.plugin.media.service.MediaServicePlayerComponent;
 import se.spacify.plugin.music.service.MusicService;
 import se.spacify.service.media.PlaybackSupport;
@@ -20,7 +21,19 @@ import se.spacify.service.media.PlaybackSupport;
  */
 public class YouTubeMusicService implements MusicService {
 
+    /** Settings key for the optional YouTube Data API key. */
+    public static final String SETTING_API_KEY = "apiKey";
+
     private final PlaybackSupport playback = new PlaybackSupport();
+    private final PluginSettings settings;
+
+    public YouTubeMusicService() { this(null); }
+    public YouTubeMusicService(PluginSettings settings) { this.settings = settings; }
+
+    /** The configured YouTube Data API key, or "" to use the no-key scrape. */
+    String apiKey() {
+        return settings != null ? settings.getString(SETTING_API_KEY) : "";
+    }
 
     private YouTubePlayerComponent player;
     private PlaybackState state      = PlaybackState.IDLE;
