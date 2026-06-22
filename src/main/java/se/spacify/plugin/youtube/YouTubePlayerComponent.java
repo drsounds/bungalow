@@ -31,11 +31,13 @@ import java.util.concurrent.atomic.AtomicBoolean;
 /**
  * The YouTube playback surface: an embedded CEF browser running a small page that
  * drives the <a href="https://developers.google.com/youtube/iframe_api_reference">
- * YouTube IFrame Player API</a>. {@link #loadAndPlay(String)} starts the top
- * search result for a query via {@code loadPlaylist({listType:'search', …})}; no
- * API key is needed. Player state and position are posted back from JavaScript
- * through a {@link CefMessageRouter} ({@code window.cefQuery}) and forwarded to
- * the owning {@link YouTubeMusicService}.
+ * YouTube IFrame Player API</a>. {@link #loadAndPlay(String)} resolves a query to
+ * video ids via {@link YouTubeSearch} (no API key) and plays the first with
+ * {@code loadVideoById}, falling through to the next on an embedding/playback
+ * error — the IFrame API's {@code listType:'search'} loader was removed by
+ * YouTube. Player state and position are posted back from JavaScript through a
+ * {@link CefMessageRouter} ({@code window.cefQuery}) and forwarded to the owning
+ * {@link YouTubeMusicService}.
  *
  * <p>The host page is served from a registered {@code https://spacify.youtube}
  * scheme handler rather than {@code file://}, so the IFrame API sees a real,
@@ -65,7 +67,11 @@ public class YouTubePlayerComponent extends MediaServicePlayerComponent {
     private CefBrowser browser;
     private boolean    initStarted;
     private boolean    ready;
-    private String     pendingQuery;
+    // Resolved video ids for the current query; we try the next one if a video
+    // turns out to be non-embeddable / region-blocked.
+    private java.util.List<String> resultIds = java.util.List.of();
+    private int     resultIndex;
+    private String  pendingPlayId;   // id to play once the IFrame player is ready
 
     public YouTubePlayerComponent(YouTubeMusicService Service) {
         this.Service = Service;
@@ -79,14 +85,39 @@ public class YouTubePlayerComponent extends MediaServicePlayerComponent {
 
     // ── Playback API used by the Service ────────────────────────────────────────
 
-    /** Search YouTube for {@code query} and play the top result. */
+    /**
+     * Resolve {@code query} to YouTube video ids (off the EDT) and play the first
+     * playable one. {@code query} may already be a bare 11-char video id. The
+     * IFrame API's {@code listType:"search"} loader was removed by YouTube, so we
+     * search ourselves and {@code loadVideoById}.
+     */
     public void loadAndPlay(String query) {
         ensureBrowser();
-        if (ready) {
-            runJs("searchAndPlay(" + jsString(query) + ")");
-        } else {
-            pendingQuery = query;   // flushed once the IFrame player reports ready
+        if (YouTubeSearch.isVideoId(query)) {
+            setResults(java.util.List.of(query));
+            return;
         }
+        new SwingWorker<java.util.List<String>, Void>() {
+            @Override protected java.util.List<String> doInBackground() { return YouTubeSearch.search(query); }
+            @Override protected void done() {
+                try { setResults(get()); } catch (Exception e) { setResults(java.util.List.of()); }
+            }
+        }.execute();
+    }
+
+    /** Adopt a fresh list of candidate video ids and start playing the first. */
+    private void setResults(java.util.List<String> ids) {
+        resultIds = ids;
+        resultIndex = 0;
+        if (!ids.isEmpty()) playCurrentResult();
+    }
+
+    /** Play the current candidate, or queue it until the player reports ready. */
+    private void playCurrentResult() {
+        if (resultIndex < 0 || resultIndex >= resultIds.size()) return;
+        String id = resultIds.get(resultIndex);
+        if (ready) runJs("playVideoId(" + jsString(id) + ")");
+        else       pendingPlayId = id;
     }
 
     public void play()  { runJs("doPlay()"); }
@@ -160,10 +191,16 @@ public class YouTubePlayerComponent extends MediaServicePlayerComponent {
         switch (key) {
             case "ready" -> {
                 ready = true;
-                if (pendingQuery != null) {
-                    runJs("searchAndPlay(" + jsString(pendingQuery) + ")");
-                    pendingQuery = null;
+                if (pendingPlayId != null) {
+                    runJs("playVideoId(" + jsString(pendingPlayId) + ")");
+                    pendingPlayId = null;
                 }
+            }
+            case "error" -> {
+                // 2 = bad id, 5 = HTML5 error, 100 = removed/private,
+                // 101/150 = embedding disabled → fall through to the next result.
+                resultIndex++;
+                if (resultIndex < resultIds.size()) playCurrentResult();
             }
             case "state" -> {
                 try { Service.onPlayerState(Integer.parseInt(val.trim())); }
@@ -261,9 +298,10 @@ public class YouTubePlayerComponent extends MediaServicePlayerComponent {
                 function onYouTubeIframeAPIReady(){
                   player = new YT.Player('player', {
                     height:'100%', width:'100%',
-                    playerVars:{autoplay:1, controls:1, modestbranding:1, rel:0, origin:window.location.origin},
+                    playerVars:{autoplay:1, controls:1, modestbranding:1, rel:0, playsinline:1, origin:window.location.origin},
                     events:{
                       'onReady':function(){ post('ready:'); },
+                      'onError':function(e){ post('error:'+e.data); },
                       'onStateChange':function(e){
                         post('state:'+e.data);
                         if(e.data==1 && player.getVideoData){ post('title:'+(player.getVideoData().title||'')); }
@@ -271,7 +309,8 @@ public class YouTubePlayerComponent extends MediaServicePlayerComponent {
                     }
                   });
                 }
-                function searchAndPlay(q){ if(player&&player.loadPlaylist) player.loadPlaylist({listType:'search', list:q}); }
+                // listType:'search' was removed from the IFrame API; play concrete ids.
+                function playVideoId(id){ if(player&&player.loadVideoById) player.loadVideoById(id); }
                 function doPlay(){ if(player&&player.playVideo) player.playVideo(); }
                 function doPause(){ if(player&&player.pauseVideo) player.pauseVideo(); }
                 function doSeek(s){ if(player&&player.seekTo) player.seekTo(s,true); }
