@@ -71,7 +71,19 @@ public class MusicScanner {
 
     // ── Import one file ───────────────────────────────────────────────────────────
 
-    private void importFile(File file, ScanResult result) throws Exception {
+    /** Tagged metadata of an imported file, returned to the caller for display. */
+    public record Imported(String title, String artist, String album) {}
+
+    /**
+     * Import a single audio file (any jaudiotagger-supported format) into the
+     * library, creating/de-duplicating the Artist → Release → Recording → Track →
+     * LocalFile graph. Used by the download manager when a download completes.
+     */
+    public Imported importFile(File file) throws Exception {
+        return importFile(file, new ScanResult());
+    }
+
+    private Imported importFile(File file, ScanResult result) throws Exception {
         AudioFile audio = AudioFileIO.read(file);
         Tag tag = audio.getTag();
 
@@ -94,6 +106,7 @@ public class MusicScanner {
         Recording recording = getOrCreateRecording(isrc, title, file.getAbsolutePath(), durationMs, artist, result);
         getOrCreateTrack(recording, release, trackNumber, durationMs, result);
         getOrCreateLocalFile(isrc, title, artistName, albumTitle, file.getAbsolutePath(), result);
+        return new Imported(title, artistName, albumTitle);
     }
 
     // ── Upsert helpers (count only newly created rows) ─────────────────────────────

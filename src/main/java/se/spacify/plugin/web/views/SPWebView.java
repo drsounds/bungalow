@@ -6,6 +6,7 @@ import org.cef.browser.CefFrame;
 import org.cef.handler.CefDisplayHandlerAdapter;
 import se.spacify.navigation.View;
 import se.spacify.navigation.ViewStack;
+import se.spacify.plugin.downloads.DownloadService;
 import se.spacify.ui.theme.ThemeManager;
 import se.spacify.web.BookmarkEvents;
 import se.spacify.web.BookmarkManager;
@@ -131,6 +132,12 @@ public class SPWebView extends View {
                 SwingUtilities.invokeLater(() -> currentTitle = title);
             }
         });
+
+        // Capture audio downloads (incl. paid store downloads) into the Download
+        // Manager; cookies/session ride the same request context, so auth carries over.
+        DownloadService downloads = getViewStack().getMainWindow() != null
+            ? getViewStack().getMainWindow().getServiceManager().getService(DownloadService.class) : null;
+        if (downloads != null) client.addDownloadHandler(downloads.cefDownloadHandler());
 
         browser = client.createBrowser(url, false, false);
         remove(status);

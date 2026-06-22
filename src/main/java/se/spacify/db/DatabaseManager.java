@@ -30,6 +30,7 @@ public class DatabaseManager {
     private Dao<LocalFile,             Integer> localFileDao;
     private Dao<Bookmark,              Integer> bookmarkDao;
     private Dao<MusicServiceTrack,     Integer> musicServiceTrackDao;
+    private Dao<Download,              Integer> downloadDao;
 
     private DatabaseManager() {}
 
@@ -55,6 +56,7 @@ public class DatabaseManager {
         TableUtils.createTableIfNotExists(connectionSource, LocalFile.class);
         TableUtils.createTableIfNotExists(connectionSource, Bookmark.class);
         TableUtils.createTableIfNotExists(connectionSource, MusicServiceTrack.class);
+        TableUtils.createTableIfNotExists(connectionSource, Download.class);
 
         artistDao                = DaoManager.createDao(connectionSource, Artist.class);
         musicWorkDao             = DaoManager.createDao(connectionSource, MusicWork.class);
@@ -66,6 +68,7 @@ public class DatabaseManager {
         localFileDao             = DaoManager.createDao(connectionSource, LocalFile.class);
         bookmarkDao              = DaoManager.createDao(connectionSource, Bookmark.class);
         musicServiceTrackDao     = DaoManager.createDao(connectionSource, MusicServiceTrack.class);
+        downloadDao              = DaoManager.createDao(connectionSource, Download.class);
     }
 
     public void close() {
@@ -87,4 +90,5 @@ public class DatabaseManager {
     public Dao<LocalFile,             Integer> localFileDao()             { return localFileDao; }
     public Dao<Bookmark,              Integer> bookmarkDao()              { return bookmarkDao; }
     public Dao<MusicServiceTrack,     Integer> musicServiceTrackDao()     { return musicServiceTrackDao; }
+    public Dao<Download,              Integer> downloadDao()              { return downloadDao; }
 }

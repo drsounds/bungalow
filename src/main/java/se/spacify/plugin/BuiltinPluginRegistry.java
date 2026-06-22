@@ -36,6 +36,10 @@ final class BuiltinPluginRegistry {
         // After local music so YouTube resolves as a fallback for tracks not held locally.
         list.add(builtin("se.spacify.plugin.youtube", "YouTube", "1.0.0",
             "se.spacify.plugin.youtube.YouTubePlugin", cl));
+        // Download manager: captures audio downloads from the store/web views and
+        // imports them into the library.
+        list.add(builtin("se.spacify.plugin.downloads", "Download Manager", "1.0.0",
+            "se.spacify.plugin.downloads.DownloadsPlugin", cl));
         return list;
     }
 

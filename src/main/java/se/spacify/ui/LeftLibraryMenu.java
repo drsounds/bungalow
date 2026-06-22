@@ -134,7 +134,8 @@ public class LeftLibraryMenu extends Panel implements NavigationListener {
         add(scroll, BorderLayout.CENTER);
 
         bottomToolbar = new ToolBar();
-        bottomToolbar.add(new JButton("Test"));
+        // Cross-plugin download activity spinner (listens on the broadcast bus).
+        bottomToolbar.add(new DownloadActivityIndicator());
         add(bottomToolbar, BorderLayout.SOUTH);
         
         addToLibraryMenuButton = new MenuToolButton();
