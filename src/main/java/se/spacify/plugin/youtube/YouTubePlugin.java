@@ -21,7 +21,9 @@ public class YouTubePlugin extends Plugin {
     }
     @Override
     public void onActivate(PluginContext ctx) {
-        ctx.registerService(new YouTubeMusicService(ctx.settings()));
+        YouTubeMusicService service = new YouTubeMusicService(ctx.settings());
+        ctx.registerService(service);
+        ctx.registerSearchProvider(new YouTubeSearchProvider(service));
     }
 
     /** Optional YouTube Data API key; when set, search uses the API (else a scrape). */

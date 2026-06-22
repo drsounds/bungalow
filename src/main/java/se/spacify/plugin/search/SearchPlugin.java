@@ -2,43 +2,23 @@ package se.spacify.plugin.search;
 
 import se.spacify.aspect.Aspect;
 import se.spacify.aspect.AspectManager;
-
-import se.spacify.library.LibraryEvents;
-
 import se.spacify.plugin.Plugin;
 import se.spacify.plugin.PluginContext;
-
-import se.spacify.plugin.search.concept.SearchConcept;
+import se.spacify.plugin.search.views.SearchView;
 
 /**
- * Built-in plugin providing the music library: the data-backed views (tracks,
- * recordings, releases, artists, local files, detail pages, search, playlists)
- * registered into the {@code spacify:library*} URI space, plus the "Your Library"
- * sidebar subtree with live Releases/Artists lists kept in sync via
- * {@link LibraryEvents}.
+ * Built-in plugin owning the unified search screen ({@code spacify:search}). The
+ * view aggregates every registered {@code SearchProvider}; other plugins
+ * contribute their entities by registering providers (the "Searchable" model).
  */
 public class SearchPlugin extends Plugin {
 
+    @Override public String getId()   { return "search"; }
+    @Override public String getName() { return "Search"; }
+    @Override public void onRegister(AspectManager<? extends Aspect> aspectManager) {}
 
-    @Override
-    public String getId() {
-        // TODO Auto-generated method stub
-        return "music";
-    }
-
-    @Override
-    public String getName() {
-        // TODO Auto-generated method stub
-        return "Music";
-    }
-
-    @Override
-    public void onRegister(AspectManager<? extends Aspect> aspectManager) {
-        // TODO Auto-generated method stub
-
-    }
     @Override
     public void onActivate(PluginContext ctx) {
-        ctx.registerConcept(new SearchConcept(this));
+        ctx.registerView(new SearchView(ctx.viewStack()));
     }
 }

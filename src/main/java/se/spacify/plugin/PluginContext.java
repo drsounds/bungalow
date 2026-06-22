@@ -37,6 +37,9 @@ public interface PluginContext {
     /** Register a view into the {@code spacify:} URI space. */
     void registerView(View v);
 
+    /** Register a search provider; its results appear in the unified search view. */
+    void registerSearchProvider(se.spacify.search.SearchProvider p);
+
     /** The app view stack, for views (e.g. the web view) that drive navigation. */
     ViewStack viewStack();
 

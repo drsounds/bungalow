@@ -46,7 +46,9 @@ public class LibraryConcept implements Concept {
     private SidebarHandle artists;
     @Override
     public void onActivate(ConceptContext ctx) {
-        ctx.registerView(new SearchView(getViewStack()));
+        // The search view is owned by the search plugin now; the library only
+        // contributes its entries as a search provider.
+        ctx.registerSearchProvider(new se.spacify.plugin.library.LibrarySearchProvider());
         ctx.registerView(new TracksLibraryView(getViewStack()));
         ctx.registerView(new RecordingsLibraryView(getViewStack()));
         ctx.registerView(new ReleasesLibraryView(getViewStack()));

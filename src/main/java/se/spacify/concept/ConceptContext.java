@@ -38,6 +38,9 @@ public interface ConceptContext {
     /** Register a view into the {@code spacify:} URI space. */
     void registerView(View v);
 
+    /** Register a search provider; its results appear in the unified search view. */
+    void registerSearchProvider(se.spacify.search.SearchProvider p);
+
     /** Append a node (subtree) to the sidebar; the handle maintains dynamic children. */
     SidebarHandle addSidebarNode(SidebarNode n);
 

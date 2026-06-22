@@ -28,6 +28,7 @@ public class CataloguePlugin extends Plugin {
         ctx.registerView(new ArtistsCatalogView(viewStack));
         ctx.registerView(new ReleasesCatalogView(viewStack));
         ctx.registerView(new RecordingsCatalogView(viewStack));
+        ctx.registerSearchProvider(new CatalogueSearchProvider());
 
         SidebarNode catalogs = new SidebarNode("Catalogs", null);
         for (MusicCatalogueService svc : getManager().getMainWindow().getServiceManager().getServices(MusicCatalogueService.class)) {

@@ -265,7 +265,8 @@ public final class PluginManager {
         private final List<Design> 				   designs = new ArrayList<>();
         private final List<Theme> 				   themes = new ArrayList<>();
         private final List<Concept>                concepts = new ArrayList<>();
-      
+        private final List<se.spacify.search.SearchProvider> searchProviders = new ArrayList<>();
+
         Recorder(ManagedPlugin owner) { this.owner = owner; }
 
         @Override public String pluginId() { return owner.descriptor.getId(); }
@@ -306,6 +307,11 @@ public final class PluginManager {
             views.add(v);
         }
 
+        @Override public void registerSearchProvider(se.spacify.search.SearchProvider p) {
+            getMainWindow().getSearchManager().register(p);
+            searchProviders.add(p);
+        }
+
         @Override public SidebarHandle addSidebarNode(SidebarNode n) {
             if (leftLibraryMenu == null) return NoopSidebarHandle.INSTANCE;
             DefaultMutableTreeNode node = leftLibraryMenu.addSidebarNode(n);
@@ -330,12 +336,13 @@ public final class PluginManager {
             // Let concepts release their own resources first (e.g. event listeners),
             // then drop the views/services/nodes they (and the plugin) registered.
             for (Concept c : concepts) { c.onDeactivate(); getMainWindow().getConceptManager().unregister(c); }
+            for (se.spacify.search.SearchProvider p : searchProviders) getMainWindow().getSearchManager().unregister(p);
             for (DefaultMutableTreeNode n : nodes) if (leftLibraryMenu != null) leftLibraryMenu.removeSidebarNode(n);
             for (View v : views) if (viewStack != null) viewStack.unregisterView(v);
             for (Service s : services) getMainWindow().getServiceManager().unregister(s);
              for (Skin s : skins) getMainWindow().getSkinManager().unregister(s);
             for (Feature f : features) getMainWindow().getFeatureManager().unregister(f);
-            nodes.clear(); views.clear(); services.clear(); features.clear(); chromes.clear(); skins.clear(); concepts.clear();
+            nodes.clear(); views.clear(); services.clear(); features.clear(); chromes.clear(); skins.clear(); concepts.clear(); searchProviders.clear();
         }
 
         @Override

@@ -80,6 +80,10 @@ public class MainWindow extends JFrame {
     public ServiceManager getServiceManager() {
         return serviceManager;
     }
+    private se.spacify.search.SearchManager searchManager;
+    public se.spacify.search.SearchManager getSearchManager() {
+        return searchManager;
+    }
     private PluginManager pluginManager;
     public PluginManager getPluginManager() {
         return pluginManager;
@@ -200,6 +204,7 @@ public class MainWindow extends JFrame {
         designManager  = new DesignManager(this);
         featureManager = new FeatureManager(this);
         skinManager    = new SkinManager(this);
+        searchManager  = new se.spacify.search.SearchManager(this);
 
         // 2. The sidebar is owned here (not by the Chrome) and created before plugins
         //    so plugin-contributed nodes land in the menu the Chrome later embeds.

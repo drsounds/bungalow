@@ -116,9 +116,19 @@ public final class PlaybackCoordinator {
         return false;
     }
 
-    /** Play an arbitrary spacify: URI on the primary media Service. */
+    /** Play an arbitrary spacify: URI, routing by scheme to the Service that handles it. */
     public static boolean playUri(String uri) {
         if (uri == null) return false;
+        // YouTube URIs must play on the YouTube service, not the first media one.
+        if (uri.startsWith("spacify:youtube:")) {
+            MusicService yt = findService("se.spacify.plugin.youtube");
+            if (yt != null) {
+                setActiveService(yt);
+                yt.loadUri(uri);
+                yt.play();
+                return true;
+            }
+        }
         MediaService ms = staticMainWindow.getServiceManager().getService(MediaService.class);
         if (ms == null) return false;
         setActiveService(ms);
