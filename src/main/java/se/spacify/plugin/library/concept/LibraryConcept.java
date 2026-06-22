@@ -25,7 +25,6 @@ import se.spacify.plugin.library.views.ReleaseDetailView;
 import se.spacify.plugin.library.views.ReleasesLibraryView;
 import se.spacify.plugin.library.views.TracksLibraryView;
 import se.spacify.plugin.playlist.views.PlaylistView;
-import se.spacify.plugin.search.views.SearchView;
 
 public class LibraryConcept implements Concept {
     private Plugin plugin;

@@ -6,9 +6,6 @@ import java.awt.Paint;
 
 import javax.swing.JComponent;
 import javax.swing.JPanel;
-import javax.swing.JTable;
-
-import java.awt.Point;
 
 import se.spacify.aspect.Aspect;
 import se.spacify.aspect.AspectManager;

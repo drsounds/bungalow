@@ -7,7 +7,6 @@ import java.awt.Point;
 
 import javax.swing.JComponent;
 import javax.swing.JPanel;
-import javax.swing.JTable;
 
 import se.spacify.controls.Button;
 import se.spacify.controls.SplitPane.SplitPaneDivider;
@@ -61,7 +60,6 @@ public class Spot09Skin extends SpotSkin {
 	@Override
 	public void paintTree(Tree control, Graphics2D g2) {
         int w = control.getWidth(), h = control.getHeight();
-        Color bgColor = ColorUtils.darken(control.getBackground(),  0.8f); 
         Taste taste = control.getTaste();
         Color tintColor = taste.getTintColor();
         g2.setBackground(tintColor);
@@ -73,7 +71,6 @@ public class Spot09Skin extends SpotSkin {
 	@Override
 	public void paintLeftMenuPanel(LeftMenuPanel control, Graphics2D g2) {
         int w = control.getWidth(), h = control.getHeight();
-        Color bgColor = ColorUtils.darken(control.getBackground(),  0.8f); 
         Taste taste = control.getTaste();
         Color tintColor = taste.getTintColor();
         g2.setBackground(tintColor);

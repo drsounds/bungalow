@@ -45,6 +45,7 @@ public final class DownloadService implements Service {
         final DownloadCaptureScope scope;
         final PendingDownload pending;
         CefDownloadItemCallback callback;   // latest, for cancel
+        @SuppressWarnings("unused")
         long speed;                          // bytes/sec, live
         int  lastPercent = -2;               // throttling: last persisted/announced percent
         long lastUpdate;                     // throttling: last persist time

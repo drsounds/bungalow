@@ -1,6 +1,5 @@
 package se.spacify.ui;
 
-import se.spacify.db.entity.Recording;
 import se.spacify.service.media.ServiceMatch;
 import se.spacify.ui.theme.ThemeManager;
 
@@ -126,12 +125,6 @@ public final class ServiceMatchDialog extends JDialog {
                 setForeground(ThemeManager.getForeground());
             }
             return this;
-        }
-
-        private static String fmtDuration(long ms) {
-            if (ms <= 0) return "";
-            long s = ms / 1000;
-            return String.format("%d:%02d", s / 60, s % 60);
         }
 
         private static String escape(String s) {

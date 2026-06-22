@@ -6,7 +6,6 @@ import java.awt.Graphics2D;
 
 import javax.swing.ButtonModel;
 import javax.swing.JPanel;
-import javax.swing.JTable;
 
 import se.spacify.aspect.Aspect;
 import se.spacify.aspect.AspectManager;

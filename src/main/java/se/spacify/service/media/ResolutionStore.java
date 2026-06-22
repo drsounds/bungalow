@@ -4,7 +4,7 @@ import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.stmt.Where;
 import se.spacify.db.DatabaseManager;
 import se.spacify.db.entity.MusicServiceTrack;
-import se.spacify.db.entity.Recording;
+
 import se.spacify.db.entity.Track;
 
 import java.util.List;
