@@ -9,10 +9,12 @@ import se.spacify.graphics.GroupAvatar;
 import se.spacify.library.LibraryEvents;
 import se.spacify.navigation.View;
 import se.spacify.navigation.ViewStack;
+import se.spacify.service.media.AvailabilityResolver;
 import se.spacify.service.media.PlaybackCoordinator;
 import se.spacify.service.media.PlayQueue;
 import se.spacify.service.media.PlayQueueItem;
 import se.spacify.service.media.PlayRequest;
+import se.spacify.service.media.TrackAvailability;
 
 import se.spacify.ui.theme.ThemeManager;
 import se.spacify.ui.theme.ThemedTableCellRenderer;
@@ -35,9 +37,15 @@ import java.util.Map;
  */
 public abstract class AbstractLibraryView extends View {
 
+	/** Width of the Buy/Stream column, and the ▾ (menu) hit zone within it. */
+	private static final int BUY_STREAM_COL_WIDTH = 94;
+	private static final int BUY_STREAM_ARROW_W   = 18;
+
 	protected final JLabel headerLabel;
 	protected final Table table;
 	protected final JScrollPane scroll;
+	/** Index of the trailing Buy/Stream column appended to every view's model. */
+	private final int buyStreamCol;
 	protected final DefaultTableModel model;
 	private ToolBar bottomToolbar;
 	private ToolBar toolbar;
@@ -76,10 +84,27 @@ public abstract class AbstractLibraryView extends View {
 		headerLabel.setVisible(false);
 
 		// ── Table ────────────────────────────────────────────────────────────────
-		model = new DefaultTableModel(getColumns(), 0) {
+		// A trailing Buy/Stream column is appended to every view; its cells are
+		// rendered from per-row availability, not the row data, so rows added with
+		// the subclass's column count are padded to fit.
+		String[] baseCols = getColumns();
+		String[] cols = new String[baseCols.length + 1];
+		System.arraycopy(baseCols, 0, cols, 0, baseCols.length);
+		cols[baseCols.length] = "";
+		buyStreamCol = baseCols.length;
+		model = new DefaultTableModel(cols, 0) {
 			@Override
 			public boolean isCellEditable(int r, int c) {
 				return false;
+			}
+			@Override
+			public void addRow(Object[] rowData) {
+				if (rowData != null && rowData.length < getColumnCount()) {
+					Object[] padded = new Object[getColumnCount()];
+					System.arraycopy(rowData, 0, padded, 0, rowData.length);
+					rowData = padded;
+				}
+				super.addRow(rowData);
 			}
 		};
 		table = new Table(model);
@@ -93,10 +118,12 @@ public abstract class AbstractLibraryView extends View {
 				int row = table.rowAtPoint(e.getPoint());
 				if (row < 0)
 					return;
+				int col = table.columnAtPoint(e.getPoint());
 				if (e.getClickCount() == 2) {
 					activate(row);
 				} else if (e.getClickCount() == 1) {
-					onCellClicked(row, table.columnAtPoint(e.getPoint()));
+					if (col == buyStreamCol && handleBuyStreamClick(row, e)) return;
+					onCellClicked(row, col);
 				}
 			}
 
@@ -108,6 +135,13 @@ public abstract class AbstractLibraryView extends View {
 		for (int i = 0; i < table.getColumnCount(); i++) {
 			table.getColumnModel().getColumn(i).setCellRenderer(renderer);
 		}
+		// The Buy/Stream column draws its own split button.
+		javax.swing.table.TableColumn bs = table.getColumnModel().getColumn(buyStreamCol);
+		bs.setCellRenderer(new BuyStreamRenderer());
+		bs.setResizable(false);
+		bs.setMinWidth(0);
+		bs.setMaxWidth(BUY_STREAM_COL_WIDTH);
+		bs.setPreferredWidth(BUY_STREAM_COL_WIDTH);
 
 		scroll = new JScrollPane(table);
 		// Non-UIResource empty border so the Nimbus reinstall on theme change
@@ -357,8 +391,139 @@ public abstract class AbstractLibraryView extends View {
 	/** Repopulate the model, then refresh the grouped view if it's showing. */
 	protected void reloadAndRegroup() {
 		reload();
+		updateBuyStreamColumn();
 		if (grouped)
 			rebuildGroups();
+	}
+
+	/** Show the Buy/Stream column only when the view has at least one playable row. */
+	private void updateBuyStreamColumn() {
+		boolean any = false;
+		for (int r = 0; r < model.getRowCount(); r++) {
+			if (playRequestAt(r) != null) { any = true; break; }
+		}
+		int w = any ? BUY_STREAM_COL_WIDTH : 0;
+		javax.swing.table.TableColumn col = table.getColumnModel().getColumn(buyStreamCol);
+		col.setMinWidth(0);
+		col.setMaxWidth(w);
+		col.setPreferredWidth(w);
+	}
+
+	// ── Buy/Stream split button ─────────────────────────────────────────────────
+
+	/** Handle a click in the Buy/Stream cell: ▾ zone (or Buy-only) opens the menu,
+	 *  the left part plays when streamable. Returns true if it consumed the click. */
+	private boolean handleBuyStreamClick(int row, MouseEvent e) {
+		PlayRequest req = playRequestAt(row);
+		if (req == null) return false;
+		Rectangle cell = table.getCellRect(row, buyStreamCol, false);
+		boolean onArrow = (e.getX() - cell.x) >= cell.width - BUY_STREAM_ARROW_W - 4;
+		TrackAvailability a = AvailabilityResolver.get().availabilityFor(req, table::repaint);
+		if (onArrow || !a.hasStream()) {
+			showBuyStreamMenu(row, req, a);
+		} else {
+			activate(row);   // default action: stream/play
+		}
+		return true;
+	}
+
+	private void showBuyStreamMenu(int row, PlayRequest req, TrackAvailability a) {
+		JPopupMenu menu = new JPopupMenu();
+
+		if (a.hasStream()) {
+			JMenu stream = new JMenu("Stream");
+			for (se.spacify.plugin.music.service.MusicService ms : a.streamServices()) {
+				JMenuItem it = new JMenuItem("Play on " + ms.getName());
+				it.addActionListener(x -> PlaybackCoordinator.playOn(ms, req));
+				stream.add(it);
+			}
+			menu.add(stream);
+		}
+
+		JMenu buy = new JMenu("Buy");
+		String query = ((req.title() == null ? "" : req.title())
+			+ (req.artist() == null || req.artist().isBlank() ? "" : " " + req.artist())).trim();
+		for (se.spacify.web.StoreCatalog.Store s : se.spacify.web.StoreCatalog.STORES) {
+			JMenuItem it = new JMenuItem(s.name());
+			it.addActionListener(x -> getViewStack().navigate(s.searchUri(query)));
+			buy.add(it);
+		}
+		menu.add(buy);
+
+		menu.addSeparator();
+		JMenuItem openWith = new JMenuItem("Open with…");
+		openWith.addActionListener(x -> PlaybackCoordinator.resolveAndPlay(req, true));
+		menu.add(openWith);
+
+		Rectangle cell = table.getCellRect(row, buyStreamCol, false);
+		menu.show(table, cell.x, cell.y + cell.height);
+	}
+
+	/** Cell renderer: the per-row split button driven by {@link TrackAvailability}. */
+	private final class BuyStreamRenderer implements javax.swing.table.TableCellRenderer {
+		private final BuyStreamCell cell = new BuyStreamCell();
+		@Override
+		public Component getTableCellRendererComponent(JTable t, Object value, boolean sel,
+				boolean focus, int row, int column) {
+			cell.setFont(t.getFont());
+			PlayRequest req = playRequestAt(row);
+			if (req == null) { cell.setBlank(); return cell; }
+			cell.setState(AvailabilityResolver.get().availabilityFor(req, table::repaint));
+			return cell;
+		}
+	}
+
+	/** Paints the iTunes-style split button: optional file icon, a Buy/Stream label,
+	 *  a divider and a ▾ menu arrow. */
+	private static final class BuyStreamCell extends JComponent {
+		private static final long serialVersionUID = 1L;
+		private boolean blank;
+		private TrackAvailability availability = TrackAvailability.PENDING;
+
+		void setBlank() { this.blank = true; }
+		void setState(TrackAvailability a) { this.blank = false; this.availability = a; }
+
+		@Override
+		protected void paintComponent(Graphics g) {
+			if (blank) return;
+			Graphics2D g2 = (Graphics2D) g.create();
+			g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+			int pad = 3, bx = pad, by = pad, bw = getWidth() - 2 * pad, bh = getHeight() - 2 * pad;
+			if (bw <= BUY_STREAM_ARROW_W || bh <= 0) { g2.dispose(); return; }
+
+			g2.setColor(new Color(255, 255, 255, 28));
+			g2.fillRoundRect(bx, by, bw, bh, 8, 8);
+			g2.setColor(new Color(255, 255, 255, 46));
+			g2.drawRoundRect(bx, by, bw - 1, bh - 1, 8, 8);
+
+			Color fg = new Color(228, 228, 228);
+			int textX = bx + 7;
+			if (availability.local()) {
+				drawFileIcon(g2, textX, by + bh / 2 - 5, new Color(150, 200, 255));
+				textX += 12;
+			}
+			String label = !availability.resolved() ? "…" : (availability.hasStream() ? "Stream" : "Buy");
+			g2.setColor(fg);
+			if (getFont() != null) g2.setFont(getFont());
+			int baseline = by + (bh + g2.getFontMetrics().getAscent()) / 2 - 2;
+			g2.drawString(label, textX, baseline);
+
+			int arrowX = bx + bw - BUY_STREAM_ARROW_W;
+			g2.setColor(new Color(255, 255, 255, 40));
+			g2.drawLine(arrowX, by + 3, arrowX, by + bh - 3);
+			int ax = arrowX + BUY_STREAM_ARROW_W / 2, ay = by + bh / 2;
+			g2.setColor(fg);
+			g2.fillPolygon(new int[]{ ax - 3, ax + 3, ax }, new int[]{ ay - 1, ay - 1, ay + 3 }, 3);
+
+			g2.dispose();
+		}
+
+		private static void drawFileIcon(Graphics2D g2, int x, int y, Color c) {
+			g2.setColor(c);
+			int w = 8, h = 10, fold = 3;
+			g2.fillPolygon(new int[]{ x, x + w - fold, x + w, x + w, x },
+			               new int[]{ y, y, y + fold, y + h, y + h }, 5);
+		}
 	}
 
 	private void setGrouped(boolean on) {

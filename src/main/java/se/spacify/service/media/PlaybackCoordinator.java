@@ -116,6 +116,15 @@ public final class PlaybackCoordinator {
         return false;
     }
 
+    /** Play a request directly on a specific Service (the Stream submenu quick-play). */
+    public static void playOn(MusicService ms, PlayRequest req) {
+        if (ms == null || req == null) return;
+        setActiveService(ms);
+        if (req.isrc() != null && !req.isrc().isBlank()) ms.loadByIsrc(req.isrc());
+        else ms.loadByTitleArtist(req.title(), req.artist());
+        ms.play();
+    }
+
     /** Play an arbitrary spacify: URI, routing by scheme to the Service that handles it. */
     public static boolean playUri(String uri) {
         if (uri == null) return false;
