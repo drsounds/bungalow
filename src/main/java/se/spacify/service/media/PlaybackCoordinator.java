@@ -170,12 +170,14 @@ public final class PlaybackCoordinator {
         MusicService ms = findService(saved.getServiceId());
         if (ms == null) return false;
         setActiveService(ms);
-        if (notBlank(saved.getMatchIsrc())) {
+        // Prefer the concrete saved URI (e.g. the exact YouTube video) so the pick
+        // replays precisely instead of re-searching by title.
+        if (notBlank(saved.getMatchUri())) {
+            ms.loadUri(saved.getMatchUri());
+        } else if (notBlank(saved.getMatchIsrc())) {
             ms.loadByIsrc(saved.getMatchIsrc());
         } else if (notBlank(saved.getMatchTitle())) {
             ms.loadByTitleArtist(saved.getMatchTitle(), saved.getMatchArtist());
-        } else if (notBlank(saved.getMatchUri())) {
-            ms.loadUri(saved.getMatchUri());
         } else {
             return false;
         }
@@ -220,16 +222,11 @@ public final class PlaybackCoordinator {
     public static List<ServiceMatch> gatherMatches(PlayRequest req) {
         List<ServiceMatch> matches = new ArrayList<>();
         for (MusicService ms : staticMainWindow.getServiceManager().getServices(MusicService.class)) {
-            Recording match = null;
-            boolean byIsrc = false;
-            if (req.isrc() != null) {
-                match = ms.lookup(req.isrc());
-                if (match != null) byIsrc = true;
+            // Each Service contributes one or more concrete candidates (e.g. YouTube
+            // returns one per search result), all listed in the chooser.
+            for (MusicService.Candidate c : ms.findCandidates(req.isrc(), req.title(), req.artist())) {
+                matches.add(new ServiceMatch(ms, c));
             }
-            if (match == null && !req.title().isBlank()) {
-                match = ms.lookupByTitleArtist(req.title(), req.artist());
-            }
-            if (match != null) matches.add(new ServiceMatch(ms, match, byIsrc));
         }
         return matches;
     }
@@ -238,7 +235,9 @@ public final class PlaybackCoordinator {
     private static void playMatch(ServiceMatch match, PlayRequest req) {
         MusicService ms = match.Service();
         setActiveService(ms);
-        if (match.byIsrc() && req.isrc() != null) {
+        if (notBlank(match.uri())) {
+            ms.loadUri(match.uri());                          // exact candidate (e.g. a specific video)
+        } else if (match.byIsrc() && req.isrc() != null) {
             ms.loadByIsrc(req.isrc());
         } else {
             ms.loadByTitleArtist(req.title(), req.artist());

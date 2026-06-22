@@ -99,7 +99,9 @@ public class YouTubePlayerComponent extends MediaServicePlayerComponent {
         }
         String apiKey = Service.apiKey();
         new SwingWorker<java.util.List<String>, Void>() {
-            @Override protected java.util.List<String> doInBackground() { return YouTubeSearch.search(query, apiKey); }
+            @Override protected java.util.List<String> doInBackground() {
+                return YouTubeSearch.search(query, apiKey).stream().map(YouTubeSearch.Result::videoId).toList();
+            }
             @Override protected void done() {
                 try { setResults(get()); } catch (Exception e) { setResults(java.util.List.of()); }
             }

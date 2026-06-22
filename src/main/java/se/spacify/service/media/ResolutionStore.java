@@ -56,8 +56,9 @@ final class ResolutionStore {
             if (match.byIsrc()) m.setMatchIsrc(req.isrc());
             m.setMatchTitle(req.title());
             m.setMatchArtist(req.artist());
-            Recording rec = match.recording();
-            if (rec != null) m.setMatchUri(rec.getPlayUri());
+            // The concrete candidate target (e.g. the chosen YouTube video) so the
+            // saved pick replays exactly, not as a re-search.
+            if (match.uri() != null) m.setMatchUri(match.uri());
             dao().create(m);
         } catch (Exception ignored) {
         }

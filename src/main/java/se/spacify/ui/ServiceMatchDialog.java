@@ -112,17 +112,9 @@ public final class ServiceMatchDialog extends JDialog {
                 boolean isSelected, boolean hasFocus) {
             super.getListCellRendererComponent(list, value, index, isSelected, hasFocus);
             ServiceMatch m = (ServiceMatch) value;
-            Recording rec = m.recording();
-
-            StringBuilder detail = new StringBuilder();
-            if (rec != null) {
-                if (rec.getTitle() != null) detail.append(rec.getTitle());
-                String dur = fmtDuration(rec.getDurationMs());
-                if (!dur.isEmpty()) detail.append("  (").append(dur).append(')');
-                if (rec.getIsrc() != null) detail.append("  ·  ISRC ").append(rec.getIsrc());
-            }
+            String detail = m.label() != null ? m.label() : "";
             setText("<html><b>" + escape(m.ServiceName()) + "</b>"
-                    + (detail.length() > 0 ? " — <span>" + escape(detail.toString()) + "</span>" : "")
+                    + (!detail.isEmpty() ? " — <span>" + escape(detail) + "</span>" : "")
                     + "</html>");
             setIcon(m.icon());
             setBorder(BorderFactory.createEmptyBorder(4, 8, 4, 8));

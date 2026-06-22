@@ -74,6 +74,22 @@ public class YouTubeMusicService implements MusicService {
         return token;
     }
 
+    /**
+     * Offer the top YouTube search results as concrete candidates for the
+     * "Play with…" chooser, each a specific video — so the user can pick the right
+     * one and it plays exactly that, rather than re-searching to the first hit.
+     */
+    @Override
+    public java.util.List<Candidate> findCandidates(String isrc, String title, String artist) {
+        if (title == null || title.isBlank()) return java.util.List.of();
+        String query = (artist == null || artist.isBlank()) ? title : title + " " + artist;
+        java.util.List<Candidate> out = new java.util.ArrayList<>();
+        for (YouTubeSearch.Result r : YouTubeSearch.search(query, apiKey())) {
+            out.add(new Candidate("spacify:youtube:" + r.videoId(), r.title(), artist, false));
+        }
+        return out;
+    }
+
     // ── Loading ─────────────────────────────────────────────────────────────────
 
     @Override
