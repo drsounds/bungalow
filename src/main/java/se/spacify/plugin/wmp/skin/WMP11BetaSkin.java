@@ -11,6 +11,7 @@ import javax.swing.JTable;
 import se.spacify.aspect.Aspect;
 import se.spacify.aspect.AspectManager;
 import se.spacify.controls.SplitPane.SplitPaneDivider;
+import se.spacify.controls.Table;
 import se.spacify.controls.ToolBar;
 import se.spacify.controls.ToolButton;
 
@@ -21,7 +22,7 @@ public class WMP11BetaSkin extends WMPSkin {
 	@Override
 	public void paintHeader(JPanel control, Graphics2D g2) {
         int w = control.getWidth(), h = control.getHeight();
-		g2.setPaint(ThemeManager.getAccentColor());
+		g2.setPaint(ThemeManager.getAccentForegroundColor());
 		g2.fillRect(0, 0, w, h);
 		
 		g2.setPaint(new GradientPaint(0, 0, ThemeManager.accentLight(2f), 0, h, new Color(255, 255, 255 ,0)));
@@ -83,7 +84,7 @@ public class WMP11BetaSkin extends WMPSkin {
 
 
 	@Override
-	public void paintTableHeader(JTable table, int width, int height, Graphics2D g2) {
+	public void paintTableHeader(Table table, int width, int height, Graphics2D g2) {
 		// TODO Auto-generated method stub
 		g2.setPaint(new Color(235, 234, 219));
 		g2.fillRect(0, 0, width, height);

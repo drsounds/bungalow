@@ -127,7 +127,7 @@ public final class ServiceMatchDialog extends JDialog {
             setIcon(m.icon());
             setBorder(BorderFactory.createEmptyBorder(4, 8, 4, 8));
             if (isSelected) {
-                setBackground(ThemeManager.getAccentColor());
+                setBackground(ThemeManager.getAccentForegroundColor());
                 setForeground(Color.WHITE);
             } else {
                 setBackground(ThemeManager.getBackground());

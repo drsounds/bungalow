@@ -191,7 +191,7 @@ public class PluginManagerView extends View {
         table.setBackground(bg);
         table.setForeground(fg);
         table.setGridColor(ThemeManager.getGridColor());
-        table.setSelectionBackground(ThemeManager.getAccentColor());
+        table.setSelectionBackground(ThemeManager.getAccentForegroundColor());
         table.setSelectionForeground(Color.WHITE);
         detail.getViewport().setBackground(bg);
         detail.setBackground(bg);

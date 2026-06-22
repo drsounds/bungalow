@@ -3,6 +3,7 @@ package se.spacify.ui.theme;
 import javax.swing.*;
 
 import se.spacify.aspect.BaseAspectManager;
+import se.spacify.service.AuthAspect;
 import se.spacify.ui.MainWindow;
 
 import java.awt.*;
@@ -44,7 +45,7 @@ public class ThemeManager extends BaseAspectManager<Theme> {
     private static float saturation = 0.0f;  // 0-1  (background tint)
     private static float lightness  = 0.5f;  // 0-1  (background tint)
     private static boolean darkMode = true;
-    private static Color accentColor = new Color(30, 215, 96);  // Spotify green default
+    private static Color accentForegroundColor = new Color(30, 215, 96);  // Spotify green default
 
     // ── Display toggles (saved alongside the HSL / dark-light / accent settings) ──
     private static boolean stripedRows          = true;   // alternate row shading
@@ -59,6 +60,7 @@ public class ThemeManager extends BaseAspectManager<Theme> {
     private static Color currentAltBg = new Color(30, 30, 30);
     private static Color currentFg    = new Color(210, 210, 210);
     private static Color currentGrid  = new Color(35, 35, 35);
+    private static Color accentBackgroundColor;
 
     public static Color getBackground()          { return currentBg; }
     public static Color getAlternateBackground() { return currentAltBg; }
@@ -77,7 +79,8 @@ public class ThemeManager extends BaseAspectManager<Theme> {
     public static void setSaturation(float s)    { saturation = s;    applyToDefaults(); notify_(); }
     public static void setLightness(float l)     { lightness = l;     applyToDefaults(); notify_(); }
     public static void setDarkMode(boolean d)    { darkMode = d;      applyToDefaults(); notify_(); }
-    public static void setAccentColor(Color c)   { accentColor = c;   applyToDefaults(); notify_(); }
+    public static void setAccentForegroundColor(Color c)   { accentForegroundColor = c;   applyToDefaults(); notify_(); }
+    public static void setAccentBackgroundColor(Color c)   { accentBackgroundColor = c;   applyToDefaults(); notify_(); }
 
     public static void setStripedRows(boolean v)          { stripedRows = v;          applyToDefaults(); notify_(); }
     public static void setHighContrast(boolean v)         { highContrast = v;         applyToDefaults(); notify_(); }
@@ -88,7 +91,8 @@ public class ThemeManager extends BaseAspectManager<Theme> {
     public static float   getSaturation()   { return saturation; }
     public static float   getLightness()    { return lightness; }
     public static boolean isDarkMode()      { return darkMode; }
-    public static Color   getAccentColor()  { return accentColor; }
+    public static Color   getAccentForegroundColor()  { return accentForegroundColor; }
+    public static Color   getAccentBackgroundColor()  { return accentBackgroundColor; }
 
     public static boolean isStripedRows()          { return stripedRows; }
     public static boolean isHighContrast()         { return highContrast; }
@@ -137,19 +141,19 @@ public class ThemeManager extends BaseAspectManager<Theme> {
         put(d, "textForeground", currentFg);
         put(d, "nimbusDisabledText",          darkMode ? new Color(100,100,100) : new Color(120,120,120));
         put(d, "nimbusSelectedText",          darkMode ? Color.WHITE : Color.BLACK);
-        put(d, "nimbusFocus",               accentColor);
-        put(d, "nimbusSelectionBackground", accentColor);
+        put(d, "nimbusFocus",               accentForegroundColor);
+        put(d, "nimbusSelectionBackground", accentForegroundColor);
 
         // Component-specific keys read by DefaultTreeCellRenderer/JTable.updateUI()
         // and by our themed renderers as fallback
         put(d, "Tree.textBackground",       currentBg);
         put(d, "Tree.textForeground",        currentFg);
-        put(d, "Tree.selectionBackground",   accentColor);
+        put(d, "Tree.selectionBackground",   accentForegroundColor);
         put(d, "Tree.selectionForeground",   Color.WHITE);
-        put(d, "Tree.selectionBorderColor",  accentColor);
+        put(d, "Tree.selectionBorderColor",  accentForegroundColor);
         put(d, "Table.background",           currentBg);
         put(d, "Table.foreground",           currentFg);
-        put(d, "Table.selectionBackground",  accentColor);
+        put(d, "Table.selectionBackground",  accentForegroundColor);
         put(d, "Table.selectionForeground",  Color.WHITE);
         put(d, "Table.gridColor",            currentGrid);
         put(d, "Table.rowHeight",            24);   // Windows ListView-style row height
@@ -157,7 +161,7 @@ public class ThemeManager extends BaseAspectManager<Theme> {
         put(d, "TableHeader.foreground",     new Color(0, 0, 0));
         put(d, "List.background",            currentBg);
         put(d, "List.foreground",            currentFg);
-        put(d, "List.selectionBackground",   accentColor);
+        put(d, "List.selectionBackground",   accentForegroundColor);
         put(d, "List.selectionForeground",   Color.WHITE);
         put(d, "ScrollPane.background",      currentBg);
         put(d, "Viewport.background",        currentBg);
@@ -190,9 +194,12 @@ public class ThemeManager extends BaseAspectManager<Theme> {
      */
     private static void applyUiFont(UIDefaults d) {
         javax.swing.plaf.FontUIResource f = new javax.swing.plaf.FontUIResource(getUiFont());
-        put(d, "defaultFont", f);                 // Nimbus applies this everywhere
+        //put(d, "defaultFont", f);                 // Nimbus applies this everywhere
         for (Object key : new ArrayList<>(d.keySet())) {
-            if (key instanceof String s && s.endsWith(".font")) {
+            if (key instanceof String s && s.endsWith("Table.font")) {
+                put(d, s, f);                     // explicit per-component fonts (Table.font, Tree.font, …)
+            }
+            if (key instanceof String s && s.endsWith("Tree.font")) {
                 put(d, s, f);                     // explicit per-component fonts (Table.font, Tree.font, …)
             }
         }
@@ -217,7 +224,7 @@ public class ThemeManager extends BaseAspectManager<Theme> {
 
     /** Darken the tint: each channel multiplied by ratio (0–1). */
     public static Color accentDark(float ratio) {
-        return ColorUtils.darken(getAccentColor(), ratio);
+        return ColorUtils.darken(getAccentForegroundColor(), ratio);
     }
 
     /** Darken the tint: each channel multiplied by ratio (0–1). */
@@ -227,7 +234,7 @@ public class ThemeManager extends BaseAspectManager<Theme> {
 
     /** Brighten the tint: each channel multiplied by ratio (>1 boosts toward white). */
     public static Color accentLight(float ratio) {
-        return ColorUtils.lighten(getAccentColor(), ratio);
+        return ColorUtils.lighten(getAccentForegroundColor(), ratio);
     }
 
     /** Brighten the tint: each channel multiplied by ratio (>1 boosts toward white). */

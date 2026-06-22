@@ -18,7 +18,7 @@ import se.spacify.controls.GlassPanel;
 import se.spacify.controls.GlossyButton;
 import se.spacify.controls.SplitPane.SplitPaneDivider;
 import se.spacify.controls.TabButton;
-
+import se.spacify.controls.Table;
 import se.spacify.controls.ToolBar;
 import se.spacify.controls.ToolButton;
 
@@ -95,7 +95,7 @@ public class WMP8Skin extends WMPSkin {
 			} else {
 				g2.fillRect(0, 0, w, h);
 			}
-			g2.setPaint(new GradientPaint(0f, 0f, ThemeManager.getAccentColor(), (float)(w), h / 2f, new Color(255, 255 ,255, 0)));
+			g2.setPaint(new GradientPaint(0f, 0f, ThemeManager.getAccentForegroundColor(), (float)(w), h / 2f, new Color(255, 255 ,255, 0)));
 	
 		} else if (control.isHovered()) {
 			g2.setColor(new Color(255, 255, 255, 45));
@@ -150,7 +150,7 @@ public class WMP8Skin extends WMPSkin {
 	}
 
 	@Override
-	public void paintTableHeader(JTable table, int width, int height, Graphics2D g2) {
+	public void paintTableHeader(Table table, int width, int height, Graphics2D g2) {
 		// TODO Auto-generated method stub
 		g2.setPaint(new Color(235, 234, 219));
 		g2.fillRect(0, 0, width, height);

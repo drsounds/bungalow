@@ -19,7 +19,7 @@ import java.awt.Rectangle;
 import se.spacify.skinning.Skin;
 import se.spacify.ui.MainWindow;
 
-public class TableHeaderRenderer extends Label implements TableCellRenderer {
+public class SpaceTableCellRenderer extends Label implements TableCellRenderer {
     private static final long serialVersionUID = 1L;
     private Table table;
     public Table getTable() {
@@ -34,7 +34,7 @@ public class TableHeaderRenderer extends Label implements TableCellRenderer {
 		return ((MainWindow)(SwingUtilities.getWindowAncestor(this)));
 	}
 	
-	public TableHeaderRenderer(Table table) { 
+	public SpaceTableCellRenderer(Table table) { 
         super();
         this.table = table;
     }
@@ -42,11 +42,10 @@ public class TableHeaderRenderer extends Label implements TableCellRenderer {
     private class SpaceTableCellLabelUI extends LabelUI {
 
 		// Define your custom padding/insets
-    	private static final Insets BUTTON_PADS = new Insets( 8, 8, 8, 8);
-
+    	private static final Insets BUTTON_PADS = new Insets( 4, 4, 4, 4);
 		@Override
 		public Dimension getPreferredSize(JComponent c) {
-			Label b = (Label)TableHeaderRenderer.this;
+			Label b = (Label)SpaceTableCellRenderer.this;
 
 			// Get the font metrics to measure text width/height
 			FontMetrics fm = b.getFontMetrics(b.getFont());
@@ -81,7 +80,6 @@ public class TableHeaderRenderer extends Label implements TableCellRenderer {
 			Graphics2D g2 = (Graphics2D) g.create();
 			g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 	
-			getSkin().paintTableHeader((Table)TableHeaderRenderer.this.getTable(), getWidth(), getHeight(), g2);
 			// 2. Initialize layout rectangles
 			
 			FontMetrics fm = g2.getFontMetrics(l.getFont());

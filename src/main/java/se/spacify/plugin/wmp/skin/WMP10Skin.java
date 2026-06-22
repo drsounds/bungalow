@@ -20,6 +20,7 @@ import se.spacify.controls.GlassPanel;
 import se.spacify.controls.GlossyButton;
 import se.spacify.controls.SplitPane.SplitPaneDivider;
 import se.spacify.controls.TabButton;
+import se.spacify.controls.Table;
 import se.spacify.controls.ToolBar;
 import se.spacify.controls.ToolButton;
 import se.spacify.controls.VerticalPanel;
@@ -103,7 +104,7 @@ public class WMP10Skin extends WMPSkin {
 	@Override
 	public void paintGlossyButton(GlossyButton control, Graphics2D g2, int x, int y, int d) {
 		// TODO Auto-generated method stub
-		Color accent = ThemeManager.getAccentColor();
+		Color accent = ThemeManager.getAccentForegroundColor();
 		Color tint = ThemeManager.getTintColor();
 
 		Color glowColor = new Color(255, 255, 255, 0);
@@ -246,7 +247,7 @@ public class WMP10Skin extends WMPSkin {
 		}
 	}
 	@Override
-	public void paintTableHeader(JTable table, int width, int height, Graphics2D g2) {
+	public void paintTableHeader(Table table, int width, int height, Graphics2D g2) {
 		g2.setPaint(new LinearGradientPaint(new Point(0, height - height / 4), new Point(0, height), new float[] { 0, 1 }, new Color[] { new Color(235, 234, 219), new Color (203, 199, 184) }));
 		g2.fillRect(0, 0, width, height);		
 	}

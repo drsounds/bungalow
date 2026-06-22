@@ -46,6 +46,10 @@ public class ColorUtils {
         return new Color((rgb & 0x00FFFFFF) | (alpha << 24), true);
     }
     
+    public static double getLuminanceOfColor(Color color) {
+        return 0.2126 * color.getRed() + 0.7152 * color.getGreen() + 0.0722 * color.getBlue();
+    }
+
     public static Color hsl(float h, float s, float l) {
         if (s == 0f) { int v = (int)(l * 255); return new Color(v, v, v); }
         float q = l < 0.5f ? l * (1 + s) : l + s - l * s;

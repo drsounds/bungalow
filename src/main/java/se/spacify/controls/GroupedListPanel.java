@@ -233,7 +233,7 @@ public class GroupedListPanel extends Panel {
 
         /** A subtle accent-tinted shade for the hovered row, distinct from stripes. */
         private static Color hover(Color base) {
-            Color a = ThemeManager.getAccentColor();
+            Color a = ThemeManager.getAccentForegroundColor();
             return new Color((base.getRed()   * 3 + a.getRed())   / 4,
                              (base.getGreen() * 3 + a.getGreen()) / 4,
                              (base.getBlue()  * 3 + a.getBlue())  / 4);

@@ -8,12 +8,16 @@ import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.JTable;
 
+import java.awt.Point;
+
 import se.spacify.aspect.Aspect;
 import se.spacify.aspect.AspectManager;
+import se.spacify.controls.Button;
 import se.spacify.controls.GlassPanel;
 import se.spacify.controls.GlossyButton;
 import se.spacify.controls.SplitPane.SplitPaneDivider;
 import se.spacify.controls.TabButton;
+import se.spacify.controls.Table;
 import se.spacify.controls.TextField;
 import se.spacify.controls.ToolBar;
 import se.spacify.controls.ToolButton;
@@ -45,7 +49,10 @@ public abstract class Skin implements Aspect {
 		return defaultValue;
 	}
 
-	public abstract String getId();
+	public abstract String getId(); 
+	public void paintText(JComponent control, Graphics2D g2, String text, int x, int y) {
+		g2.drawString(text, x, y);
+	}
 	public void paintTopBar(JPanel control, Graphics2D g2) {}
 	public void paintHeader(JPanel header, Graphics2D g2) {}
 	public void paintFooter(JPanel footer, Graphics2D g2) {}
@@ -54,12 +61,11 @@ public abstract class Skin implements Aspect {
 	public void paintPlaylist(JPanel control, Graphics2D g2) {}
 	public void paintGlassPanel(GlassPanel control, Graphics2D g2) {}
 	public void paintToolBar(ToolBar control, Graphics2D g2) {}
-	public void paintTableHeader(JTable table, int width, int height, Graphics2D g2)  {}
+	public void paintTableHeader(Table table, int width, int height, Graphics2D g2)  {}
 	public void paintToolButton(ToolButton control, Graphics2D g2) {}
 	public void paintVerticalPanel(VerticalPanel verticalPanel, Graphics2D g2) {}
-	public void onRegister(SkinManager manager) {
-		
-	}
+	public void onRegister(SkinManager manager) {}
+	public void paintButton(Button control, Graphics2D g2, boolean hovered, boolean pressed) {}
 	public void paintViewStack(ViewStack control, Graphics2D g2) {}
     public void paintTextField(TextField textField, Graphics2D g2) {}
     public void paintSplitPaneDivider(SplitPaneDivider splitPaneDivider, Graphics2D g2) {}

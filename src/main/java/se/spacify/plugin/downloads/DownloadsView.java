@@ -6,7 +6,7 @@ import se.spacify.db.entity.Download;
 import se.spacify.navigation.ViewStack;
 import se.spacify.plugin.library.views.AbstractLibraryView;
 import se.spacify.service.media.PlayRequest;
-
+import se.spacify.controls.Button;
 import javax.swing.*;
 import java.awt.*;
 import java.io.File;
@@ -128,8 +128,8 @@ public class DownloadsView extends AbstractLibraryView {
 
     // ── Formatting ──────────────────────────────────────────────────────────────────
 
-    private static JButton button(String text, Runnable action) {
-        JButton b = new JButton(text);
+    private static Button button(String text, Runnable action) {
+        Button b = new Button(text);
         b.setFocusPainted(false);
         b.addActionListener(e -> action.run());
         return b;

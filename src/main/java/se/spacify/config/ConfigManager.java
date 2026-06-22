@@ -1,6 +1,7 @@
 package se.spacify.config;
 
 import se.spacify.ui.MainWindow;
+import se.spacify.ui.theme.ColorUtils;
 import se.spacify.ui.theme.Taste;
 import se.spacify.ui.theme.Theme;
 
@@ -57,9 +58,17 @@ public class ConfigManager {
             taste.setSaturation( Float.parseFloat(p.getProperty("theme.saturation", "0.0")));
             taste.setLightness(  Float.parseFloat(p.getProperty("theme.lightness",  "0.5")));
             taste.setDarkMode(  Boolean.parseBoolean(p.getProperty("theme.darkMode", "true")));
-            taste.setAccentBackgroundColor(new Color(
+
+            Color accentBackgroundColor = new Color(
                 Integer.parseInt(p.getProperty("theme.accentColor",
-                    String.valueOf(new Color(30, 215, 96).getRGB()))), true));
+                    String.valueOf(new Color(30, 215, 96).getRGB()))), true);
+            taste.setAccentBackgroundColor(accentBackgroundColor);
+
+            double luminance = ColorUtils.getLuminanceOfColor(accentBackgroundColor);
+        
+            Color accentForegroundColor = luminance > 127 ? accentBackgroundColor.darker().darker() : accentBackgroundColor.brighter();
+            taste.setAccentForegroundColor(accentForegroundColor);
+        
             taste.setStripedRows(         Boolean.parseBoolean(p.getProperty("theme.stripedRows",          "true")));
             taste.setHighContrast(        Boolean.parseBoolean(p.getProperty("theme.highContrast",         "false")));
             taste.setHighContrastInverted(Boolean.parseBoolean(p.getProperty("theme.highContrastInverted", "false")));

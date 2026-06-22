@@ -27,7 +27,7 @@ public class Tree extends JTree implements Control {
         // fills behind the label). The cell renderer paints transparently on top.
         int[] selected = getSelectionRows();
         if (selected != null) {
-            g.setColor(ThemeManager.getAccentColor());
+            g.setColor(ThemeManager.getAccentForegroundColor());
             for (int row : selected) {
                 Rectangle b = getRowBounds(row);
                 if (b != null) g.fillRect(0, b.y, getWidth(), b.height);

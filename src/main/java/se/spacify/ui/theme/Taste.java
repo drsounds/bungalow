@@ -109,7 +109,8 @@ public class Taste {
     public void setSaturation(float s)    { saturation = s;    ThemeManager.setSaturation(s);    notify_(); }
     public void setLightness(float l)     { lightness = l;     ThemeManager.setLightness(l);     notify_(); }
     public void setDarkMode(boolean d)    { darkMode = d;      ThemeManager.setDarkMode(d);      notify_(); }
-    public void setAccentBackgroundColor(Color c)   { accentBackgroundColor = c;   ThemeManager.setAccentColor(c);   notify_(); }
+    public void setAccentBackgroundColor(Color c)   { accentBackgroundColor = c;   ThemeManager.setAccentBackgroundColor(c);   notify_(); }
+    public void setAccentForegroundColor(Color c)   { accentForegroundColor = c;   ThemeManager.setAccentForegroundColor(c);   notify_(); }
 
     public void setStripedRows(boolean v)          { stripedRows = v;          ThemeManager.setStripedRows(v);          notify_(); }
     public void setHighContrast(boolean v)         { highContrast = v;         ThemeManager.setHighContrast(v);         notify_(); }

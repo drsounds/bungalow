@@ -28,15 +28,19 @@ public class Table extends JTable implements Control {
 	public Table() {
 		setRowHeight(ROW_HEIGHT);
 		this.getTableHeader().setDefaultRenderer(new TableHeaderRenderer(this));
+		this.setDefaultRenderer(getClass(), new SpaceTableCellRenderer(this));
 	}
 	public Table(Object[][] data, String[] columns) {
 		super(data, columns);
 		setRowHeight(ROW_HEIGHT);
+		this.getTableHeader().setDefaultRenderer(new TableHeaderRenderer(this));
+		this.setDefaultRenderer(getClass(), new SpaceTableCellRenderer(this));
 	}
 	public Table(TableModel model) {
 		super(model);
 		setRowHeight(ROW_HEIGHT);
 		this.getTableHeader().setDefaultRenderer(new TableHeaderRenderer(this));
+		this.setDefaultRenderer(getClass(), new SpaceTableCellRenderer(this));
 	}
 
 	private Theme theme;
