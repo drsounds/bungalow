@@ -2,7 +2,7 @@ package se.spacify.service.media;
 
 import java.util.List;
 
-import se.spacify.plugin.music.service.MusicService;
+import se.spacify.app.music.service.MusicService;
 
 /**
  * The availability of a track across installed services, used to render the

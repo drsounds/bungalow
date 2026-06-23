@@ -62,7 +62,7 @@ public class SpacifyApp {
 	     defaults.put("TableHeader.renderer[Pressed].backgroundPainter", customHeaderPainter);*/
         // ── Services ──────────────────────────────────────────────────────────
         // Services are now contributed by plugins (see the Local Music plugin),
-        // discovered and started by PluginManager during MainWindow startup.
+        // discovered and started by ApplicationManager during MainWindow startup.
 
         // ── Register shutdown hook ────────────────────────────────────────────
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {

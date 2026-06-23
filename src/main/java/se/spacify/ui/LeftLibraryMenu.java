@@ -6,7 +6,7 @@ import se.spacify.controls.ToolMenuItem;
 import se.spacify.library.LibraryEvents;
 import se.spacify.navigation.NavigationListener;
 import se.spacify.navigation.ViewStack;
-import se.spacify.plugin.library.views.LibraryScanAction;
+import se.spacify.app.library.views.LibraryScanAction;
 import se.spacify.navigation.SidebarNode;
 import se.spacify.ui.theme.ThemeManager;
 import se.spacify.controls.Panel;
@@ -70,7 +70,7 @@ public class LeftLibraryMenu extends Panel implements NavigationListener {
         root = new DefaultMutableTreeNode("root");
         root.add(nodeFor(new SidebarNode("Player",    "spacify:now-playing")));
         root.add(nodeFor(new SidebarNode("Downloads", "spacify:downloads")));
-        root.add(nodeFor(new SidebarNode("Plugins",   "spacify:plugins")));
+        root.add(nodeFor(new SidebarNode("Apps",   "spacify:apps")));
 
         toolbar = new ToolBar();
         toolbar.setFloatable(false);

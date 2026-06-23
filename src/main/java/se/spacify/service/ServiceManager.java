@@ -57,7 +57,7 @@ public class ServiceManager extends BaseAspectManager<Service> {
     /**
      * Returns the first registered service exposing the given aspect, or null.
      * {@code aspect} may be {@link Service} itself, a concrete service class, or
-     * any capability interface (e.g. {@link se.spacify.plugin.media.service.MediaService},
+     * any capability interface (e.g. {@link se.spacify.app.media.service.MediaService},
      * {@link AuthAspect}); only the services implementing it are considered.
      */
     @SuppressWarnings("unchecked")

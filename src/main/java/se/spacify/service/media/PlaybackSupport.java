@@ -3,9 +3,9 @@ package se.spacify.service.media;
 import java.util.ArrayList;
 import java.util.List;
 
-import se.spacify.plugin.media.service.MediaService;
-import se.spacify.plugin.media.service.MediaService.PlaybackListener;
-import se.spacify.plugin.media.service.MediaService.PlaybackState;
+import se.spacify.app.media.service.MediaService;
+import se.spacify.app.media.service.MediaService.PlaybackListener;
+import se.spacify.app.media.service.MediaService.PlaybackState;
 
 /**
  * Reusable listener bookkeeping for {@link MediaService} implementations.

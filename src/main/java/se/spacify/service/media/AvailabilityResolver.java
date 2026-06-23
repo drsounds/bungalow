@@ -12,7 +12,7 @@ import java.util.concurrent.TimeUnit;
 import javax.swing.SwingUtilities;
 
 import se.spacify.library.LibraryEvents;
-import se.spacify.plugin.music.service.MusicService;
+import se.spacify.app.music.service.MusicService;
 import se.spacify.ui.MainWindow;
 
 /**

@@ -3,16 +3,16 @@ package se.spacify.ui.theme;
 import se.spacify.aspect.Aspect;
 import se.spacify.aspect.AspectManager;
 import se.spacify.design.Design;
-import se.spacify.plugin.Plugin;
+import se.spacify.app.Application;
 import se.spacify.skinning.Skin;
 import se.spacify.ui.chrome.Chrome;
 
 public class Theme implements Aspect {
-    private Plugin plugin;
-    public Plugin getPlugin() {
+    private Application plugin;
+    public Application getApplication() {
         return plugin;
     }
-    public void setPlugin(Plugin plugin) {
+    public void setApplication(Application plugin) {
         this.plugin = plugin;
     }
     public String getId() {

@@ -28,7 +28,7 @@ public class MusicServiceTrack {
     @DatabaseField(canBeNull = true, index = true)
     private String trackKey;
 
-    /** {@code getServiceId()} of the chosen {@link se.spacify.plugin.music.service.MusicService}. */
+    /** {@code getServiceId()} of the chosen {@link se.spacify.app.music.service.MusicService}. */
     @DatabaseField(canBeNull = false)
     private String ServiceId;
 

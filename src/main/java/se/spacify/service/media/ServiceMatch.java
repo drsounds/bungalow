@@ -1,7 +1,7 @@
 package se.spacify.service.media;
 
-import se.spacify.plugin.music.service.MusicService;
-import se.spacify.plugin.music.service.MusicService.Candidate;
+import se.spacify.app.music.service.MusicService;
+import se.spacify.app.music.service.MusicService.Candidate;
 
 import javax.swing.ImageIcon;
 

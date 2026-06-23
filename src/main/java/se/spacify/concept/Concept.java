@@ -3,7 +3,7 @@ package se.spacify.concept;
 import javax.swing.Icon;
 
 import se.spacify.aspect.Aspect;
-import se.spacify.plugin.Plugin;
+import se.spacify.app.Application;
 
 public interface Concept extends Aspect {
     public void onActivate(ConceptContext ctx);
@@ -12,5 +12,5 @@ public interface Concept extends Aspect {
 
     /** Icon shown in the plugin manager; null falls back to a default. */
     public Icon getIcon();
-    public Plugin getPlugin();
+    public Application getApplication();
 }

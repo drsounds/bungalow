@@ -3,9 +3,9 @@ package se.spacify.service.media;
 import se.spacify.db.entity.LocalFile;
 import se.spacify.db.entity.MusicServiceTrack;
 
-import se.spacify.plugin.localmusic.service.LocalMusicService;
-import se.spacify.plugin.media.service.MediaService;
-import se.spacify.plugin.music.service.MusicService;
+import se.spacify.app.localmusic.service.LocalMusicService;
+import se.spacify.app.media.service.MediaService;
+import se.spacify.app.music.service.MusicService;
 import se.spacify.ui.MainWindow;
 import se.spacify.ui.ServiceMatchDialog;
 
@@ -130,7 +130,7 @@ public final class PlaybackCoordinator {
         if (uri == null) return false;
         // YouTube URIs must play on the YouTube service, not the first media one.
         if (uri.startsWith("spacify:youtube:")) {
-            MusicService yt = findService("se.spacify.plugin.youtube");
+            MusicService yt = findService("se.spacify.app.youtube");
             if (yt != null) {
                 setActiveService(yt);
                 yt.loadUri(uri);

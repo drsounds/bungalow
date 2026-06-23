@@ -21,13 +21,13 @@ import se.spacify.controls.ToolButton;
 import se.spacify.controls.Tree;
 import se.spacify.controls.VerticalPanel;
 import se.spacify.navigation.ViewStack;
-import se.spacify.plugin.Plugin;
+import se.spacify.app.Application;
 import se.spacify.ui.LeftLibraryMenu;
 import se.spacify.ui.LeftMenuPanel;
 
 public abstract class Skin implements Aspect {
-	protected Plugin plugin;
-	public Plugin getPlugin() {
+	protected Application plugin;
+	public Application getApplication() {
 		return plugin;
 	}
 	public float getFloatValue(JComponent control, String key, float defaultValue) {

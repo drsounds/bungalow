@@ -8,8 +8,8 @@ import se.spacify.ui.theme.ThemeManager;
 
 import se.spacify.controls.Panel;
 import se.spacify.controls.Slider;
-import se.spacify.plugin.media.service.MediaService;
-import se.spacify.plugin.media.service.MediaService.PlaybackState;
+import se.spacify.app.media.service.MediaService;
+import se.spacify.app.media.service.MediaService.PlaybackState;
 
 import javax.swing.*;
 import java.awt.*;

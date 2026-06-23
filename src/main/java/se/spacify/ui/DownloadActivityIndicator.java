@@ -12,7 +12,7 @@ import se.spacify.broadcast.BroadcastManager;
  * a pure consumer of the broadcast bus: it has <em>no</em> dependency on the
  * downloads plugin and simply listens for the {@code bungalow.downloads.changed}
  * action (the documented contract published by
- * {@code se.spacify.plugin.downloads.DownloadActions#CHANGED}). This is the
+ * {@code se.spacify.app.downloads.DownloadActions#CHANGED}). This is the
  * cross-plugin reporting the broadcast system enables — the same pattern works
  * for menu items, in-app headers, etc.
  */

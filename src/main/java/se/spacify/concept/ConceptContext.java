@@ -5,21 +5,21 @@ import se.spacify.feature.Feature;
 import se.spacify.navigation.View;
 import se.spacify.navigation.ViewStack;
 import se.spacify.navigation.SidebarNode;
-import se.spacify.plugin.Plugin;
-import se.spacify.plugin.SidebarHandle;
+import se.spacify.app.Application;
+import se.spacify.app.SidebarHandle;
 import se.spacify.service.Service;
 import se.spacify.skinning.Skin;
 import se.spacify.ui.chrome.Chrome;
 import se.spacify.ui.theme.Theme;
 
 /**
- * Registration surface handed to {@link Plugin#onActivate}. Every contribution
+ * Registration surface handed to {@link Application#onActivate}. Every contribution
  * made through this context is recorded, so disabling or removing the plugin
  * can undo exactly what it added (Services, features, views, sidebar nodes).
  */
 public interface ConceptContext {
 
-    /** This plugin's java-namespace id, e.g. {@code se.spacify.plugin.library}. */
+    /** This plugin's java-namespace id, e.g. {@code se.spacify.app.library}. */
     String pluginId();
     
     void registerChrome(Chrome c);

@@ -5,9 +5,9 @@ import se.spacify.design.Design;
 import se.spacify.design.DesignManager;
 import se.spacify.feature.FeatureManager;
 import se.spacify.navigation.ViewStack;
-import se.spacify.plugin.PluginManager;
-import se.spacify.plugin.media.service.MediaService;
-import se.spacify.plugin.media.views.NowPlayingView;
+import se.spacify.app.ApplicationManager;
+import se.spacify.app.media.service.MediaService;
+import se.spacify.app.media.views.NowPlayingView;
 import se.spacify.service.ServiceManager;
 import se.spacify.service.media.PlaybackCoordinator;
 import se.spacify.service.media.PlayQueue;
@@ -84,12 +84,12 @@ public class MainWindow extends JFrame {
     public se.spacify.search.SearchManager getSearchManager() {
         return searchManager;
     }
-    private PluginManager pluginManager;
-    public PluginManager getPluginManager() {
+    private ApplicationManager pluginManager;
+    public ApplicationManager getApplicationManager() {
         return pluginManager;
     }
 
-    public void setPluginManager(PluginManager pluginManager) {
+    public void setApplicationManager(ApplicationManager pluginManager) {
         this.pluginManager = pluginManager;
     }
     private SkinManager skinManager;
@@ -212,7 +212,7 @@ public class MainWindow extends JFrame {
 
         // 3. Now activate plugins: they register Services, Designs, Chromes, Skins,
         //    Themes and sidebar nodes into the managers created above.
-        pluginManager = new PluginManager(this);
+        pluginManager = new ApplicationManager(this);
         pluginManager.init(getViewStack(), getLeftLibraryMenu());
         pluginManager.start();
 
