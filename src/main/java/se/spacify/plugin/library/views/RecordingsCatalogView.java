@@ -17,19 +17,13 @@ import java.util.List;
  */
 public class RecordingsCatalogView extends AbstractCatalogView<Recording> {
 
-    private static final String ADD = "＋";
-    private static final String IN  = "✓";
-
     public RecordingsCatalogView(ViewStack viewStack) {
         super(viewStack);
-        // Keep the toggle column tight — it holds just the ＋/✓ glyph.
-        table.getColumnModel().getColumn(0).setMaxWidth(34);
-        table.getColumnModel().getColumn(0).setMinWidth(34);
     }
 
     @Override protected String kind() { return "recordings"; }
     @Override protected String searchHint() { return "Search recordings…"; }
-    @Override protected String[] getColumns() { return new String[]{"", "Recording", "Length"}; }
+    @Override protected String[] getColumns() { return new String[]{"Recording", "Length"}; }
 
     @Override
     protected List<Recording> fetch(MusicCatalogueService svc) {
@@ -40,7 +34,7 @@ public class RecordingsCatalogView extends AbstractCatalogView<Recording> {
 
     @Override
     protected Object[] toRow(Recording r) {
-        return new Object[]{ inLibrary(r) ? IN : ADD, r.getTitle(), fmtDuration(r.getDurationMs()) };
+        return new Object[]{ r.getTitle(), fmtDuration(r.getDurationMs()) };
     }
 
     @Override
@@ -50,12 +44,20 @@ public class RecordingsCatalogView extends AbstractCatalogView<Recording> {
         return new PlayRequest(null, r.getIsrc(), r.getTitle(), "", r.getPlayUri(), r.getDurationMs());
     }
 
+    // ── Library-membership toggle (the shared ✓/＋ column) ───────────────────────
+
+    @Override protected boolean showsLibraryToggle() { return true; }
+
     @Override
-    protected void onCellClicked(int row, int col) {
-        if (col != 0 || row < 0 || row >= rows.size()) return;
+    protected boolean inLibraryAt(int row) {
+        return row >= 0 && row < rows.size() && inLibrary(rows.get(row));
+    }
+
+    @Override
+    protected void toggleLibraryAt(int row) {
+        if (row < 0 || row >= rows.size()) return;
         Recording r = rows.get(row);
         if (inLibrary(r)) removeFromLibrary(r); else addToLibrary(r);
-        model.setValueAt(inLibrary(r) ? IN : ADD, row, 0);
         LibraryEvents.fireChanged();
     }
 

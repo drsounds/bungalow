@@ -4,7 +4,7 @@ import se.spacify.broadcast.BroadcastManager;
 import se.spacify.db.DatabaseManager;
 import se.spacify.db.entity.Download;
 import se.spacify.navigation.ViewStack;
-import se.spacify.plugin.library.views.AbstractLibraryView;
+import se.spacify.plugin.library.views.AbstractMusicListView;
 import se.spacify.service.media.PlayRequest;
 import se.spacify.controls.Button;
 import javax.swing.*;
@@ -17,10 +17,10 @@ import java.util.List;
 /**
  * The Download Manager screen (spacify:downloads): an iTunes/Kazaa-style list of
  * downloads with progress, size and speed, plus Cancel / Retry / Reveal / Play.
- * Built on {@link AbstractLibraryView} so it inherits the library look (themed
+ * Built on {@link AbstractMusicListView} so it inherits the library look (themed
  * 24px rows, full-height stripes). Updated live via the broadcast bus.
  */
-public class DownloadsView extends AbstractLibraryView {
+public class DownloadsView extends AbstractMusicListView {
 
     private final List<Download> rows = new ArrayList<>();
 

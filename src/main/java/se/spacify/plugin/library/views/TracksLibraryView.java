@@ -23,7 +23,7 @@ import java.util.Map;
  * release (album), with full CRUD. Also serves as the default library landing
  * view ({@code spacify:library}).
  */
-public class TracksLibraryView extends AbstractLibraryView {
+public class TracksLibraryView extends AbstractMusicListView {
 
     public TracksLibraryView(ViewStack viewStack) {
         super(viewStack);

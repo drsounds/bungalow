@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /** Library view listing recordings (name, artists) with full CRUD. */
-public class RecordingsLibraryView extends AbstractLibraryView {
+public class RecordingsLibraryView extends AbstractMusicListView {
 
     public RecordingsLibraryView(ViewStack viewStack) {
         super(viewStack);

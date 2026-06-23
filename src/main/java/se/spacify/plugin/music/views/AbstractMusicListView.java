@@ -1,4 +1,4 @@
-package se.spacify.plugin.library.views;
+package se.spacify.plugin.music.views;
 
 import se.spacify.controls.GroupedListPanel;
 import se.spacify.controls.Table;
@@ -9,6 +9,7 @@ import se.spacify.graphics.GroupAvatar;
 import se.spacify.library.LibraryEvents;
 import se.spacify.navigation.View;
 import se.spacify.navigation.ViewStack;
+import se.spacify.plugin.library.views.LibraryScanAction;
 import se.spacify.service.media.AvailabilityResolver;
 import se.spacify.service.media.PlaybackCoordinator;
 import se.spacify.service.media.PlayQueue;
@@ -35,7 +36,7 @@ import java.util.Map;
  * Read-only views (see {@link #isEditable()}) keep just Refresh; mutating
  * actions broadcast via {@link LibraryEvents} so the sidebar stays in sync.
  */
-public abstract class AbstractLibraryView extends View {
+public abstract class AbstractMusicListView extends View {
 
 	/** Width of the Buy/Stream column, and the ▾ (menu) hit zone within it. */
 	private static final int BUY_STREAM_COL_WIDTH = 94;
@@ -46,6 +47,9 @@ public abstract class AbstractLibraryView extends View {
 	protected final JScrollPane scroll;
 	/** Index of the trailing Buy/Stream column appended to every view's model. */
 	private final int buyStreamCol;
+	/** Index of the optional library-membership (✓/＋) column, or -1 if absent. */
+	private final int libToggleCol;
+	private static final int LIB_TOGGLE_COL_WIDTH = 32;
 	protected final DefaultTableModel model;
 	private ToolBar bottomToolbar;
 	private ToolBar toolbar;
@@ -73,7 +77,7 @@ public abstract class AbstractLibraryView extends View {
 		GroupRef groupOf(int modelRow);
 	}
 
-	protected AbstractLibraryView(ViewStack viewStack) {
+	protected AbstractMusicListView(ViewStack viewStack) {
 		super(viewStack);
 		setLayout(new BorderLayout(0, 0));
 		setOpaque(false);
@@ -87,11 +91,15 @@ public abstract class AbstractLibraryView extends View {
 		// A trailing Buy/Stream column is appended to every view; its cells are
 		// rendered from per-row availability, not the row data, so rows added with
 		// the subclass's column count are padded to fit.
+		// Base-managed trailing columns: an optional library-toggle, then Buy/Stream.
 		String[] baseCols = getColumns();
-		String[] cols = new String[baseCols.length + 1];
+		boolean libToggle = showsLibraryToggle();
+		String[] cols = new String[baseCols.length + (libToggle ? 1 : 0) + 1];
 		System.arraycopy(baseCols, 0, cols, 0, baseCols.length);
-		cols[baseCols.length] = "";
-		buyStreamCol = baseCols.length;
+		int idx = baseCols.length;
+		libToggleCol = libToggle ? idx++ : -1;
+		buyStreamCol = idx;
+		// (column titles for the appended columns are blank)
 		model = new DefaultTableModel(cols, 0) {
 			@Override
 			public boolean isCellEditable(int r, int c) {
@@ -122,6 +130,7 @@ public abstract class AbstractLibraryView extends View {
 				if (e.getClickCount() == 2) {
 					activate(row);
 				} else if (e.getClickCount() == 1) {
+					if (col == libToggleCol && handleLibraryToggleClick(row)) return;
 					if (col == buyStreamCol && handleBuyStreamClick(row, e)) return;
 					onCellClicked(row, col);
 				}
@@ -142,6 +151,15 @@ public abstract class AbstractLibraryView extends View {
 		bs.setMinWidth(0);
 		bs.setMaxWidth(BUY_STREAM_COL_WIDTH);
 		bs.setPreferredWidth(BUY_STREAM_COL_WIDTH);
+		// Optional library-membership (✓/＋) toggle column.
+		if (libToggleCol >= 0) {
+			javax.swing.table.TableColumn lt = table.getColumnModel().getColumn(libToggleCol);
+			lt.setCellRenderer(new LibraryToggleRenderer());
+			lt.setResizable(false);
+			lt.setMinWidth(0);
+			lt.setMaxWidth(LIB_TOGGLE_COL_WIDTH);
+			lt.setPreferredWidth(LIB_TOGGLE_COL_WIDTH);
+		}
 
 		scroll = new JScrollPane(table);
 		// Non-UIResource empty border so the Nimbus reinstall on theme change
@@ -301,10 +319,20 @@ public abstract class AbstractLibraryView extends View {
 	protected void onActivate(int row) {
 	}
 
-	/** Invoked on a single click of a cell; default does nothing. Used e.g. by the
-	 *  catalogue recordings view to toggle a row's "in library" (＋/✓) column. */
+	/** Invoked on a single click of a cell; default does nothing. */
 	protected void onCellClicked(int row, int col) {
 	}
+
+	// ── Library-membership toggle (✓/＋) — consistent across track lists ──────────
+
+	/** Whether this view shows the library-membership toggle column. Constant. */
+	protected boolean showsLibraryToggle() { return false; }
+
+	/** Whether the row's track is saved in the local library (drives ✓ vs ＋). */
+	protected boolean inLibraryAt(int row) { return false; }
+
+	/** Add/remove the row's track to/from the local library. */
+	protected void toggleLibraryAt(int row) {}
 
 	/**
 	 * An optional component contributed to the right of the toolbar — e.g. a
@@ -396,17 +424,46 @@ public abstract class AbstractLibraryView extends View {
 			rebuildGroups();
 	}
 
-	/** Show the Buy/Stream column only when the view has at least one playable row. */
+	/** Show the managed columns (Buy/Stream, library toggle) only when the view has
+	 *  at least one playable row. */
 	private void updateBuyStreamColumn() {
 		boolean any = false;
 		for (int r = 0; r < model.getRowCount(); r++) {
 			if (playRequestAt(r) != null) { any = true; break; }
 		}
-		int w = any ? BUY_STREAM_COL_WIDTH : 0;
-		javax.swing.table.TableColumn col = table.getColumnModel().getColumn(buyStreamCol);
+		sizeColumn(buyStreamCol, any ? BUY_STREAM_COL_WIDTH : 0);
+		if (libToggleCol >= 0) sizeColumn(libToggleCol, any ? LIB_TOGGLE_COL_WIDTH : 0);
+	}
+
+	private void sizeColumn(int index, int width) {
+		javax.swing.table.TableColumn col = table.getColumnModel().getColumn(index);
 		col.setMinWidth(0);
-		col.setMaxWidth(w);
-		col.setPreferredWidth(w);
+		col.setMaxWidth(width);
+		col.setPreferredWidth(width);
+	}
+
+	/** Toggle library membership for a clicked row; repaints so the glyph flips. */
+	private boolean handleLibraryToggleClick(int row) {
+		if (row < 0 || row >= model.getRowCount() || playRequestAt(row) == null) return false;
+		toggleLibraryAt(row);
+		table.repaint();
+		return true;
+	}
+
+	/** Renders the library-membership glyph (✓ in library / ＋ to add), themed. */
+	private final class LibraryToggleRenderer extends ThemedTableCellRenderer {
+		private static final long serialVersionUID = 1L;
+		@Override
+		public Component getTableCellRendererComponent(JTable t, Object value, boolean sel,
+				boolean focus, int row, int column) {
+			super.getTableCellRendererComponent(t, value, sel, focus, row, column);
+			boolean playable = playRequestAt(row) != null;
+			boolean in = playable && inLibraryAt(row);
+			setHorizontalAlignment(CENTER);
+			setText(!playable ? "" : (in ? "✓" : "＋"));
+			if (!sel) setForeground(in ? ThemeManager.getAccentBackgroundColor() : new Color(150, 150, 150));
+			return this;
+		}
 	}
 
 	// ── Buy/Stream split button ─────────────────────────────────────────────────
@@ -416,9 +473,10 @@ public abstract class AbstractLibraryView extends View {
 	private boolean handleBuyStreamClick(int row, MouseEvent e) {
 		PlayRequest req = playRequestAt(row);
 		if (req == null) return false;
+		TrackAvailability a = AvailabilityResolver.get().availabilityFor(req, table::repaint);
+		if (a.local()) { activate(row); return true; }   // already have the file → play it
 		Rectangle cell = table.getCellRect(row, buyStreamCol, false);
 		boolean onArrow = (e.getX() - cell.x) >= cell.width - BUY_STREAM_ARROW_W - 4;
-		TrackAvailability a = AvailabilityResolver.get().availabilityFor(req, table::repaint);
 		if (onArrow || !a.hasStream()) {
 			showBuyStreamMenu(row, req, a);
 		} else {
@@ -459,70 +517,59 @@ public abstract class AbstractLibraryView extends View {
 		menu.show(table, cell.x, cell.y + cell.height);
 	}
 
-	/** Cell renderer: the per-row split button driven by {@link TrackAvailability}. */
+	/**
+	 * Cell renderer driven by {@link TrackAvailability}: a real {@link se.spacify.controls.Button}
+	 * (so it uses the same skinned painting as every other button, via SpaceButtonUI)
+	 * labelled "Stream ▾" / "Buy ▾"; or, when the track is matched locally, just a
+	 * file icon and no button.
+	 */
 	private final class BuyStreamRenderer implements javax.swing.table.TableCellRenderer {
-		private final BuyStreamCell cell = new BuyStreamCell();
+		private final BuyStreamButton button = new BuyStreamButton();
+		private final FileCell        fileCell = new FileCell();
+		private final JLabel          blank = new JLabel();
 		@Override
 		public Component getTableCellRendererComponent(JTable t, Object value, boolean sel,
 				boolean focus, int row, int column) {
-			cell.setFont(t.getFont());
 			PlayRequest req = playRequestAt(row);
-			if (req == null) { cell.setBlank(); return cell; }
-			cell.setState(AvailabilityResolver.get().availabilityFor(req, table::repaint));
-			return cell;
+			if (req == null) return blank;
+			TrackAvailability a = AvailabilityResolver.get().availabilityFor(req, table::repaint);
+			if (a.local()) return fileCell;   // have the file → file icon only, no button
+			button.setFont(t.getFont());
+			button.setText(!a.resolved() ? "…" : (a.hasStream() ? "Stream ▾" : "Buy ▾"));
+			return button;
 		}
 	}
 
-	/** Paints the iTunes-style split button: optional file icon, a Buy/Stream label,
-	 *  a divider and a ▾ menu arrow. */
-	private static final class BuyStreamCell extends JComponent {
+	/** A {@link se.spacify.controls.Button} usable as a detached table cell renderer —
+	 *  falls back to the live window so the skin (SpaceButtonUI paint) still resolves. */
+	private static final class BuyStreamButton extends se.spacify.controls.Button {
 		private static final long serialVersionUID = 1L;
-		private boolean blank;
-		private TrackAvailability availability = TrackAvailability.PENDING;
+		BuyStreamButton() {
+			super();
+			setFocusable(false);
+			setMargin(new java.awt.Insets(0, 0, 0, 0));
+		}
+		@Override
+		public se.spacify.ui.MainWindow getMainWindow() {
+			java.awt.Window w = SwingUtilities.getWindowAncestor(this);
+			if (w instanceof se.spacify.ui.MainWindow mw) return mw;
+			return se.spacify.ui.MainWindow.getInstance();
+		}
+	}
 
-		void setBlank() { this.blank = true; }
-		void setState(TrackAvailability a) { this.blank = false; this.availability = a; }
-
+	/** A file glyph shown when the track already has a local copy. */
+	private static final class FileCell extends JComponent {
+		private static final long serialVersionUID = 1L;
 		@Override
 		protected void paintComponent(Graphics g) {
-			if (blank) return;
 			Graphics2D g2 = (Graphics2D) g.create();
 			g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-			int pad = 3, bx = pad, by = pad, bw = getWidth() - 2 * pad, bh = getHeight() - 2 * pad;
-			if (bw <= BUY_STREAM_ARROW_W || bh <= 0) { g2.dispose(); return; }
-
-			g2.setColor(new Color(255, 255, 255, 28));
-			g2.fillRoundRect(bx, by, bw, bh, 8, 8);
-			g2.setColor(new Color(255, 255, 255, 46));
-			g2.drawRoundRect(bx, by, bw - 1, bh - 1, 8, 8);
-
-			Color fg = new Color(228, 228, 228);
-			int textX = bx + 7;
-			if (availability.local()) {
-				drawFileIcon(g2, textX, by + bh / 2 - 5, new Color(150, 200, 255));
-				textX += 12;
-			}
-			String label = !availability.resolved() ? "…" : (availability.hasStream() ? "Stream" : "Buy");
-			g2.setColor(fg);
-			if (getFont() != null) g2.setFont(getFont());
-			int baseline = by + (bh + g2.getFontMetrics().getAscent()) / 2 - 2;
-			g2.drawString(label, textX, baseline);
-
-			int arrowX = bx + bw - BUY_STREAM_ARROW_W;
-			g2.setColor(new Color(255, 255, 255, 40));
-			g2.drawLine(arrowX, by + 3, arrowX, by + bh - 3);
-			int ax = arrowX + BUY_STREAM_ARROW_W / 2, ay = by + bh / 2;
-			g2.setColor(fg);
-			g2.fillPolygon(new int[]{ ax - 3, ax + 3, ax }, new int[]{ ay - 1, ay - 1, ay + 3 }, 3);
-
-			g2.dispose();
-		}
-
-		private static void drawFileIcon(Graphics2D g2, int x, int y, Color c) {
-			g2.setColor(c);
-			int w = 8, h = 10, fold = 3;
+			int w = 9, h = 11, fold = 3;
+			int x = (getWidth() - w) / 2, y = (getHeight() - h) / 2;
+			g2.setColor(new Color(150, 200, 255));
 			g2.fillPolygon(new int[]{ x, x + w - fold, x + w, x + w, x },
 			               new int[]{ y, y, y + fold, y + h, y + h }, 5);
+			g2.dispose();
 		}
 	}
 

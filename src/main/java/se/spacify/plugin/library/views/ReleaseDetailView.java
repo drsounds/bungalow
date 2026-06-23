@@ -18,7 +18,7 @@ import java.util.regex.Pattern;
  * {@code spacify:library:release:<id>}. Lists the album's tracks; double-click
  * resolves and plays a track across the registered music Services.
  */
-public class ReleaseDetailView extends AbstractLibraryView {
+public class ReleaseDetailView extends AbstractMusicListView {
     public ReleaseDetailView(ViewStack viewStack) {
         super(viewStack);
         //TODO Auto-generated constructor stub

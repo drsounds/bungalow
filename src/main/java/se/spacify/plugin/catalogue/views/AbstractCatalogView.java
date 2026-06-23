@@ -1,7 +1,8 @@
-package se.spacify.plugin.library.views;
+package se.spacify.plugin.catalogue.views;
 
 import se.spacify.navigation.ViewStack;
 import se.spacify.plugin.catalogue.service.MusicCatalogueService;
+import se.spacify.plugin.music.views.AbstractMusicListView;
 
 import javax.swing.JComponent;
 import javax.swing.JTextField;
@@ -17,7 +18,7 @@ import java.util.regex.Pattern;
 
 /**
  * Base for the read-only catalogue browsing views, one per catalogue tree kind
- * (artists / releases / recordings). It reuses {@link AbstractLibraryView}'s
+ * (artists / releases / recordings). It reuses {@link AbstractMusicListView}'s
  * themed table, play-queue integration and "Play with…" plumbing, but fetches
  * its rows from a remote {@link MusicCatalogueService} on a background thread —
  * a {@link SwingWorker} per reload, with the latest request winning so quick
@@ -27,9 +28,7 @@ import java.util.regex.Pattern;
  *
  * @param <T> the catalogue entity type a concrete view lists
  */
-public abstract class AbstractCatalogView<T> extends AbstractLibraryView {
-
-
+public abstract class AbstractCatalogView<T> extends AbstractMusicListView {
     protected final List<T> rows = new ArrayList<>();
 
     private String ServiceId;

@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /** Library view listing releases (name, artists, type, date) with full CRUD. */
-public class ReleasesLibraryView extends AbstractLibraryView {
+public class ReleasesLibraryView extends AbstractMusicListView {
 
     public ReleasesLibraryView(ViewStack viewStack) {
         super(viewStack);

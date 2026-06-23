@@ -37,7 +37,7 @@ public class WMPSkin extends Skin {
                 if (control.getTaste().isDarkMode()) {
                     return new Color(255, 255, 255, 25);
                 } else {
-                    return new Color(0, 0, 0, 1);
+                    return new Color(0, 0, 0,  15);
                 }
             }
         }

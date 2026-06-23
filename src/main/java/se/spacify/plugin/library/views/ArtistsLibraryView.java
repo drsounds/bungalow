@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /** Library view listing artists (name, ISNI, MBID) with full CRUD. */
-public class ArtistsLibraryView extends AbstractLibraryView {
+public class ArtistsLibraryView extends AbstractMusicListView {
 
     public ArtistsLibraryView(ViewStack viewStack) {
         super(viewStack);

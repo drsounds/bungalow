@@ -18,7 +18,7 @@ import java.util.List;
  * ISRC across the registered music Services, falling back to direct local
  * playback.
  */
-public class LocalFileLibraryView extends AbstractLibraryView {
+public class LocalFileLibraryView extends AbstractMusicListView {
 
     public LocalFileLibraryView(ViewStack viewStack) {
         super(viewStack);

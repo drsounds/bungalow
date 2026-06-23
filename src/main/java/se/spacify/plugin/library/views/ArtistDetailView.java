@@ -20,7 +20,7 @@ import java.util.regex.Pattern;
  * {@code spacify:library:artist:<id>}. Lists the artist's recordings and the
  * album each appears on; double-click resolves and plays across Services.
  */
-public class ArtistDetailView extends AbstractLibraryView {
+public class ArtistDetailView extends AbstractMusicListView {
 
     public ArtistDetailView(ViewStack viewStack) {
         super(viewStack);
