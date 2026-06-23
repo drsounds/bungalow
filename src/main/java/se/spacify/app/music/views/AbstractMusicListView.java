@@ -1,81 +1,54 @@
 package se.spacify.app.music.views;
 
-import se.spacify.controls.GroupedListPanel;
 import se.spacify.controls.Table;
 import se.spacify.controls.ToggleButton;
 import se.spacify.controls.ToolBar;
 import se.spacify.controls.ToolButton;
-import se.spacify.graphics.GroupAvatar;
 import se.spacify.library.LibraryEvents;
 import se.spacify.navigation.View;
 import se.spacify.navigation.ViewStack;
 import se.spacify.app.library.views.LibraryScanAction;
-import se.spacify.service.media.AvailabilityResolver;
 import se.spacify.service.media.PlaybackCoordinator;
-import se.spacify.service.media.PlayQueue;
 import se.spacify.service.media.PlayQueueItem;
 import se.spacify.service.media.PlayRequest;
-import se.spacify.service.media.TrackAvailability;
 
 import se.spacify.ui.theme.ThemeManager;
-import se.spacify.ui.theme.ThemedTableCellRenderer;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
- * Base for the data-backed library views. Provides a themed {@link JTable} with
- * an optional header and a CRUD toolbar (Add / Edit / Delete / Scan / Refresh).
- * Read-only views (see {@link #isEditable()}) keep just Refresh; mutating
- * actions broadcast via {@link LibraryEvents} so the sidebar stays in sync.
+ * Base for the data-backed music views. Provides the page chrome — an optional
+ * header and a CRUD toolbar (Add / Edit / Delete / Scan / Refresh), plus an
+ * optional grouped-view switch — wrapped around a reusable {@link MusicTable}.
+ * Read-only views (see {@link #isEditable()}) keep just Refresh; mutating actions
+ * broadcast via {@link LibraryEvents} so the sidebar stays in sync.
+ *
+ * <p>The table itself — the Buy/Stream column, the library-membership toggle,
+ * play-queue activation, the "Play with…" menu and the grouped presentation — all
+ * live in {@link MusicTable}, which other apps can embed directly without
+ * subclassing this view. Subclasses here fill {@link #model} in {@link #reload()}
+ * and answer the per-row hooks ({@link #playRequestAt}, etc.).
  */
 public abstract class AbstractMusicListView extends View {
 
-	/** Width of the Buy/Stream column, and the ▾ (menu) hit zone within it. */
-	private static final int BUY_STREAM_COL_WIDTH = 94;
-	private static final int BUY_STREAM_ARROW_W   = 18;
-
 	protected final JLabel headerLabel;
-	protected final Table table;
-	protected final JScrollPane scroll;
-	/** Index of the trailing Buy/Stream column appended to every view's model. */
-	private final int buyStreamCol;
-	/** Index of the optional library-membership (✓/＋) column, or -1 if absent. */
-	private final int libToggleCol;
-	private static final int LIB_TOGGLE_COL_WIDTH = 32;
+	/** The reusable music table; subclasses normally interact via {@link #model}. */
+	protected final MusicTable musicTable;
+	/** The table model to fill in {@link #reload()} (owned by {@link #musicTable}). */
 	protected final DefaultTableModel model;
+	/** The underlying table (owned by {@link #musicTable}); for selection queries. */
+	protected final Table table;
+
 	private ToolBar bottomToolbar;
 	private ToolBar toolbar;
 	private ToolButton refreshBtn;
 
 	// ── Optional grouped presentation (see supportsGrouping/groupings) ──────────
-	private GroupedListPanel groupedPanel;
 	private ToggleButton groupToggle;
-	private JComboBox<Grouping> groupingChooser;
-	private boolean grouped;
-
-	/**
-	 * Identity and display text of the group a row belongs to. {@code key} is the
-	 * stable group identity (drives the placeholder image colour and de-dupes
-	 * rows into sections); {@code title}/{@code subtitle} are shown in the section
-	 * header — e.g. an album name and its artists.
-	 */
-	public record GroupRef(String key, String title, String subtitle) {}
-
-	/** A named way of grouping the current rows (e.g. "Release", "Playlist"). */
-	public interface Grouping {
-		String name();
-
-		/** The group the given model row belongs to. */
-		GroupRef groupOf(int modelRow);
-	}
+	private JComboBox<MusicTable.Grouping> groupingChooser;
 
 	protected AbstractMusicListView(ViewStack viewStack) {
 		super(viewStack);
@@ -87,86 +60,12 @@ public abstract class AbstractMusicListView extends View {
 		headerLabel.setBorder(BorderFactory.createEmptyBorder(4, 6, 4, 6));
 		headerLabel.setVisible(false);
 
-		// ── Table ────────────────────────────────────────────────────────────────
-		// A trailing Buy/Stream column is appended to every view; its cells are
-		// rendered from per-row availability, not the row data, so rows added with
-		// the subclass's column count are padded to fit.
-		// Base-managed trailing columns: an optional library-toggle, then Buy/Stream.
-		String[] baseCols = getColumns();
-		boolean libToggle = showsLibraryToggle();
-		String[] cols = new String[baseCols.length + (libToggle ? 1 : 0) + 1];
-		System.arraycopy(baseCols, 0, cols, 0, baseCols.length);
-		int idx = baseCols.length;
-		libToggleCol = libToggle ? idx++ : -1;
-		buyStreamCol = idx;
-		// (column titles for the appended columns are blank)
-		model = new DefaultTableModel(cols, 0) {
-			@Override
-			public boolean isCellEditable(int r, int c) {
-				return false;
-			}
-			@Override
-			public void addRow(Object[] rowData) {
-				if (rowData != null && rowData.length < getColumnCount()) {
-					Object[] padded = new Object[getColumnCount()];
-					System.arraycopy(rowData, 0, padded, 0, rowData.length);
-					rowData = padded;
-				}
-				super.addRow(rowData);
-			}
-		};
-		table = new Table(model);
-		table.setFillsViewportHeight(true);
-		table.setShowGrid(false);
-		table.setIntercellSpacing(new Dimension(0, 0));
-		table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		table.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseClicked(MouseEvent e) {
-				int row = table.rowAtPoint(e.getPoint());
-				if (row < 0)
-					return;
-				int col = table.columnAtPoint(e.getPoint());
-				if (e.getClickCount() == 2) {
-					activate(row);
-				} else if (e.getClickCount() == 1) {
-					if (col == libToggleCol && handleLibraryToggleClick(row)) return;
-					if (col == buyStreamCol && handleBuyStreamClick(row, e)) return;
-					onCellClicked(row, col);
-				}
-			}
-
-			@Override public void mousePressed(MouseEvent e)  { maybeShowRowMenu(e); }
-			@Override public void mouseReleased(MouseEvent e) { maybeShowRowMenu(e); }
-		});
-
-		ThemedTableCellRenderer renderer = new ThemedTableCellRenderer();
-		for (int i = 0; i < table.getColumnCount(); i++) {
-			table.getColumnModel().getColumn(i).setCellRenderer(renderer);
-		}
-		// The Buy/Stream column draws its own split button.
-		javax.swing.table.TableColumn bs = table.getColumnModel().getColumn(buyStreamCol);
-		bs.setCellRenderer(new BuyStreamRenderer());
-		bs.setResizable(false);
-		bs.setMinWidth(0);
-		bs.setMaxWidth(BUY_STREAM_COL_WIDTH);
-		bs.setPreferredWidth(BUY_STREAM_COL_WIDTH);
-		// Optional library-membership (✓/＋) toggle column.
-		if (libToggleCol >= 0) {
-			javax.swing.table.TableColumn lt = table.getColumnModel().getColumn(libToggleCol);
-			lt.setCellRenderer(new LibraryToggleRenderer());
-			lt.setResizable(false);
-			lt.setMinWidth(0);
-			lt.setMaxWidth(LIB_TOGGLE_COL_WIDTH);
-			lt.setPreferredWidth(LIB_TOGGLE_COL_WIDTH);
-		}
-
-		scroll = new JScrollPane(table);
-		// Non-UIResource empty border so the Nimbus reinstall on theme change
-		// doesn't re-install a default scroll-pane border.
-		scroll.setBorder(BorderFactory.createEmptyBorder());
-		scroll.setOpaque(true);
-		scroll.getViewport().setOpaque(true);
+		// ── Reusable music table ──────────────────────────────────────────────────
+		// getColumns()/showsLibraryToggle() are queried during construction and must
+		// be constant; the SourceAdapter forwards the per-row hooks to this view.
+		musicTable = new MusicTable(viewStack, getColumns(), showsLibraryToggle(), new SourceAdapter());
+		model = musicTable.getModel();
+		table = musicTable.getTable();
 
 		// ── CRUD toolbar ───────────────────────────────────────────────────────
 		toolbar = new ToolBar();
@@ -216,9 +115,8 @@ public abstract class AbstractMusicListView extends View {
 
 		// ── Optional grouped-view switch ────────────────────────────────────────
 		// supportsGrouping() must be a constant (it's called mid-construction);
-		// the actual Grouping list is read lazily once the subclass is built.
+		// the actual Grouping list is read lazily from the table once built.
 		if (supportsGrouping()) {
-			groupedPanel = new GroupedListPanel();
 			groupingChooser = new JComboBox<>();
 			groupingChooser.setRenderer(new DefaultListCellRenderer() {
 				private static final long serialVersionUID = 1L;
@@ -226,12 +124,15 @@ public abstract class AbstractMusicListView extends View {
 				public Component getListCellRendererComponent(JList<?> list, Object value, int index,
 						boolean isSelected, boolean hasFocus) {
 					super.getListCellRendererComponent(list, value, index, isSelected, hasFocus);
-					setText(value instanceof Grouping g ? g.name() : "");
+					setText(value instanceof MusicTable.Grouping g ? g.name() : "");
 					return this;
 				}
 			});
 			groupingChooser.setVisible(false);
-			groupingChooser.addActionListener(e -> { if (grouped) rebuildGroups(); });
+			groupingChooser.addActionListener(e -> {
+				if (musicTable.isGrouped())
+					musicTable.setGrouping((MusicTable.Grouping) groupingChooser.getSelectedItem());
+			});
 
 			groupToggle = new ToggleButton("Grouped");
 			groupToggle.addActionListener(e -> setGrouped(groupToggle.isSelected()));
@@ -249,13 +150,13 @@ public abstract class AbstractMusicListView extends View {
 		}
 
 		JPanel north = new JPanel();
-		north.setLayout(new BoxLayout(north, BoxLayout.PAGE_AXIS));  
+		north.setLayout(new BoxLayout(north, BoxLayout.PAGE_AXIS));
 		north.setOpaque(false);
 		north.add(toolbar, BorderLayout.CENTER);
 		//add(headerLabel, BorderLayout.NORTH);
 
 		add(north, BorderLayout.NORTH);
-		add(scroll, BorderLayout.CENTER);
+		add(musicTable, BorderLayout.CENTER);
 
 		bottomToolbar = new ToolBar();
 		bottomToolbar.add(new JButton("Test"));
@@ -263,8 +164,19 @@ public abstract class AbstractMusicListView extends View {
 
 		updateColors();
 		ThemeManager.addChangeListener(this::updateColors);
-		// Repaint so the now-playing row highlight follows the active track.
-		PlayQueue.getInstance().addChangeListener(table::repaint);
+	}
+
+	/** Drives the table between flat and grouped, populating the chooser on demand. */
+	private void setGrouped(boolean on) {
+		if (groupingChooser != null) {
+			groupingChooser.setVisible(on);
+			if (on && groupingChooser.getItemCount() == 0)
+				for (MusicTable.Grouping g : musicTable.groupings())
+					groupingChooser.addItem(g);
+			if (on)
+				musicTable.setGrouping((MusicTable.Grouping) groupingChooser.getSelectedItem());
+		}
+		musicTable.setGrouped(on);
 	}
 
 	/** Sets the page header text; pass null/blank to hide it. */
@@ -283,8 +195,7 @@ public abstract class AbstractMusicListView extends View {
 	/**
 	 * Whether this view offers the optional grouped presentation (a "Grouped"
 	 * toggle plus a grouping chooser). Must be constant — it is queried during
-	 * construction. Views that return true must also override {@link #groupings()}
-	 * and produce play-queue items via {@link #queueItemAt(int)}.
+	 * construction. Views that return true must also override {@link #groupings()}.
 	 */
 	protected boolean supportsGrouping() {
 		return false;
@@ -294,7 +205,7 @@ public abstract class AbstractMusicListView extends View {
 	 * The grouping options offered when {@link #supportsGrouping()} is true; read
 	 * lazily after construction. The first entry is the default selection.
 	 */
-	protected List<Grouping> groupings() {
+	protected List<MusicTable.Grouping> groupings() {
 		return List.of();
 	}
 
@@ -315,7 +226,7 @@ public abstract class AbstractMusicListView extends View {
 	protected void onDelete(int row) {
 	}
 
-	/** Invoked when a row is double-clicked; default does nothing. */
+	/** Invoked when a row is double-clicked and isn't otherwise playable. */
 	protected void onActivate(int row) {
 	}
 
@@ -370,274 +281,16 @@ public abstract class AbstractMusicListView extends View {
 				() -> PlaybackCoordinator.resolveAndPlay(req), req);
 	}
 
-	/**
-	 * Pop the row context menu ("Play with…") on a platform popup trigger, when the
-	 * row under the cursor is playable.
-	 */
-	private void maybeShowRowMenu(MouseEvent e) {
-		if (!e.isPopupTrigger())
-			return;
-		int row = table.rowAtPoint(e.getPoint());
-		if (row < 0)
-			return;
-		table.setRowSelectionInterval(row, row);
-		PlayRequest req = playRequestAt(row);
-		if (req == null)
-			return;
-		JPopupMenu menu = new JPopupMenu();
-		JMenuItem playWith = new JMenuItem("Play with…");
-		playWith.addActionListener(a -> PlaybackCoordinator.resolveAndPlay(req, true));
-		menu.add(playWith);
-		menu.show(e.getComponent(), e.getX(), e.getY());
-	}
-
-	/**
-	 * Turn the visible rows into the play queue and start at {@code row}. Every
-	 * playable row (per {@link #queueItemAt}) becomes a queue entry; if the view
-	 * doesn't produce queue items, falls back to {@link #onActivate(int)}.
-	 */
-	private void activate(int row) {
-		List<PlayQueueItem> queue = new ArrayList<>();
-		int startIndex = -1;
-		for (int i = 0; i < model.getRowCount(); i++) {
-			PlayQueueItem item = queueItemAt(i);
-			if (item == null)
-				continue;
-			if (i == row)
-				startIndex = queue.size();
-			queue.add(item);
-		}
-		if (startIndex >= 0) {
-			PlayQueue.getInstance().setQueueAndPlay(queue, startIndex);
-		} else {
-			onActivate(row);
-		}
-	}
-
-	// ── Grouped presentation ────────────────────────────────────────────────────
-
-	/** Repopulate the model, then refresh the grouped view if it's showing. */
+	/** Repopulate the model, then refresh the table (managed columns + grouping). */
 	protected void reloadAndRegroup() {
 		reload();
-		updateBuyStreamColumn();
-		if (grouped)
-			rebuildGroups();
-	}
-
-	/** Show the managed columns (Buy/Stream, library toggle) only when the view has
-	 *  at least one playable row. */
-	private void updateBuyStreamColumn() {
-		boolean any = false;
-		for (int r = 0; r < model.getRowCount(); r++) {
-			if (playRequestAt(r) != null) { any = true; break; }
-		}
-		sizeColumn(buyStreamCol, any ? BUY_STREAM_COL_WIDTH : 0);
-		if (libToggleCol >= 0) sizeColumn(libToggleCol, any ? LIB_TOGGLE_COL_WIDTH : 0);
-	}
-
-	private void sizeColumn(int index, int width) {
-		javax.swing.table.TableColumn col = table.getColumnModel().getColumn(index);
-		col.setMinWidth(0);
-		col.setMaxWidth(width);
-		col.setPreferredWidth(width);
-	}
-
-	/** Toggle library membership for a clicked row; repaints so the glyph flips. */
-	private boolean handleLibraryToggleClick(int row) {
-		if (row < 0 || row >= model.getRowCount() || playRequestAt(row) == null) return false;
-		toggleLibraryAt(row);
-		table.repaint();
-		return true;
-	}
-
-	/** Renders the library-membership glyph (✓ in library / ＋ to add), themed. */
-	private final class LibraryToggleRenderer extends ThemedTableCellRenderer {
-		private static final long serialVersionUID = 1L;
-		@Override
-		public Component getTableCellRendererComponent(JTable t, Object value, boolean sel,
-				boolean focus, int row, int column) {
-			super.getTableCellRendererComponent(t, value, sel, focus, row, column);
-			boolean playable = playRequestAt(row) != null;
-			boolean in = playable && inLibraryAt(row);
-			setHorizontalAlignment(CENTER);
-			setText(!playable ? "" : (in ? "✓" : "＋"));
-			if (!sel) setForeground(in ? ThemeManager.getAccentBackgroundColor() : new Color(150, 150, 150));
-			return this;
-		}
-	}
-
-	// ── Buy/Stream split button ─────────────────────────────────────────────────
-
-	/** Handle a click in the Buy/Stream cell: ▾ zone (or Buy-only) opens the menu,
-	 *  the left part plays when streamable. Returns true if it consumed the click. */
-	private boolean handleBuyStreamClick(int row, MouseEvent e) {
-		PlayRequest req = playRequestAt(row);
-		if (req == null) return false;
-		TrackAvailability a = AvailabilityResolver.get().availabilityFor(req, table::repaint);
-		if (a.local()) { activate(row); return true; }   // already have the file → play it
-		Rectangle cell = table.getCellRect(row, buyStreamCol, false);
-		boolean onArrow = (e.getX() - cell.x) >= cell.width - BUY_STREAM_ARROW_W - 4;
-		if (onArrow || !a.hasStream()) {
-			showBuyStreamMenu(row, req, a);
-		} else {
-			activate(row);   // default action: stream/play
-		}
-		return true;
-	}
-
-	private void showBuyStreamMenu(int row, PlayRequest req, TrackAvailability a) {
-		JPopupMenu menu = new JPopupMenu();
-
-		if (a.hasStream()) {
-			JMenu stream = new JMenu("Stream");
-			for (se.spacify.app.music.service.MusicService ms : a.streamServices()) {
-				JMenuItem it = new JMenuItem("Play on " + ms.getName());
-				it.addActionListener(x -> PlaybackCoordinator.playOn(ms, req));
-				stream.add(it);
-			}
-			menu.add(stream);
-		}
-
-		JMenu buy = new JMenu("Buy");
-		String query = ((req.title() == null ? "" : req.title())
-			+ (req.artist() == null || req.artist().isBlank() ? "" : " " + req.artist())).trim();
-		for (se.spacify.web.StoreCatalog.Store s : se.spacify.web.StoreCatalog.STORES) {
-			JMenuItem it = new JMenuItem(s.name());
-			it.addActionListener(x -> getViewStack().navigate(s.searchUri(query)));
-			buy.add(it);
-		}
-		menu.add(buy);
-
-		menu.addSeparator();
-		JMenuItem openWith = new JMenuItem("Open with…");
-		openWith.addActionListener(x -> PlaybackCoordinator.resolveAndPlay(req, true));
-		menu.add(openWith);
-
-		Rectangle cell = table.getCellRect(row, buyStreamCol, false);
-		menu.show(table, cell.x, cell.y + cell.height);
-	}
-
-	/**
-	 * Cell renderer driven by {@link TrackAvailability}: a real {@link se.spacify.controls.Button}
-	 * (so it uses the same skinned painting as every other button, via SpaceButtonUI)
-	 * labelled "Stream ▾" / "Buy ▾"; or, when the track is matched locally, just a
-	 * file icon and no button.
-	 */
-	private final class BuyStreamRenderer implements javax.swing.table.TableCellRenderer {
-		private final BuyStreamButton button = new BuyStreamButton();
-		private final FileCell        fileCell = new FileCell();
-		private final JLabel          blank = new JLabel();
-		@Override
-		public Component getTableCellRendererComponent(JTable t, Object value, boolean sel,
-				boolean focus, int row, int column) {
-			PlayRequest req = playRequestAt(row);
-			if (req == null) return blank;
-			TrackAvailability a = AvailabilityResolver.get().availabilityFor(req, table::repaint);
-			if (a.local()) return fileCell;   // have the file → file icon only, no button
-			button.setFont(t.getFont());
-			button.setText(!a.resolved() ? "…" : (a.hasStream() ? "Stream ▾" : "Buy ▾"));
-			return button;
-		}
-	}
-
-	/** A {@link se.spacify.controls.Button} usable as a detached table cell renderer —
-	 *  falls back to the live window so the skin (SpaceButtonUI paint) still resolves. */
-	private static final class BuyStreamButton extends se.spacify.controls.Button {
-		private static final long serialVersionUID = 1L;
-		BuyStreamButton() {
-			super();
-			setFocusable(false);
-			setMargin(new java.awt.Insets(0, 0, 0, 0));
-		}
-		@Override
-		public se.spacify.ui.MainWindow getMainWindow() {
-			java.awt.Window w = SwingUtilities.getWindowAncestor(this);
-			if (w instanceof se.spacify.ui.MainWindow mw) return mw;
-			return se.spacify.ui.MainWindow.getInstance();
-		}
-	}
-
-	/** A file glyph shown when the track already has a local copy. */
-	private static final class FileCell extends JComponent {
-		private static final long serialVersionUID = 1L;
-		@Override
-		protected void paintComponent(Graphics g) {
-			Graphics2D g2 = (Graphics2D) g.create();
-			g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-			int w = 9, h = 11, fold = 3;
-			int x = (getWidth() - w) / 2, y = (getHeight() - h) / 2;
-			g2.setColor(new Color(150, 200, 255));
-			g2.fillPolygon(new int[]{ x, x + w - fold, x + w, x + w, x },
-			               new int[]{ y, y, y + fold, y + h, y + h }, 5);
-			g2.dispose();
-		}
-	}
-
-	private void setGrouped(boolean on) {
-		grouped = on;
-		groupingChooser.setVisible(on);
-		if (on) {
-			if (groupingChooser.getItemCount() == 0)
-				for (Grouping g : groupings())
-					groupingChooser.addItem(g);
-			rebuildGroups();
-			scroll.setViewportView(groupedPanel);
-		} else {
-			scroll.setViewportView(table);
-		}
-		scroll.revalidate();
-		scroll.repaint();
-	}
-
-	/** Rebuild the grouped sections from the current model rows. */
-	private void rebuildGroups() {
-		if (groupedPanel == null)
-			return;
-		Grouping g = (Grouping) groupingChooser.getSelectedItem();
-		if (g == null) {
-			groupedPanel.setGroups(List.of());
-			return;
-		}
-		// Preserve model row order within each section (rows already arrive in
-		// album order), and section order by first appearance.
-		Map<String, GroupBucket> buckets = new LinkedHashMap<>();
-		for (int row = 0; row < model.getRowCount(); row++) {
-			PlayQueueItem item = queueItemAt(row);
-			if (item == null)
-				continue;
-			GroupRef maybe = g.groupOf(row);
-			final GroupRef ref = maybe != null ? maybe : new GroupRef("none", "Unknown", "");
-			GroupBucket bucket = buckets.computeIfAbsent(ref.key(), k -> new GroupBucket(ref));
-			final int r = row;
-			bucket.items.add(new GroupedListPanel.Item(
-					item.getName(), item.getArtists(), fmtDuration(item.getDurationMs()),
-					item.getKey(), () -> activate(r)));
-		}
-		List<GroupedListPanel.Group> groups = new ArrayList<>();
-		for (GroupBucket bucket : buckets.values()) {
-			Image image = GroupAvatar.of(bucket.ref.key(), bucket.ref.title(), 64);
-			groups.add(new GroupedListPanel.Group(
-					image, bucket.ref.title(), bucket.ref.subtitle(), bucket.items));
-		}
-		groupedPanel.setGroups(groups);
-	}
-
-	private static final class GroupBucket {
-		final GroupRef ref;
-		final List<GroupedListPanel.Item> items = new ArrayList<>();
-
-		GroupBucket(GroupRef ref) {
-			this.ref = ref;
-		}
+		musicTable.refresh();
 	}
 
 	// ── Shared helpers ──────────────────────────────────────────────────────────
 
 	protected static String fmtDuration(long ms) {
-		if (ms <= 0)
-			return "";
-		long s = ms / 1000;
-		return String.format("%d:%02d", s / 60, s % 60);
+		return MusicTable.fmtDuration(ms);
 	}
 
 	/** Parse "m:ss" or a plain seconds value into milliseconds; 0 on failure. */
@@ -668,17 +321,18 @@ public abstract class AbstractMusicListView extends View {
 	}
 
 	private void updateColors() {
-		Color bg = ThemeManager.getBackground();
-		Color fg = ThemeManager.getForeground();
-		Color grid = ThemeManager.getGridColor();
+		headerLabel.setForeground(ThemeManager.getForeground());
+	}
 
-		headerLabel.setForeground(fg);
-		table.setBackground(bg);
-		table.setForeground(fg);
-		table.setGridColor(grid);
-		scroll.setBackground(bg);
-		scroll.getViewport().setBackground(bg);
-		table.repaint();
+	/** Forwards this view's per-row hooks to the embedded {@link MusicTable}. */
+	private final class SourceAdapter implements MusicTable.Source {
+		@Override public PlayRequest playRequestAt(int row) { return AbstractMusicListView.this.playRequestAt(row); }
+		@Override public PlayQueueItem queueItemAt(int row) { return AbstractMusicListView.this.queueItemAt(row); }
+		@Override public boolean inLibraryAt(int row)       { return AbstractMusicListView.this.inLibraryAt(row); }
+		@Override public void toggleLibraryAt(int row)      { AbstractMusicListView.this.toggleLibraryAt(row); }
+		@Override public void onActivate(int row)           { AbstractMusicListView.this.onActivate(row); }
+		@Override public void onCellClicked(int row, int col) { AbstractMusicListView.this.onCellClicked(row, col); }
+		@Override public List<MusicTable.Grouping> groupings() { return AbstractMusicListView.this.groupings(); }
 	}
 
 	// ── SPView ──────────────────────────────────────────────────────────────────
@@ -686,7 +340,6 @@ public abstract class AbstractMusicListView extends View {
 	@Override
 	public void navigate(String uri) {
 	}
-
 
 	@Override
 	public void onShow() {
