@@ -1,81 +1,52 @@
 package se.spacify.controls;
 
+import java.awt.Component;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 
 import javax.swing.JToolBar;
-import javax.swing.SwingUtilities;
 
-import se.spacify.design.Design;
-import se.spacify.skinning.Skin;
-import se.spacify.ui.MainWindow;
-import se.spacify.ui.theme.Taste;
-import se.spacify.ui.theme.Theme;
 import se.spacify.ui.theme.ThemeManager;
 
-public class ToolBar extends JToolBar implements Control {
+/**
+ * A toolbar container control wrapping a {@link JToolBar}, painted by the active
+ * skin via {@link se.spacify.skinning.Skin#paintToolBar}. As a container it offers
+ * a small add facade ({@link #add(Control)}, {@link #add(Component)},
+ * {@link #addSeparator()}).
+ */
+public class ToolBar extends Control<JToolBar> {
 
-	public Skin getSkin() {
-		return getMainWindow().getSkin();
+	protected class Surface extends JToolBar {
+		private static final long serialVersionUID = 1L;
+		Surface() { super(); }
+		@Override
+		protected void paintComponent(Graphics g) {
+			Graphics2D g2 = (Graphics2D) g.create();
+			g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+			getSkin().paintToolBar(ToolBar.this, g2);
+			g2.dispose();
+		}
 	}
-	private Theme theme;
-	public MainWindow getMainWindow() {
-		// While a panel is still being constructed it has no window ancestor yet,
-		// so fall back to the live MainWindow so theme/skin/taste stay resolvable.
-		java.awt.Window w = SwingUtilities.getWindowAncestor(this);
-		if (w instanceof MainWindow) return (MainWindow) w;
-		return MainWindow.getInstance();
-	}
-	public Theme getTheme() {
-		if (theme != null) {
-			return theme;
-		}
-		if (getParent() != null && getParent() instanceof Panel) {
-			if (((Panel)getParent()).getTheme() != null) {
-				return ((Panel)getParent()).getTheme();
-			}		
-		}
-		return getMainWindow().getTheme();
-	}
-	private Design design;
-	public Design getDesign() {
-		if (design != null) {
-			return design;
-		}
-		if (getParent() != null && getParent() instanceof Panel) {
-			if (((Panel)getParent()).getDesign() != null) {
-				return ((Panel)getParent()).getDesign();
-			}		
-		}
-		return getMainWindow().getDesign();
-	}
-	private Taste taste;
-	public Taste getTaste() {
-		if (taste != null) {
-			return taste;
-		}
-		if (getParent() != null && getParent() instanceof Panel) {
-			if (((Panel)getParent()).getTaste() != null) {
-				return ((Panel)getParent()).getTaste();
-			}
-		}
-		return getMainWindow().getTaste();
-	}
-	private static final long serialVersionUID = -3117479158547825878L;
- 
+
 	public ToolBar() {
-		super();
-		setFloatable(false);
-		setOpaque(true);
-		setBackground(ThemeManager.getTintColor());
-	}
-	@Override
-	protected void paintComponent(Graphics g) {
-		Graphics2D g2 = (Graphics2D) g.create();
-		g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-		getSkin().paintToolBar(this, g2);
-		g2.dispose();
+		this.component = new Surface();
+		component.setFloatable(false);
+		component.setOpaque(true);
+		component.setBackground(ThemeManager.getTintColor());
 	}
 
+	// ── Add facade ───────────────────────────────────────────────────────────────
+
+	public Component add(Component c)  { return component.add(c); }
+
+	@Override
+	public Control<JToolBar> add(Control<?> child) {
+		children.add(child);
+		child.setParent(this);
+		if (child.getComponent() != null) component.add(child.getComponent());
+		return this;
+	}
+
+	public void addSeparator()         { component.addSeparator(); }
 }

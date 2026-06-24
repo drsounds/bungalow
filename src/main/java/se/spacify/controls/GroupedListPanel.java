@@ -35,7 +35,6 @@ import java.util.List;
  */
 public class GroupedListPanel extends Panel {
 
-    private static final long serialVersionUID = 1L;
     private static final int IMAGE_SIZE = 64;
 
     /** One playable line within a group. */
@@ -74,7 +73,7 @@ public class GroupedListPanel extends Panel {
     private final List<ItemRow> rowComponents = new ArrayList<>();
 
     public GroupedListPanel() {
-        setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+        setLayout(new BoxLayout(getComponent(), BoxLayout.Y_AXIS));
         setOpaque(true);
         ThemeManager.addChangeListener(this::applyColors);
         // Follow the active track so the now-playing highlight moves with playback.
@@ -106,7 +105,7 @@ public class GroupedListPanel extends Panel {
         JPanel header = new JPanel(new BorderLayout(12, 0));
         header.setOpaque(false);
         header.setBorder(BorderFactory.createEmptyBorder(10, 6, 8, 6));
-        header.setAlignmentX(LEFT_ALIGNMENT);
+        header.setAlignmentX(Component.LEFT_ALIGNMENT);
 
         JLabel image = new JLabel();
         if (group.image != null) {
@@ -125,12 +124,12 @@ public class GroupedListPanel extends Panel {
         JLabel title = new JLabel(group.title);
         title.setFont(title.getFont().deriveFont(Font.BOLD, 17f));
         title.setForeground(ThemeManager.getForeground());
-        title.setAlignmentX(LEFT_ALIGNMENT);
+        title.setAlignmentX(Component.LEFT_ALIGNMENT);
 
         JLabel subtitle = new JLabel(group.subtitle);
         subtitle.setFont(subtitle.getFont().deriveFont(Font.PLAIN, 12f));
         subtitle.setForeground(muted());
-        subtitle.setAlignmentX(LEFT_ALIGNMENT);
+        subtitle.setAlignmentX(Component.LEFT_ALIGNMENT);
 
         text.add(Box.createVerticalGlue());
         text.add(title);
@@ -149,7 +148,7 @@ public class GroupedListPanel extends Panel {
 
     private void applyColors() {
         setBackground(ThemeManager.getBackground());
-        for (Component c : getComponents()) {
+        for (Component c : getComponent().getComponents()) {
             if (c instanceof JComponent jc) jc.setForeground(ThemeManager.getForeground());
         }
         for (ItemRow row : rowComponents) row.refreshColors();

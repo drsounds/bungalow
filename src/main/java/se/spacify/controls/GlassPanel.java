@@ -6,15 +6,14 @@ import java.awt.RenderingHints;
 import java.awt.geom.Path2D;
 
 /**
- * Windows-Media-Player-style glossy panel with rounded corners. Either vertical
- * edge can optionally be rendered as a sharp diagonal instead of a rounded
- * corner — see {@link #setLeadingDiagonal(boolean)} /
- * {@link #setTrailingDiagonal(boolean)}. A diagonal edge slants so its bottom is
- * longer than its top by {@link #setDiagonalInset(int)} pixels.
+ * Windows-Media-Player-style glossy panel with rounded corners, painted by the
+ * active skin ({@link se.spacify.skinning.Skin#paintGlassPanel}). Either vertical
+ * edge can optionally be rendered as a sharp diagonal instead of a rounded corner
+ * — see {@link #setLeadingDiagonal(boolean)} / {@link #setTrailingDiagonal(boolean)}.
+ * A diagonal edge slants so its bottom is longer than its top by
+ * {@link #setDiagonalInset(int)} pixels.
  */
 public class GlassPanel extends Panel {
-
-	private static final long serialVersionUID = -6838852001495396343L;
 
 	private int arc = 8;
 	private int diagonalInset = 18;
@@ -22,7 +21,17 @@ public class GlassPanel extends Panel {
 	private boolean trailingDiagonal = false;  // right edge
 
 	public GlassPanel() {
+		super();
 		setOpaque(false);
+	}
+
+	@Override
+	protected void paintSurface(Graphics g) {
+		Graphics2D g2 = (Graphics2D) g.create();
+		g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+		getSkin().paintGlassPanel(this, g2);
+		g2.dispose();
+		super.paintSurface(g);
 	}
 
 	public void setArc(int arc)                  { this.arc = arc; repaint(); }
@@ -73,15 +82,5 @@ public class GlassPanel extends Panel {
 
 		p.closePath();
 		return p;
-	}
-
-	@Override
-	protected void paintComponent(Graphics g) {
-		Graphics2D g2 = (Graphics2D) g.create();
-		g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-
-		getSkin().paintGlassPanel(this, g2);
-
-		g2.dispose();
 	}
 }

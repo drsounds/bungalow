@@ -7,15 +7,19 @@ import javax.swing.BorderFactory;
 
 import se.spacify.ui.MainWindow;
 
+/**
+ * The WMP-style vertical navigation strip (Now Playing / Library / Media Guide),
+ * painted by the active skin ({@link se.spacify.skinning.Skin#paintVerticalPanel}).
+ */
 public class VerticalPanel extends Panel {
 
-	private static final long serialVersionUID = -7149779098199783154L;
-	private TabButton nowPlayingTab;
-	private TabButton libraryTab;
-	private TabButton mediaGuideTab;
+	private final TabButton nowPlayingTab;
+	private final TabButton libraryTab;
+	private final TabButton mediaGuideTab;
+
 	public VerticalPanel() {
 		setOpaque(false);
-        setBorder(BorderFactory.createEmptyBorder(0, 80, 0, 0));
+		setBorder(BorderFactory.createEmptyBorder(0, 80, 0, 0));
 		// WMP-style tab strip, flush with the bottom edge of the nav bar.
 		nowPlayingTab = new TabButton("Now Playing");
 		nowPlayingTab.addActionListener(e -> {
@@ -40,18 +44,18 @@ public class VerticalPanel extends Panel {
 				mw.setSidebarVisible(true);
 				mw.navigate("spacify:store:www.last.fm");
 			}
-		}); 
-		
+		});
+
 		add(nowPlayingTab);
 		add(libraryTab);
 		add(mediaGuideTab);
-		
 	}
+
 	@Override
-	public void paintComponent(Graphics g) {
-		Graphics2D g2 = (Graphics2D)g.create();
+	protected void paintSurface(Graphics g) {
+		Graphics2D g2 = (Graphics2D) g.create();
 		getSkin().paintVerticalPanel(this, g2);
 		g2.dispose();
-		super.paintComponent(g);
+		super.paintSurface(g);
 	}
 }

@@ -1,124 +1,71 @@
 package se.spacify.controls;
 
+import java.awt.Component;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 
-import javax.swing.JComponent;
 import javax.swing.JSplitPane;
-import javax.swing.SwingUtilities;
 import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
 import javax.swing.plaf.basic.BasicSplitPaneDivider;
 import javax.swing.plaf.basic.BasicSplitPaneUI;
 
-import se.spacify.design.Design;
-import se.spacify.skinning.Skin;
-import se.spacify.ui.MainWindow;
-import se.spacify.ui.theme.Taste;
-import se.spacify.ui.theme.Theme;
+/**
+ * A split-pane container control wrapping a {@link JSplitPane}, with a skinned
+ * divider painted via {@link se.spacify.skinning.Skin#paintSplitPaneDivider}.
+ * Reach the widget through {@link #getComponent()}.
+ */
+public class SplitPane extends Control<JSplitPane> {
 
-public class SplitPane extends JSplitPane implements Control {
-	 
-	public Skin getSkin() {
-		return getMainWindow().getSkin();
-	}
-	private Theme theme;
-	public MainWindow getMainWindow() {
-		// While a panel is still being constructed it has no window ancestor yet,
-		// so fall back to the live MainWindow so theme/skin/taste stay resolvable.
-		java.awt.Window w = SwingUtilities.getWindowAncestor(this);
-		if (w instanceof MainWindow) return (MainWindow) w;
-		return MainWindow.getInstance();
-	}
-	public Theme getTheme() {
-		if (theme != null) {
-			return theme;
-		}
-		if (getParent() != null && getParent() instanceof Panel) {
-			if (((Panel)getParent()).getTheme() != null) {
-				return ((Panel)getParent()).getTheme();
-			}		
-		}
-		return getMainWindow().getTheme();
-	}
-	private Design design;
-	public Design getDesign() {
-		if (design != null) {
-			return design;
-		}
-		if (getParent() != null && getParent() instanceof Panel) {
-			if (((Panel)getParent()).getDesign() != null) {
-				return ((Panel)getParent()).getDesign();
-			}		
-		}
-		return getMainWindow().getDesign();
-	}
-	private Taste taste;
-	public Taste getTaste() {
-		if (taste != null) {
-			return taste;
-		}
-		if (getParent() != null && getParent() instanceof Panel) {
-			if (((Panel)getParent()).getTaste() != null) {
-				return ((Panel)getParent()).getTaste();
-			}
-		}
-		return getMainWindow().getTaste();
-	}
+	/** The skinned divider; painted by the active skin. */
 	public class SplitPaneDivider extends BasicSplitPaneDivider {
-        public SplitPaneDivider( BasicSplitPaneUI ui ) {
-            super( ui );
-            super.setBorder( null );
-        }
-
-        @Override
-        public void setBorder( Border border ) {
-            // ignore
-        }
-
-        @Override
-        public void paint( Graphics g ) {
-        	Graphics2D g2 = (Graphics2D)g.create();
+		private static final long serialVersionUID = 1L;
+		public SplitPaneDivider(BasicSplitPaneUI ui) {
+			super(ui);
+			super.setBorder(null);
+		}
+		@Override public void setBorder(Border border) { /* ignore */ }
+		@Override
+		public void paint(Graphics g) {
+			Graphics2D g2 = (Graphics2D) g.create();
 			getTaste().getSkin().paintSplitPaneDivider(this, g2);
-    		
-    		g2.dispose();
-        }
+			g2.dispose();
+		}
+	}
 
-        @Override
-        protected void dragDividerTo( int location ) {
-            super.dragDividerTo( location );
-        }
+	private class SplitPaneDividerUI extends BasicSplitPaneUI {
+		@Override
+		public BasicSplitPaneDivider createDefaultDivider() {
+			return new SplitPaneDivider(this);
+		}
+	}
 
-        @Override
-        protected void finishDraggingTo( int location ) {
-            super.finishDraggingTo( location );
-        }
-    }
-    private class SplitPaneDividerUI extends BasicSplitPaneUI {
-        @Override
-        public BasicSplitPaneDivider createDefaultDivider() {
-            return new SplitPaneDivider( this );
-        }
-    }
-	private static final long serialVersionUID = -5587739050405239941L;
 	public SplitPane() {
-		setOpaque(false);
-		getDivider().setBorder(new EmptyBorder(0, 0, 0, 0));
+		this.component = new JSplitPane();
+		component.setOpaque(false);
+		BasicSplitPaneDivider d = getDivider();
+		if (d != null) d.setBorder(new EmptyBorder(0, 0, 0, 0));
 	}
+
+	public SplitPane(int orientation, Component left, Component right) {
+		this.component = new JSplitPane(orientation, left, right);
+		component.setUI(new SplitPaneDividerUI());
+		BasicSplitPaneDivider d = getDivider();
+		if (d != null) d.setBorder(new EmptyBorder(0, 0, 0, 0));
+	}
+
+	public SplitPane(int orientation, Control<?> left, Control<?> right) {
+		this(orientation, left.getComponent(), right.getComponent());
+		children.add(left);
+		left.setParent(this);
+		children.add(right);
+		right.setParent(this);
+	}
+
 	public BasicSplitPaneDivider getDivider() {
-		if (this.getUI() instanceof BasicSplitPaneUI) {
-            return ((BasicSplitPaneUI)(this.getUI())).getDivider();
-        }
+		if (component.getUI() instanceof BasicSplitPaneUI ui) {
+			return ui.getDivider();
+		}
 		return null;
-	}
-	public SplitPane(int horizontalSplit, JComponent leftSplit, JComponent c) {
-		super(horizontalSplit, leftSplit, c);
-		setUI(new SplitPaneDividerUI());
-		getDivider().setBorder(new EmptyBorder(0, 0, 0, 0));
-	}
-	@Override
-	public void paintComponent(Graphics g) {
-		
-		super.paintComponent(g);
 	}
 }

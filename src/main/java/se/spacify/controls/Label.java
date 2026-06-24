@@ -1,75 +1,40 @@
 package se.spacify.controls;
 
+import java.awt.Graphics;
+
 import javax.swing.JLabel;
 
-import se.spacify.design.Design;
-import se.spacify.skinning.Skin;
-import se.spacify.ui.MainWindow;
-import se.spacify.ui.theme.Taste;
-import se.spacify.ui.theme.Theme;
+/**
+ * A text/icon label control wrapping a {@link JLabel}. Reach the widget through
+ * {@link #getComponent()}; custom painting is done by overriding
+ * {@link #paintSurface(Graphics)} (the wrapped {@link Surface} routes here).
+ */
+public class Label extends Control<JLabel> {
 
-public class Label extends JLabel implements Control {
- 
-    @Override
-    public MainWindow getMainWindow() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getMainWindow'");
-    }
-	private Theme theme;
-	public void setTheme(Theme theme) {
-		this.theme = theme;
+	/** The wrapped JLabel; routes painting back to {@link Label#paintSurface}. */
+	protected class Surface extends JLabel {
+		private static final long serialVersionUID = 1L;
+		Surface() { super(); }
+		Surface(String text) { super(text); }
+		@Override
+		protected void paintComponent(Graphics g) {
+			Label.this.paintSurface(g);
+		}
+		void superPaint(Graphics g) {
+			super.paintComponent(g);
+		}
 	}
-	public void setDesign(Design design) {
-		this.design = design;
+
+	public Label() {
+		this.component = new Surface();
 	}
-	private Skin skin;
-	public void setSkin(Skin skin) {
-		this.skin = skin;
+
+	public Label(String text) {
+		this.component = new Surface(text);
 	}
-	public Skin getSkin() {
-		if (skin != null) {
-			return skin;
-		}
-		if (getParent() != null && getParent() instanceof Panel) {
-			if (((Panel)getParent()).getSkin() != null) {
-				return ((Panel)getParent()).getSkin();
-			}		
-		}
-		return getMainWindow().getSkin();
-	}
-	public Theme getTheme() {
-		if (theme != null) {
-			return theme;
-		}
-		if (getParent() != null && getParent() instanceof Panel) {
-			if (((Panel)getParent()).getTheme() != null) {
-				return ((Panel)getParent()).getTheme();
-			}		
-		}
-		return getMainWindow().getTheme();
-	}
-	private Design design;
-	public Design getDesign() {
-		if (design != null) {
-			return design;
-		}
-		if (getParent() != null && getParent() instanceof Panel) {
-			if (((Panel)getParent()).getDesign() != null) {
-				return ((Panel)getParent()).getDesign();
-			}		
-		}
-		return getMainWindow().getDesign();
-	}
-	private Taste taste;
-	public Taste getTaste() {
-		if (taste != null) {
-			return taste;
-		}
-		if (getParent() != null && getParent() instanceof Panel) {
-			if (((Panel)getParent()).getTaste() != null) {
-				return ((Panel)getParent()).getTaste();
-			}
-		}
-		return getMainWindow().getTaste();
+
+	/** Override to custom-paint; default does the standard label painting. */
+	protected void paintSurface(Graphics g) {
+		((Surface) component).superPaint(g);
 	}
 }

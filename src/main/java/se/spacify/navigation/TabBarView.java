@@ -2,7 +2,7 @@ package se.spacify.navigation;
 
 import se.spacify.controls.TabbedPane;
 
-public abstract class TabBarView extends View {
+public class TabBarView extends View {
     private TabbedPane tabbedPane;
 
     public TabbedPane getTabbedPane() {
@@ -14,6 +14,17 @@ public abstract class TabBarView extends View {
         this.tabbedPane = new TabbedPane();
         add(this.tabbedPane);
         
+    }
+
+    @Override
+    public boolean acceptsUri(String uri) {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
+    @Override
+    public void navigate(String uri) {
+        // TODO Auto-generated method stub
     }
 
   

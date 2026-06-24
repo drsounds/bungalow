@@ -5,88 +5,50 @@ import java.awt.Graphics2D;
 import java.awt.Rectangle;
 
 import javax.swing.JTree;
-import javax.swing.SwingUtilities;
-
 import javax.swing.tree.TreeNode;
 
-import se.spacify.design.Design;
-import se.spacify.skinning.Skin;
-import se.spacify.ui.MainWindow;
-import se.spacify.ui.theme.Taste;
-import se.spacify.ui.theme.Theme;
 import se.spacify.ui.theme.ThemeManager;
 
-public class Tree extends JTree implements Control {
+/**
+ * A tree control wrapping a {@link JTree}, painted by the active skin via
+ * {@link se.spacify.skinning.Skin#paintTree}. Reach the widget through
+ * {@link #getComponent()}.
+ */
+public class Tree extends Control<JTree> {
 
-    @Override
-    public void paintComponent(Graphics g) {
-        Graphics2D g2 = (Graphics2D)g.create();
-        getMainWindow().getSkin().paintTree(this, g2);
-        g2.dispose();
-        // Selection highlight spanning the full row width (a plain JTree only
-        // fills behind the label). The cell renderer paints transparently on top.
-        int[] selected = getSelectionRows();
-        if (selected != null) {
-            g.setColor(ThemeManager.getAccentForegroundColor());
-            for (int row : selected) {
-                Rectangle b = getRowBounds(row);
-                if (b != null) g.fillRect(0, b.y, getWidth(), b.height);
-            }
-        }
-        super.paintComponent(g);
-    }
+	protected class Surface extends JTree {
+		private static final long serialVersionUID = 1L;
+		Surface() { super(); }
+		Surface(TreeNode root) { super(root); }
+		@Override
+		protected void paintComponent(Graphics g) {
+			Tree.this.paintSurface(g, this);
+		}
+		void superPaint(Graphics g) { super.paintComponent(g); }
+	}
 
-    public Tree() {
-        super();   
-    }
-    public Tree(TreeNode root) {
-        super(root);
-    }
-	public Skin getSkin() {
-		return getMainWindow().getSkin();
+	public Tree() {
+		this.component = new Surface();
 	}
-	private Theme theme;
-	public MainWindow getMainWindow() { 
-		// While a panel is still being constructed it has no window ancestor yet,
-		// so fall back to the live MainWindow so theme/skin/taste stay resolvable.
-		java.awt.Window w = SwingUtilities.getWindowAncestor(this);
-		if (w instanceof MainWindow) return (MainWindow) w;
-		return MainWindow.getInstance();
+
+	public Tree(TreeNode root) {
+		this.component = new Surface(root);
 	}
-	public Theme getTheme() {
-		if (theme != null) {
-			return theme;
-		}
-		if (getParent() != null && getParent() instanceof Panel) {
-			if (((Panel)getParent()).getTheme() != null) {
-				return ((Panel)getParent()).getTheme();
-			}		
-		}
-		return getMainWindow().getTheme();
-	}
-	private Design design;
-	public Design getDesign() {
-		if (design != null) {
-			return design;
-		}
-		if (getParent() != null && getParent() instanceof Panel) {
-			if (((Panel)getParent()).getDesign() != null) {
-				return ((Panel)getParent()).getDesign();
-			}		
-		}
-		return getMainWindow().getDesign();
-	}
-	private Taste taste;
-	public Taste getTaste() {
-		if (taste != null) {
-			return taste;
-		}
-		if (getParent() != null && getParent() instanceof Panel) {
-			if (((Panel)getParent()).getTaste() != null) {
-				return ((Panel)getParent()).getTaste();
+
+	protected void paintSurface(Graphics g, JTree tree) {
+		Graphics2D g2 = (Graphics2D) g.create();
+		getSkin().paintTree(this, g2);
+		g2.dispose();
+		// Selection highlight spanning the full row width (a plain JTree only fills
+		// behind the label). The cell renderer paints transparently on top.
+		int[] selected = tree.getSelectionRows();
+		if (selected != null) {
+			g.setColor(ThemeManager.getAccentForegroundColor());
+			for (int row : selected) {
+				Rectangle b = tree.getRowBounds(row);
+				if (b != null) g.fillRect(0, b.y, tree.getWidth(), b.height);
 			}
 		}
-		return getMainWindow().getTaste();
+		((Surface) component).superPaint(g);
 	}
-    
 }
