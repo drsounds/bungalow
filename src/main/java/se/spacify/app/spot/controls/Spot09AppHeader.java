@@ -25,7 +25,7 @@ public class Spot09AppHeader extends AppHeader {
     private Panel center;
     public Spot09AppHeader(ViewStack viewStack) {
         super(viewStack);
-        setLayout(new BoxLayout(this, BoxLayout.LINE_AXIS));
+        setLayout(new BoxLayout(getComponent(), BoxLayout.LINE_AXIS));
         setBorder(BorderFactory.createEmptyBorder(8, 16, 8, 16));
 
 		backBtn = makeNavButton("◄");

@@ -19,7 +19,7 @@ public class NowPlayingView extends View {
     private final JComboBox<String> viewSelector;
     private final List<PlayerView> playerViews = new ArrayList<>();
     private PlayerView activeView;
-	private JToolBar topToolbar;
+	private ToolBar topToolbar;
 
     public NowPlayingView(ViewStack viewStack) {
         super(viewStack);

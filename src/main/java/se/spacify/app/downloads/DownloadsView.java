@@ -69,10 +69,10 @@ public class DownloadsView extends AbstractMusicListView {
     protected JComponent toolbarAccessory() {
         JPanel bar = new JPanel(new FlowLayout(FlowLayout.RIGHT, 4, 0));
         bar.setOpaque(false);
-        bar.add(button("Cancel",  this::cancelSelected));
-        bar.add(button("Retry",   this::retrySelected));
-        bar.add(button("Reveal",  this::revealSelected));
-        bar.add(button("Play",    this::playSelected));
+        bar.add(button("Cancel",  this::cancelSelected).getComponent());
+        bar.add(button("Retry",   this::retrySelected).getComponent());
+        bar.add(button("Reveal",  this::revealSelected).getComponent());
+        bar.add(button("Play",    this::playSelected).getComponent());
         return bar;
     }
 

@@ -39,7 +39,7 @@ public class WMP1XAppHeader extends AppHeader {
 	protected GlossyButton storesBtn;
 	private final Map<String, Icon> faviconCache = new HashMap<>();
 	private Panel navButtons;
-	private Container center;
+	private Panel center;
 	/** Build the stores popup from the catalogue, using cached favicons. */
 	private JPopupMenu buildStoresMenu() {
 		JPopupMenu menu = new JPopupMenu();
@@ -99,7 +99,7 @@ public class WMP1XAppHeader extends AppHeader {
 
 		// Centre region carries the WMP tab strip along its bottom edge.
 		center = new Panel(new BorderLayout());
-		((Panel) center).setOpaque(false);
+		center.setOpaque(false);
 
 		navButtons = new Panel(new FlowLayout(FlowLayout.LEFT, 4, 0));
 		navButtons.setOpaque(false);
@@ -135,9 +135,9 @@ public class WMP1XAppHeader extends AppHeader {
 		});
 		JPanel tabBar = new JPanel(new FlowLayout(FlowLayout.CENTER, 4, 0));
 		tabBar.setOpaque(false);
-		tabBar.add(nowPlayingTab);
-		tabBar.add(libraryTab);
-		tabBar.add(mediaGuideTab);
+		tabBar.add(nowPlayingTab.getComponent());
+		tabBar.add(libraryTab.getComponent());
+		tabBar.add(mediaGuideTab.getComponent());
 		center.add(tabBar, BorderLayout.SOUTH);
 		JPanel right = new JPanel(new FlowLayout(FlowLayout.RIGHT, 5, 5));
 		right.setOpaque(false);
@@ -152,19 +152,19 @@ public class WMP1XAppHeader extends AppHeader {
 		storesBtn.setPreferredSize(new Dimension(160, 32));
 		storesBtn.setToolTipText("Open a music Service");
 		// Transparent & borderless so it floats on the glass field.
-		storesBtn.setOpaque(false);
-		storesBtn.setContentAreaFilled(false);
-		storesBtn.setBorderPainted(false);
-		storesBtn.setBorder(BorderFactory.createEmptyBorder(4, 8, 4, 8));
-		storesBtn.setHorizontalAlignment(SwingConstants.LEFT);
-		storesBtn.addActionListener(e -> buildStoresMenu().show(storesBtn, 0, storesBtn.getHeight()));
+		storesBtn.getComponent().setOpaque(false);
+		storesBtn.getComponent().setContentAreaFilled(false);
+		storesBtn.getComponent().setBorderPainted(false);
+		storesBtn.getComponent().setBorder(BorderFactory.createEmptyBorder(4, 8, 4, 8));
+		storesBtn.getComponent().setHorizontalAlignment(SwingConstants.LEFT);
+		storesBtn.addActionListener(e -> buildStoresMenu().show(storesBtn.getComponent(), 0, storesBtn.getComponent().getHeight()));
 		storePanel.add(storesBtn);
 
 		add(navButtons, BorderLayout.WEST);
 		add(center, BorderLayout.CENTER);
 		add(right, BorderLayout.EAST);
 
-		right.add(storePanel, BorderLayout.CENTER);
+		right.add(storePanel.getComponent(), BorderLayout.CENTER);
 
 		loadFavicons();
 

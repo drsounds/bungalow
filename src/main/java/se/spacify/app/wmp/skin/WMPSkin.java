@@ -18,9 +18,8 @@ public class WMPSkin extends Skin {
 
     @Override
     public Paint getPaintValue(JComponent component, String key, Paint defaultValue) {
-        Control control = (Control)component;
         if (key == "table.alternateBackground") {
-            if (control.getTaste().isDarkMode()) {
+            if (se.spacify.ui.MainWindow.getInstance().getTaste().isDarkMode()) {
                 return new Color(255, 255, 255, 25);
             } else {
                 return new Color(0, 0, 0, 1);
@@ -31,14 +30,11 @@ public class WMPSkin extends Skin {
 
     @Override
     public Color getColorValue(JComponent component, String key, Color defaultValue) {
-        if (component instanceof Control) {
-            Control control = (Control)component;
-            if (key == "table.alternateBackground") {
-                if (control.getTaste().isDarkMode()) {
-                    return new Color(255, 255, 255, 25);
-                } else {
-                    return new Color(0, 0, 0,  15);
-                }
+        if (key == "table.alternateBackground") {
+            if (se.spacify.ui.MainWindow.getInstance().getTaste().isDarkMode()) {
+                return new Color(255, 255, 255, 25);
+            } else {
+                return new Color(0, 0, 0,  15);
             }
         }
         return defaultValue;

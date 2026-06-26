@@ -108,6 +108,7 @@ public class MusicTable extends JPanel {
 	private final Source source;
 	private final DefaultTableModel model;
 	private final Table table;
+	private final javax.swing.JTable jtable;
 	private final JScrollPane scroll;
 	/** Index of the trailing Buy/Stream column appended to the model. */
 	private final int buyStreamCol;
@@ -159,17 +160,18 @@ public class MusicTable extends JPanel {
 			}
 		};
 		table = new Table(model);
-		table.setFillsViewportHeight(true);
-		table.setShowGrid(false);
-		table.setIntercellSpacing(new Dimension(0, 0));
-		table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		table.addMouseListener(new MouseAdapter() {
+		jtable = table.getComponent();
+		jtable.setFillsViewportHeight(true);
+		jtable.setShowGrid(false);
+		jtable.setIntercellSpacing(new Dimension(0, 0));
+		jtable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		jtable.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				int row = table.rowAtPoint(e.getPoint());
+				int row = jtable.rowAtPoint(e.getPoint());
 				if (row < 0)
 					return;
-				int col = table.columnAtPoint(e.getPoint());
+				int col = jtable.columnAtPoint(e.getPoint());
 				if (e.getClickCount() == 2) {
 					activate(row);
 				} else if (e.getClickCount() == 1) {
@@ -184,11 +186,11 @@ public class MusicTable extends JPanel {
 		});
 
 		ThemedTableCellRenderer renderer = new ThemedTableCellRenderer();
-		for (int i = 0; i < table.getColumnCount(); i++) {
-			table.getColumnModel().getColumn(i).setCellRenderer(renderer);
+		for (int i = 0; i < jtable.getColumnCount(); i++) {
+			jtable.getColumnModel().getColumn(i).setCellRenderer(renderer);
 		}
 		// The Buy/Stream column draws its own split button.
-		TableColumn bs = table.getColumnModel().getColumn(buyStreamCol);
+		TableColumn bs = jtable.getColumnModel().getColumn(buyStreamCol);
 		bs.setCellRenderer(new BuyStreamRenderer());
 		bs.setResizable(false);
 		bs.setMinWidth(0);
@@ -196,7 +198,7 @@ public class MusicTable extends JPanel {
 		bs.setPreferredWidth(BUY_STREAM_COL_WIDTH);
 		// Optional library-membership (✓/＋) toggle column.
 		if (libToggleCol >= 0) {
-			TableColumn lt = table.getColumnModel().getColumn(libToggleCol);
+			TableColumn lt = jtable.getColumnModel().getColumn(libToggleCol);
 			lt.setCellRenderer(new LibraryToggleRenderer());
 			lt.setResizable(false);
 			lt.setMinWidth(0);
@@ -204,7 +206,7 @@ public class MusicTable extends JPanel {
 			lt.setPreferredWidth(LIB_TOGGLE_COL_WIDTH);
 		}
 
-		scroll = new JScrollPane(table);
+		scroll = new JScrollPane(jtable);
 		// Non-UIResource empty border so the Nimbus reinstall on theme change
 		// doesn't re-install a default scroll-pane border.
 		scroll.setBorder(BorderFactory.createEmptyBorder());
@@ -215,7 +217,7 @@ public class MusicTable extends JPanel {
 		updateColors();
 		ThemeManager.addChangeListener(this::updateColors);
 		// Repaint so the now-playing row highlight follows the active track.
-		PlayQueue.getInstance().addChangeListener(table::repaint);
+		PlayQueue.getInstance().addChangeListener(jtable::repaint);
 	}
 
 	// ── Public API ──────────────────────────────────────────────────────────────
@@ -227,7 +229,7 @@ public class MusicTable extends JPanel {
 	public Table getTable() { return table; }
 
 	/** The selected model row, or -1. */
-	public int getSelectedRow() { return table.getSelectedRow(); }
+	public int getSelectedRow() { return jtable.getSelectedRow(); }
 
 	/**
 	 * Call after the model has been (re)filled: sizes the managed columns (hiding
@@ -270,9 +272,9 @@ public class MusicTable extends JPanel {
 			if (currentGrouping == null && !groupings().isEmpty())
 				currentGrouping = groupings().get(0);
 			rebuildGroups();
-			scroll.setViewportView(groupedPanel);
+			scroll.setViewportView(groupedPanel.getComponent());
 		} else {
-			scroll.setViewportView(table);
+			scroll.setViewportView(jtable);
 		}
 		scroll.revalidate();
 		scroll.repaint();
@@ -310,10 +312,10 @@ public class MusicTable extends JPanel {
 	private void maybeShowRowMenu(MouseEvent e) {
 		if (!e.isPopupTrigger())
 			return;
-		int row = table.rowAtPoint(e.getPoint());
+		int row = jtable.rowAtPoint(e.getPoint());
 		if (row < 0)
 			return;
-		table.setRowSelectionInterval(row, row);
+		jtable.setRowSelectionInterval(row, row);
 		PlayRequest req = source.playRequestAt(row);
 		if (req == null)
 			return;
@@ -330,7 +332,7 @@ public class MusicTable extends JPanel {
 	private boolean handleLibraryToggleClick(int row) {
 		if (row < 0 || row >= model.getRowCount() || source.playRequestAt(row) == null) return false;
 		source.toggleLibraryAt(row);
-		table.repaint();
+		jtable.repaint();
 		return true;
 	}
 
@@ -357,9 +359,9 @@ public class MusicTable extends JPanel {
 	private boolean handleBuyStreamClick(int row, MouseEvent e) {
 		PlayRequest req = source.playRequestAt(row);
 		if (req == null) return false;
-		TrackAvailability a = AvailabilityResolver.get().availabilityFor(req, table::repaint);
+		TrackAvailability a = AvailabilityResolver.get().availabilityFor(req, jtable::repaint);
 		if (a.local()) { activate(row); return true; }   // already have the file → play it
-		Rectangle cell = table.getCellRect(row, buyStreamCol, false);
+		Rectangle cell = jtable.getCellRect(row, buyStreamCol, false);
 		boolean onArrow = (e.getX() - cell.x) >= cell.width - BUY_STREAM_ARROW_W - 4;
 		if (onArrow || !a.hasStream()) {
 			showBuyStreamMenu(row, req, a);
@@ -397,8 +399,8 @@ public class MusicTable extends JPanel {
 		openWith.addActionListener(x -> PlaybackCoordinator.resolveAndPlay(req, true));
 		menu.add(openWith);
 
-		Rectangle cell = table.getCellRect(row, buyStreamCol, false);
-		menu.show(table, cell.x, cell.y + cell.height);
+		Rectangle cell = jtable.getCellRect(row, buyStreamCol, false);
+		menu.show(jtable, cell.x, cell.y + cell.height);
 	}
 
 	/**
@@ -416,11 +418,11 @@ public class MusicTable extends JPanel {
 				boolean focus, int row, int column) {
 			PlayRequest req = source.playRequestAt(row);
 			if (req == null) return blank;
-			TrackAvailability a = AvailabilityResolver.get().availabilityFor(req, table::repaint);
+			TrackAvailability a = AvailabilityResolver.get().availabilityFor(req, jtable::repaint);
 			if (a.local()) return fileCell;   // have the file → file icon only, no button
 			button.setFont(t.getFont());
 			button.setText(!a.resolved() ? "…" : (a.hasStream() ? "Stream ▾" : "Buy ▾"));
-			return button;
+			return button.getComponent();
 		}
 	}
 
@@ -430,14 +432,8 @@ public class MusicTable extends JPanel {
 		private static final long serialVersionUID = 1L;
 		BuyStreamButton() {
 			super();
-			setFocusable(false);
-			setMargin(new java.awt.Insets(0, 0, 0, 0));
-		}
-		@Override
-		public se.spacify.ui.MainWindow getMainWindow() {
-			java.awt.Window w = SwingUtilities.getWindowAncestor(this);
-			if (w instanceof se.spacify.ui.MainWindow mw) return mw;
-			return se.spacify.ui.MainWindow.getInstance();
+			component.setFocusable(false);
+			component.setMargin(new java.awt.Insets(0, 0, 0, 0));
 		}
 	}
 
@@ -504,7 +500,7 @@ public class MusicTable extends JPanel {
 	// ── Helpers ──────────────────────────────────────────────────────────────────
 
 	private void sizeColumn(int index, int width) {
-		TableColumn col = table.getColumnModel().getColumn(index);
+		TableColumn col = jtable.getColumnModel().getColumn(index);
 		col.setMinWidth(0);
 		col.setMaxWidth(width);
 		col.setPreferredWidth(width);
@@ -523,11 +519,11 @@ public class MusicTable extends JPanel {
 		Color fg = ThemeManager.getForeground();
 		Color grid = ThemeManager.getGridColor();
 
-		table.setBackground(bg);
-		table.setForeground(fg);
-		table.setGridColor(grid);
+		jtable.setBackground(bg);
+		jtable.setForeground(fg);
+		jtable.setGridColor(grid);
 		scroll.setBackground(bg);
 		scroll.getViewport().setBackground(bg);
-		table.repaint();
+		jtable.repaint();
 	}
 }

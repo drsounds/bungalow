@@ -98,7 +98,7 @@ public abstract class Chrome extends Panel implements Aspect {
 		for (Component comp : getComponents()) {
 			remove(comp);
 		}
-		setLayout(new BoxLayout(this, BoxLayout.LINE_AXIS));
+		setLayout(new BoxLayout(getComponent(), BoxLayout.LINE_AXIS));
 	}
 
     /** Toggle the left leftLibraryMenu; remembers the user's preference. */

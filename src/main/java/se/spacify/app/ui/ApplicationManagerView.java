@@ -23,7 +23,7 @@ import java.util.List;
  */
 public class ApplicationManagerView extends View {
 
-    private final Table           table;
+    private final javax.swing.JTable table;
     private final DefaultTableModel model;
     private final JScrollPane      detail;
     private final List<ManagedApplication> rows = new ArrayList<>();
@@ -62,7 +62,7 @@ public class ApplicationManagerView extends View {
             @Override public boolean isCellEditable(int r, int c) { return c == 0; }
             @Override public Class<?> getColumnClass(int c) { return c == 0 ? Boolean.class : String.class; }
         };
-        table = new Table(model);
+        table = new Table(model).getComponent();
         table.setShowGrid(false);
         table.getColumnModel().getColumn(0).setMaxWidth(32);
         table.getSelectionModel().addListSelectionListener(e -> { if (!e.getValueIsAdjusting()) showSelected(); });
@@ -98,11 +98,11 @@ public class ApplicationManagerView extends View {
     private void onAdd() {
         JFileChooser chooser = new JFileChooser();
         chooser.setFileFilter(new javax.swing.filechooser.FileNameExtensionFilter("Application jar (*.jar)", "jar"));
-        if (chooser.showOpenDialog(this) != JFileChooser.APPROVE_OPTION) return;
+        if (chooser.showOpenDialog(getComponent()) != JFileChooser.APPROVE_OPTION) return;
         File jar = chooser.getSelectedFile();
         boolean ok = getViewStack().getMainWindow().getApplicationManager().install(jar);
         if (!ok) {
-            JOptionPane.showMessageDialog(this,
+            JOptionPane.showMessageDialog(getComponent(),
                 "Not a valid Spacify plugin jar (missing Spacify-App-Id / -Class manifest headers).",
                 "Install failed", JOptionPane.ERROR_MESSAGE);
         }
@@ -112,12 +112,12 @@ public class ApplicationManagerView extends View {
         ManagedApplication m = selected();
         if (m == null) return;
         if (!m.getDescriptor().isRemovable()) {
-            JOptionPane.showMessageDialog(this,
+            JOptionPane.showMessageDialog(getComponent(),
                 "Built-in plugins can't be removed — disable it with the checkbox instead.",
                 "Remove", JOptionPane.INFORMATION_MESSAGE);
             return;
         }
-        int ans = JOptionPane.showConfirmDialog(this,
+        int ans = JOptionPane.showConfirmDialog(getComponent(),
             "Remove plugin \"" + m.getDescriptor().getName() + "\"?",
             "Remove plugin", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
         if (ans == JOptionPane.YES_OPTION) {

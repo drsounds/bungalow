@@ -51,7 +51,7 @@ public class ReleasesLibraryView extends AbstractMusicListView {
         JTextField date    = new JTextField();
         JTextField upc     = new JTextField();
         JTextField mbid    = new JTextField();
-        if (!FormDialog.show(this, "New Release",
+        if (!FormDialog.show(getComponent(), "New Release",
                 new String[]{"Title", "Artists (comma-separated)", "Type", "Date (YYYY-MM-DD)", "UPC", "MBID"},
                 new JComponent[]{title, artists, type, date, upc, mbid})) return;
         if (title.getText().isBlank()) return;
@@ -78,7 +78,7 @@ public class ReleasesLibraryView extends AbstractMusicListView {
         JTextField date    = new JTextField(r.getReleaseDate());
         JTextField upc     = new JTextField(r.getUpc());
         JTextField mbid    = new JTextField(r.getMbid());
-        if (!FormDialog.show(this, "Edit Release",
+        if (!FormDialog.show(getComponent(), "Edit Release",
                 new String[]{"Title", "Artists (comma-separated)", "Type", "Date (YYYY-MM-DD)", "UPC", "MBID"},
                 new JComponent[]{title, artists, type, date, upc, mbid})) return;
         if (title.getText().isBlank()) return;

@@ -27,7 +27,7 @@ public class WMP9Chrome extends Chrome {
         @Override
         public void build() {
                 super.build();
-                setLayout(new BoxLayout(this, BoxLayout.LINE_AXIS));
+                setLayout(new BoxLayout(getComponent(), BoxLayout.LINE_AXIS));
         
                 leftMenuPanel.setMinimumSize(new Dimension(100, 0));
                 leftMenuPanel.setMaximumSize(new Dimension(100, Short.MAX_VALUE));
@@ -39,8 +39,8 @@ public class WMP9Chrome extends Chrome {
                 leftMenuPanel.setVisible(false);
                 add(appPanel);
                 appPanel.setOpaque(false);
-                leftMenuPanel.setLayout(new BoxLayout(leftMenuPanel, BoxLayout.PAGE_AXIS));
-                appPanel.setLayout(new BoxLayout(appPanel, BoxLayout.PAGE_AXIS));
+                leftMenuPanel.setLayout(new BoxLayout(leftMenuPanel.getComponent(), BoxLayout.PAGE_AXIS));
+                appPanel.setLayout(new BoxLayout(appPanel.getComponent(), BoxLayout.PAGE_AXIS));
                 
                 topSpacing = new Panel();
                 topSpacing.setMinimumSize(new Dimension(0, 1660));

@@ -164,7 +164,7 @@ public class SettingsPanel extends Panel {
         accentBtn.setToolTipText("Click to choose accent color");
         accentBtn.addActionListener(e -> {
             Color chosen = JColorChooser.showDialog(
-                SwingUtilities.getWindowAncestor(this), "Accent Color",
+                SwingUtilities.getWindowAncestor(getComponent()), "Accent Color",
                 getTaste().getAccentBackgroundColor());
             if (chosen != null) {
                 getTaste().setAccentBackgroundColor(chosen);
@@ -201,15 +201,8 @@ public class SettingsPanel extends Panel {
         add(right,       BorderLayout.EAST);
     }
 
-    // Force black bg to survive updateComponentTreeUI
     @Override
-    public void updateUI() {
-        super.updateUI();
-        setBackground(BG);
-    }
-
-    @Override
-    protected void paintComponent(Graphics g) {
+    protected void paintSurface(Graphics g) {
         g.setColor(BG);
         g.fillRect(0, 0, getWidth(), getHeight());
     }

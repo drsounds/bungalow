@@ -12,7 +12,7 @@ public class Slider extends Control<JSlider> {
 		this.component = new JSlider();
 	}
 
-	public Slider(int orientation, int min, int max) {
-		this.component = new JSlider(orientation, min, max);
+	public Slider(int min, int max, int value) {
+		this.component = new JSlider(min, max, value);
 	}
 }

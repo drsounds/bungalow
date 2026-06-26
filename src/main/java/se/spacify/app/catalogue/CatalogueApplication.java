@@ -9,8 +9,8 @@ import se.spacify.app.ApplicationContext;
 import se.spacify.app.SidebarHandle;
 import se.spacify.app.catalogue.service.MusicCatalogueService;
 import se.spacify.app.catalogue.views.ArtistsCatalogView;
+import se.spacify.app.catalogue.views.RecordingsCatalogView;
 import se.spacify.app.catalogue.views.ReleasesCatalogView;
-import se.spacify.app.library.views.RecordingsCatalogView;
 
 /**
  * Built-in plugin contributing the <strong>Catalogs</strong> sidebar folder and

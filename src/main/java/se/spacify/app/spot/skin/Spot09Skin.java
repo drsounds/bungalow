@@ -35,8 +35,7 @@ public class Spot09Skin extends SpotSkin {
     @Override
     public void paintHeader(JPanel header, Graphics2D g2) {
         // TODO Auto-generated method stub
-        Spot09AppHeader panel = (Spot09AppHeader)header;
-        Taste taste = panel.getTaste();
+        Taste taste = se.spacify.ui.MainWindow.getInstance().getTaste();
         Color tintColor = taste.getTintColor();
         int w = header.getWidth(), h = header.getHeight();
         g2.setPaint(new LinearGradientPaint(new Point(0, 0), new Point(0, h), new float[] {0, 1}, new Color[] { ColorUtils.darken(tintColor, 0.8f), ColorUtils.darken(tintColor, 0.5f) }));
@@ -118,9 +117,7 @@ public class Spot09Skin extends SpotSkin {
     @Override
     public void paintFooter(JPanel footer, Graphics2D g2) {
         // TODO Auto-generated method stub
-         Spot09AppFooter panel = (Spot09AppFooter)footer;
-
-        Taste taste = panel.getTaste();
+        Taste taste = se.spacify.ui.MainWindow.getInstance().getTaste();
         Color tintColor = taste.getTintColor();
         int w = footer.getWidth(), h = footer.getHeight();
         g2.setPaint(new LinearGradientPaint(new Point(0, 0), new Point(0, h), new float[] {0, 1}, new Color[] { ColorUtils.darken(tintColor, 0.8f), ColorUtils.darken(tintColor, 0.5f) }));

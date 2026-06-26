@@ -21,7 +21,6 @@ public class AppHeader extends Panel implements NavigationListener {
 	protected GlossyButton backBtn;
 	protected GlossyButton forwardBtn;
 	protected Button sidebarToggle;
-	/** Cached store favicons, fetched off the EDT. */
 
 	public void build() {
 
@@ -30,8 +29,8 @@ public class AppHeader extends Panel implements NavigationListener {
 		setOpaque(true);
 
 		sidebarToggle = makeNavButton("☰");
-		sidebarToggle.setToolTipText("Show/hide the sidebar");
-		sidebarToggle.addActionListener(e -> {
+		sidebarToggle.getComponent().setToolTipText("Show/hide the sidebar");
+		sidebarToggle.getComponent().addActionListener(e -> {
 			if (viewStack.getMainWindow() != null)
 				viewStack.getMainWindow().toggleSidebar();
 		});
@@ -41,11 +40,11 @@ public class AppHeader extends Panel implements NavigationListener {
 		backBtn.setPrimary(true);
 		forwardBtn = makeNavButton("►");
 		forwardBtn.setDiameter(36);
-		backBtn.setEnabled(false);
-		forwardBtn.setEnabled(false);
+		backBtn.getComponent().setEnabled(false);
+		forwardBtn.getComponent().setEnabled(false);
 
-		backBtn.addActionListener((ActionEvent e) -> viewStack.back());
-		forwardBtn.addActionListener((ActionEvent e) -> viewStack.forward());
+		backBtn.getComponent().addActionListener((ActionEvent e) -> viewStack.back());
+		forwardBtn.getComponent().addActionListener((ActionEvent e) -> viewStack.forward());
 	}
 
 	public AppHeader(ViewStack viewStack) {
@@ -54,11 +53,11 @@ public class AppHeader extends Panel implements NavigationListener {
 	}
 
 	@Override
-	protected void paintComponent(Graphics g) {
+	protected void paintSurface(Graphics g) {
 		Graphics2D g2 = (Graphics2D) g.create();
 		int w = getWidth(), h = getHeight();
 
-        ((MainWindow)(SwingUtilities.getWindowAncestor(this))).getSkin().paintHeader(this, g2);
+		getSkin().paintHeader(getComponent(), g2);
 		// 1 px white sheen along the very bottom edge
 		g2.setColor(HIGHLIGHT);
 		g2.drawLine(0, h - 1, w, h - 1);
@@ -68,15 +67,15 @@ public class AppHeader extends Panel implements NavigationListener {
 
 	protected GlossyButton makeNavButton(String text) {
 		GlossyButton btn = new GlossyButton(text);
-		btn.setFocusPainted(false);
-		btn.setPreferredSize(new Dimension(32, 32));
-		btn.setFont(btn.getFont().deriveFont(11f));
+		btn.getComponent().setFocusPainted(false);
+		btn.getComponent().setPreferredSize(new Dimension(32, 32));
+		btn.getComponent().setFont(btn.getComponent().getFont().deriveFont(11f));
 		return btn;
 	}
 
 	@Override
 	public void onNavigate(String uri, boolean canGoBack, boolean canGoForward) {
-		backBtn.setEnabled(canGoBack);
-		forwardBtn.setEnabled(canGoForward);
+		backBtn.getComponent().setEnabled(canGoBack);
+		forwardBtn.getComponent().setEnabled(canGoForward);
 	}
 }

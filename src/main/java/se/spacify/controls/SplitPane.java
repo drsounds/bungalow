@@ -17,6 +17,9 @@ import javax.swing.plaf.basic.BasicSplitPaneUI;
  */
 public class SplitPane extends Control<JSplitPane> {
 
+	public static final int HORIZONTAL_SPLIT = JSplitPane.HORIZONTAL_SPLIT;
+	public static final int VERTICAL_SPLIT   = JSplitPane.VERTICAL_SPLIT;
+
 	/** The skinned divider; painted by the active skin. */
 	public class SplitPaneDivider extends BasicSplitPaneDivider {
 		private static final long serialVersionUID = 1L;
@@ -47,20 +50,36 @@ public class SplitPane extends Control<JSplitPane> {
 		if (d != null) d.setBorder(new EmptyBorder(0, 0, 0, 0));
 	}
 
-	public SplitPane(int orientation, Component left, Component right) {
-		this.component = new JSplitPane(orientation, left, right);
+	/**
+	 * @param left  a {@link Control} or a raw {@link Component}
+	 * @param right a {@link Control} or a raw {@link Component}
+	 */
+	public SplitPane(int orientation, Object left, Object right) {
+		this.component = new JSplitPane(orientation, comp(left), comp(right));
 		component.setUI(new SplitPaneDividerUI());
 		BasicSplitPaneDivider d = getDivider();
 		if (d != null) d.setBorder(new EmptyBorder(0, 0, 0, 0));
+		if (left instanceof Control<?> l)  { children.add(l); l.setParent(this); }
+		if (right instanceof Control<?> r) { children.add(r); r.setParent(this); }
 	}
 
-	public SplitPane(int orientation, Control<?> left, Control<?> right) {
-		this(orientation, left.getComponent(), right.getComponent());
-		children.add(left);
-		left.setParent(this);
-		children.add(right);
-		right.setParent(this);
+	private static Component comp(Object o) {
+		return o instanceof Control<?> c ? c.getComponent() : (Component) o;
 	}
+
+	// ── Facade ───────────────────────────────────────────────────────────────────
+	public void setDividerLocation(int loc)    { component.setDividerLocation(loc); }
+	public void setDividerLocation(double prop) { component.setDividerLocation(prop); }
+	public int getDividerLocation()            { return component.getDividerLocation(); }
+	public void setDividerSize(int size)       { component.setDividerSize(size); }
+	public void setResizeWeight(double w)      { component.setResizeWeight(w); }
+	public void setContinuousLayout(boolean b) { component.setContinuousLayout(b); }
+	public void setOpaque(boolean b)           { component.setOpaque(b); }
+	public void setBorder(javax.swing.border.Border b) { component.setBorder(b); }
+	public void setLeftComponent(Component c)  { component.setLeftComponent(c); }
+	public void setRightComponent(Component c) { component.setRightComponent(c); }
+	public void setLeftComponent(Control<?> c)  { component.setLeftComponent(c.getComponent()); }
+	public void setRightComponent(Control<?> c) { component.setRightComponent(c.getComponent()); }
 
 	public BasicSplitPaneDivider getDivider() {
 		if (component.getUI() instanceof BasicSplitPaneUI ui) {

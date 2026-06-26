@@ -40,7 +40,7 @@ public abstract class AbstractMusicListView extends View {
 	/** The table model to fill in {@link #reload()} (owned by {@link #musicTable}). */
 	protected final DefaultTableModel model;
 	/** The underlying table (owned by {@link #musicTable}); for selection queries. */
-	protected final Table table;
+	protected final javax.swing.JTable table;
 
 	private ToolBar bottomToolbar;
 	private ToolBar toolbar;
@@ -65,7 +65,7 @@ public abstract class AbstractMusicListView extends View {
 		// be constant; the SourceAdapter forwards the per-row hooks to this view.
 		musicTable = new MusicTable(viewStack, getColumns(), showsLibraryToggle(), new SourceAdapter());
 		model = musicTable.getModel();
-		table = musicTable.getTable();
+		table = musicTable.getTable().getComponent();
 
 		// ── CRUD toolbar ───────────────────────────────────────────────────────
 		toolbar = new ToolBar();
@@ -79,7 +79,7 @@ public abstract class AbstractMusicListView extends View {
 			ToolButton deleteBtn = new ToolButton("Delete");
 			ToolButton scanBtn = new ToolButton("Scan…");
 
-			scanBtn.addActionListener(e -> LibraryScanAction.run(this, () -> {
+			scanBtn.addActionListener(e -> LibraryScanAction.run(getComponent(), () -> {
 				reloadAndRegroup();
 				LibraryEvents.fireChanged();
 			}));
@@ -152,7 +152,7 @@ public abstract class AbstractMusicListView extends View {
 		JPanel north = new JPanel();
 		north.setLayout(new BoxLayout(north, BoxLayout.PAGE_AXIS));
 		north.setOpaque(false);
-		north.add(toolbar, BorderLayout.CENTER);
+		north.add(toolbar.getComponent(), BorderLayout.CENTER);
 		//add(headerLabel, BorderLayout.NORTH);
 
 		add(north, BorderLayout.NORTH);
@@ -312,11 +312,11 @@ public abstract class AbstractMusicListView extends View {
 	}
 
 	protected void showError(Exception e) {
-		JOptionPane.showMessageDialog(this, e.getMessage(), "Library error", JOptionPane.ERROR_MESSAGE);
+		JOptionPane.showMessageDialog(getComponent(), e.getMessage(), "Library error", JOptionPane.ERROR_MESSAGE);
 	}
 
 	protected boolean confirmDelete(String what) {
-		return JOptionPane.showConfirmDialog(this, "Delete " + what + "?", "Confirm delete", JOptionPane.YES_NO_OPTION,
+		return JOptionPane.showConfirmDialog(getComponent(), "Delete " + what + "?", "Confirm delete", JOptionPane.YES_NO_OPTION,
 				JOptionPane.WARNING_MESSAGE) == JOptionPane.YES_OPTION;
 	}
 

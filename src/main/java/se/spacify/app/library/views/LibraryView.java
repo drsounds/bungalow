@@ -26,16 +26,16 @@ public class LibraryView extends View {
         };
 
         table = new Table(data, columns);
-        table.setFillsViewportHeight(true);
-        table.setOpaque(true);
-        table.setShowGrid(false);
-        table.setIntercellSpacing(new Dimension(0, 0));
+        table.getComponent().setFillsViewportHeight(true);
+        table.getComponent().setOpaque(true);
+        table.getComponent().setShowGrid(false);
+        table.getComponent().setIntercellSpacing(new Dimension(0, 0));
 
         ThemedTableCellRenderer renderer = new ThemedTableCellRenderer();
-        for (int i = 0; i < table.getColumnCount(); i++)
-            table.getColumnModel().getColumn(i).setCellRenderer(renderer);
+        for (int i = 0; i < table.getComponent().getColumnCount(); i++)
+            table.getComponent().getColumnModel().getColumn(i).setCellRenderer(renderer);
 
-        scroll = new JScrollPane(table);
+        scroll = new JScrollPane(table.getComponent());
         scroll.setBorder(BorderFactory.createEmptyBorder());
         scroll.setOpaque(true);
         scroll.getViewport().setOpaque(true);
@@ -53,7 +53,7 @@ public class LibraryView extends View {
 
         table.setBackground(bg);
         table.setForeground(fg);
-        table.setGridColor(grid);
+        table.getComponent().setGridColor(grid);
         scroll.setBackground(bg);
         scroll.getViewport().setBackground(bg);
         table.repaint();

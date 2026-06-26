@@ -20,14 +20,10 @@ public class SpotSkin extends Skin {
     public Color getColorValue(JComponent comp, String key, Color defaultValue) {
         if (key.equals( "table.alternateBackground")) {
             System.out.println("table.alternateBackground");
-            if (comp instanceof Table) {
-                Table table = (Table)comp;
-                if (table.getTaste().isDarkMode()) {                
-                    return new Color(0, 0, 0, 61);
-                } else {
-                    return new Color(0, 0, 0,  11);
-
-                }
+            if (se.spacify.ui.MainWindow.getInstance().getTaste().isDarkMode()) {
+                return new Color(0, 0, 0, 61);
+            } else {
+                return new Color(0, 0, 0,  11);
             }
         }
         return defaultValue;

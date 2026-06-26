@@ -57,7 +57,6 @@ public class MainWindow extends JFrame {
         return conceptManager;
     }
 
-
     private ThemeManager themeManager;
     public ThemeManager getThemeManager() {
         return themeManager;
@@ -108,11 +107,11 @@ public class MainWindow extends JFrame {
 
     public void setTaste(Taste taste) {
         if (getChrome() != null) {
-            remove(getChrome()); 
+            remove(getChrome().getComponent());
         }
         this.taste = taste;
         if (getChrome() != null) {
-            add(getChrome(), BorderLayout.CENTER);
+            add(getChrome().getComponent(), BorderLayout.CENTER);
         }
     }
 
@@ -137,10 +136,10 @@ public class MainWindow extends JFrame {
 
     /** Build the Chrome's UI tree and swap it into the window's CENTER. */
     private void installChrome(Chrome next) {
-        if (chrome != null) remove(chrome);
+        if (chrome != null) remove(chrome.getComponent());
         chrome = next;
         chrome.build();
-        add(chrome, BorderLayout.CENTER);
+        add(chrome.getComponent(), BorderLayout.CENTER);
         revalidate();
         repaint();
     }

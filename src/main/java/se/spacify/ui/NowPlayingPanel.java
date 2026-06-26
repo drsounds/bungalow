@@ -30,7 +30,7 @@ public class NowPlayingPanel extends JPanel {
 
     private static final long serialVersionUID = 1L;
 	private final DefaultTableModel model;
-    private final Table            table;
+    private final javax.swing.JTable table;
     private final JScrollPane       scroll;
     private final JLabel            emptyLabel;
 	private JToolBar topToolbar;
@@ -45,7 +45,7 @@ public class NowPlayingPanel extends JPanel {
         setBorder(new EmptyBorder(0, 0, 0, 0));
 
         
-        topToolbar = new ToolBar();
+        topToolbar = new ToolBar().getComponent();
         topToolbar.setFloatable(false);
         topToolbar.setOpaque(true);
         topToolbar.setBackground(ThemeManager.getTintColor());
@@ -58,7 +58,7 @@ public class NowPlayingPanel extends JPanel {
         model = new DefaultTableModel(new String[]{"Name", "Duration"}, 0) {
             @Override public boolean isCellEditable(int r, int c) { return false; }
         };
-        table = new Table(model);
+        table = new Table(model).getComponent();
         table.setFillsViewportHeight(true);
         table.setShowGrid(false);
         table.setIntercellSpacing(new Dimension(0, 0));
@@ -101,7 +101,7 @@ public class NowPlayingPanel extends JPanel {
         add(topToolbar,  BorderLayout.NORTH);
         add(scroll, BorderLayout.CENTER);
 
-        bottomToolbar = new ToolBar();
+        bottomToolbar = new ToolBar().getComponent();
         bottomToolbar.setFloatable(false);
         bottomToolbar.setOpaque(true);
         bottomToolbar.setBackground(ThemeManager.getTintColor());
@@ -161,11 +161,11 @@ public class NowPlayingPanel extends JPanel {
 
         if (currentPlayer != null) {
             currentPlayer.onDeactivated();
-            playerHost.remove(currentPlayer);
+            playerHost.remove(currentPlayer.getComponent());
         }
         currentPlayer = next;
         if (currentPlayer != null) {
-            playerHost.add(currentPlayer, BorderLayout.CENTER);
+            playerHost.add(currentPlayer.getComponent(), BorderLayout.CENTER);
             currentPlayer.onActivated();
         }
         playerHost.setVisible(currentPlayer != null);

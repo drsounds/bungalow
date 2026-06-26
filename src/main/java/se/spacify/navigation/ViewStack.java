@@ -4,7 +4,6 @@ import se.spacify.ui.MainWindow;
 import se.spacify.controls.Panel;
 
 import java.awt.CardLayout;
-import java.awt.Component;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.util.ArrayDeque;
@@ -16,8 +15,7 @@ import java.util.Map;
 
 public class ViewStack extends Panel {
 
-    private static final long serialVersionUID = 6893909424664812987L;
-	private final List<View> registeredViews = new ArrayList<>();
+    private final List<View> registeredViews = new ArrayList<>();
     private final Deque<String> backStack = new ArrayDeque<>();
     private final Deque<String> forwardStack = new ArrayDeque<>();
     private final List<NavigationListener> listeners = new ArrayList<>();
@@ -31,17 +29,6 @@ public class ViewStack extends Panel {
     private String currentUri = null;
     private View currentView = null;
 
-    public MainWindow getMainWindow() {
-    	Component parent = getParent();
-    	while (parent != null && parent != this) {
-    		if (parent instanceof MainWindow) {
-    			return (MainWindow)parent;
-    		}
-    		parent = parent.getParent();
-    	}
-    	return null;
-    }
-
     public ViewStack() {
         setLayout(cards);
     }
@@ -53,14 +40,13 @@ public class ViewStack extends Panel {
     /** Mount a view as a card the first time it is shown. */
     private void ensureCard(View view) {
         if (cardKeys.containsKey(view)) return;
-        view.mount();
         String key = "view-" + (cardSeq++);
         cardKeys.put(view, key);
         add(view, key);
     }
 
     /**
-     * Remove a previously-registered view (e.g. when a plugin is disabled). If it
+     * Remove a previously-registered view (e.g. when an app is disabled). If it
      * is currently showing, navigate away to a safe default first so the stack
      * isn't left displaying an orphaned component.
      */
@@ -120,7 +106,7 @@ public class ViewStack extends Panel {
         currentView.onShow();
 
         // CardLayout reveals this view and hides whichever was showing.
-        cards.show(this, cardKeys.get(currentView));
+        cards.show(getComponent(), cardKeys.get(currentView));
         revalidate();
         repaint();
 
@@ -187,9 +173,11 @@ public class ViewStack extends Panel {
     }
 
     @Override
-    protected void paintComponent(Graphics g) {
-        Graphics2D g2 = (Graphics2D)g.create();
-        getMainWindow().getSkin().paintViewStack(this, g2);
+    protected void paintSurface(Graphics g) {
+        Graphics2D g2 = (Graphics2D) g.create();
+        getSkin().paintViewStack(this, g2);
+        g2.dispose();
+        super.paintSurface(g);
     }
 
     private void notifyListeners() {

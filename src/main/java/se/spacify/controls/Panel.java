@@ -78,6 +78,7 @@ public class Panel extends Control<JPanel> {
 
 	public void remove(Component c)                    { component.remove(c); }
 	public void removeAll()                            { component.removeAll(); }
+	public Component[] getComponents()                 { return component.getComponents(); }
 
 	public void setBorder(Border border)               { component.setBorder(border); }
 	public Border getBorder()                          { return component.getBorder(); }

@@ -15,7 +15,7 @@ public class Spot09AppFooter extends AppFooter {
     @Override
     public void build() {
 
-        setLayout(new BoxLayout(this, BoxLayout.LINE_AXIS));
+        setLayout(new BoxLayout(getComponent(), BoxLayout.LINE_AXIS));
 
         buttons = new Panel(new FlowLayout(FlowLayout.CENTER, 6, 0));
         buttons.setOpaque(false);
@@ -38,7 +38,7 @@ public class Spot09AppFooter extends AppFooter {
         progress = new Slider(0,  5, 0);
         add(progressPanel);
         progressPanel.add(progress);
-        progress.setOpaque(false); 
+        progress.getComponent().setOpaque(false); 
 
     }
 }

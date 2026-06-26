@@ -1,6 +1,4 @@
-package se.spacify.app.library.views;
-import se.spacify.app.catalogue.views.AbstractCatalogView;
-
+package se.spacify.app.catalogue.views;
 import se.spacify.db.DatabaseManager;
 import se.spacify.db.entity.Recording;
 import se.spacify.library.LibraryEvents;

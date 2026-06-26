@@ -43,22 +43,19 @@ public class LeftLibraryMenu extends Panel implements NavigationListener {
     }
 
     @Override
-    protected void paintComponent(Graphics g) {
-        Graphics2D g2 = (Graphics2D)g.create();
-        getMainWindow().getSkin().paintLeftLibraryMenu(this, g2);
+    protected void paintSurface(Graphics g) {
+        Graphics2D g2 = (Graphics2D) g.create();
+        getSkin().paintLeftLibraryMenu(this, g2);
         g2.dispose();
-        super.paintComponent(g);
+        super.paintSurface(g);
     }
-    
 
     public void reload() {
-		
 	}
-	
+
 	public void onAdd() {
-		
 	}
-	
+
     public LeftLibraryMenu(ViewStack viewStack) {
         this.viewStack = viewStack;
         setLayout(new BorderLayout());
@@ -66,7 +63,7 @@ public class LeftLibraryMenu extends Panel implements NavigationListener {
         setOpaque(true);
 
         // Core shell nodes only; content subtrees (Your Library, Sites) are
-        // contributed by built-in plugins via addSidebarNode() at activation.
+        // contributed by built-in apps via addSidebarNode() at activation.
         root = new DefaultMutableTreeNode("root");
         root.add(nodeFor(new SidebarNode("Player",    "spacify:now-playing")));
         root.add(nodeFor(new SidebarNode("Downloads", "spacify:downloads")));
@@ -77,7 +74,6 @@ public class LeftLibraryMenu extends Panel implements NavigationListener {
         toolbar.setOpaque(true);
         toolbar.setBackground(ThemeManager.getTintColor());
         add(toolbar, BorderLayout.NORTH);
-        
 
         searchField = new JTextField();
         searchField.putClientProperty("JTextField.placeholderText", "Search...");
@@ -91,28 +87,28 @@ public class LeftLibraryMenu extends Panel implements NavigationListener {
         });
         toolbar.add(searchField);
 
-
         tree = new Tree(root);
-        tree.setOpaque(false);
-        tree.setRootVisible(false);
-        tree.setShowsRootHandles(true);
-        tree.setBorder(BorderFactory.createEmptyBorder(8, 4, 8, 4));
-        tree.setRowHeight(28);
-        tree.setCellRenderer(new ThemedTreeCellRenderer());
+        tree.getComponent().setOpaque(false);
+        tree.getComponent().setRootVisible(false);
+        tree.getComponent().setShowsRootHandles(true);
+        tree.getComponent().setBorder(BorderFactory.createEmptyBorder(8, 4, 8, 4));
+        tree.getComponent().setRowHeight(28);
+        tree.getComponent().setCellRenderer(new ThemedTreeCellRenderer());
 
-        tree.addMouseListener(new MouseAdapter() {
+        tree.getComponent().addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
+                JTree jt = tree.getComponent();
                 // Resolve the row from the y-position only, so a click anywhere along
                 // the row width counts — not just on the label text.
-                int row = tree.getClosestRowForLocation(e.getX(), e.getY());
+                int row = jt.getClosestRowForLocation(e.getX(), e.getY());
                 if (row < 0) return;
-                Rectangle bounds = tree.getRowBounds(row);
+                Rectangle bounds = jt.getRowBounds(row);
                 if (bounds == null || e.getY() < bounds.y || e.getY() >= bounds.y + bounds.height) {
                     return;   // clicked in the empty area below the last row
                 }
-                tree.setSelectionRow(row);
-                TreePath path = tree.getPathForRow(row);
+                jt.setSelectionRow(row);
+                TreePath path = jt.getPathForRow(row);
                 DefaultMutableTreeNode node = (DefaultMutableTreeNode) path.getLastPathComponent();
                 if (node.getUserObject() instanceof SidebarNode sn && sn.getUri() != null) {
                     suppressSelection = true;
@@ -120,12 +116,12 @@ public class LeftLibraryMenu extends Panel implements NavigationListener {
                     suppressSelection = false;
                 } else if (!node.isLeaf()) {
                     // A folder row (no URI): toggle it across the whole width.
-                    if (tree.isExpanded(row)) tree.collapseRow(row); else tree.expandRow(row);
+                    if (jt.isExpanded(row)) jt.collapseRow(row); else jt.expandRow(row);
                 }
             }
         });
 
-        scroll = new JScrollPane(tree);
+        scroll = new JScrollPane(tree.getComponent());
         scroll.setBorder(BorderFactory.createEmptyBorder());
         // Keep scroll and viewport opaque so they paint a background;
         // colours are kept in sync by updateColors() below.
@@ -134,24 +130,24 @@ public class LeftLibraryMenu extends Panel implements NavigationListener {
         add(scroll, BorderLayout.CENTER);
 
         bottomToolbar = new ToolBar();
-        // Cross-plugin download activity spinner (listens on the broadcast bus).
+        // Cross-app download activity spinner (listens on the broadcast bus).
         bottomToolbar.add(new DownloadActivityIndicator());
         add(bottomToolbar, BorderLayout.SOUTH);
-        
+
         addToLibraryMenuButton = new MenuToolButton();
-        addToLibraryMenuButton.setText("Add to Library");
+        addToLibraryMenuButton.getComponent().setText("Add to Library");
         addToLibraryMenu = addToLibraryMenuButton.getPopup();
         ToolMenuItem addBtn    = new ToolMenuItem("Add");
         ToolMenuItem scanBtn   = new ToolMenuItem("Scan…");
 
-        scanBtn.addActionListener(e -> LibraryScanAction.run(this,
+        scanBtn.addActionListener(e -> LibraryScanAction.run(getComponent(),
             () -> { /*reload();*/ LibraryEvents.fireChanged(); }));
         addBtn.addActionListener(e -> { onAdd(); reload(); LibraryEvents.fireChanged(); });
         addToLibraryMenuButton.add(addBtn);
         addToLibraryMenuButton.add(scanBtn);
-        
+
         bottomToolbar.add(addToLibraryMenuButton);
-        	
+
         viewStack.addNavigationListener(this);
 
         updateColors();
@@ -163,7 +159,7 @@ public class LeftLibraryMenu extends Panel implements NavigationListener {
     private void updateColors() {
         Color bg = ThemeManager.getBackground();
         setBackground(bg);
-        tree.setBackground(bg);
+        tree.getComponent().setBackground(bg);
         scroll.setBackground(bg);
         scroll.getViewport().setBackground(bg);
         tree.repaint();
@@ -204,11 +200,11 @@ public class LeftLibraryMenu extends Panel implements NavigationListener {
 
     public DefaultMutableTreeNode getRootNode() { return root; }
 
-    /** Append a plugin-contributed node (subtree) to the sidebar root, live. */
+    /** Append an app-contributed node (subtree) to the sidebar root, live. */
     public DefaultMutableTreeNode addSidebarNode(SidebarNode sn) {
         DefaultMutableTreeNode node = nodeFor(sn);
         root.add(node);
-        ((DefaultTreeModel) tree.getModel()).nodeStructureChanged(root);
+        ((DefaultTreeModel) tree.getComponent().getModel()).nodeStructureChanged(root);
         return node;
     }
 
@@ -216,20 +212,20 @@ public class LeftLibraryMenu extends Panel implements NavigationListener {
     public void removeSidebarNode(DefaultMutableTreeNode node) {
         if (node.getParent() != null) {
             root.remove(node);
-            ((DefaultTreeModel) tree.getModel()).nodeStructureChanged(root);
+            ((DefaultTreeModel) tree.getComponent().getModel()).nodeStructureChanged(root);
         }
     }
 
-    /** Replace a node's children (used for dynamic plugin subtrees). */
+    /** Replace a node's children (used for dynamic app subtrees). */
     public void setNodeChildren(DefaultMutableTreeNode node, List<SidebarNode> children) {
         node.removeAllChildren();
         for (SidebarNode sn : children) node.add(nodeFor(sn));
-        ((DefaultTreeModel) tree.getModel()).nodeStructureChanged(node);
+        ((DefaultTreeModel) tree.getComponent().getModel()).nodeStructureChanged(node);
     }
 
     /** Expand a node in the tree. */
     public void expandNode(DefaultMutableTreeNode node) {
-        tree.expandPath(new TreePath(node.getPath()));
+        tree.getComponent().expandPath(new TreePath(node.getPath()));
     }
 
     // ── NavigationListener ────────────────────────────────────────────────────
@@ -237,14 +233,14 @@ public class LeftLibraryMenu extends Panel implements NavigationListener {
     @Override
     public void onNavigate(String uri, boolean canGoBack, boolean canGoForward) {
         if (suppressSelection) return;
-        selectNodeForUri(uri, (DefaultMutableTreeNode) tree.getModel().getRoot());
+        selectNodeForUri(uri, (DefaultMutableTreeNode) tree.getComponent().getModel().getRoot());
     }
 
     private boolean selectNodeForUri(String uri, DefaultMutableTreeNode node) {
         if (node.getUserObject() instanceof SidebarNode sn && uri.equals(sn.getUri())) {
             TreePath path = new TreePath(node.getPath());
-            tree.setSelectionPath(path);
-            tree.scrollPathToVisible(path);
+            tree.getComponent().setSelectionPath(path);
+            tree.getComponent().scrollPathToVisible(path);
             return true;
         }
         for (int i = 0; i < node.getChildCount(); i++) {

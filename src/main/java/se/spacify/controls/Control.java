@@ -11,7 +11,7 @@ import javax.swing.JComponent;
 import javax.swing.SwingUtilities;
 
 import se.spacify.design.Design;
-import se.spacify.dom.Element;
+import org.w3c.dom.Element;
 import se.spacify.skinning.Skin;
 import se.spacify.ui.MainWindow;
 import se.spacify.ui.theme.Taste;
@@ -114,6 +114,17 @@ public abstract class Control<T extends Component> {
 			component.repaint();
 	}
 
+	// ── Geometry / appearance (delegate to the wrapped component) ────────────────
+	public int getWidth()   { return component != null ? component.getWidth()  : 0; }
+	public int getHeight()  { return component != null ? component.getHeight() : 0; }
+	public int getX()       { return component != null ? component.getX() : 0; }
+	public int getY()       { return component != null ? component.getY() : 0; }
+	public java.awt.Color getBackground() { return component.getBackground(); }
+	public java.awt.Color getForeground() { return component.getForeground(); }
+	public void setBackground(java.awt.Color c) { component.setBackground(c); }
+	public void setForeground(java.awt.Color c) { component.setForeground(c); }
+	public boolean isOpaque() { return component instanceof JComponent j && j.isOpaque(); }
+
 	public void revalidate() {
 		if (component instanceof JComponent j)
 			j.revalidate();
@@ -191,6 +202,17 @@ public abstract class Control<T extends Component> {
 	}
 
 	// ── XUL / DOM hooks ──────────────────────────────────────────────────────────
+
+	private String name;
+
+	/** Component name (parity with the old {@code Component.getName()}; used by Aspect). */
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
 
 	public Element getElement() {
 		return element;

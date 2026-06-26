@@ -39,7 +39,7 @@ public class ArtistsLibraryView extends AbstractMusicListView {
         JTextField name = new JTextField();
         JTextField isni = new JTextField();
         JTextField mbid = new JTextField();
-        if (!FormDialog.show(this, "New Artist",
+        if (!FormDialog.show(getComponent(), "New Artist",
                 new String[]{"Name", "ISNI", "MBID"},
                 new JComponent[]{name, isni, mbid})) return;
         if (name.getText().isBlank()) return;
@@ -59,7 +59,7 @@ public class ArtistsLibraryView extends AbstractMusicListView {
         JTextField name = new JTextField(a.getName());
         JTextField isni = new JTextField(a.getIsni());
         JTextField mbid = new JTextField(a.getMbid());
-        if (!FormDialog.show(this, "Edit Artist",
+        if (!FormDialog.show(getComponent(), "Edit Artist",
                 new String[]{"Name", "ISNI", "MBID"},
                 new JComponent[]{name, isni, mbid})) return;
         if (name.getText().isBlank()) return;

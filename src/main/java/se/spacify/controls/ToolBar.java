@@ -49,4 +49,8 @@ public class ToolBar extends Control<JToolBar> {
 	}
 
 	public void addSeparator()         { component.addSeparator(); }
+
+	public void setFloatable(boolean b)        { component.setFloatable(b); }
+	public void setOpaque(boolean b)           { component.setOpaque(b); }
+	public void setBackground(java.awt.Color c) { component.setBackground(c); }
 }

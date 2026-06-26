@@ -127,7 +127,7 @@ public class SearchView extends View {
         l.setFont(l.getFont().deriveFont(Font.BOLD, 14f));
         l.setForeground(new Color(180, 180, 180));
         l.setBorder(BorderFactory.createEmptyBorder(12, 0, 4, 0));
-        l.setAlignmentX(LEFT_ALIGNMENT);
+        l.setAlignmentX(java.awt.Component.LEFT_ALIGNMENT);
         return l;
     }
 
@@ -139,7 +139,7 @@ public class SearchView extends View {
         JLabel row = new JLabel(text);
         row.setForeground(new Color(220, 220, 220));
         row.setBorder(BorderFactory.createEmptyBorder(5, 8, 5, 8));
-        row.setAlignmentX(LEFT_ALIGNMENT);
+        row.setAlignmentX(java.awt.Component.LEFT_ALIGNMENT);
         row.setMaximumSize(new Dimension(Integer.MAX_VALUE, row.getPreferredSize().height + 10));
         if (r.uri() != null && !r.uri().isBlank()) {
             row.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));

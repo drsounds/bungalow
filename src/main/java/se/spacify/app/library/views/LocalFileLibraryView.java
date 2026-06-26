@@ -54,7 +54,7 @@ public class LocalFileLibraryView extends AbstractMusicListView {
         JTextField isrc    = new JTextField();
         JTextField path    = new JTextField();
         JButton browse = makeBrowseButton(path, name);
-        if (!FormDialog.show(this, "New Local File",
+        if (!FormDialog.show(getComponent(), "New Local File",
                 new String[]{"Name", "Artist", "Release", "ISRC", "File path", ""},
                 new JComponent[]{name, artist, release, isrc, path, browse})) return;
         if (path.getText().isBlank()) return;
@@ -80,7 +80,7 @@ public class LocalFileLibraryView extends AbstractMusicListView {
         JTextField isrc    = new JTextField(f.getIsrc());
         JTextField path    = new JTextField(f.getFilePath());
         JButton browse = makeBrowseButton(path, name);
-        if (!FormDialog.show(this, "Edit Local File",
+        if (!FormDialog.show(getComponent(), "Edit Local File",
                 new String[]{"Name", "Artist", "Release", "ISRC", "File path", ""},
                 new JComponent[]{name, artist, release, isrc, path, browse})) return;
         if (path.getText().isBlank()) return;
@@ -120,7 +120,7 @@ public class LocalFileLibraryView extends AbstractMusicListView {
         browse.addActionListener(e -> {
             JFileChooser chooser = new JFileChooser();
             if (!path.getText().isBlank()) chooser.setSelectedFile(new File(path.getText().trim()));
-            if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
+            if (chooser.showOpenDialog(getComponent()) == JFileChooser.APPROVE_OPTION) {
                 File chosen = chooser.getSelectedFile();
                 path.setText(chosen.getAbsolutePath());
                 if (name.getText().isBlank()) name.setText(chosen.getName());
