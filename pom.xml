@@ -67,6 +67,20 @@
     <!-- Fixed final name so the GitHub Actions jpackage workflow can refer to a
          stable main jar (spacify.jar) regardless of the project version. -->
     <finalName>spacify</finalName>
+    <resources>
+      <!-- Default resources directory. -->
+      <resource>
+        <directory>src/main/resources</directory>
+      </resource>
+      <!-- Spider templates live next to their code under src/main/java; copy the
+           .xml views onto the classpath so controllers can load them as resources. -->
+      <resource>
+        <directory>src/main/java</directory>
+        <includes>
+          <include>**/*.xml</include>
+        </includes>
+      </resource>
+    </resources>
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>

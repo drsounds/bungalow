@@ -4,17 +4,14 @@ import java.awt.BorderLayout;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.swing.JButton;
 import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+import se.spacify.app.spider.Postbacks;
 import se.spacify.app.spider.Request;
 import se.spacify.app.spider.Spider;
-import se.spacify.controls.Button;
-import se.spacify.controls.Control;
-import se.spacify.controls.TextField;
 import se.spacify.controls.XUL;
 
 /**
@@ -29,9 +26,6 @@ import se.spacify.controls.XUL;
  * carrying the action name and the current input fields, and the view re-renders.
  */
 public class SpiderView extends XUL {
-
-    /** Marks a button whose postback listener is already attached, so reused controls bind once. */
-    private static final String BOUND = "spider.bound";
 
     private Spider spider = new Spider();
 
@@ -67,7 +61,7 @@ public class SpiderView extends XUL {
     public void postBack(String action) {
         Map<String, Object> headers = new HashMap<>();
         headers.put("action", action);
-        request(new Request("POST", currentUri, headers, action, collectInput()));
+        request(new Request("POST", currentUri, headers, action, Postbacks.collectInput(this)));
     }
 
     // ── Rendering ────────────────────────────────────────────────────────────────
@@ -79,7 +73,7 @@ public class SpiderView extends XUL {
         // setInnerXul renders a root's *children*; wrap so the root element itself
         // (e.g. <view> → TabbedPane) becomes this view's single reconciled child.
         setInnerXul(wrap(root));
-        bindPostbacks(this);
+        Postbacks.bind(this, this::postBack);
         revalidate();
         repaint();
     }
@@ -97,48 +91,5 @@ public class SpiderView extends XUL {
         } catch (Exception e) {
             throw new IllegalStateException("Failed to wrap Spider root element", e);
         }
-    }
-
-    /** Attach a postback listener to every {@code onclick} button in the subtree, once each. */
-    private void bindPostbacks(Control<?> control) {
-        for (Control<?> child : control.getChildren()) {
-            if (child instanceof Button button && child.getAttribute("onclick", null) != null) {
-                JButton widget = button.getComponent();
-                if (widget.getClientProperty(BOUND) == null) {
-                    widget.putClientProperty(BOUND, Boolean.TRUE);
-                    // Read the action live so a reused button uses its latest onclick.
-                    widget.addActionListener(e -> postBack(child.getAttribute("onclick", "").toString()));
-                }
-            }
-            bindPostbacks(child);
-        }
-    }
-
-    /** Gather the current value of every named input field in the rendered tree. */
-    private Map<String, Object> collectInput() {
-        Map<String, Object> input = new HashMap<>();
-        collectInput(this, input);
-        return input;
-    }
-
-    private void collectInput(Control<?> control, Map<String, Object> input) {
-        for (Control<?> child : control.getChildren()) {
-            if (child instanceof TextField field) {
-                String name = inputName(child);
-                if (name != null) {
-                    input.put(name, field.getComponent().getText());
-                }
-            }
-            collectInput(child, input);
-        }
-    }
-
-    /** An input's key: its control name, else its {@code name}, else its {@code id} attribute. */
-    private static String inputName(Control<?> control) {
-        if (control.getName() != null) {
-            return control.getName();
-        }
-        Object name = control.getAttribute("name", control.getAttribute("id", null));
-        return name != null ? name.toString() : null;
     }
 }

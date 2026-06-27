@@ -42,6 +42,9 @@ final class BuiltinApplicationRegistry {
         // imports them into the library.
         list.add(builtin("se.spacify.app.downloads", "Download Manager", "1.0.0",
             "se.spacify.app.downloads.DownloadsApplication", cl));
+        // Hello-world demo of the Spider template system (spacify:testapp).
+        list.add(builtin("se.spacify.app.testapp", "Test App", "1.0.0",
+            "se.spacify.app.testapp.TestApplication", cl));
         return list;
     }
 
