@@ -46,6 +46,15 @@
       <artifactId>gson</artifactId>
       <version>2.11.0</version>
     </dependency>
+
+    <!-- Pure-Java Lua 5.2 interpreter powering the Spider template engine
+         (se.spacify.app.spider): templates are preprocessed to Lua, run here,
+         and the emitted XML is parsed back into a control tree. -->
+    <dependency>
+      <groupId>org.luaj</groupId>
+      <artifactId>luaj-jse</artifactId>
+      <version>3.0.1</version>
+    </dependency>
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>

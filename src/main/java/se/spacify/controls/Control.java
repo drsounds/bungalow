@@ -312,7 +312,11 @@ public abstract class Control<T extends Component> {
 	/** Mount a freshly created XUL child; a {@link TabbedPane} hosts it as a titled tab. */
 	private void mountXulChild(Control<?> child, Element element) {
 		if (this instanceof TabbedPane tabs) {
-			tabs.addTab(element.getAttribute("label"), child);
+			String title = element.getAttribute("title");
+			if (title.isEmpty()) {
+				title = element.getAttribute("label");
+			}
+			tabs.addTab(title, child);
 		} else {
 			add(child);
 		}

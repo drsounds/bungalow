@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import se.spacify.app.spider.controller.Controller;
+import se.spacify.net.Uri;
 
 /***
  * 
@@ -28,24 +29,6 @@ public class Spider {
         return controllers;
     }
 
-    public class Response {
-        private org.w3c.dom.Element xml;
-        private String text;
-
-        public String getText() {
-            return text;
-        }
-
-        public org.w3c.dom.Element getXml() {
-            return xml;
-        }
-        private Request request;
-
-        public Request getRequest() {
-            return request;
-        }
-
-    }
 
     /**
      * Takes a request and format it into a response, accoring to preprocessing a LUA template
@@ -63,6 +46,17 @@ public class Spider {
      * @return
      */
     public org.w3c.dom.Element process(Request request) {
+        Uri uri;
+        try {
+            uri = Uri.parse(request.getUri());
+        } catch (Exception e) {
+            return null;
+        }
+        for (Controller controller : controllers) {
+            if (controller.acceptsUri(uri)) {
+                return controller.process(request);
+            }
+        }
         return null;
     }
 }
