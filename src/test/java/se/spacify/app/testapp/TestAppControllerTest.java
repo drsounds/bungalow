@@ -10,7 +10,6 @@ import java.util.HashMap;
 
 import org.junit.Test;
 import org.w3c.dom.Element;
-import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import se.spacify.app.spider.Request;
@@ -40,35 +39,21 @@ public class TestAppControllerTest {
         assertNotNull("template resource should load and render", view);
         assertEquals("view", view.getTagName());
 
-        Element page = firstChild(view, "page");
+        Element page = firstDescendant(view, "page");
         assertEquals("overview", page.getAttribute("id"));
         assertEquals("Overview", page.getAttribute("title"));
 
-        // One date line plus the 1..10 loop.
-        assertEquals(11, count(page, "text"));
-        assertEquals(1, count(page, "button"));
+        // One date line plus the 1..10 loop (counted as descendants, so layout
+        // wrappers such as <vbox> around the body don't matter).
+        assertEquals(11, page.getElementsByTagName("text").getLength());
+        assertEquals(1, page.getElementsByTagName("button").getLength());
     }
 
-    private static Element firstChild(Element parent, String tag) {
-        NodeList nodes = parent.getChildNodes();
-        for (int i = 0; i < nodes.getLength(); i++) {
-            Node node = nodes.item(i);
-            if (node.getNodeType() == Node.ELEMENT_NODE && ((Element) node).getTagName().equals(tag)) {
-                return (Element) node;
-            }
+    private static Element firstDescendant(Element parent, String tag) {
+        NodeList nodes = parent.getElementsByTagName(tag);
+        if (nodes.getLength() == 0) {
+            throw new AssertionError("no <" + tag + "> element");
         }
-        throw new AssertionError("no <" + tag + "> child");
-    }
-
-    private static int count(Element parent, String tag) {
-        int n = 0;
-        NodeList nodes = parent.getChildNodes();
-        for (int i = 0; i < nodes.getLength(); i++) {
-            Node node = nodes.item(i);
-            if (node.getNodeType() == Node.ELEMENT_NODE && ((Element) node).getTagName().equals(tag)) {
-                n++;
-            }
-        }
-        return n;
+        return (Element) nodes.item(0);
     }
 }
