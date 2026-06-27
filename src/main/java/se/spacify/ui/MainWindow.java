@@ -303,7 +303,7 @@ public class MainWindow extends JFrame {
 
     private void applySidebar(boolean visible) {
         getLeftLibraryMenu().setVisible(visible);
-        getLeftSplit().setDividerLocation(visible ? 220 : 0);
+        getLeftSplit().getComponent().setDividerLocation(visible ? 220 : 0);
         getLeftSplit().revalidate();
         getLeftSplit().repaint();
     }
@@ -314,10 +314,10 @@ public class MainWindow extends JFrame {
         immersive = on;
         if (on) {
             applySidebar(false);
-            getMainSplit().setDividerLocation(1.0);   // collapse the right Now Playing panel
+            getMainSplit().getComponent().setDividerLocation(1.0);   // collapse the right Now Playing panel
         } else {
             applySidebar(userWantsSidebar);
-            getMainSplit().setDividerLocation(880);
+            getMainSplit().getComponent().setDividerLocation(880);
         }
         getMainSplit().revalidate();
         getMainSplit().repaint();

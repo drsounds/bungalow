@@ -29,7 +29,7 @@ public class ViewStack extends Panel {
     private View currentView = null;
 
     public ViewStack() {
-        setLayout(cards);
+        getComponent().setLayout(cards);
     }
 
     public void registerView(View view) {

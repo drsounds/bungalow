@@ -35,22 +35,4 @@ public class ToolBar extends Control<JToolBar> {
 		component.setOpaque(true);
 		component.setBackground(ThemeManager.getTintColor());
 	}
-
-	// ── Add facade ───────────────────────────────────────────────────────────────
-
-	public Component add(Component c)  { return component.add(c); }
-
-	@Override
-	public Control<JToolBar> add(Control<?> child) {
-		children.add(child);
-		child.setParent(this);
-		if (child.getComponent() != null) component.add(child.getComponent());
-		return this;
-	}
-
-	public void addSeparator()         { component.addSeparator(); }
-
-	public void setFloatable(boolean b)        { component.setFloatable(b); }
-	public void setOpaque(boolean b)           { component.setOpaque(b); }
-	public void setBackground(java.awt.Color c) { component.setBackground(c); }
 }

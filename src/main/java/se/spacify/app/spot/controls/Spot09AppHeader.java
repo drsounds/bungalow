@@ -25,31 +25,31 @@ public class Spot09AppHeader extends AppHeader {
     private Panel center;
     public Spot09AppHeader(ViewStack viewStack) {
         super(viewStack);
-        setLayout(new BoxLayout(getComponent(), BoxLayout.LINE_AXIS));
-        setBorder(BorderFactory.createEmptyBorder(8, 16, 8, 16));
+        getComponent().setLayout(new BoxLayout(getComponent(), BoxLayout.LINE_AXIS));
+        getComponent().setBorder(BorderFactory.createEmptyBorder(8, 16, 8, 16));
 
 		backBtn = makeNavButton("◄");
 		backBtn.setDiameter(48);
 		backBtn.setPrimary(true);
-		backBtn.setEnabled(false);
+		backBtn.getComponent().setEnabled(false);
 		add(backBtn);
 		forwardBtn = makeNavButton("►");
 		forwardBtn.setDiameter(36);
-		forwardBtn.setEnabled(false);
+		forwardBtn.getComponent().setEnabled(false);
 		add(forwardBtn);
 
-		backBtn.addActionListener((ActionEvent e) -> viewStack.back());
-		forwardBtn.addActionListener((ActionEvent e) -> viewStack.forward());
+		backBtn.getComponent().addActionListener((ActionEvent e) -> viewStack.back());
+		forwardBtn.getComponent().addActionListener((ActionEvent e) -> viewStack.forward());
 		uriField = new TextField("spacify:home");
-		uriField.setFont(uriField.getFont().deriveFont(12f));
-		uriField.setPreferredSize(new Dimension(260, 28));
-		uriField.addActionListener(e -> viewStack.navigate(uriField.getText().trim()));
+		uriField.getComponent().setFont(uriField.getComponent().getFont().deriveFont(12f));
+		uriField.getComponent().setPreferredSize(new Dimension(260, 28));
+		uriField.getComponent().addActionListener(e -> viewStack.navigate(uriField.getComponent().getText().trim()));
 
 		searchField = new TextField();
-		searchField.putClientProperty("JTextField.placeholderText", "Search...");
-		searchField.setPreferredSize(new Dimension(180, 28));
-		searchField.addActionListener(e -> {
-			String q = searchField.getText().trim();
+		searchField.getComponent().putClientProperty("JTextField.placeholderText", "Search...");
+		searchField.getComponent().setPreferredSize(new Dimension(180, 28));
+		searchField.getComponent().addActionListener(e -> {
+			String q = searchField.getComponent().getText().trim();
 			if (!q.isEmpty()) {
 				String encoded = URLEncoder.encode(q, StandardCharsets.UTF_8);
 				viewStack.navigate("spacify:search?q=" + encoded);
@@ -58,7 +58,7 @@ public class Spot09AppHeader extends AppHeader {
         add(searchField);
 
 		center = new Panel(new BorderLayout());
-		center.setOpaque(false);
+		center.getComponent().setOpaque(false);
 		add(center);
 
 		uriField.setVisible(false);
@@ -66,10 +66,10 @@ public class Spot09AppHeader extends AppHeader {
     }
 	@Override
 	public void onNavigate(String uri, boolean canGoBack, boolean canGoForward) {
-		backBtn.setEnabled(canGoBack);
-		forwardBtn.setEnabled(canGoForward);
+		backBtn.getComponent().setEnabled(canGoBack);
+		forwardBtn.getComponent().setEnabled(canGoForward);
 		if (uri != null)
-			uriField.setText(uri);
+			uriField.getComponent().setText(uri);
 	}
     
 }

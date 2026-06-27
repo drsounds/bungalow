@@ -16,7 +16,7 @@ public abstract class View extends Panel {
 
 	public View(ViewStack viewStack) {
 		this.viewStack = viewStack;
-		setLayout(new BorderLayout());
+		getComponent().setLayout(new BorderLayout());
 	}
 
 	public ViewStack getViewStack() {

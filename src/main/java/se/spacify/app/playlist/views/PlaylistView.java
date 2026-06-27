@@ -12,18 +12,18 @@ public class PlaylistView extends View {
 
     public PlaylistView(ViewStack viewStack) {
         super(viewStack);
-        setLayout(new BorderLayout(0, 12));
-        setOpaque(false);
-        setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+        getComponent().setLayout(new BorderLayout(0, 12));
+        getComponent().setOpaque(false);
+        getComponent().setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 
         titleLabel = new JLabel("Playlist");
         titleLabel.setFont(titleLabel.getFont().deriveFont(Font.BOLD, 20f));
         titleLabel.setForeground(Color.WHITE);
-        add(titleLabel, BorderLayout.NORTH);
+        getComponent().add(titleLabel, BorderLayout.NORTH);
 
         JLabel placeholder = new JLabel("No tracks yet.", SwingConstants.CENTER);
         placeholder.setForeground(new Color(160, 160, 160));
-        add(placeholder, BorderLayout.CENTER);
+        getComponent().add(placeholder, BorderLayout.CENTER);
     }
 
     @Override

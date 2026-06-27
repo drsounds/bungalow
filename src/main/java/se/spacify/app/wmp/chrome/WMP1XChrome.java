@@ -30,33 +30,33 @@ public class WMP1XChrome extends Chrome {
                 // are contributed by built-in plugins during ApplicationManager.start().
         
                 leftMenuPanel = new LeftMenuPanel();
-                leftMenuPanel.setMinimumSize(new Dimension(100, 0));
-                leftMenuPanel.setMaximumSize(new Dimension(100, Short.MAX_VALUE));
-                leftMenuPanel.setPreferredSize(new Dimension(100, Short.MAX_VALUE));
-                leftMenuPanel.setOpaque(false);
+                leftMenuPanel.getComponent().setMinimumSize(new Dimension(100, 0));
+                leftMenuPanel.getComponent().setMaximumSize(new Dimension(100, Short.MAX_VALUE));
+                leftMenuPanel.getComponent().setPreferredSize(new Dimension(100, Short.MAX_VALUE));
+                leftMenuPanel.getComponent().setOpaque(false);
                 appPanel = new Panel();
                 
                 leftMenuPanel.setVisible(false);
                 add(appPanel);
-                appPanel.setOpaque(false);
-                leftMenuPanel.setLayout(new BoxLayout(leftMenuPanel.getComponent(), BoxLayout.PAGE_AXIS));
-                appPanel.setLayout(new BoxLayout(appPanel.getComponent(), BoxLayout.PAGE_AXIS));
+                appPanel.getComponent().setOpaque(false);
+                leftMenuPanel.getComponent().setLayout(new BoxLayout(leftMenuPanel.getComponent(), BoxLayout.PAGE_AXIS));
+                appPanel.getComponent().setLayout(new BoxLayout(appPanel.getComponent(), BoxLayout.PAGE_AXIS));
                 
                 topSpacing = new Panel();
-                topSpacing.setMinimumSize(new Dimension(0, 1660));
-                topSpacing.setMaximumSize(new Dimension(Integer.MAX_VALUE, 1660));
-                topSpacing.setOpaque(false);
+                topSpacing.getComponent().setMinimumSize(new Dimension(0, 1660));
+                topSpacing.getComponent().setMaximumSize(new Dimension(Integer.MAX_VALUE, 1660));
+                topSpacing.getComponent().setOpaque(false);
                 appPanel.add(topSpacing);
                 topBar = new TopBar();
                 topBar.add(new JButton());
-                appPanel.add(topBar);
+                appPanel.getComponent().add(topBar);
                 topBar.setMaximumSize(new Dimension(Short.MAX_VALUE, 18));
                 topBar.setMinimumSize(new Dimension(0, 18));
                 // The WMP header carries the nav buttons, the tab strip
                 // (Now Playing / Library / Media Guide) and the Stores dropdown.
                 appHeader = new WMP1XAppHeader(viewStack);
-                appHeader.setMaximumSize(new Dimension(Short.MAX_VALUE, 64));
-                appHeader.setMinimumSize(new Dimension(0, 56));
+                appHeader.getComponent().setMaximumSize(new Dimension(Short.MAX_VALUE, 64));
+                appHeader.getComponent().setMinimumSize(new Dimension(0, 56));
                 appPanel.add(appHeader);
 
                 // Reuse the shared sidebar (owned by MainWindow, populated by plugins) if set.
@@ -66,30 +66,30 @@ public class WMP1XChrome extends Chrome {
                 centerPanel.add(viewStack);
 
                 leftSplit = new SplitPane(SplitPane.HORIZONTAL_SPLIT, leftLibraryMenu, centerPanel);
-                leftSplit.setDividerLocation(220);
-                leftSplit.setDividerSize(1);
+                leftSplit.getComponent().setDividerLocation(220);
+                leftSplit.getComponent().setDividerSize(1);
                 // Keep the leftLibraryMenu at its width and let the centre view absorb resizes.
-                leftSplit.setResizeWeight(0.0);
+                leftSplit.getComponent().setResizeWeight(0.0);
                 // Empty (non-UIResource) border survives the Nimbus reinstall in
                 // rebuildTheme(); a null border would get a default border re-installed.
-                leftSplit.setBorder(BorderFactory.createEmptyBorder());
-                leftSplit.setContinuousLayout(true);
+                leftSplit.getComponent().setBorder(BorderFactory.createEmptyBorder());
+                leftSplit.getComponent().setContinuousLayout(true);
 
                 mainSplit = new SplitPane(SplitPane.HORIZONTAL_SPLIT, leftSplit, new NowPlayingPanel(viewStack));
-                mainSplit.setDividerLocation(880);
-                mainSplit.setDividerSize(1);
+                mainSplit.getComponent().setDividerLocation(880);
+                mainSplit.getComponent().setDividerSize(1);
                 // Give all extra width to the left (leftLibraryMenu + centre); the right
                 // Now Playing / queue panel keeps its width as the window resizes.
-                mainSplit.setResizeWeight(1.0);
-                mainSplit.setBorder(BorderFactory.createEmptyBorder());
-                mainSplit.setContinuousLayout(true);
+                mainSplit.getComponent().setResizeWeight(1.0);
+                mainSplit.getComponent().setBorder(BorderFactory.createEmptyBorder());
+                mainSplit.getComponent().setContinuousLayout(true);
 
                 appPanel.add(mainSplit, BorderLayout.CENTER);
 
                 appFooter = new AppFooter();
                 appPanel.add(appFooter);
-                appFooter.setMaximumSize(new Dimension(Short.MAX_VALUE, 18));
-                appFooter.setMinimumSize(new Dimension(0, 18));
+                appFooter.getComponent().setMaximumSize(new Dimension(Short.MAX_VALUE, 18));
+                appFooter.getComponent().setMinimumSize(new Dimension(0, 18));
 	}
 
         @Override

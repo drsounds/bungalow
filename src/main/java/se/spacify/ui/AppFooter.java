@@ -33,18 +33,18 @@ public class AppFooter extends Panel {
 	protected GlossyButton forwardButton;
 
     public AppFooter() {
-        setBorder(BorderFactory.createEmptyBorder(8, 16, 8, 16));
-        setOpaque(true);
+        getComponent().setBorder(BorderFactory.createEmptyBorder(8, 16, 8, 16));
+        getComponent().setOpaque(true);
         this.build();
     }
     public void build() {
-        setLayout(new BoxLayout(getComponent(), BoxLayout.PAGE_AXIS));
-        setPreferredSize(new Dimension(0, 90));
+        getComponent().setLayout(new BoxLayout(getComponent(), BoxLayout.PAGE_AXIS));
+        getComponent().setPreferredSize(new Dimension(0, 90));
 
         progressPanel = new Panel(new BorderLayout());
-        progressPanel.setMinimumSize(new Dimension(0, 18));
-        progressPanel.setMaximumSize(new Dimension(Short.MAX_VALUE, 18));
-        progressPanel.setOpaque(false);
+        progressPanel.getComponent().setMinimumSize(new Dimension(0, 18));
+        progressPanel.getComponent().setMaximumSize(new Dimension(Short.MAX_VALUE, 18));
+        progressPanel.getComponent().setOpaque(false);
         add(progressPanel);
 
         backwardButton = makeControlButton("⏪");
@@ -55,35 +55,35 @@ public class AppFooter extends Panel {
         forwardButton = makeControlButton("⏩");
         progressPanel.add(forwardButton, BorderLayout.EAST);
         mainBar = new Panel();
-        mainBar.setLayout(new BoxLayout(mainBar.getComponent(), BoxLayout.LINE_AXIS));
-        mainBar.setPreferredSize(new Dimension(0, 28));
-        mainBar.setOpaque(false);
+        mainBar.getComponent().setLayout(new BoxLayout(mainBar.getComponent(), BoxLayout.LINE_AXIS));
+        mainBar.getComponent().setPreferredSize(new Dimension(0, 28));
+        mainBar.getComponent().setOpaque(false);
         add(mainBar);
 
         // Left: track info
         leftPanel = new GlassPanel();
-		leftPanel.setLayout(new GridLayout(2, 1, 0, 2));
-		leftPanel.setOpaque(false);
-		leftPanel.setPreferredSize(new Dimension(200, 0));
+		leftPanel.getComponent().setLayout(new GridLayout(2, 1, 0, 2));
+		leftPanel.getComponent().setOpaque(false);
+		leftPanel.getComponent().setPreferredSize(new Dimension(200, 0));
 		leftPanel.setTrailingDiagonal(true);   // sharp left edge, bottom longer than top
         leftPanel.setDiagonalInset(65);
-        leftPanel.setPreferredSize(new Dimension(160, 0));
+        leftPanel.getComponent().setPreferredSize(new Dimension(160, 0));
         trackNameLabel = new JLabel("No track playing");
         trackNameLabel.setForeground(Color.WHITE);
         trackNameLabel.setFont(trackNameLabel.getFont().deriveFont(Font.BOLD, 13f));
         artistLabel = new JLabel("");
         artistLabel.setForeground(new Color(180, 180, 180));
         artistLabel.setFont(artistLabel.getFont().deriveFont(11f));
-        leftPanel.add(trackNameLabel);
-        leftPanel.add(artistLabel);
+        leftPanel.getComponent().add(trackNameLabel);
+        leftPanel.getComponent().add(artistLabel);
 
         // Center: playback controls + progress
         controls = new Panel();
-        controls.setLayout(new BoxLayout(controls.getComponent(), BoxLayout.Y_AXIS));
-        controls.setOpaque(false);
+        controls.getComponent().setLayout(new BoxLayout(controls.getComponent(), BoxLayout.Y_AXIS));
+        controls.getComponent().setOpaque(false);
 
         buttons = new Panel(new FlowLayout(FlowLayout.CENTER, 6, 0));
-        buttons.setOpaque(false);
+        buttons.getComponent().setOpaque(false);
         GlossyButton prevBtn = makeControlButton("⏮");
         prevBtn.getComponent().addActionListener(e -> PlayQueue.getInstance().previous());
         buttons.add(prevBtn);
@@ -107,12 +107,12 @@ public class AppFooter extends Panel {
         });
 
         controls.add(buttons);
-        controls.add(Box.createVerticalStrut(4));
+        controls.getComponent().add(Box.createVerticalStrut(4));
 
         // Right: volume
         rightPanel = new GlassPanel();
-        rightPanel.setPreferredSize(new Dimension(300, 16));
-        rightPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 0, 0));
+        rightPanel.getComponent().setPreferredSize(new Dimension(300, 16));
+        rightPanel.getComponent().setLayout(new FlowLayout(FlowLayout.CENTER, 0, 0));
         rightPanel.setLeadingDiagonal(true);   // sharp left edge, bottom longer than top
         rightPanel.setDiagonalInset(65);
         JLabel volIcon = new JLabel("🔊");
@@ -120,8 +120,8 @@ public class AppFooter extends Panel {
         JSlider volume = new JSlider(0, 100, 70);
         volume.setPreferredSize(new Dimension(100, 20));
         volume.setOpaque(false);
-        controls.add(volIcon);
-        controls.add(volume);
+        controls.getComponent().add(volIcon);
+        controls.getComponent().add(volume);
 
         mainBar.add(leftPanel);
         mainBar.add(controls);
@@ -191,7 +191,7 @@ public class AppFooter extends Panel {
     @Override
     protected void paintSurface(Graphics g) {
         Graphics2D g2 = (Graphics2D) g.create();
-        int w = getWidth(), h = getHeight();
+        int w = getComponent().getWidth(), h = getComponent().getHeight();
 
         getSkin().paintFooter(getComponent(), g2);
 

@@ -23,9 +23,9 @@ public class AppHeader extends Panel implements NavigationListener {
 
 	public void build() {
 
-		setLayout(new BorderLayout(8, 0));
-		setPreferredSize(new Dimension(0, 56));
-		setOpaque(true);
+		getComponent().setLayout(new BorderLayout(8, 0));
+		getComponent().setPreferredSize(new Dimension(0, 56));
+		getComponent().setOpaque(true);
 
 		sidebarToggle = makeNavButton("☰");
 		sidebarToggle.getComponent().setToolTipText("Show/hide the sidebar");
@@ -54,7 +54,7 @@ public class AppHeader extends Panel implements NavigationListener {
 	@Override
 	protected void paintSurface(Graphics g) {
 		Graphics2D g2 = (Graphics2D) g.create();
-		int w = getWidth(), h = getHeight();
+		int w = getComponent().getWidth(), h = getComponent().getHeight();
 
 		getSkin().paintHeader(getComponent(), g2);
 		// 1 px white sheen along the very bottom edge

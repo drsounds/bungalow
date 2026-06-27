@@ -11,13 +11,13 @@ public class HomeView extends View {
 
     public HomeView(ViewStack viewStack) {
         super(viewStack);
-        setLayout(new BorderLayout());
-        setOpaque(false);
+        getComponent().setLayout(new BorderLayout());
+        getComponent().setOpaque(false);
 
         JLabel label = new JLabel("Home", SwingConstants.CENTER);
         label.setFont(label.getFont().deriveFont(Font.BOLD, 24f));
         label.setForeground(Color.WHITE);
-        add(label, BorderLayout.CENTER);
+        getComponent().add(label, BorderLayout.CENTER);
     }
 
     @Override

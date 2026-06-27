@@ -85,11 +85,11 @@ public class WMP1XAppHeader extends AppHeader {
 			String host = SiteUri.host(uri, SiteUri.STORE_PREFIX);
 			StoreCatalog.Store store = StoreCatalog.STORES.stream().filter(s -> s.host().equals(host)).findFirst()
 					.orElse(null);
-			storesBtn.setText((store != null ? store.name() : host) + " ▾");
-			storesBtn.setIcon(host != null ? faviconCache.get(host) : null);
+			storesBtn.getComponent().setText((store != null ? store.name() : host) + " ▾");
+			storesBtn.getComponent().setIcon(host != null ? faviconCache.get(host) : null);
 		} else {
-			storesBtn.setText("Stores ▾");
-			storesBtn.setIcon(null);
+			storesBtn.getComponent().setText("Stores ▾");
+			storesBtn.getComponent().setIcon(null);
 		}
 	}
 
@@ -98,18 +98,18 @@ public class WMP1XAppHeader extends AppHeader {
 
 		// Centre region carries the WMP tab strip along its bottom edge.
 		center = new Panel(new BorderLayout());
-		center.setOpaque(false);
+		center.getComponent().setOpaque(false);
 
 		navButtons = new Panel(new FlowLayout(FlowLayout.LEFT, 4, 0));
-		navButtons.setOpaque(false);
+		navButtons.getComponent().setOpaque(false);
 		// navButtons.add(sidebarToggle);
 		navButtons.add(backBtn);
 		navButtons.add(forwardBtn);
-		navButtons.setBorder(BorderFactory.createEmptyBorder(8, 12, 8, 12));
+		navButtons.getComponent().setBorder(BorderFactory.createEmptyBorder(8, 12, 8, 12));
 
 		// WMP-style tab strip, flush with the bottom edge of the nav bar.
 		nowPlayingTab = new TabButton("Now Playing");
-		nowPlayingTab.addActionListener(e -> {
+		nowPlayingTab.getComponent().addActionListener(e -> {
 			MainWindow mw = viewStack.getMainWindow();
 			if (mw != null) {
 				mw.setSidebarVisible(false);
@@ -117,7 +117,7 @@ public class WMP1XAppHeader extends AppHeader {
 			}
 		});
 		libraryTab = new TabButton("Library");
-		libraryTab.addActionListener(e -> {
+		libraryTab.getComponent().addActionListener(e -> {
 			MainWindow mw = viewStack.getMainWindow();
 			if (mw != null) {
 				mw.setSidebarVisible(true);
@@ -125,7 +125,7 @@ public class WMP1XAppHeader extends AppHeader {
 			}
 		});
 		mediaGuideTab = new TabButton("Media Guide");
-		mediaGuideTab.addActionListener(e -> {
+		mediaGuideTab.getComponent().addActionListener(e -> {
 			MainWindow mw = viewStack.getMainWindow();
 			if (mw != null) {
 				mw.setSidebarVisible(true);
@@ -137,31 +137,31 @@ public class WMP1XAppHeader extends AppHeader {
 		tabBar.add(nowPlayingTab.getComponent());
 		tabBar.add(libraryTab.getComponent());
 		tabBar.add(mediaGuideTab.getComponent());
-		center.add(tabBar, BorderLayout.SOUTH);
+		center.getComponent().add(tabBar, BorderLayout.SOUTH);
 		JPanel right = new JPanel(new FlowLayout(FlowLayout.RIGHT, 5, 5));
 		right.setOpaque(false);
 
 		// right.add(searchField);
 		GlassPanel storePanel = new GlassPanel();
-		storePanel.setPreferredSize(new Dimension(300, 46));
-		storePanel.setLayout(new FlowLayout(FlowLayout.CENTER, 0, 0));
+		storePanel.getComponent().setPreferredSize(new Dimension(300, 46));
+		storePanel.getComponent().setLayout(new FlowLayout(FlowLayout.CENTER, 0, 0));
 		storePanel.setLeadingDiagonal(true); // sharp left edge, bottom longer than top
 		storePanel.setDiagonalInset(65);
 		storesBtn = makeNavButton("Stores ▾");
-		storesBtn.setPreferredSize(new Dimension(160, 32));
-		storesBtn.setToolTipText("Open a music Service");
+		storesBtn.getComponent().setPreferredSize(new Dimension(160, 32));
+		storesBtn.getComponent().setToolTipText("Open a music Service");
 		// Transparent & borderless so it floats on the glass field.
 		storesBtn.getComponent().setOpaque(false);
 		storesBtn.getComponent().setContentAreaFilled(false);
 		storesBtn.getComponent().setBorderPainted(false);
 		storesBtn.getComponent().setBorder(BorderFactory.createEmptyBorder(4, 8, 4, 8));
 		storesBtn.getComponent().setHorizontalAlignment(SwingConstants.LEFT);
-		storesBtn.addActionListener(e -> buildStoresMenu().show(storesBtn.getComponent(), 0, storesBtn.getComponent().getHeight()));
+		storesBtn.getComponent().addActionListener(e -> buildStoresMenu().show(storesBtn.getComponent(), 0, storesBtn.getComponent().getHeight()));
 		storePanel.add(storesBtn);
 
 		add(navButtons, BorderLayout.WEST);
 		add(center, BorderLayout.CENTER);
-		add(right, BorderLayout.EAST);
+		getComponent().add(right, BorderLayout.EAST);
 
 		right.add(storePanel.getComponent(), BorderLayout.CENTER);
 
@@ -174,7 +174,7 @@ public class WMP1XAppHeader extends AppHeader {
 	public void onNavigate(String uri, boolean canGoBack, boolean canGoForward) {
         super.onNavigate(uri, canGoBack, canGoForward);
 		updateStoresButton(uri);
-		nowPlayingTab.setSelected(uri != null && uri.startsWith("spacify:now-playing"));
-		libraryTab.setSelected(uri != null && uri.startsWith("spacify:library"));
+		nowPlayingTab.getComponent().setSelected(uri != null && uri.startsWith("spacify:now-playing"));
+		libraryTab.getComponent().setSelected(uri != null && uri.startsWith("spacify:library"));
 	}
 }

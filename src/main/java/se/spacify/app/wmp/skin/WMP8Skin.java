@@ -50,7 +50,7 @@ public class WMP8Skin extends WMPSkin {
 	}
 	@Override
 	public void paintGlassPanel(GlassPanel control, Graphics2D g2) {
-		int w = control.getWidth(), h = control.getHeight();
+		int w = control.getComponent().getWidth(), h = control.getComponent().getHeight();
 		Path2D shape = control.shape(w, h);
 
 		// Base accent gradient, antialiased to the rounded/diagonal outline.
@@ -67,14 +67,14 @@ public class WMP8Skin extends WMPSkin {
 
 	@Override
 	public void paintToolBar(ToolBar control, Graphics2D g2) {
-		int w = control.getWidth(), h = control.getHeight();
+		int w = control.getComponent().getWidth(), h = control.getComponent().getHeight();
 		g2.setPaint(ThemeManager.getTintColor());
 		g2.fillRect(0, 0, w, h);
 	}
 	@Override
 	public void paintTabButton(TabButton control, Graphics2D g2) {
 		g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-		int w = control.getWidth(), h = control.getHeight();
+		int w = control.getComponent().getWidth(), h = control.getComponent().getHeight();
 
 		// Top-rounded, bottom-sharp shape flush with the panel's bottom edge.
 		Path2D tab = new Path2D.Float();
@@ -87,7 +87,7 @@ public class WMP8Skin extends WMPSkin {
 		tab.closePath();
 
 
-	 	if (control.isSelected()) {
+	 	if (control.getComponent().isSelected()) {
 			g2.setPaint(new RadialGradientPaint((float)(w / 2), (float)h, 20f, new float[] {}, new Color[] { ThemeManager.getTintColor(), ThemeManager.accentDark(0.5f)}));
 			if (control.getOrientation() == TabButton.ORIENTATION_HORIZONTAL) {
 				g2.fill(tab);
@@ -115,9 +115,9 @@ public class WMP8Skin extends WMPSkin {
 
 	@Override
 	public void paintToolButton(ToolButton control, Graphics2D g2) {
-		int w = control.getWidth(), h = control.getHeight();
+		int w = control.getComponent().getWidth(), h = control.getComponent().getHeight();
 		Color background = ThemeManager.getTintColor();
-        ButtonModel model = control.getModel();
+        ButtonModel model = control.getComponent().getModel();
 		g2.setPaint(background);
 		g2.fillRect(0, 0, w, h);
 		if (model.isPressed()) {
@@ -168,7 +168,7 @@ public class WMP8Skin extends WMPSkin {
 	public void paintVerticalPanel(VerticalPanel control, Graphics2D g2) {
 		// TODO Auto-generated method stub
 
-		int w = control.getWidth();
+		int w = control.getComponent().getWidth();
 		Color tintColor = ThemeManager.getTintColor();
 		g2.setPaint(new GradientPaint(0, 0, ThemeManager.accentLight(2f), w, 0, tintColor));
 	}

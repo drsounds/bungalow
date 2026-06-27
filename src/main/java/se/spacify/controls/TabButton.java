@@ -52,7 +52,7 @@ public class TabButton extends ToggleButton {
 		component.addMouseListener(mouse);
 
 		ThemeManager.addChangeListener(() -> {
-			component.setForeground(isSelected() ? Color.WHITE : ThemeManager.accentDark(0.2f));
+			component.setForeground(component.isSelected() ? Color.WHITE : ThemeManager.accentDark(0.2f));
 			repaint();
 		});
 	}
@@ -66,26 +66,17 @@ public class TabButton extends ToggleButton {
 	/** True while the tab is being held down (before release). */
 	public boolean isPressedState() { return pressed; }
 
-	/** Add an action listener (fires on release). */
-	public void addActionListener(ActionListener l) { component.addActionListener(l); }
-
 	@Override
 	protected Color foreground(Color dflt) {
 		// The skin fills the tab with the active background while selected or
 		// pressed, so keep the label white in both cases for legibility.
-		if (pressed && !isSelected()) return Color.WHITE;
+		if (pressed && !component.isSelected()) return Color.WHITE;
 		return dflt;
 	}
 
 	@Override
 	protected Dimension preferredSize(Dimension d) {
 		return new Dimension(d.width, 50);
-	}
-
-	@Override
-	public void setSelected(boolean b) {
-		super.setSelected(b);
-		component.setForeground(b ? Color.WHITE : ThemeManager.accentDark(0.2f));
 	}
 
 	@Override

@@ -34,15 +34,4 @@ public class TextField extends Control<JTextField> {
 	public TextField(String text) {
 		this.component = new Surface(text);
 	}
-
-	// ── Common JTextField facade ─────────────────────────────────────────────────
-	public void setText(String text)            { component.setText(text); }
-	public String getText()                     { return component.getText(); }
-	public void addActionListener(java.awt.event.ActionListener l) { component.addActionListener(l); }
-	public void putClientProperty(Object k, Object v) { component.putClientProperty(k, v); }
-	public void setPreferredSize(java.awt.Dimension d) { component.setPreferredSize(d); }
-	public void setColumns(int n)               { component.setColumns(n); }
-	public void setFont(java.awt.Font f)        { component.setFont(f); }
-	public java.awt.Font getFont()              { return component.getFont(); }
-	public void setEnabled(boolean b)           { component.setEnabled(b); }
 }

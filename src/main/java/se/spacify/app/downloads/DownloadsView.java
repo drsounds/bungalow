@@ -130,8 +130,8 @@ public class DownloadsView extends AbstractMusicListView {
 
     private static Button button(String text, Runnable action) {
         Button b = new Button(text);
-        b.setFocusPainted(false);
-        b.addActionListener(e -> action.run());
+        b.getComponent().setFocusPainted(false);
+        b.getComponent().addActionListener(e -> action.run());
         return b;
     }
 

@@ -67,20 +67,6 @@ public class SplitPane extends Control<JSplitPane> {
 		return o instanceof Control<?> c ? c.getComponent() : (Component) o;
 	}
 
-	// ── Facade ───────────────────────────────────────────────────────────────────
-	public void setDividerLocation(int loc)    { component.setDividerLocation(loc); }
-	public void setDividerLocation(double prop) { component.setDividerLocation(prop); }
-	public int getDividerLocation()            { return component.getDividerLocation(); }
-	public void setDividerSize(int size)       { component.setDividerSize(size); }
-	public void setResizeWeight(double w)      { component.setResizeWeight(w); }
-	public void setContinuousLayout(boolean b) { component.setContinuousLayout(b); }
-	public void setOpaque(boolean b)           { component.setOpaque(b); }
-	public void setBorder(javax.swing.border.Border b) { component.setBorder(b); }
-	public void setLeftComponent(Component c)  { component.setLeftComponent(c); }
-	public void setRightComponent(Component c) { component.setRightComponent(c); }
-	public void setLeftComponent(Control<?> c)  { component.setLeftComponent(c.getComponent()); }
-	public void setRightComponent(Control<?> c) { component.setRightComponent(c.getComponent()); }
-
 	public BasicSplitPaneDivider getDivider() {
 		if (component.getUI() instanceof BasicSplitPaneUI ui) {
 			return ui.getDivider();

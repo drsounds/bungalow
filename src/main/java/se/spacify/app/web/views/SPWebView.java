@@ -45,10 +45,10 @@ public class SPWebView extends View {
 
     public SPWebView(ViewStack viewStack) {
         super(viewStack);
-        setLayout(new BorderLayout());
+        getComponent().setLayout(new BorderLayout());
         status = new JLabel("", SwingConstants.CENTER);
         status.setBorder(BorderFactory.createEmptyBorder(24, 24, 24, 24));
-        add(status, BorderLayout.CENTER);
+        getComponent().add(status, BorderLayout.CENTER);
         updateColors();
         ThemeManager.addChangeListener(this::updateColors);
     }
@@ -140,7 +140,7 @@ public class SPWebView extends View {
         if (downloads != null) client.addDownloadHandler(downloads.cefDownloadHandler());
 
         browser = client.createBrowser(url, false, false);
-        remove(status);
+        getComponent().remove(status);
 
         toolbar = new JToolBar();
         toolbar.setFloatable(false);
@@ -163,8 +163,8 @@ public class SPWebView extends View {
         btnRefresh.addActionListener(e -> { if (browser != null) browser.reload(); });
         toolbar.add(btnRefresh);
 
-        add(toolbar, BorderLayout.NORTH);
-        add(browser.getUIComponent(), BorderLayout.CENTER);
+        getComponent().add(toolbar, BorderLayout.NORTH);
+        getComponent().add(browser.getUIComponent(), BorderLayout.CENTER);
         revalidate();
         repaint();
         updateStar();
@@ -197,7 +197,7 @@ public class SPWebView extends View {
 
     private void updateColors() {
         Color bg = ThemeManager.getBackground();
-        setBackground(bg);
+        getComponent().setBackground(bg);
         status.setForeground(ThemeManager.getForeground());
         repaint();
     }

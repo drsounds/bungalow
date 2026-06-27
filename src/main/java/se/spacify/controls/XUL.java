@@ -39,8 +39,8 @@ public class XUL extends Panel {
 	public XUL() {
 		// Containers stack their children vertically by default; leaves override
 		// this in setContent().
-		setLayout(new BoxLayout(getComponent(), BoxLayout.PAGE_AXIS));
-		setOpaque(false);
+		getComponent().setLayout(new BoxLayout(getComponent(), BoxLayout.PAGE_AXIS));
+		getComponent().setOpaque(false);
 	}
 
 	public String getTagName()            { return tagName; }
@@ -148,8 +148,8 @@ public class XUL extends Panel {
 			case "input"       -> elm.setContent(new TextField());   // ~ SPInputElement
 			case "view"        -> elm.setContent(new TabbedPane());  // ~ SPTabBarViewElement
 			case "splitter"    -> { /* container, handled by SplitPane usage */ }
-			case "vbox"        -> elm.setLayout(new BoxLayout(elm.getComponent(), BoxLayout.PAGE_AXIS));
-			case "hbox"        -> elm.setLayout(new BoxLayout(elm.getComponent(), BoxLayout.LINE_AXIS));
+			case "vbox"        -> elm.getComponent().setLayout(new BoxLayout(elm.getComponent(), BoxLayout.PAGE_AXIS));
+			case "hbox"        -> elm.getComponent().setLayout(new BoxLayout(elm.getComponent(), BoxLayout.LINE_AXIS));
 			default            -> { /* plain element */ }
 		}
 		return elm;
@@ -158,10 +158,10 @@ public class XUL extends Panel {
 	/** Host a single widget as this element's content (leaf tags). */
 	private void setContent(Control<?> widget) {
 		this.content = widget;
-		removeAll();
-		setLayout(new java.awt.BorderLayout());
+		getComponent().removeAll();
+		getComponent().setLayout(new java.awt.BorderLayout());
 		if (widget.getComponent() != null) {
-			add(widget.getComponent(), java.awt.BorderLayout.CENTER);
+			getComponent().add(widget.getComponent(), java.awt.BorderLayout.CENTER);
 		}
 	}
 

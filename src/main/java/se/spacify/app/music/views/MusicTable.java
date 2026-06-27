@@ -420,8 +420,8 @@ public class MusicTable extends JPanel {
 			if (req == null) return blank;
 			TrackAvailability a = AvailabilityResolver.get().availabilityFor(req, jtable::repaint);
 			if (a.local()) return fileCell;   // have the file → file icon only, no button
-			button.setFont(t.getFont());
-			button.setText(!a.resolved() ? "…" : (a.hasStream() ? "Stream ▾" : "Buy ▾"));
+			button.getComponent().setFont(t.getFont());
+			button.getComponent().setText(!a.resolved() ? "…" : (a.hasStream() ? "Stream ▾" : "Buy ▾"));
 			return button.getComponent();
 		}
 	}

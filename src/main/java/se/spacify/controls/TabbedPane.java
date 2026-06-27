@@ -1,12 +1,11 @@
 package se.spacify.controls;
 
-import java.awt.Component;
-
 import javax.swing.JTabbedPane;
 
 /**
  * A tabbed container control wrapping a {@link JTabbedPane}. Reach the widget
- * through {@link #getComponent()}; a small add facade is offered for convenience.
+ * through {@link #getComponent()}; child controls are added (with a tab title) via
+ * {@link #addTab(String, Control)}.
  */
 public class TabbedPane extends Control<JTabbedPane> {
 
@@ -14,8 +13,7 @@ public class TabbedPane extends Control<JTabbedPane> {
 		this.component = new JTabbedPane();
 	}
 
-	public void addTab(String title, Component c) { component.addTab(title, c); }
-
+	/** Add a child control as a titled tab (mounts {@code child.getComponent()}). */
 	public Control<JTabbedPane> addTab(String title, Control<?> child) {
 		children.add(child);
 		child.setParent(this);

@@ -11,24 +11,25 @@ import javax.swing.JComponent;
 import javax.swing.SwingUtilities;
 
 import se.spacify.design.Design;
-import org.w3c.dom.Element;
 import se.spacify.skinning.Skin;
 import se.spacify.ui.MainWindow;
 import se.spacify.ui.theme.Taste;
 import se.spacify.ui.theme.Theme;
 
 /**
- * Intermediate base for every Spacify control. Controls no longer inherit a Swing
- * widget directly; instead each one <em>wraps</em> one as its {@link #component}
- * (the {@code T} type parameter) and is reached through {@link #getComponent()}
- * (the "getComponent() bridge"). This gives the controls a single, maintainable
- * trait hierarchy — shared skin/theme/design/taste resolution and parent/child
- * wiring live here once — that is also straightforward to map onto a XUL XML
- * element tree (see {@link se.spacify.controls.XUL} and {@link Element}).
+ * Intermediate base for every Spacify control. Controls do not inherit a Swing
+ * widget; each one <em>wraps</em> one as its {@link #component} ({@code T}) and is
+ * a clean abstraction over it. The only bridge into Swing's component model is
+ * {@link #getComponent()} — and the {@link #add(Control) child-adding} methods,
+ * which mount {@code child.getComponent()} into this control's component. All
+ * widget configuration (layout, borders, geometry, text, …) is done through
+ * {@code getComponent()} so the two models stay cleanly separated; only the
+ * lifecycle conveniences {@link #repaint()}, {@link #revalidate()} and
+ * {@link #setVisible(boolean)} are offered directly.
  *
- * <p>Resolution of {@link Skin}/{@link Theme}/{@link Design}/{@link Taste} walks
- * up the control tree (this → parent → … → {@link MainWindow}); set an explicit
- * value on a control to override it for that subtree.
+ * <p>{@link Skin}/{@link Theme}/{@link Design}/{@link Taste} resolution walks up
+ * the control tree (this → parent → … → {@link MainWindow}); set an explicit value
+ * on a control to override it for that subtree.
  *
  * @param <T> the Swing component this control wraps
  */
@@ -38,13 +39,11 @@ public abstract class Control<T extends Component> {
 	protected Control<?> parent;
 	protected final List<Control<?>> children = new ArrayList<>();
 
-	/** Optional XUL/DOM element this control was built from (null when built in code). */
-	protected Element element;
-
 	private Theme theme;
 	private Design design;
 	private Skin skin;
 	private Taste taste;
+	private String name;
 
 	private final Map<String, Object> attributes = new LinkedHashMap<>();
 
@@ -57,7 +56,7 @@ public abstract class Control<T extends Component> {
 
 	// ── The Swing bridge ─────────────────────────────────────────────────────────
 
-	/** The wrapped Swing component — the bridge into the Swing tree. */
+	/** The wrapped Swing component — the single bridge into the Swing tree. */
 	public T getComponent() {
 		return component;
 	}
@@ -80,7 +79,10 @@ public abstract class Control<T extends Component> {
 		return children;
 	}
 
-	/** Add a child control, wiring parentage and mounting its component into ours. */
+	/**
+	 * Add a child control: records it in the control tree and mounts its
+	 * {@link #getComponent() component} into this control's component.
+	 */
 	public Control<T> add(Control<?> child) {
 		children.add(child);
 		child.setParent(this);
@@ -107,23 +109,12 @@ public abstract class Control<T extends Component> {
 		}
 	}
 
-	// ── Common widget conveniences (delegate to the wrapped component) ───────────
+	// ── Lifecycle conveniences ───────────────────────────────────────────────────
 
 	public void repaint() {
 		if (component != null)
 			component.repaint();
 	}
-
-	// ── Geometry / appearance (delegate to the wrapped component) ────────────────
-	public int getWidth()   { return component != null ? component.getWidth()  : 0; }
-	public int getHeight()  { return component != null ? component.getHeight() : 0; }
-	public int getX()       { return component != null ? component.getX() : 0; }
-	public int getY()       { return component != null ? component.getY() : 0; }
-	public java.awt.Color getBackground() { return component.getBackground(); }
-	public java.awt.Color getForeground() { return component.getForeground(); }
-	public void setBackground(java.awt.Color c) { component.setBackground(c); }
-	public void setForeground(java.awt.Color c) { component.setForeground(c); }
-	public boolean isOpaque() { return component instanceof JComponent j && j.isOpaque(); }
 
 	public void revalidate() {
 		if (component instanceof JComponent j)
@@ -139,7 +130,7 @@ public abstract class Control<T extends Component> {
 		return component != null && component.isVisible();
 	}
 
-	// ── Skin / Theme / Design / Taste resolution (formerly ControlTrait) ─────────
+	// ── Skin / Theme / Design / Taste resolution ─────────────────────────────────
 
 	public void setSkin(Skin skin) {
 		this.skin = skin;
@@ -201,25 +192,15 @@ public abstract class Control<T extends Component> {
 		return MainWindow.getInstance();
 	}
 
-	// ── XUL / DOM hooks ──────────────────────────────────────────────────────────
+	// ── Control properties ───────────────────────────────────────────────────────
 
-	private String name;
-
-	/** Component name (parity with the old {@code Component.getName()}; used by Aspect). */
+	/** Control name (used by {@link se.spacify.aspect.Aspect}); a Control concept, not the component's. */
 	public String getName() {
 		return name;
 	}
 
 	public void setName(String name) {
 		this.name = name;
-	}
-
-	public Element getElement() {
-		return element;
-	}
-
-	public void setElement(Element element) {
-		this.element = element;
 	}
 
 	/** Generic attribute bag used by the XUL mapping; subclasses may specialise. */

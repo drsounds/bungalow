@@ -41,16 +41,16 @@ public class WMP11BetaSkin extends WMPSkin {
 	}
 	@Override
 	public void paintToolBar(ToolBar control, Graphics2D g2) {
-		int w = control.getWidth(), h = control.getHeight();
+		int w = control.getComponent().getWidth(), h = control.getComponent().getHeight();
 		g2.setPaint(ThemeManager.getTintColor());
 		g2.fillRect(0, 0, w, h);
 	}
 
 	@Override
 	public void paintToolButton(ToolButton control, Graphics2D g2) {
-		int w = control.getWidth(), h = control.getHeight();
+		int w = control.getComponent().getWidth(), h = control.getComponent().getHeight();
 		Color background = ThemeManager.getTintColor();
-        ButtonModel model = control.getModel();
+        ButtonModel model = control.getComponent().getModel();
 		g2.setPaint(background);
 		g2.fillRect(0, 0, w, h);
 		if (model.isPressed()) {

@@ -74,16 +74,4 @@ public class ToggleButton extends Control<JToggleButton> {
 		return dflt;
 	}
 
-	public boolean isSelected() { return component.isSelected(); }
-	public void setSelected(boolean b) { component.setSelected(b); }
-
-	// ── Common AbstractButton facade ─────────────────────────────────────────────
-	public void addActionListener(java.awt.event.ActionListener l) { component.addActionListener(l); }
-	public javax.swing.ButtonModel getModel()   { return component.getModel(); }
-	public void setText(String text)            { component.setText(text); }
-	public String getText()                     { return component.getText(); }
-	public void setEnabled(boolean b)           { component.setEnabled(b); }
-	public void setToolTipText(String t)        { component.setToolTipText(t); }
-	public void setFont(java.awt.Font f)        { component.setFont(f); }
-	public java.awt.Font getFont()              { return component.getFont(); }
 }

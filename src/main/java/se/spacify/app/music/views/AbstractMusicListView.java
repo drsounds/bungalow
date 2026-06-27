@@ -51,8 +51,8 @@ public abstract class AbstractMusicListView extends View {
 
 	protected AbstractMusicListView(ViewStack viewStack) {
 		super(viewStack);
-		setLayout(new BorderLayout(0, 0));
-		setOpaque(false);
+		getComponent().setLayout(new BorderLayout(0, 0));
+		getComponent().setOpaque(false);
 
 		headerLabel = new JLabel();
 		headerLabel.setFont(headerLabel.getFont().deriveFont(Font.BOLD, 18f));
@@ -70,7 +70,7 @@ public abstract class AbstractMusicListView extends View {
 		toolbar = new ToolBar();
 
 		refreshBtn = new ToolButton("Refresh");
-		refreshBtn.addActionListener(e -> reloadAndRegroup());
+		refreshBtn.getComponent().addActionListener(e -> reloadAndRegroup());
 
 		if (isEditable()) {
 			ToolButton addBtn = new ToolButton("Add");
@@ -78,16 +78,16 @@ public abstract class AbstractMusicListView extends View {
 			ToolButton deleteBtn = new ToolButton("Delete");
 			ToolButton scanBtn = new ToolButton("Scan…");
 
-			scanBtn.addActionListener(e -> LibraryScanAction.run(getComponent(), () -> {
+			scanBtn.getComponent().addActionListener(e -> LibraryScanAction.run(getComponent(), () -> {
 				reloadAndRegroup();
 				LibraryEvents.fireChanged();
 			}));
-			addBtn.addActionListener(e -> {
+			addBtn.getComponent().addActionListener(e -> {
 				onAdd();
 				reloadAndRegroup();
 				LibraryEvents.fireChanged();
 			});
-			editBtn.addActionListener(e -> {
+			editBtn.getComponent().addActionListener(e -> {
 				int row = table.getSelectedRow();
 				if (row >= 0) {
 					onEdit(row);
@@ -95,7 +95,7 @@ public abstract class AbstractMusicListView extends View {
 					LibraryEvents.fireChanged();
 				}
 			});
-			deleteBtn.addActionListener(e -> {
+			deleteBtn.getComponent().addActionListener(e -> {
 				int row = table.getSelectedRow();
 				if (row >= 0) {
 					onDelete(row);
@@ -107,7 +107,7 @@ public abstract class AbstractMusicListView extends View {
 			toolbar.add(addBtn);
 			toolbar.add(editBtn);
 			toolbar.add(deleteBtn);
-			toolbar.addSeparator();
+			toolbar.getComponent().addSeparator();
 			toolbar.add(scanBtn);
 		}
 		toolbar.add(refreshBtn);
@@ -134,18 +134,18 @@ public abstract class AbstractMusicListView extends View {
 			});
 
 			groupToggle = new ToggleButton("Grouped");
-			groupToggle.addActionListener(e -> setGrouped(groupToggle.isSelected()));
+			groupToggle.getComponent().addActionListener(e -> setGrouped(groupToggle.getComponent().isSelected()));
 
-			toolbar.addSeparator();
+			toolbar.getComponent().addSeparator();
 			toolbar.add(groupToggle);
-			toolbar.add(groupingChooser);
+			toolbar.getComponent().add(groupingChooser);
 		}
 
 		// Subclass-contributed toolbar control (e.g. a catalogue search field).
 		JComponent accessory = toolbarAccessory();
 		if (accessory != null) {
-			toolbar.addSeparator();
-			toolbar.add(accessory);
+			toolbar.getComponent().addSeparator();
+			toolbar.getComponent().add(accessory);
 		}
 
 		JPanel north = new JPanel();
@@ -154,11 +154,11 @@ public abstract class AbstractMusicListView extends View {
 		north.add(toolbar.getComponent(), BorderLayout.CENTER);
 		//add(headerLabel, BorderLayout.NORTH);
 
-		add(north, BorderLayout.NORTH);
-		add(musicTable, BorderLayout.CENTER);
+		getComponent().add(north, BorderLayout.NORTH);
+		getComponent().add(musicTable, BorderLayout.CENTER);
 
 		bottomToolbar = new ToolBar();
-		bottomToolbar.add(new JButton("Test"));
+		bottomToolbar.getComponent().add(new JButton("Test"));
 		add(bottomToolbar, BorderLayout.SOUTH);
 
 		updateColors();

@@ -1,7 +1,5 @@
 package se.spacify.controls;
 
-import java.awt.event.ActionListener;
-
 import javax.swing.JMenuItem;
 
 /**
@@ -17,7 +15,4 @@ public class MenuItem extends Control<JMenuItem> {
 	public MenuItem(String text) {
 		this.component = new JMenuItem(text);
 	}
-
-	public void addActionListener(ActionListener l) { component.addActionListener(l); }
-	public void setText(String text) { component.setText(text); }
 }

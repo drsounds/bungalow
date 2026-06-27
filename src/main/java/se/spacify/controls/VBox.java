@@ -9,6 +9,6 @@ public class VBox extends Panel {
 
 	public VBox() {
 		super();
-		setLayout(new BoxLayout(getComponent(), BoxLayout.PAGE_AXIS));
+		getComponent().setLayout(new BoxLayout(getComponent(), BoxLayout.PAGE_AXIS));
 	}
 }

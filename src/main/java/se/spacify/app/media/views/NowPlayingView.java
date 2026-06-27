@@ -23,16 +23,16 @@ public class NowPlayingView extends View {
 
     public NowPlayingView(ViewStack viewStack) {
         super(viewStack);
-        setLayout(new BorderLayout());
-        setOpaque(true);
-        setBackground(Color.BLACK);
+        getComponent().setLayout(new BorderLayout());
+        getComponent().setOpaque(true);
+        getComponent().setBackground(Color.BLACK);
 
         topToolbar = new ToolBar();
-        topToolbar.setFloatable(false);
-        topToolbar.setOpaque(true);
-        topToolbar.setBackground(ThemeManager.getTintColor());
+        topToolbar.getComponent().setFloatable(false);
+        topToolbar.getComponent().setOpaque(true);
+        topToolbar.getComponent().setBackground(ThemeManager.getTintColor());
         add(topToolbar, BorderLayout.NORTH);
-        topToolbar.add(new JButton("<"));
+        topToolbar.getComponent().add(new JButton("<"));
         // ── Player area ──────────────────────────────────────────────────────
         playerContainer = new JPanel(new BorderLayout());
         playerContainer.setOpaque(false);
@@ -60,8 +60,8 @@ public class NowPlayingView extends View {
         // ── Settings strip ───────────────────────────────────────────────────
         SettingsPanel settings = new SettingsPanel();
 
-        add(playerWrapper, BorderLayout.CENTER);
-        add(settings,      BorderLayout.SOUTH);
+        getComponent().add(playerWrapper, BorderLayout.CENTER);
+        getComponent().add(settings.getComponent(), BorderLayout.SOUTH);
 
         // Default view
         addPlayerView(new DefaultPlayerView());

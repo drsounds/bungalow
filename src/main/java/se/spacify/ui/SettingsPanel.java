@@ -15,12 +15,12 @@ public class SettingsPanel extends Panel {
     private Skin[] skins;
 
     public SettingsPanel() {
-        setLayout(new BorderLayout(12, 0));
-        setBorder(BorderFactory.createCompoundBorder(
+        getComponent().setLayout(new BorderLayout(12, 0));
+        getComponent().setBorder(BorderFactory.createCompoundBorder(
             BorderFactory.createMatteBorder(1, 0, 0, 0, new Color(50, 50, 50)),
             BorderFactory.createEmptyBorder(8, 16, 8, 16)
         ));
-        setPreferredSize(new Dimension(0, 150));
+        getComponent().setPreferredSize(new Dimension(0, 150));
 
         // ── Background tint sliders ──────────────────────────────────────────
         JPanel tintSection = new JPanel(new GridBagLayout()) {
@@ -195,14 +195,14 @@ public class SettingsPanel extends Panel {
         right.add(Box.createHorizontalStrut(8));
         right.add(accentSection);
 
-        add(tintSection, BorderLayout.CENTER);
-        add(right,       BorderLayout.EAST);
+        getComponent().add(tintSection, BorderLayout.CENTER);
+        getComponent().add(right, BorderLayout.EAST);
     }
 
     @Override
     protected void paintSurface(Graphics g) {
         g.setColor(BG);
-        g.fillRect(0, 0, getWidth(), getHeight());
+        g.fillRect(0, 0, getComponent().getWidth(), getComponent().getHeight());
     }
 
     // ── Helpers ──────────────────────────────────────────────────────────────

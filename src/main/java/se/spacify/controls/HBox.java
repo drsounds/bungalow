@@ -9,6 +9,6 @@ public class HBox extends Panel {
 
 	public HBox() {
 		super();
-		setLayout(new BoxLayout(getComponent(), BoxLayout.LINE_AXIS));
+		getComponent().setLayout(new BoxLayout(getComponent(), BoxLayout.LINE_AXIS));
 	}
 }

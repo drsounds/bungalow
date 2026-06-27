@@ -73,12 +73,12 @@ public class YouTubePlayerComponent extends MediaServicePlayerComponent {
 
     public YouTubePlayerComponent(YouTubeMusicService Service) {
         this.Service = Service;
-        setLayout(new BorderLayout());
-        setPreferredSize(new Dimension(0, 200));
+        getComponent().setLayout(new BorderLayout());
+        getComponent().setPreferredSize(new Dimension(0, 200));
         status = new JLabel("YouTube", SwingConstants.CENTER);
         status.setForeground(ThemeManager.getForeground());
         status.setBorder(BorderFactory.createEmptyBorder(24, 12, 24, 12));
-        add(status, BorderLayout.CENTER);
+        getComponent().add(status, BorderLayout.CENTER);
     }
 
     // ── Playback API used by the Service ────────────────────────────────────────
@@ -177,8 +177,8 @@ public class YouTubePlayerComponent extends MediaServicePlayerComponent {
         client.addMessageRouter(router);
 
         browser = client.createBrowser(PAGE_URL, false, false);
-        remove(status);
-        add(browser.getUIComponent(), BorderLayout.CENTER);
+        getComponent().remove(status);
+        getComponent().add(browser.getUIComponent(), BorderLayout.CENTER);
         revalidate();
         repaint();
     }

@@ -134,21 +134,6 @@ public class Button extends Control<JButton> {
 		component.setUI(new SpaceButtonUI());
 	}
 
-	// ── Common AbstractButton facade (delegates to the wrapped JButton) ──────────
-	public void addActionListener(java.awt.event.ActionListener l) { component.addActionListener(l); }
-	public javax.swing.ButtonModel getModel()   { return component.getModel(); }
-	public void setText(String text)            { component.setText(text); }
-	public String getText()                     { return component.getText(); }
-	public void setIcon(Icon icon)              { component.setIcon(icon); }
-	public void setEnabled(boolean b)           { component.setEnabled(b); }
-	public boolean isEnabled()                  { return component.isEnabled(); }
-	public void setToolTipText(String t)        { component.setToolTipText(t); }
-	public void setFocusPainted(boolean b)      { component.setFocusPainted(b); }
-	public void setFont(java.awt.Font f)        { component.setFont(f); }
-	public java.awt.Font getFont()              { return component.getFont(); }
-	public void setPreferredSize(java.awt.Dimension d) { component.setPreferredSize(d); }
-	public void setForeground(java.awt.Color c) { component.setForeground(c); }
-
 	/** Override to extend painting; default runs the installed {@link SpaceButtonUI}. */
 	protected void paintSurface(Graphics g) {
 		((Surface) component).superPaint(g);

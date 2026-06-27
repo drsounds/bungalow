@@ -33,9 +33,9 @@ public class ApplicationManagerView extends View {
     @SuppressWarnings("static-access")
     public ApplicationManagerView(ViewStack viewStack) {
         super(viewStack);
-        setLayout(new BorderLayout(0, 8));
-        setOpaque(true);
-        setBorder(BorderFactory.createEmptyBorder(16, 16, 16, 16));
+        getComponent().setLayout(new BorderLayout(0, 8));
+        getComponent().setOpaque(true);
+        getComponent().setBorder(BorderFactory.createEmptyBorder(16, 16, 16, 16));
 
         // ── Header + toolbar ─────────────────────────────────────────────────
         JLabel title = new JLabel("Apps");
@@ -55,7 +55,7 @@ public class ApplicationManagerView extends View {
         header.setOpaque(false);
         header.add(title, BorderLayout.WEST);
         header.add(buttons, BorderLayout.EAST);
-        add(header, BorderLayout.NORTH);
+        getComponent().add(header, BorderLayout.NORTH);
 
         // ── Application table ─────────────────────────────────────────────────────
         model = new DefaultTableModel(new String[]{"On", "Name", "Version", "Source"}, 0) {
@@ -85,7 +85,7 @@ public class ApplicationManagerView extends View {
         split.setDividerLocation(360);
         split.setBorder(BorderFactory.createEmptyBorder());
         split.setOpaque(false);
-        add(split, BorderLayout.CENTER);
+        getComponent().add(split, BorderLayout.CENTER);
 
         refresh();
         applyTheme();
@@ -187,7 +187,7 @@ public class ApplicationManagerView extends View {
     private void applyTheme() {
         Color bg = ThemeManager.getBackground();
         Color fg = ThemeManager.getForeground();
-        setBackground(bg);
+        getComponent().setBackground(bg);
         table.setBackground(bg);
         table.setForeground(fg);
         table.setGridColor(ThemeManager.getGridColor());

@@ -58,9 +58,9 @@ public class LeftLibraryMenu extends Panel implements NavigationListener {
 
     public LeftLibraryMenu(ViewStack viewStack) {
         this.viewStack = viewStack;
-        setLayout(new BorderLayout());
-        setPreferredSize(new Dimension(220, 0));
-        setOpaque(true);
+        getComponent().setLayout(new BorderLayout());
+        getComponent().setPreferredSize(new Dimension(220, 0));
+        getComponent().setOpaque(true);
 
         // Core shell nodes only; content subtrees (Your Library, Sites) are
         // contributed by built-in apps via addSidebarNode() at activation.
@@ -70,9 +70,9 @@ public class LeftLibraryMenu extends Panel implements NavigationListener {
         root.add(nodeFor(new SidebarNode("Apps",   "spacify:apps")));
 
         toolbar = new ToolBar();
-        toolbar.setFloatable(false);
-        toolbar.setOpaque(true);
-        toolbar.setBackground(ThemeManager.getTintColor());
+        toolbar.getComponent().setFloatable(false);
+        toolbar.getComponent().setOpaque(true);
+        toolbar.getComponent().setBackground(ThemeManager.getTintColor());
         add(toolbar, BorderLayout.NORTH);
 
         searchField = new JTextField();
@@ -85,7 +85,7 @@ public class LeftLibraryMenu extends Panel implements NavigationListener {
                 viewStack.navigate("spacify:search?q=" + encoded);
             }
         });
-        toolbar.add(searchField);
+        toolbar.getComponent().add(searchField);
 
         tree = new Tree(root);
         tree.getComponent().setOpaque(false);
@@ -127,11 +127,11 @@ public class LeftLibraryMenu extends Panel implements NavigationListener {
         // colours are kept in sync by updateColors() below.
         scroll.setOpaque(true);
         scroll.getViewport().setOpaque(true);
-        add(scroll, BorderLayout.CENTER);
+        getComponent().add(scroll, BorderLayout.CENTER);
 
         bottomToolbar = new ToolBar();
         // Cross-app download activity spinner (listens on the broadcast bus).
-        bottomToolbar.add(new DownloadActivityIndicator());
+        bottomToolbar.getComponent().add(new DownloadActivityIndicator());
         add(bottomToolbar, BorderLayout.SOUTH);
 
         addToLibraryMenuButton = new MenuToolButton();
@@ -140,9 +140,9 @@ public class LeftLibraryMenu extends Panel implements NavigationListener {
         ToolMenuItem addBtn    = new ToolMenuItem("Add");
         ToolMenuItem scanBtn   = new ToolMenuItem("Scan…");
 
-        scanBtn.addActionListener(e -> LibraryScanAction.run(getComponent(),
+        scanBtn.getComponent().addActionListener(e -> LibraryScanAction.run(getComponent(),
             () -> { /*reload();*/ LibraryEvents.fireChanged(); }));
-        addBtn.addActionListener(e -> { onAdd(); reload(); LibraryEvents.fireChanged(); });
+        addBtn.getComponent().addActionListener(e -> { onAdd(); reload(); LibraryEvents.fireChanged(); });
         addToLibraryMenuButton.add(addBtn);
         addToLibraryMenuButton.add(scanBtn);
 
@@ -158,7 +158,7 @@ public class LeftLibraryMenu extends Panel implements NavigationListener {
 
     private void updateColors() {
         Color bg = ThemeManager.getBackground();
-        setBackground(bg);
+        getComponent().setBackground(bg);
         tree.getComponent().setBackground(bg);
         scroll.setBackground(bg);
         scroll.getViewport().setBackground(bg);

@@ -16,19 +16,19 @@ public class LeftMenuPanel extends Panel {
 	private Panel bottomSpacePanel;
 
 	public LeftMenuPanel() {
-		setLayout(new BoxLayout(getComponent(), BoxLayout.PAGE_AXIS));
-		setOpaque(false);
+		getComponent().setLayout(new BoxLayout(getComponent(), BoxLayout.PAGE_AXIS));
+		getComponent().setOpaque(false);
 		topSpacePanel = new Panel();
-		topSpacePanel.setOpaque(false);
-		topSpacePanel.setMinimumSize(new Dimension(0, 2500));
-		topSpacePanel.setMaximumSize(new Dimension(Short.MAX_VALUE, 2500));
+		topSpacePanel.getComponent().setOpaque(false);
+		topSpacePanel.getComponent().setMinimumSize(new Dimension(0, 2500));
+		topSpacePanel.getComponent().setMaximumSize(new Dimension(Short.MAX_VALUE, 2500));
 		add(topSpacePanel);
 		menuPanel = new VerticalPanel();
 		add(menuPanel);
 		bottomSpacePanel = new Panel();
-		bottomSpacePanel.setOpaque(false);
-		bottomSpacePanel.setMinimumSize(new Dimension(0, 2500));
-		bottomSpacePanel.setMaximumSize(new Dimension(Short.MAX_VALUE, 2500));
+		bottomSpacePanel.getComponent().setOpaque(false);
+		bottomSpacePanel.getComponent().setMinimumSize(new Dimension(0, 2500));
+		bottomSpacePanel.getComponent().setMaximumSize(new Dimension(Short.MAX_VALUE, 2500));
 		add(bottomSpacePanel);
 	}
 

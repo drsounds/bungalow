@@ -66,7 +66,7 @@ public class WMP11Skin extends WMPSkin {
 	}
 	@Override
 	public void paintTabButton(TabButton control, Graphics2D g2) {
-		int w = control.getWidth(), h = control.getHeight();
+		int w = control.getComponent().getWidth(), h = control.getComponent().getHeight();
 
 		// Top-rounded, bottom-sharp shape flush with the panel's bottom edge.
 		Path2D tab = new Path2D.Float();
@@ -79,8 +79,8 @@ public class WMP11Skin extends WMPSkin {
 		tab.closePath();
 
 
-	 	if (control.isSelected() || control.isPressedState()) {
-			paintGlossy(g2, false, 0, 0, control.getWidth(), control.getHeight(), false, true, false);
+	 	if (control.getComponent().isSelected() || control.isPressedState()) {
+			paintGlossy(g2, false, 0, 0, control.getComponent().getWidth(), control.getComponent().getHeight(), false, true, false);
 		} else if (control.isHovered()) {
 			g2.setColor(new Color(255, 255, 255, 45));
 			if (control.getOrientation() == TabButton.ORIENTATION_HORIZONTAL) {
@@ -96,7 +96,7 @@ public class WMP11Skin extends WMPSkin {
 	@Override
 	public void paintGlossyButton(GlossyButton control, Graphics2D g2, int x, int y, int d) {
 		// TODO Auto-generated method stub
-		paintGlossy(g2, true, x, y, control.getWidth(), control.getHeight(), control.getHovered(), control.getPrimary(), control.getPressed());
+		paintGlossy(g2, true, x, y, control.getComponent().getWidth(), control.getComponent().getHeight(), control.getHovered(), control.getPrimary(), control.getPressed());
 	}
 	
 	private void paintGlossy(Graphics2D g2, boolean round, int x, int y, int width, int height, boolean hovered, boolean primary, boolean pressed) {
@@ -197,7 +197,7 @@ public class WMP11Skin extends WMPSkin {
 
 	@Override
 	public void paintGlassPanel(GlassPanel control, Graphics2D g2) {
-		int w = control.getWidth(), h = control.getHeight();
+		int w = control.getComponent().getWidth(), h = control.getComponent().getHeight();
 		Path2D shape = control.shape(w, h);
 
 		// Glossy white overlays, confined to the shape.
@@ -233,7 +233,7 @@ public class WMP11Skin extends WMPSkin {
 	}
 	@Override
 	public void paintToolBar(ToolBar control, Graphics2D g2) {
-		int w = control.getWidth(), h = control.getHeight();
+		int w = control.getComponent().getWidth(), h = control.getComponent().getHeight();
 		g2.setPaint(ThemeManager.getBackground());
 		g2.fillRect(0, 0, w, h);
 	}
@@ -250,9 +250,9 @@ public class WMP11Skin extends WMPSkin {
 
 	@Override
 	public void paintToolButton(ToolButton control, Graphics2D g2) {
-		int w = control.getWidth(), h = control.getHeight();
+		int w = control.getComponent().getWidth(), h = control.getComponent().getHeight();
 		Color background = ThemeManager.getBackground();
-        ButtonModel model = control.getModel();
+        ButtonModel model = control.getComponent().getModel();
 		g2.setPaint(background);
 		g2.fillRect(0, 0, w, h);
 		if (model.isPressed()) {
@@ -293,7 +293,7 @@ public class WMP11Skin extends WMPSkin {
 	@Override
 	public void paintVerticalPanel(VerticalPanel control, Graphics2D g2) {
 		// TODO Auto-generated method stub
-		int w = control.getWidth(), h = control.getHeight();
+		int w = control.getComponent().getWidth(), h = control.getComponent().getHeight();
 
 		g2.setPaint(Color.BLACK);
 		g2.fillRect(0, 0, w, h);

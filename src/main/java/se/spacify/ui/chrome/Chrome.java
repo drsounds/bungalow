@@ -93,10 +93,10 @@ public abstract class Chrome extends Panel implements Aspect {
     }
 
 	public void build() {
-		for (Component comp : getComponents()) {
-			remove(comp);
+		for (Component comp : getComponent().getComponents()) {
+			getComponent().remove(comp);
 		}
-		setLayout(new BoxLayout(getComponent(), BoxLayout.LINE_AXIS));
+		getComponent().setLayout(new BoxLayout(getComponent(), BoxLayout.LINE_AXIS));
 	}
 
     /** Toggle the left leftLibraryMenu; remembers the user's preference. */
@@ -112,9 +112,9 @@ public abstract class Chrome extends Panel implements Aspect {
 
     public void applySidebar(boolean visible) {
         leftLibraryMenu.setVisible(visible);
-        leftSplit.setDividerLocation(visible ? 220 : 0);
+        leftSplit.getComponent().setDividerLocation(visible ? 220 : 0);
         leftSplit.revalidate();
-		leftSplit.setDividerSize(1);
+		leftSplit.getComponent().setDividerSize(1);
         leftSplit.repaint();
     }
 
@@ -124,10 +124,10 @@ public abstract class Chrome extends Panel implements Aspect {
         immersive = on;
         if (on) {
             applySidebar(false);
-            mainSplit.setDividerLocation(1.0);   // collapse the right Now Playing panel
+            mainSplit.getComponent().setDividerLocation(1.0);   // collapse the right Now Playing panel
         } else {
             applySidebar(userWantsSidebar);
-            mainSplit.setDividerLocation(880);
+            mainSplit.getComponent().setDividerLocation(880);
         }
         mainSplit.revalidate();
         mainSplit.repaint();

@@ -22,7 +22,7 @@ public class GlassPanel extends Panel {
 
 	public GlassPanel() {
 		super();
-		setOpaque(false);
+		getComponent().setOpaque(false);
 	}
 
 	@Override

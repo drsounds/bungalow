@@ -18,11 +18,11 @@ public class VerticalPanel extends Panel {
 	private final TabButton mediaGuideTab;
 
 	public VerticalPanel() {
-		setOpaque(false);
-		setBorder(BorderFactory.createEmptyBorder(0, 80, 0, 0));
+		getComponent().setOpaque(false);
+		getComponent().setBorder(BorderFactory.createEmptyBorder(0, 80, 0, 0));
 		// WMP-style tab strip, flush with the bottom edge of the nav bar.
 		nowPlayingTab = new TabButton("Now Playing");
-		nowPlayingTab.addActionListener(e -> {
+		nowPlayingTab.getComponent().addActionListener(e -> {
 			MainWindow mw = getMainWindow().getViewStack().getMainWindow();
 			if (mw != null) {
 				mw.setSidebarVisible(false);
@@ -30,7 +30,7 @@ public class VerticalPanel extends Panel {
 			}
 		});
 		libraryTab = new TabButton("Library");
-		libraryTab.addActionListener(e -> {
+		libraryTab.getComponent().addActionListener(e -> {
 			MainWindow mw = getMainWindow().getViewStack().getMainWindow();
 			if (mw != null) {
 				mw.setSidebarVisible(true);
@@ -38,7 +38,7 @@ public class VerticalPanel extends Panel {
 			}
 		});
 		mediaGuideTab = new TabButton("Media Guide");
-		mediaGuideTab.addActionListener(e -> {
+		mediaGuideTab.getComponent().addActionListener(e -> {
 			MainWindow mw = getMainWindow().getViewStack().getMainWindow();
 			if (mw != null) {
 				mw.setSidebarVisible(true);

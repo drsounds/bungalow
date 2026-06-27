@@ -16,9 +16,9 @@ public class LibraryView extends View {
 
     public LibraryView(ViewStack viewStack) {
         super(viewStack);
-        setLayout(new BorderLayout(0, 12));
-        setOpaque(false);
-        setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
+        getComponent().setLayout(new BorderLayout(0, 12));
+        getComponent().setOpaque(false);
+        getComponent().setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
 
         String[] columns = {"Title", "Artist", "Album"};
         Object[][] data = {
@@ -40,7 +40,7 @@ public class LibraryView extends View {
         scroll.setOpaque(true);
         scroll.getViewport().setOpaque(true);
 
-        add(scroll, BorderLayout.CENTER);
+        getComponent().add(scroll, BorderLayout.CENTER);
 
         updateColors();
         ThemeManager.addChangeListener(this::updateColors);
@@ -51,8 +51,8 @@ public class LibraryView extends View {
         Color fg   = ThemeManager.getForeground();
         Color grid = ThemeManager.getGridColor();
 
-        table.setBackground(bg);
-        table.setForeground(fg);
+        table.getComponent().setBackground(bg);
+        table.getComponent().setForeground(fg);
         table.getComponent().setGridColor(grid);
         scroll.setBackground(bg);
         scroll.getViewport().setBackground(bg);
