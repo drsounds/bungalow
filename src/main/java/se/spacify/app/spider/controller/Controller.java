@@ -10,8 +10,12 @@ import se.spacify.net.Uri;
  * @return
  */
 public abstract class Controller {
+    public abstract boolean acceptsUri(Uri uri);
     /**
-     * Returns template from file or whatever, abstract to implement
+     * Processes the request body with the xml lua preprocessor template, let LUA preprocess it and return it as org.w3c.dom.Element
+     * @param request
+     * @return 
+     * It will take a template from file or whatever, abstract to implement
      * The returned String is a LUA preprocessor template which could look like this
      * {@code
      *  <view>
@@ -23,15 +27,9 @@ public abstract class Controller {
      *          <button onclick="refresh">Refresh</button>
      *      </page>
      *  </view>}
-     * @return
+     * @return Element tree
      */
-    public abstract String getTemplate(); // TODO Write the lua preprocessor
-    public abstract boolean acceptsUri(Uri uri);
-    /**
-     * Processes the request body with the xml lua preprocessor template, let LUA preprocess it and return it as org.w3c.dom.Element
-     * @param request
-     * @return
-     */
+    
     public org.w3c.dom.Element process(Request request) {
         // TODO Should process the request body with the xml lua preprocessor template, let LUA preprocess it and return it as org.w3c.dom.Element
         return null;
