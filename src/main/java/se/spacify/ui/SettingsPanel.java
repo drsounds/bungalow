@@ -9,8 +9,6 @@ import javax.swing.border.TitledBorder;
 import java.awt.*;
 
 public class SettingsPanel extends Panel {
-
-    private static final long serialVersionUID = 4436865841340299032L;
 	private static final Color BG   = Color.BLACK;
     private static final Color FG   = Color.WHITE;
     private static final Color FG_DIM = new Color(180, 180, 180);

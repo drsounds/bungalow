@@ -1,6 +1,5 @@
 package se.spacify.navigation;
 
-import se.spacify.ui.MainWindow;
 import se.spacify.controls.Panel;
 
 import java.awt.CardLayout;

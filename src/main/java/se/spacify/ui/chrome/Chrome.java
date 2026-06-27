@@ -17,8 +17,6 @@ import se.spacify.ui.TopBar;
 import se.spacify.app.media.views.NowPlayingView;
 	
 public abstract class Chrome extends Panel implements Aspect {
-	
-    private static final long serialVersionUID = 2144395787232553079L;
 	public void onDestroy() {
 		
 	}

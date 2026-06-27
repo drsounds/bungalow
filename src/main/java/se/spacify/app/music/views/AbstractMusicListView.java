@@ -1,6 +1,5 @@
 package se.spacify.app.music.views;
 
-import se.spacify.controls.Table;
 import se.spacify.controls.ToggleButton;
 import se.spacify.controls.ToolBar;
 import se.spacify.controls.ToolButton;

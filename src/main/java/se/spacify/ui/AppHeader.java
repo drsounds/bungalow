@@ -8,7 +8,6 @@ import se.spacify.navigation.ViewStack;
 import se.spacify.controls.Panel;
 import se.spacify.controls.Button;
 
-import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 

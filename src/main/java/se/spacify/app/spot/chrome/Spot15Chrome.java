@@ -21,7 +21,6 @@ import se.spacify.ui.LeftMenuPanel;
 import se.spacify.ui.NowPlayingPanel;
 
 public class Spot15Chrome extends Chrome {
-        private static final long serialVersionUID = 2766717544747588265L;
 
         @Override
         public String getId() {

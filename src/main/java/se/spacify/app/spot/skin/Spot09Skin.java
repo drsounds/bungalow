@@ -16,8 +16,6 @@ import se.spacify.controls.ToolBar;
 import se.spacify.controls.Tree;
 
 import se.spacify.navigation.ViewStack;
-import se.spacify.app.spot.controls.Spot09AppFooter;
-import se.spacify.app.spot.controls.Spot09AppHeader;
 import se.spacify.ui.LeftLibraryMenu;
 import se.spacify.ui.LeftMenuPanel;
 import se.spacify.ui.theme.ColorUtils;

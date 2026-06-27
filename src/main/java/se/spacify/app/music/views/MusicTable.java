@@ -429,7 +429,6 @@ public class MusicTable extends JPanel {
 	/** A {@link se.spacify.controls.Button} usable as a detached table cell renderer —
 	 *  falls back to the live window so the skin (SpaceButtonUI paint) still resolves. */
 	private static final class BuyStreamButton extends se.spacify.controls.Button {
-		private static final long serialVersionUID = 1L;
 		BuyStreamButton() {
 			super();
 			component.setFocusable(false);

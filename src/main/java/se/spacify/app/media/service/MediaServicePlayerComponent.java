@@ -18,8 +18,6 @@ import se.spacify.service.media.PlaybackCoordinator;
  */
 public abstract class MediaServicePlayerComponent extends Panel {
 
-    private static final long serialVersionUID = 1L;
-
     protected MediaServicePlayerComponent() {
         setOpaque(false);
     }

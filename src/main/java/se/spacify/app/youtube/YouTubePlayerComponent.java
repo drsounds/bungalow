@@ -49,8 +49,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
  */
 public class YouTubePlayerComponent extends MediaServicePlayerComponent {
 
-    private static final long serialVersionUID = 1L;
-
     private static final String SCHEME   = "https";
     private static final String DOMAIN   = "spacify.youtube";
     private static final String PAGE_URL = SCHEME + "://" + DOMAIN + "/player.html";

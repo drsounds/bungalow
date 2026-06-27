@@ -22,7 +22,6 @@ import se.spacify.ui.NowPlayingPanel;
 import se.spacify.ui.TopBar;
 
 public class WMP9Chrome extends Chrome {
-	private static final long serialVersionUID = 2766717544747588265L;
 
         @Override
         public void build() {

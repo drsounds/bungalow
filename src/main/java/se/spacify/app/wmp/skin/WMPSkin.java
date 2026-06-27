@@ -5,7 +5,6 @@ import java.awt.Paint;
 
 import javax.swing.JComponent;
 
-import se.spacify.controls.Control;
 import se.spacify.skinning.Skin;
 
 public class WMPSkin extends Skin {
