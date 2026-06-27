@@ -7,6 +7,7 @@ import se.spacify.library.LibraryEvents;
 import se.spacify.navigation.View;
 import se.spacify.navigation.ViewStack;
 import se.spacify.app.library.views.LibraryScanAction;
+import se.spacify.app.music.controls.MusicTable;
 import se.spacify.service.media.PlaybackCoordinator;
 import se.spacify.service.media.PlayQueueItem;
 import se.spacify.service.media.PlayRequest;

@@ -72,6 +72,7 @@ public class Taste {
     }
     // ── Display toggles (saved alongside the HSL / dark-light / accent settings) ──
     private boolean stripedRows          = true;   // alternate row shading
+    private boolean fillEmptyRows        = true;   // continue the zebra below the last row
     private boolean highContrast         = false;  // plain B/W background (WMP-style)
     private boolean highContrastInverted = false;  // white-on-black vs black-on-white
     private boolean tintText             = true;   // tint text in light mode (else black)
@@ -113,6 +114,7 @@ public class Taste {
     public void setAccentForegroundColor(Color c)   { accentForegroundColor = c;   ThemeManager.setAccentForegroundColor(c);   notify_(); }
 
     public void setStripedRows(boolean v)          { stripedRows = v;          ThemeManager.setStripedRows(v);          notify_(); }
+    public void setFillEmptyRows(boolean v)        { fillEmptyRows = v;        ThemeManager.setFillEmptyRows(v);        notify_(); }
     public void setHighContrast(boolean v)         { highContrast = v;         ThemeManager.setHighContrast(v);         notify_(); }
     public void setHighContrastInverted(boolean v) { highContrastInverted = v; ThemeManager.setHighContrastInverted(v); notify_(); }
     public void setTintText(boolean v)             { tintText = v;             ThemeManager.setTintText(v);             notify_(); }
@@ -125,6 +127,7 @@ public class Taste {
     public Color   getAccentForegroundColor() { return accentForegroundColor; }
 
     public boolean isStripedRows()          { return stripedRows; }
+    public boolean isFillEmptyRows()        { return fillEmptyRows; }
     public boolean isHighContrast()         { return highContrast; }
     public boolean isHighContrastInverted() { return highContrastInverted; }
     public boolean isTintText()             { return tintText; }

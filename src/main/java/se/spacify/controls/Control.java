@@ -2,6 +2,7 @@ package se.spacify.controls;
 
 import java.awt.Component;
 import java.awt.Container;
+import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -9,6 +10,14 @@ import java.util.Map;
 
 import javax.swing.JComponent;
 import javax.swing.SwingUtilities;
+import javax.xml.parsers.DocumentBuilderFactory;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.InputSource;
 
 import se.spacify.design.Design;
 import se.spacify.skinning.Skin;
@@ -178,6 +187,182 @@ public abstract class Control<T extends Component> {
 		if (parent != null && parent.getTaste() != null)
 			return parent.getTaste();
 		return getMainWindow().getTaste();
+	}
+
+	/*
+	 * XUL like View parser with following element schema:
+	 * <button> = button
+	 * <element> = Control
+	 * <hbox> = HBox : Control<HBox>
+	 * <vbox> = VBox : Control<VBox>
+	 * <view> = ui.navigation.TabBarView - TabbedPane : Control<TabbedPane> with children <page> TabbedPane pages, with title = label attribute, that can host other components like a panel
+	 * etc.
+	 */
+
+	/** Constant under which a control records the XUL tag it was rendered from, used to reconcile by type. */
+	private static final String XUL_TAG = "xul:tag";
+
+	/**
+	 * The child controls created by the last {@link #setInnerXul} render, in document
+	 * order. Tracked separately from {@link #children} so reconciliation can match a
+	 * new element tree against the controls already on screen and keep their state.
+	 */
+	private final List<Control<?>> xulChildren = new ArrayList<>();
+
+	/**
+	 * Render {@code root}'s child elements as this control's children, much like
+	 * setting {@code innerHTML}. Each tag maps to a control (see the schema above);
+	 * the render <em>reconciles</em> against the previous one the way React does: a
+	 * child whose tag matches the control already at that position is reused (and its
+	 * attributes/text/subtree updated in place) so live state — selection, scroll,
+	 * focus, caret — survives; only a differing tag forces a replacement.
+	 */
+	public void setInnerXul(Element root) {
+		reconcileChildren(elementChildren(root));
+		revalidate();
+		repaint();
+	}
+
+	/** Syntactic sugar for {@link #setInnerXul(Element)} that parses {@code text} to a root element first. */
+	public void setInnerXul(String text) {
+		try {
+			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+			factory.setNamespaceAware(false);
+			Document doc = factory.newDocumentBuilder().parse(new InputSource(new StringReader(text)));
+			setInnerXul(doc.getDocumentElement());
+		} catch (Exception e) {
+			throw new IllegalArgumentException("Failed to parse XUL: " + text, e);
+		}
+	}
+
+	/** Reconcile this control's XUL-managed children against a new list of element children. */
+	private void reconcileChildren(List<Element> elements) {
+		for (int i = 0; i < elements.size(); i++) {
+			Element element = elements.get(i);
+			String tag = element.getTagName();
+			Control<?> existing = i < xulChildren.size() ? xulChildren.get(i) : null;
+
+			// Reuse the control already at this slot when its tag matches; otherwise
+			// create a fresh one and splice it into the tree at the same position.
+			if (existing == null || !tag.equals(existing.getAttribute(XUL_TAG, null))) {
+				Control<?> created = createControl(tag);
+				created.setAttribute(XUL_TAG, tag);
+				if (existing != null) {
+					replaceChild(existing, created);
+					xulChildren.set(i, created);
+				} else {
+					mountXulChild(created, element);
+					xulChildren.add(created);
+				}
+				existing = created;
+			}
+			applyElement(existing, element);
+		}
+
+		// Drop trailing controls the new tree no longer has.
+		while (xulChildren.size() > elements.size()) {
+			remove(xulChildren.remove(xulChildren.size() - 1));
+		}
+	}
+
+	/** Push attributes, direct text and the child subtree from {@code element} onto {@code control}. */
+	private static void applyElement(Control<?> control, Element element) {
+		NamedNodeMap attrs = element.getAttributes();
+		for (int i = 0; i < attrs.getLength(); i++) {
+			Node attr = attrs.item(i);
+			String name = attr.getNodeName();
+			String value = attr.getNodeValue();
+			control.setAttribute(name, value);
+			switch (name) {
+				case "name"   -> control.setName(value);
+				case "hidden" -> control.setVisible("false".equalsIgnoreCase(value));
+				default       -> { /* plain attribute, kept in the bag */ }
+			}
+		}
+
+		String text = directText(element);
+		if (text != null) {
+			setControlText(control, text);
+		}
+
+		// Recurse: the element's own children become the control's children.
+		control.setInnerXul(element);
+	}
+
+	/** Map a tag name to its control. {@code <element>} and unknown tags become a plain {@link Panel}. */
+	private static Control<?> createControl(String tag) {
+		return switch (tag) {
+			case "button"               -> new Button();
+			case "hbox"                 -> new HBox();
+			case "vbox"                 -> new VBox();
+			case "view"                 -> new TabbedPane();
+			case "text", "label", "img" -> new Label();
+			case "input"                -> new TextField();
+			default                     -> new Panel();
+		};
+	}
+
+	/** Push text into the controls that carry text; a no-op for the rest. */
+	private static void setControlText(Control<?> control, String text) {
+		if (control instanceof Label l)          l.getComponent().setText(text);
+		else if (control instanceof TextField t) t.getComponent().setText(text);
+		else if (control instanceof Button b)    b.getComponent().setText(text);
+	}
+
+	/** Mount a freshly created XUL child; a {@link TabbedPane} hosts it as a titled tab. */
+	private void mountXulChild(Control<?> child, Element element) {
+		if (this instanceof TabbedPane tabs) {
+			tabs.addTab(element.getAttribute("label"), child);
+		} else {
+			add(child);
+		}
+	}
+
+	/** Replace {@code oldChild} with {@code newChild} in both the control tree and the Swing container, in place. */
+	private void replaceChild(Control<?> oldChild, Control<?> newChild) {
+		int controlIndex = children.indexOf(oldChild);
+		newChild.setParent(this);
+		if (component instanceof Container c) {
+			int z = oldChild.getComponent() != null ? c.getComponentZOrder(oldChild.getComponent()) : -1;
+			if (oldChild.getComponent() != null) {
+				c.remove(oldChild.getComponent());
+			}
+			if (newChild.getComponent() != null) {
+				if (z >= 0) c.add(newChild.getComponent(), z);
+				else        c.add(newChild.getComponent());
+			}
+		}
+		if (controlIndex >= 0) children.set(controlIndex, newChild);
+		else                   children.add(newChild);
+	}
+
+	/** The direct element children of {@code element}, skipping text and comment nodes. */
+	private static List<Element> elementChildren(Element element) {
+		List<Element> out = new ArrayList<>();
+		NodeList nodes = element.getChildNodes();
+		for (int i = 0; i < nodes.getLength(); i++) {
+			Node node = nodes.item(i);
+			if (node.getNodeType() == Node.ELEMENT_NODE) {
+				out.add((Element) node);
+			}
+		}
+		return out;
+	}
+
+	/** The concatenated direct text of {@code element} (ignoring child elements), or {@code null} if blank. */
+	private static String directText(Element element) {
+		StringBuilder sb = new StringBuilder();
+		NodeList nodes = element.getChildNodes();
+		for (int i = 0; i < nodes.getLength(); i++) {
+			Node node = nodes.item(i);
+			if (node.getNodeType() == Node.TEXT_NODE) {
+				String value = node.getNodeValue();
+				if (value != null && !value.isBlank()) {
+					sb.append(value.trim());
+				}
+			}
+		}
+		return sb.length() == 0 ? null : sb.toString();
 	}
 
 	/**

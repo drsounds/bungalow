@@ -109,6 +109,7 @@ public class SettingsPanel extends Panel {
         optionsSection.setBorder(titledBorder("Display"));
 
         JCheckBox stripedBox   = whiteCheck("Striped rows",        getTaste().isStripedRows());
+        JCheckBox fillRowsBox  = whiteCheck("Fill empty rows",     getTaste().isFillEmptyRows());
         JCheckBox contrastBox  = whiteCheck("B/W background",       getTaste().isHighContrast());
         JCheckBox invertedBox  = whiteCheck("Inverted (dark)",      getTaste().isHighContrastInverted());
         JCheckBox tintTextBox  = whiteCheck("Tint text (light)",    getTaste().isTintText());
@@ -116,6 +117,7 @@ public class SettingsPanel extends Panel {
         invertedBox.setEnabled(getTaste().isHighContrast());
 
         stripedBox.addActionListener(e  -> getTaste().setStripedRows(stripedBox.isSelected()));
+        fillRowsBox.addActionListener(e -> getTaste().setFillEmptyRows(fillRowsBox.isSelected()));
         contrastBox.addActionListener(e -> {
             getTaste().setHighContrast(contrastBox.isSelected());
             invertedBox.setEnabled(contrastBox.isSelected());
@@ -124,6 +126,7 @@ public class SettingsPanel extends Panel {
         tintTextBox.addActionListener(e -> getTaste().setTintText(tintTextBox.isSelected()));
 
         optionsSection.add(stripedBox);
+        optionsSection.add(fillRowsBox);
         optionsSection.add(contrastBox);
         optionsSection.add(invertedBox);
         optionsSection.add(tintTextBox);

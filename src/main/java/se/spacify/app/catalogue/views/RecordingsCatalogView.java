@@ -22,7 +22,9 @@ public class RecordingsCatalogView extends AbstractCatalogView<Recording> {
 
     @Override protected String kind() { return "recordings"; }
     @Override protected String searchHint() { return "Search recordings…"; }
-    @Override protected String[] getColumns() { return new String[]{"Recording", "Length"}; }
+    // Same columns as the library Recordings view, so every recording list reads
+    // the same: Name · Artists · ISRC · Duration.
+    @Override protected String[] getColumns() { return new String[]{"Name", "Artists", "ISRC", "Duration"}; }
 
     @Override
     protected List<Recording> fetch(MusicCatalogueService svc) {
@@ -33,14 +35,15 @@ public class RecordingsCatalogView extends AbstractCatalogView<Recording> {
 
     @Override
     protected Object[] toRow(Recording r) {
-        return new Object[]{ r.getTitle(), fmtDuration(r.getDurationMs()) };
+        return new Object[]{ r.getTitle(), r.getArtistNames(), r.getIsrc(), fmtDuration(r.getDurationMs()) };
     }
 
     @Override
     protected PlayRequest playRequestAt(int row) {
         Recording r = rows.get(row);
         // Transient catalogue recording — no local Track; keyed by ISRC/URI.
-        return new PlayRequest(null, r.getIsrc(), r.getTitle(), "", r.getPlayUri(), r.getDurationMs());
+        String artist = r.getArtistNames() != null ? r.getArtistNames() : "";
+        return new PlayRequest(null, r.getIsrc(), r.getTitle(), artist, r.getPlayUri(), r.getDurationMs());
     }
 
     // ── Library-membership toggle (the shared ✓/＋ column) ───────────────────────

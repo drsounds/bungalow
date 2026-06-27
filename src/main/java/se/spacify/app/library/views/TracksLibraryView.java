@@ -1,8 +1,7 @@
 package se.spacify.app.library.views;
+import se.spacify.app.music.controls.MusicTable.GroupRef;
+import se.spacify.app.music.controls.MusicTable.Grouping;
 import se.spacify.app.music.views.AbstractMusicListView;
-import se.spacify.app.music.views.MusicTable.GroupRef;
-import se.spacify.app.music.views.MusicTable.Grouping;
-
 import se.spacify.db.DatabaseManager;
 import se.spacify.db.LibraryRepository;
 import se.spacify.db.entity.Playable;

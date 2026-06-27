@@ -49,6 +49,7 @@ public class ThemeManager extends BaseAspectManager<Theme> {
 
     // ── Display toggles (saved alongside the HSL / dark-light / accent settings) ──
     private static boolean stripedRows          = true;   // alternate row shading
+    private static boolean fillEmptyRows        = true;   // continue the zebra below the last row
     private static boolean highContrast         = false;  // plain B/W background (WMP-style)
     private static boolean highContrastInverted = false;  // white-on-black vs black-on-white
     private static boolean tintText             = true;   // tint text in light mode (else black)
@@ -83,6 +84,7 @@ public class ThemeManager extends BaseAspectManager<Theme> {
     public static void setAccentBackgroundColor(Color c)   { accentBackgroundColor = c;   applyToDefaults(); notify_(); }
 
     public static void setStripedRows(boolean v)          { stripedRows = v;          applyToDefaults(); notify_(); }
+    public static void setFillEmptyRows(boolean v)        { fillEmptyRows = v;        notify_(); }
     public static void setHighContrast(boolean v)         { highContrast = v;         applyToDefaults(); notify_(); }
     public static void setHighContrastInverted(boolean v) { highContrastInverted = v; applyToDefaults(); notify_(); }
     public static void setTintText(boolean v)             { tintText = v;             applyToDefaults(); notify_(); }
@@ -95,6 +97,7 @@ public class ThemeManager extends BaseAspectManager<Theme> {
     public static Color   getAccentBackgroundColor()  { return accentBackgroundColor; }
 
     public static boolean isStripedRows()          { return stripedRows; }
+    public static boolean isFillEmptyRows()        { return fillEmptyRows; }
     public static boolean isHighContrast()         { return highContrast; }
     public static boolean isHighContrastInverted() { return highContrastInverted; }
     public static boolean isTintText()             { return tintText; }

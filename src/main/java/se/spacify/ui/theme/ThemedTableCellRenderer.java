@@ -20,19 +20,29 @@ public class ThemedTableCellRenderer extends DefaultTableCellRenderer {
             boolean isSelected, boolean hasFocus, int row, int column) {
         MainWindow mw = MainWindow.getInstance();
         Taste taste = mw.getTaste();
-        Skin skin = taste.getSkin();
         super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
 
         if (isSelected) {
             setBackground(taste.getAccentBackgroundColor());
             setForeground(taste.getAccentForegroundColor());
         } else {
-            setBackground(row % 2 == 0
-                ? skin.getColorValue(table, "table.alternateBackground", new Color(0, 0, 0, 11))
-                : table.getBackground());
+            setBackground(rowBackground(table, row));
             setForeground(table.getForeground());
         }
         setBorder(BorderFactory.createEmptyBorder(0, 6, 0, 6));
         return this;
+    }
+
+    /**
+     * The zebra background for a (zero-based) table row: the skin's alternate-row
+     * shade on even rows, the table background on odd rows. Shared so cells that
+     * paint their own content (e.g. the Buy/Stream button) and the empty area below
+     * the last row can match the striping exactly.
+     */
+    public static Color rowBackground(JTable table, int row) {
+        Skin skin = MainWindow.getInstance().getTaste().getSkin();
+        return row % 2 == 0
+            ? skin.getColorValue(table, "table.alternateBackground", new Color(0, 0, 0, 11))
+            : table.getBackground();
     }
 }

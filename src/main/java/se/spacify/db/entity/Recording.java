@@ -35,6 +35,14 @@ public class Recording implements Playable {
     @ForeignCollectionField(eager = false)
     private ForeignCollection<RecordingArtistCredit> artistCredits;
 
+    /**
+     * Display-only artist credit for transient (catalogue / discovery) recordings
+     * that aren't backed by DB {@link RecordingArtistCredit} rows. No
+     * {@code @DatabaseField}, so ORMLite ignores it; persisted recordings carry
+     * their artists in {@link #artistCredits} instead.
+     */
+    private String artistNames;
+
     public Recording() {}
 
     public Recording(String title) { this.title = title; }
@@ -63,6 +71,8 @@ public class Recording implements Playable {
     public MusicWork getMusicWork()          { return musicWork; }
     public void      setMusicWork(MusicWork v) { this.musicWork = v; }
     public ForeignCollection<RecordingArtistCredit> getArtistCredits() { return artistCredits; }
+    public String    getArtistNames()          { return artistNames; }
+    public void      setArtistNames(String v)  { this.artistNames = v; }
 
     @Override public String toString() { return title; }
 }

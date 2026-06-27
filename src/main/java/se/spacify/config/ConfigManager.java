@@ -70,6 +70,7 @@ public class ConfigManager {
             taste.setAccentForegroundColor(accentForegroundColor);
         
             taste.setStripedRows(         Boolean.parseBoolean(p.getProperty("theme.stripedRows",          "true")));
+            taste.setFillEmptyRows(       Boolean.parseBoolean(p.getProperty("theme.fillEmptyRows",        "true")));
             taste.setHighContrast(        Boolean.parseBoolean(p.getProperty("theme.highContrast",         "false")));
             taste.setHighContrastInverted(Boolean.parseBoolean(p.getProperty("theme.highContrastInverted", "false")));
             taste.setTintText(            Boolean.parseBoolean(p.getProperty("theme.tintText",            "true")));
@@ -87,6 +88,7 @@ public class ConfigManager {
         p.setProperty("theme.darkMode",    String.valueOf(getTaste().isDarkMode()));
         p.setProperty("theme.accentColor", String.valueOf(getTaste().getAccentBackgroundColor().getRGB()));
         p.setProperty("theme.stripedRows",          String.valueOf(getTaste().isStripedRows()));
+        p.setProperty("theme.fillEmptyRows",        String.valueOf(getTaste().isFillEmptyRows()));
         p.setProperty("theme.highContrast",         String.valueOf(getTaste().isHighContrast()));
         p.setProperty("theme.highContrastInverted", String.valueOf(getTaste().isHighContrastInverted()));
         p.setProperty("theme.tintText",             String.valueOf(getTaste().isTintText()));

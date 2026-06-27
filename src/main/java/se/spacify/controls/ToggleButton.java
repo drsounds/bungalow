@@ -47,6 +47,7 @@ public class ToggleButton extends Control<JToggleButton> {
 	}
 
 	private void init() {
+		component.getModel().addChangeListener(e -> repaint());
 		java.awt.event.MouseAdapter mouse = new java.awt.event.MouseAdapter() {
 			@Override public void mouseEntered(java.awt.event.MouseEvent e) { repaint(); }
 			@Override public void mouseExited(java.awt.event.MouseEvent e)  { repaint(); }

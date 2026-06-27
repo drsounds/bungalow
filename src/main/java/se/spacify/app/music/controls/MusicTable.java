@@ -1,4 +1,4 @@
-package se.spacify.app.music.views;
+package se.spacify.app.music.controls;
 
 import se.spacify.controls.GroupedListPanel;
 import se.spacify.controls.Table;
@@ -411,18 +411,29 @@ public class MusicTable extends JPanel {
 	 */
 	private final class BuyStreamRenderer implements javax.swing.table.TableCellRenderer {
 		private final BuyStreamButton button = new BuyStreamButton();
-		private final FileCell        fileCell = new FileCell();
-		private final JLabel          blank = new JLabel();
+		// The cell host paints the row's zebra; the button sits inset and transparent
+		// on top of it, so the striping shows around it. (The button alone would fill
+		// the whole cell with its skinned face and hide the zebra.)
+		private final JPanel          host = new JPanel(new BorderLayout());
+		BuyStreamRenderer() {
+			host.setBorder(BorderFactory.createEmptyBorder(3, 6, 3, 6));
+			button.getComponent().setOpaque(false);
+		}
 		@Override
 		public Component getTableCellRendererComponent(JTable t, Object value, boolean sel,
 				boolean focus, int row, int column) {
+			host.removeAll();
+			host.setOpaque(true);
+			host.setBackground(sel ? ThemeManager.getAccentBackgroundColor()
+			                       : ThemedTableCellRenderer.rowBackground(t, row));
 			PlayRequest req = source.playRequestAt(row);
-			if (req == null) return blank;
+			if (req == null) return host;   // empty cell — just the zebra
 			TrackAvailability a = AvailabilityResolver.get().availabilityFor(req, jtable::repaint);
-			if (a.local()) return fileCell;   // have the file → file icon only, no button
+			if (a.local()) return host;   // already local — nothing to buy/stream, empty cell
 			button.getComponent().setFont(t.getFont());
 			button.getComponent().setText(!a.resolved() ? "…" : (a.hasStream() ? "Stream ▾" : "Buy ▾"));
-			return button.getComponent();
+			host.add(button.getComponent(), BorderLayout.CENTER);
+			return host;
 		}
 	}
 
@@ -433,22 +444,6 @@ public class MusicTable extends JPanel {
 			super();
 			component.setFocusable(false);
 			component.setMargin(new java.awt.Insets(0, 0, 0, 0));
-		}
-	}
-
-	/** A file glyph shown when the track already has a local copy. */
-	private static final class FileCell extends JComponent {
-		private static final long serialVersionUID = 1L;
-		@Override
-		protected void paintComponent(Graphics g) {
-			Graphics2D g2 = (Graphics2D) g.create();
-			g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-			int w = 9, h = 11, fold = 3;
-			int x = (getWidth() - w) / 2, y = (getHeight() - h) / 2;
-			g2.setColor(new Color(150, 200, 255));
-			g2.fillPolygon(new int[]{ x, x + w - fold, x + w, x + w, x },
-			               new int[]{ y, y, y + fold, y + h, y + h }, 5);
-			g2.dispose();
 		}
 	}
 

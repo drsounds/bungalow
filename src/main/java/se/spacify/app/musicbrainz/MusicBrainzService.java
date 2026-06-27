@@ -124,6 +124,7 @@ public class MusicBrainzService implements MusicCatalogueService {
         List<Recording> out = new ArrayList<>();
         if (isBlank(releaseMbid)) return out;
         JsonObject root = get("recording?release=" + encode(releaseMbid)
+            + "&inc=artist-credits"   // browse omits credits by default; needed for the Artists column
             + "&limit=" + clampLimit(limit) + "&offset=" + Math.max(0, offset));
         if (root == null) return out;
         for (JsonElement e : array(root, "recordings")) {
@@ -185,7 +186,24 @@ public class MusicBrainzService implements MusicCatalogueService {
         }
         JsonArray isrcs = o.has("isrcs") && o.get("isrcs").isJsonArray() ? o.getAsJsonArray("isrcs") : new JsonArray();
         if (!isrcs.isEmpty()) rec.setIsrc(isrcs.get(0).getAsString());
+        rec.setArtistNames(artistCredit(o));
         return rec;
+    }
+
+    /** Join a MusicBrainz {@code artist-credit} array into a display string
+     *  (e.g. {@code "A feat. B"}), or null when absent. */
+    private static String artistCredit(JsonObject o) {
+        StringBuilder sb = new StringBuilder();
+        for (JsonElement e : array(o, "artist-credit")) {
+            if (!e.isJsonObject()) continue;
+            JsonObject c = e.getAsJsonObject();
+            String name = str(c, "name");
+            if (name != null) sb.append(name);
+            String join = str(c, "joinphrase");
+            if (join != null) sb.append(join);
+        }
+        String s = sb.toString().trim();
+        return s.isEmpty() ? null : s;
     }
 
     private static Artist toArtist(JsonObject o) {

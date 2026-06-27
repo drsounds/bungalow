@@ -99,17 +99,20 @@ public class Spot09Skin extends SpotSkin {
         int w = control.getComponent().getWidth(), h = control.getComponent().getHeight();
         System.out.println(control.getComponent().isOpaque());
 
-        g2.setColor(tintColor.brighter());
-        g2.fillRoundRect(0, 0, w, h, 4, 4);
-        g2.setColor(tintColor.darker().darker());
-        g2.fillRoundRect(1, 1, w, h, 4, 4);
-
-        g2.setPaint(new LinearGradientPaint(new Point(0, 0), new Point(0, h), new float[] {0, 1}, new Color[] { ColorUtils.darken(tintColor, 1.8f), ColorUtils.darken(tintColor, 1f) }));
-           
-        if (pressed) {
-            g2.setPaint(new LinearGradientPaint(new Point(0, 0), new Point(0, h), new float[] {0, 1}, new Color[] { ColorUtils.darken(tintColor, 0.8f), ColorUtils.darken(tintColor, 0.5f) }));        
+        if (!pressed && control.getComponent().isBorderPainted()) {
+            g2.setColor(tintColor.brighter());
+            g2.fillRoundRect(0, 0, w, h, 4, 4);
+            g2.setColor(tintColor.darker().darker());
+            g2.fillRoundRect(1, 1, w, h, 4, 4);
         }
-        g2.fillRoundRect(1,  1, w - 2, h - 2, 4, 4);
+        if (control.getComponent().isContentAreaFilled()) {
+            g2.setPaint(new LinearGradientPaint(new Point(0, 0), new Point(0, h), new float[] {0, 1}, new Color[] { ColorUtils.darken(tintColor, 1.8f), ColorUtils.darken(tintColor, 1f) }));
+
+            if (pressed) {
+                g2.setPaint(new LinearGradientPaint(new Point(0, 0), new Point(0, h), new float[] {0, 1}, new Color[] { ColorUtils.darken(tintColor, 0.8f), ColorUtils.darken(tintColor, 0.5f) }));
+            }
+            g2.fillRoundRect(1,  1, w - 2, h - 2, 4, 4);
+        }
     }
 
     @Override

@@ -13,7 +13,7 @@ import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.SwingUtilities;
-import javax.swing.plaf.ButtonUI;
+import javax.swing.plaf.basic.BasicButtonUI;
 
 /**
  * The standard push-button control wrapping a {@link JButton}, painted by the
@@ -46,7 +46,7 @@ public class Button extends Control<JButton> {
 	}
 
 	/** Paints the button face through the active skin (same logic as before). */
-	private class SpaceButtonUI extends ButtonUI {
+	private class SpaceButtonUI extends BasicButtonUI {
 
 		private final Insets BUTTON_PADS = new Insets(8, 28, 8, 28);
 
@@ -102,6 +102,10 @@ public class Button extends Control<JButton> {
 		init();
 	}
 
+	private void installModelListener() {
+		component.getModel().addChangeListener(e -> repaint());
+	}
+
 	public Button(String text) {
 		this.component = new Surface();
 		component.setText(text);
@@ -122,6 +126,7 @@ public class Button extends Control<JButton> {
 	}
 
 	private void init() {
+		installModelListener();
 		java.awt.event.MouseAdapter mouse = new java.awt.event.MouseAdapter() {
 			@Override public void mouseEntered(java.awt.event.MouseEvent e) { repaint(); }
 			@Override public void mouseExited(java.awt.event.MouseEvent e)  { repaint(); }
@@ -131,6 +136,7 @@ public class Button extends Control<JButton> {
 			@Override public void mouseReleased(java.awt.event.MouseEvent e) { repaint(); }
 		};
 		component.addMouseListener(mouse);
+		component.setRolloverEnabled(true);
 		component.setUI(new SpaceButtonUI());
 	}
 
