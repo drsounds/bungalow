@@ -44,11 +44,13 @@ even the whole look-and-feel are "apps" that plug in.
    `MusicCatalogueService`, `AuthAspect`, …
 4. [Navigation & Views](navigation-and-views.md) — the `spacify:` URI space, the
    `ViewStack`, and the sidebar.
-5. [Look & feel: Design = Chrome + Skin](look-and-feel.md) — themeable, skinnable,
+5. [Spider templates](spider-templates.md) — the ASP/JSP-style Lua template engine
+   that renders view content into a control tree and posts back on interaction.
+6. [Look & feel: Design = Chrome + Skin](look-and-feel.md) — themeable, skinnable,
    re-chromeable UI selected at runtime.
-6. [Playback & resolution](playback-and-resolution.md) — the play queue and the
+7. [Playback & resolution](playback-and-resolution.md) — the play queue and the
    "Play with…" cross-service resolver.
-7. [Status & roadmap](status-and-roadmap.md) — what is wired today, the known
+8. [Status & roadmap](status-and-roadmap.md) — what is wired today, the known
    gaps in the in-progress refactor, and where the ecosystem is headed.
 
 ## Vocabulary at a glance
@@ -61,6 +63,7 @@ even the whole look-and-feel are "apps" that plug in.
 | **Concept** | A coarse feature domain a plugin activates (library, search, playlists). | `se.spacify.concept.Concept` |
 | **Feature** | A bundle of views + sidebar nodes registered as a unit. | `se.spacify.feature.Feature` |
 | **View** | A screen bound to a `spacify:` URI. | `se.spacify.navigation.View` |
+| **Spider** | A template engine: Lua-preprocessed XUL markup → a control tree, with postbacks. | `se.spacify.app.spider.Spider` |
 | **Design** | A premix of a **Chrome** (window shell/layout) and a **Skin** (control painting). | `se.spacify.design.Design` |
 | **Theme / Taste** | Colour/tint model; `Taste` is the per-window state, `ThemeManager` the live palette. | `se.spacify.ui.theme.*` |
 

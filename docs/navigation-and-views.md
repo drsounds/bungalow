@@ -90,6 +90,18 @@ what keeps the scheme open — a plugin coins its own namespace. Conventions in 
 Query strings (`?q=…`, `?artist=…`) carry view parameters; the accepting view
 parses them in `navigate`.
 
+## Rendering view content with Spider
+
+A view's `navigate` has to produce the actual widgets. It can build them in Java,
+or it can delegate to **[Spider](spider-templates.md)** — an ASP/JSP-style template
+engine that turns Lua-preprocessed XUL markup into a control tree and re-renders on
+postback. A controller yields markup for the URI; the view mounts it via
+`Control.setInnerXul`, which reconciles against the previous render so widget state
+survives. [`TabBarView`](../src/main/java/se/spacify/navigation/TabBarView.java)
+pairs naturally with it: a `<view>`'s `<page>`s become its tabs, and a URI
+**`#fragment`** selects the tab whose id matches (e.g. `spacify:testapp#overview`).
+The [Test App](spider-templates.md#worked-example-the-test-app) is a full example.
+
 ## The sidebar
 
 [`SidebarNode`](../src/main/java/se/spacify/navigation/SidebarNode.java) is a

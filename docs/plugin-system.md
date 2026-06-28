@@ -63,6 +63,7 @@ web                  ← embedded browser / store views
 musicbrainz          ← a MusicCatalogueService (discovery)
 catalog              ← the "Catalogs" sidebar built from every MusicCatalogueService
 youtube              ← a streaming MediaService (resolution fallback)
+testapp              ← hello-world demo of the Spider template engine (spacify:testapp)
 ```
 
 Order matters where one plugin consumes another's contributions — e.g. `catalog`
