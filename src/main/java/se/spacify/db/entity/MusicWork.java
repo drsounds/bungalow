@@ -10,13 +10,10 @@ import com.j256.ormlite.table.DatabaseTable;
  * One MusicWork may have many Recordings (covers, live versions, remasters).
  */
 @DatabaseTable(tableName = "music_works")
-public class MusicWork {
+public class MusicWork extends Node {
 
     @DatabaseField(generatedId = true)
     private int id;
-
-    @DatabaseField(canBeNull = false)
-    private String title;
 
     /** International Standard Musical Work Code — nullable until catalogued. */
     @DatabaseField(unique = true, canBeNull = true)
@@ -27,14 +24,12 @@ public class MusicWork {
 
     public MusicWork() {}
 
-    public MusicWork(String title) { this.title = title; }
+    public MusicWork(String name) { setName(name); }
 
-    public int getId()                               { return id; }
-    public String getTitle()                         { return title; }
-    public void setTitle(String title)               { this.title = title; }
+    public int    getId()                            { return id; }
     public String getIswc()                          { return iswc; }
-    public void setIswc(String iswc)                 { this.iswc = iswc; }
+    public void   setIswc(String iswc)               { this.iswc = iswc; }
     public ForeignCollection<Recording> getRecordings() { return recordings; }
 
-    @Override public String toString() { return title; }
+    @Override public String toString() { return getName(); }
 }

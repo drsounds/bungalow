@@ -2,7 +2,7 @@ package se.spacify.app.catalogue.service;
 
 import se.spacify.db.entity.Artist;
 import se.spacify.db.entity.Recording;
-import se.spacify.db.entity.Release;
+import se.spacify.db.entity.MusicRelease;
 import se.spacify.service.Service;
 
 import java.util.List;
@@ -15,11 +15,11 @@ import java.util.List;
  */
 public interface MusicCatalogueService extends Service {
 
-    List<Release>   searchReleases(String query);
+    List<MusicRelease>   searchReleases(String query);
     List<Recording> searchRecordings(String query);
     List<Artist>    searchArtists(String query);
 
-    Release   getReleaseByMbid(String mbid);
+    MusicRelease   getReleaseByMbid(String mbid);
     Recording getRecordingByIsrc(String isrc);
     Artist    getArtistByIsni(String isni);
 
@@ -31,7 +31,7 @@ public interface MusicCatalogueService extends Service {
     // that don't support browsing simply show nothing rather than break.
 
     /** Releases credited to the given artist (by catalogue id, e.g. MBID). */
-    default List<Release> browseReleasesByArtist(String artistId, int offset, int limit) {
+    default List<MusicRelease> browseReleasesByArtist(String artistId, int offset, int limit) {
         return List.of();
     }
 

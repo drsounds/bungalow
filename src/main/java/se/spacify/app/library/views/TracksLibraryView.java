@@ -7,10 +7,10 @@ import se.spacify.db.DatabaseManager;
 import se.spacify.db.LibraryRepository;
 import se.spacify.db.entity.Playable;
 import se.spacify.db.entity.Recording;
-import se.spacify.db.entity.Release;
+import se.spacify.db.entity.MusicRelease;
 import se.spacify.db.entity.Track;
 import se.spacify.navigation.ViewStack;
-import se.spacify.app.playlist.models.Playlist;
+import se.spacify.db.entity.Playlist;
 import se.spacify.app.playlist.service.PlaylistService;
 import se.spacify.service.media.PlayRequest;
 
@@ -60,7 +60,7 @@ public class TracksLibraryView extends AbstractMusicListView {
     private final Grouping byRelease = new Grouping() {
         @Override public String name() { return "Release"; }
         @Override public GroupRef groupOf(int row) {
-            Release r = rows.get(row).getRelease();
+            MusicRelease r = rows.get(row).getRelease();
             if (r == null) return new GroupRef("release:none", "Unknown release", "");
             return new GroupRef("release:" + r.getId(), r.getTitle(),
                     LibraryRepository.artistNamesForRelease(r));
@@ -128,7 +128,7 @@ public class TracksLibraryView extends AbstractMusicListView {
     protected void onAdd() {
         try {
             List<Recording> recordings = DatabaseManager.getInstance().recordingDao().queryForAll();
-            List<Release>   releases   = DatabaseManager.getInstance().releaseDao().queryForAll();
+            List<MusicRelease>   releases   = DatabaseManager.getInstance().releaseDao().queryForAll();
             if (recordings.isEmpty() || releases.isEmpty()) {
                 JOptionPane.showMessageDialog(getComponent(),
                     "Add at least one recording and one release first.",
@@ -139,7 +139,7 @@ public class TracksLibraryView extends AbstractMusicListView {
             JTextField side   = new JTextField();
             JTextField duration = new JTextField();
             JComboBox<Recording> recCombo = new JComboBox<>(recordings.toArray(new Recording[0]));
-            JComboBox<Release>   relCombo = new JComboBox<>(releases.toArray(new Release[0]));
+            JComboBox<MusicRelease>   relCombo = new JComboBox<>(releases.toArray(new MusicRelease[0]));
             if (!FormDialog.show(getComponent(), "New Track",
                     new String[]{"Track number", "Side", "Duration (m:ss)", "Recording", "Release"},
                     new JComponent[]{number, side, duration, recCombo, relCombo})) return;
@@ -149,7 +149,7 @@ public class TracksLibraryView extends AbstractMusicListView {
             t.setSide(blankToNull(side.getText()));
             t.setDurationMs(parseDuration(duration.getText()));
             t.setRecording((Recording) recCombo.getSelectedItem());
-            t.setRelease((Release) relCombo.getSelectedItem());
+            t.setRelease((MusicRelease) relCombo.getSelectedItem());
             DatabaseManager.getInstance().trackDao().create(t);
         } catch (Exception e) {
             showError(e);
@@ -161,12 +161,12 @@ public class TracksLibraryView extends AbstractMusicListView {
         Track t = rows.get(row);
         try {
             List<Recording> recordings = DatabaseManager.getInstance().recordingDao().queryForAll();
-            List<Release>   releases   = DatabaseManager.getInstance().releaseDao().queryForAll();
+            List<MusicRelease>   releases   = DatabaseManager.getInstance().releaseDao().queryForAll();
             JTextField number = new JTextField(String.valueOf(t.getTrackNumber()));
             JTextField side   = new JTextField(t.getSide());
             JTextField duration = new JTextField(fmtDuration(t.getDurationMs()));
             JComboBox<Recording> recCombo = new JComboBox<>(recordings.toArray(new Recording[0]));
-            JComboBox<Release>   relCombo = new JComboBox<>(releases.toArray(new Release[0]));
+            JComboBox<MusicRelease>   relCombo = new JComboBox<>(releases.toArray(new MusicRelease[0]));
             selectById(recCombo, t.getRecording() != null ? t.getRecording().getId() : -1);
             selectReleaseById(relCombo, t.getRelease() != null ? t.getRelease().getId() : -1);
             if (!FormDialog.show(getComponent(), "Edit Track",
@@ -177,7 +177,7 @@ public class TracksLibraryView extends AbstractMusicListView {
             t.setSide(blankToNull(side.getText()));
             t.setDurationMs(parseDuration(duration.getText()));
             t.setRecording((Recording) recCombo.getSelectedItem());
-            t.setRelease((Release) relCombo.getSelectedItem());
+            t.setRelease((MusicRelease) relCombo.getSelectedItem());
             DatabaseManager.getInstance().trackDao().update(t);
         } catch (Exception e) {
             showError(e);
@@ -212,7 +212,7 @@ public class TracksLibraryView extends AbstractMusicListView {
         }
     }
 
-    private static void selectReleaseById(JComboBox<Release> combo, int id) {
+    private static void selectReleaseById(JComboBox<MusicRelease> combo, int id) {
         for (int i = 0; i < combo.getItemCount(); i++) {
             if (combo.getItemAt(i).getId() == id) { combo.setSelectedIndex(i); return; }
         }

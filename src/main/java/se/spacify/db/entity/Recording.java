@@ -1,21 +1,19 @@
 package se.spacify.db.entity;
 
+import com.j256.ormlite.dao.ForeignCollection;
 import com.j256.ormlite.field.DatabaseField;
-
+import com.j256.ormlite.field.ForeignCollectionField;
 import com.j256.ormlite.table.DatabaseTable;
 
 /**
- * A specific audio recording of a MusicWork.
- * Identified globally by ISRC; local playback uses filePath.
+ * A specific audio recording of a {@link MusicWork}, identified globally by ISRC.
+ *
+ * <p>Local playback is no longer modelled on the recording itself: file paths
+ * live in their own {@link RecordingFile} table so that a local file is just one
+ * more way to play a recording, on equal footing with any streaming service.
  */
 @DatabaseTable(tableName = "recordings")
-public class Recording extends Content implements Playable {
-
-    @DatabaseField(generatedId = true)
-    private int id;
-
-    @DatabaseField(canBeNull = false)
-    private String title;
+public class Recording extends Content<RecordingCreatorCredit> implements Playable {
 
     /** International Standard Recording Code. */
     @DatabaseField(unique = true, canBeNull = true)
@@ -24,42 +22,38 @@ public class Recording extends Content implements Playable {
     @DatabaseField
     private long durationMs;
 
-    /** Absolute path to the local audio file, if available. */
-    @DatabaseField(canBeNull = true)
-    private String filePath;
-
     @DatabaseField(foreign = true, foreignAutoRefresh = true, canBeNull = true, columnName = "music_work_id")
     private MusicWork musicWork;
 
-
+    @ForeignCollectionField(eager = false)
+    private ForeignCollection<RecordingCreatorCredit> creatorCredits;
 
     public Recording() {}
 
-    public Recording(String title) { this.title = title; }
+    public Recording(String name) { setName(name); }
+
+    // ── Content ───────────────────────────────────────────────────────────────
+
+    @Override public ForeignCollection<RecordingCreatorCredit> getCreatorCredits() { return creatorCredits; }
+    @Override public void setCreatorCredits(ForeignCollection<RecordingCreatorCredit> v) { this.creatorCredits = v; }
 
     // ── Playable ──────────────────────────────────────────────────────────────
 
     @Override
     public String getPlayUri() {
-        if (filePath != null) return "spacify:local:" + filePath;
-        if (isrc    != null) return "spacify:recording:isrc:" + isrc;
-        return null;
+        return isrc != null ? "spacify:recording:isrc:" + isrc : null;
     }
 
-    @Override public long   getDurationMs() { return durationMs; }
-    @Override public String getTitle()      { return title; }
+    @Override public long getDurationMs() { return durationMs; }
+    // getTitle() is provided by Node and satisfies Playable.
 
     // ── Getters / setters ─────────────────────────────────────────────────────
 
-    public int       getId()                 { return id; }
-    public void      setTitle(String v)      { this.title = v; }
-    public String    getIsrc()               { return isrc; }
-    public void      setIsrc(String v)       { this.isrc = v; }
-    public void      setDurationMs(long v)   { this.durationMs = v; }
-    public String    getFilePath()           { return filePath; }
-    public void      setFilePath(String v)   { this.filePath = v; }
-    public MusicWork getMusicWork()          { return musicWork; }
+    public String    getIsrc()                 { return isrc; }
+    public void      setIsrc(String v)         { this.isrc = v; }
+    public void      setDurationMs(long v)     { this.durationMs = v; }
+    public MusicWork getMusicWork()            { return musicWork; }
     public void      setMusicWork(MusicWork v) { this.musicWork = v; }
-    
-    @Override public String toString() { return title; }
+
+    @Override public String toString() { return getName(); }
 }

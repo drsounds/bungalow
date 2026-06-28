@@ -5,14 +5,9 @@ import com.j256.ormlite.field.ForeignCollectionField;
 import com.j256.ormlite.dao.ForeignCollection;
 import com.j256.ormlite.table.DatabaseTable;
 
+/** A music {@link Creator} — performer, composer, producer, etc. */
 @DatabaseTable(tableName = "artists")
-public class Artist {
-
-    @DatabaseField(generatedId = true)
-    private int id;
-
-    @DatabaseField(canBeNull = false)
-    private String name;
+public class Artist extends Creator {
 
     /** International Standard Name Identifier — nullable until resolved. */
     @DatabaseField(unique = true, canBeNull = true)
@@ -23,24 +18,21 @@ public class Artist {
     private String mbid;
 
     @ForeignCollectionField(eager = false)
-    private ForeignCollection<RecordingArtistCredit> recordingCredits;
+    private ForeignCollection<RecordingCreatorCredit> recordingCredits;
 
     @ForeignCollectionField(eager = false)
-    private ForeignCollection<ReleaseArtistCredit> releaseCredits;
+    private ForeignCollection<ReleaseCreatorCredit> releaseCredits;
 
     public Artist() {}
 
-    public Artist(String name) { this.name = name; }
+    public Artist(String name) { setName(name); }
 
-    public int    getId()              { return id; }
-    public String getName()            { return name; }
-    public void   setName(String v)    { this.name = v; }
-    public String getIsni()            { return isni; }
-    public void   setIsni(String v)    { this.isni = v; }
-    public String getMbid()            { return mbid; }
-    public void   setMbid(String v)    { this.mbid = v; }
-    public ForeignCollection<RecordingArtistCredit> getRecordingCredits() { return recordingCredits; }
-    public ForeignCollection<ReleaseArtistCredit>   getReleaseCredits()   { return releaseCredits; }
+    public String getIsni()         { return isni; }
+    public void   setIsni(String v) { this.isni = v; }
+    public String getMbid()         { return mbid; }
+    public void   setMbid(String v) { this.mbid = v; }
+    public ForeignCollection<RecordingCreatorCredit> getRecordingCredits() { return recordingCredits; }
+    public ForeignCollection<ReleaseCreatorCredit>   getReleaseCredits()   { return releaseCredits; }
 
-    @Override public String toString() { return name; }
+    @Override public String toString() { return getName(); }
 }

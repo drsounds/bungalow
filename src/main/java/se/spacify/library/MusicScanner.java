@@ -102,7 +102,7 @@ public class MusicScanner {
                         : "SPLOCAL-" + Math.abs(file.getAbsolutePath().hashCode());
 
         Artist    artist    = getOrCreateArtist(artistName, result);
-        Release   release   = getOrCreateRelease(albumTitle, albumArtist, result);
+        MusicRelease   release   = getOrCreateRelease(albumTitle, albumArtist, result);
         Recording recording = getOrCreateRecording(isrc, title, file.getAbsolutePath(), durationMs, artist, result);
         getOrCreateTrack(recording, release, trackNumber, durationMs, result);
         getOrCreateLocalFile(isrc, title, artistName, albumTitle, file.getAbsolutePath(), result);
@@ -120,9 +120,9 @@ public class MusicScanner {
         return a;
     }
 
-    private Release getOrCreateRelease(String title, String albumArtist, ScanResult result) throws Exception {
-        Dao<Release, Integer> dao = db().releaseDao();
-        for (Release r : dao.queryForEq("title", title)) {
+    private MusicRelease getOrCreateRelease(String title, String albumArtist, ScanResult result) throws Exception {
+        Dao<MusicRelease, Integer> dao = db().releaseDao();
+        for (MusicRelease r : dao.queryForEq("title", title)) {
             // Same title AND same album artist counts as the same release, so we
             // don't merge unrelated albums that happen to share a title.
             if (albumArtist == null || albumArtist.isBlank()
@@ -130,13 +130,13 @@ public class MusicScanner {
                 return r;
             }
         }
-        Release r = new Release(title);
-        r.setType(Release.ReleaseType.ALBUM);
+        MusicRelease r = new MusicRelease(title);
+        r.setType(MusicRelease.ReleaseType.ALBUM);
         dao.create(r);
         result.releasesAdded++;
         if (albumArtist != null && !albumArtist.isBlank()) {
             Artist a = getOrCreateArtist(albumArtist, result);
-            db().releaseArtistCreditDao().create(new ReleaseArtistCredit(r, a, true, "performer"));
+            db().releaseArtistCreditDao().create(new ReleaseCreatorCredit(r, a, true, "performer"));
         }
         return r;
     }
@@ -148,15 +148,15 @@ public class MusicScanner {
         if (!existing.isEmpty()) return existing.get(0);
         Recording rec = new Recording(title);
         rec.setIsrc(isrc);
-        rec.setFilePath(filePath);
         rec.setDurationMs(durationMs);
         dao.create(rec);
+        if (filePath != null) db().recordingFileDao().create(new RecordingFile(rec, filePath));
         result.recordingsAdded++;
-        db().recordingArtistCreditDao().create(new RecordingArtistCredit(rec, artist, true, "performer"));
+        db().recordingArtistCreditDao().create(new RecordingCreatorCredit(rec, artist, true, "performer"));
         return rec;
     }
 
-    private void getOrCreateTrack(Recording recording, Release release, int trackNumber,
+    private void getOrCreateTrack(Recording recording, MusicRelease release, int trackNumber,
             long durationMs, ScanResult result) throws Exception {
         Dao<Track, Integer> dao = db().trackDao();
         List<Track> existing = dao.queryBuilder().where()

@@ -9,7 +9,7 @@ import se.spacify.aspect.Aspect;
 import se.spacify.aspect.AspectManager;
 import se.spacify.db.LibraryRepository;
 import se.spacify.db.entity.Artist;
-import se.spacify.db.entity.Release;
+import se.spacify.db.entity.MusicRelease;
 import se.spacify.app.catalogue.service.MusicCatalogueService;
 import se.spacify.search.EntityKind;
 import se.spacify.search.SearchProvider;
@@ -43,7 +43,7 @@ public final class CatalogueSearchProvider implements SearchProvider {
                         "spacify:catalog:" + svc.getId() + ":releases?artist=" + enc(a.getMbid()), svc.getName()));
                 }
                 n = 0;
-                for (Release r : svc.searchReleases(query)) {
+                for (MusicRelease r : svc.searchReleases(query)) {
                     if (r.getMbid() == null || n++ >= LIMIT) break;
                     out.add(new SearchResult(EntityKind.RELEASE, r.getTitle(),
                         LibraryRepository.artistNamesForRelease(r),

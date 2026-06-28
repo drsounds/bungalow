@@ -62,8 +62,8 @@ public class RecordingsLibraryView extends AbstractMusicListView {
             Recording r = new Recording(title.getText().trim());
             r.setIsrc(blankToNull(isrc.getText()));
             r.setDurationMs(parseDuration(duration.getText()));
-            r.setFilePath(blankToNull(filePath.getText()));
             DatabaseManager.getInstance().recordingDao().create(r);
+            LibraryRepository.setFilePathForRecording(r, blankToNull(filePath.getText()));
             LibraryRepository.setRecordingArtists(r, LibraryRepository.parseArtistNames(artists.getText()));
         } catch (Exception e) {
             showError(e);
@@ -77,7 +77,7 @@ public class RecordingsLibraryView extends AbstractMusicListView {
         JTextField artists  = new JTextField(LibraryRepository.artistNamesForRecording(r));
         JTextField isrc     = new JTextField(r.getIsrc());
         JTextField duration = new JTextField(fmtDuration(r.getDurationMs()));
-        JTextField filePath = new JTextField(r.getFilePath());
+        JTextField filePath = new JTextField(LibraryRepository.filePathForRecording(r));
         if (!FormDialog.show(getComponent(), "Edit Recording",
                 new String[]{"Title", "Artists (comma-separated)", "ISRC", "Duration (m:ss)", "File path"},
                 new JComponent[]{title, artists, isrc, duration, filePath})) return;
@@ -86,8 +86,8 @@ public class RecordingsLibraryView extends AbstractMusicListView {
             r.setTitle(title.getText().trim());
             r.setIsrc(blankToNull(isrc.getText()));
             r.setDurationMs(parseDuration(duration.getText()));
-            r.setFilePath(blankToNull(filePath.getText()));
             DatabaseManager.getInstance().recordingDao().update(r);
+            LibraryRepository.setFilePathForRecording(r, blankToNull(filePath.getText()));
             LibraryRepository.setRecordingArtists(r, LibraryRepository.parseArtistNames(artists.getText()));
         } catch (Exception e) {
             showError(e);

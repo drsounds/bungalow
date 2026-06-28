@@ -3,7 +3,7 @@ package se.spacify.app.library.service;
 import se.spacify.db.entity.Artist;
 import se.spacify.db.entity.LocalFile;
 import se.spacify.db.entity.Recording;
-import se.spacify.db.entity.Release;
+import se.spacify.db.entity.MusicRelease;
 import se.spacify.db.entity.Track;
 import se.spacify.service.Service;
 
@@ -21,7 +21,7 @@ import java.util.List;
 public interface LibraryService extends Service {
 
     List<Artist>    getArtists();
-    List<Release>   getReleases();
+    List<MusicRelease>   getReleases();
     List<Recording> getRecordings();
     List<Track>     getTracks();
 

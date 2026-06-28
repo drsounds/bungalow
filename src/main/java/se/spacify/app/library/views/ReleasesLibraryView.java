@@ -4,8 +4,8 @@ import se.spacify.app.music.views.AbstractMusicListView;
 
 import se.spacify.db.DatabaseManager;
 import se.spacify.db.LibraryRepository;
-import se.spacify.db.entity.Release;
-import se.spacify.db.entity.Release.ReleaseType;
+import se.spacify.db.entity.MusicRelease;
+import se.spacify.db.entity.MusicRelease.ReleaseType;
 import se.spacify.navigation.ViewStack;
 
 import javax.swing.*;
@@ -19,7 +19,7 @@ public class ReleasesLibraryView extends AbstractMusicListView {
         super(viewStack);
         //TODO Auto-generated constructor stub
     }
-    private final List<Release> rows = new ArrayList<>();
+    private final List<MusicRelease> rows = new ArrayList<>();
 
     @Override protected List<MusicTable.Column> getColumns() {
         return List.of(
@@ -34,7 +34,7 @@ public class ReleasesLibraryView extends AbstractMusicListView {
         rows.clear();
         musicTable.clear();
         try {
-            for (Release r : DatabaseManager.getInstance().releaseDao().queryForAll()) {
+            for (MusicRelease r : DatabaseManager.getInstance().releaseDao().queryForAll()) {
                 rows.add(r);
                 addRow(row()
                     .set("name",    r.getTitle())
@@ -60,7 +60,7 @@ public class ReleasesLibraryView extends AbstractMusicListView {
                 new JComponent[]{title, artists, type, date, upc, mbid})) return;
         if (title.getText().isBlank()) return;
         try {
-            Release r = new Release(title.getText().trim());
+            MusicRelease r = new MusicRelease(title.getText().trim());
             r.setType((ReleaseType) type.getSelectedItem());
             r.setReleaseDate(blankToNull(date.getText()));
             r.setUpc(blankToNull(upc.getText()));
@@ -74,7 +74,7 @@ public class ReleasesLibraryView extends AbstractMusicListView {
 
     @Override
     protected void onEdit(int row) {
-        Release r = rows.get(row);
+        MusicRelease r = rows.get(row);
         JTextField title   = new JTextField(r.getTitle());
         JTextField artists = new JTextField(LibraryRepository.artistNamesForRelease(r));
         JComboBox<ReleaseType> type = new JComboBox<>(ReleaseType.values());
@@ -101,7 +101,7 @@ public class ReleasesLibraryView extends AbstractMusicListView {
 
     @Override
     protected void onDelete(int row) {
-        Release r = rows.get(row);
+        MusicRelease r = rows.get(row);
         if (!confirmDelete("release \"" + r.getTitle() + "\"")) return;
         try {
             DatabaseManager.getInstance().releaseArtistCreditDao().delete(

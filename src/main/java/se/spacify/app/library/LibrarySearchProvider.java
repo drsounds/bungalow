@@ -9,7 +9,7 @@ import se.spacify.db.DatabaseManager;
 import se.spacify.db.LibraryRepository;
 import se.spacify.db.entity.Artist;
 import se.spacify.db.entity.Recording;
-import se.spacify.db.entity.Release;
+import se.spacify.db.entity.MusicRelease;
 import se.spacify.db.entity.Track;
 import se.spacify.search.EntityKind;
 import se.spacify.search.SearchProvider;
@@ -37,7 +37,7 @@ public final class LibrarySearchProvider implements SearchProvider {
                 out.add(new SearchResult(EntityKind.ARTIST, a.getName(), "",
                     "spacify:library:artist:" + a.getId(), getName()));
             }
-            for (Release r : db.releaseDao().queryBuilder().limit(LIMIT).where().like("title", like).query()) {
+            for (MusicRelease r : db.releaseDao().queryBuilder().limit(LIMIT).where().like("title", like).query()) {
                 out.add(new SearchResult(EntityKind.RELEASE, r.getTitle(),
                     LibraryRepository.artistNamesForRelease(r),
                     "spacify:library:release:" + r.getId(), getName()));

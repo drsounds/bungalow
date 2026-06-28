@@ -1,6 +1,6 @@
 package se.spacify.app.catalogue.views;
 
-import se.spacify.db.entity.Release;
+import se.spacify.db.entity.MusicRelease;
 import se.spacify.navigation.ViewStack;
 import se.spacify.app.catalogue.service.MusicCatalogueService;
 import se.spacify.app.music.controls.MusicTable;
@@ -14,7 +14,7 @@ import java.util.List;
  * ({@code ?artist=<mbid>} → browse the artist's releases) or by typing a search.
  * Double-clicking a release drills into its Recordings.
  */
-public class ReleasesCatalogView extends AbstractCatalogView<Release> {
+public class ReleasesCatalogView extends AbstractCatalogView<MusicRelease> {
 
     public ReleasesCatalogView(ViewStack viewStack) { super(viewStack); }
 
@@ -27,14 +27,14 @@ public class ReleasesCatalogView extends AbstractCatalogView<Release> {
     }
 
     @Override
-    protected List<Release> fetch(MusicCatalogueService svc) {
+    protected List<MusicRelease> fetch(MusicCatalogueService svc) {
         String artist = param("artist");
         if (artist != null) return svc.browseReleasesByArtist(artist, 0, 100);
         return query().isBlank() ? List.of() : svc.searchReleases(query());
     }
 
     @Override
-    protected MusicTable.Row toRow(Release r) {
+    protected MusicTable.Row toRow(MusicRelease r) {
         return row()
             .set("release", r.getTitle())
             .set("date",    r.getReleaseDate());
@@ -42,7 +42,7 @@ public class ReleasesCatalogView extends AbstractCatalogView<Release> {
 
     @Override
     protected void onActivate(int row) {
-        Release r = rows.get(row);
+        MusicRelease r = rows.get(row);
         if (r.getMbid() != null) {
             open("recordings?release=" + URLEncoder.encode(r.getMbid(), StandardCharsets.UTF_8));
         }

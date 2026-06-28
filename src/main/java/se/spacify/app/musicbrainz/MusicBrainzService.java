@@ -9,7 +9,7 @@ import se.spacify.aspect.Aspect;
 import se.spacify.aspect.AspectManager;
 import se.spacify.db.entity.Artist;
 import se.spacify.db.entity.Recording;
-import se.spacify.db.entity.Release;
+import se.spacify.db.entity.MusicRelease;
 import se.spacify.app.catalogue.service.MusicCatalogueService;
 
 import java.net.URI;
@@ -69,8 +69,8 @@ public class MusicBrainzService implements MusicCatalogueService {
     // ── Search ──────────────────────────────────────────────────────────────────
 
     @Override
-    public List<Release> searchReleases(String query) {
-        List<Release> out = new ArrayList<>();
+    public List<MusicRelease> searchReleases(String query) {
+        List<MusicRelease> out = new ArrayList<>();
         if (isBlank(query)) return out;
         JsonObject root = get("release?query=" + encode(query) + "&limit=" + SEARCH_LIMIT);
         if (root == null) return out;
@@ -107,8 +107,8 @@ public class MusicBrainzService implements MusicCatalogueService {
     // ── Browsing ────────────────────────────────────────────────────────────────
 
     @Override
-    public List<Release> browseReleasesByArtist(String artistMbid, int offset, int limit) {
-        List<Release> out = new ArrayList<>();
+    public List<MusicRelease> browseReleasesByArtist(String artistMbid, int offset, int limit) {
+        List<MusicRelease> out = new ArrayList<>();
         if (isBlank(artistMbid)) return out;
         JsonObject root = get("release?artist=" + encode(artistMbid)
             + "&limit=" + clampLimit(limit) + "&offset=" + Math.max(0, offset));
@@ -141,7 +141,7 @@ public class MusicBrainzService implements MusicCatalogueService {
     // ── Lookups ───────────────────────────────────────────────────────────────
 
     @Override
-    public Release getReleaseByMbid(String mbid) {
+    public MusicRelease getReleaseByMbid(String mbid) {
         if (isBlank(mbid)) return null;
         JsonObject root = get("release/" + encode(mbid));
         return root != null ? toRelease(root) : null;
@@ -170,8 +170,8 @@ public class MusicBrainzService implements MusicCatalogueService {
 
     // ── JSON → entity mapping ───────────────────────────────────────────────────
 
-    private static Release toRelease(JsonObject o) {
-        Release r = new Release(str(o, "title"));
+    private static MusicRelease toRelease(JsonObject o) {
+        MusicRelease r = new MusicRelease(str(o, "title"));
         r.setMbid(str(o, "id"));
         r.setReleaseDate(str(o, "date"));
         String barcode = str(o, "barcode");

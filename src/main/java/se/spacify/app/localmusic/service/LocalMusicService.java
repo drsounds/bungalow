@@ -3,9 +3,10 @@ package se.spacify.app.localmusic.service;
 import se.spacify.aspect.Aspect;
 import se.spacify.aspect.AspectManager;
 import se.spacify.db.DatabaseManager;
+import se.spacify.db.LibraryRepository;
 import se.spacify.db.entity.LocalFile;
 import se.spacify.db.entity.Recording;
-import se.spacify.db.entity.RecordingArtistCredit;
+import se.spacify.db.entity.RecordingCreatorCredit;
 import se.spacify.app.Application;
 import se.spacify.service.media.PlaybackSupport;
 
@@ -123,8 +124,9 @@ public class LocalMusicService implements MusicService {
                 .queryForEq("isrc", isrc);
             if (results.isEmpty()) { playback.fireError(new Exception("No recording found for ISRC: " + isrc)); return; }
             Recording rec = results.get(0);
-            if (rec.getFilePath() == null) { playback.fireError(new Exception("No local file for ISRC: " + isrc)); return; }
-            loadFile(new File(rec.getFilePath()), rec.getTitle(), primaryArtist(rec), null);
+            String path = LibraryRepository.filePathForRecording(rec);
+            if (path == null) { playback.fireError(new Exception("No local file for ISRC: " + isrc)); return; }
+            loadFile(new File(path), rec.getName(), primaryArtist(rec), null);
         } catch (Exception e) {
             playback.fireError(e);
         }
@@ -143,8 +145,9 @@ public class LocalMusicService implements MusicService {
     public void loadByTitleArtist(String title, String artist) {
         Recording match = lookupByTitleArtist(title, artist);
         if (match == null) { playback.fireError(new Exception("Not found: " + title)); return; }
-        if (match.getFilePath() != null) {
-            loadFile(new File(match.getFilePath()), match.getTitle(), primaryArtist(match), null);
+        String path = LibraryRepository.filePathForRecording(match);
+        if (path != null) {
+            loadFile(new File(path), match.getName(), primaryArtist(match), null);
         } else {
             loadUri(match.getPlayUri());
         }
@@ -179,7 +182,6 @@ public class LocalMusicService implements MusicService {
             if (f != null) {
                 Recording token = new Recording(f.getName());
                 token.setIsrc(f.getIsrc());
-                token.setFilePath(f.getFilePath());
                 return token;
             }
             return null;
@@ -250,7 +252,7 @@ public class LocalMusicService implements MusicService {
         try {
             return DatabaseManager.getInstance().recordingArtistCreditDao()
                 .queryForEq("recording_id", rec.getId()).stream()
-                .filter(RecordingArtistCredit::isPrimary)
+                .filter(RecordingCreatorCredit::isPrimary)
                 .findFirst()
                 .map(c -> c.getArtist().getName())
                 .orElse("");

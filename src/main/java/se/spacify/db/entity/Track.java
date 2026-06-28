@@ -4,14 +4,12 @@ import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
 /**
- * A Recording's concrete appearance on a Release.
- * Carries position metadata (number, side, duration which may differ from the Recording's).
+ * A {@link Recording}'s concrete appearance on a {@link MusicRelease}: a
+ * {@link ContentCollectionRow} carrying position metadata (number, side,
+ * duration which may differ from the Recording's).
  */
 @DatabaseTable(tableName = "tracks")
-public class Track implements Playable {
-
-    @DatabaseField(generatedId = true)
-    private int id;
+public class Track extends ContentCollectionRow<Recording> implements Playable {
 
     @DatabaseField
     private int trackNumber;
@@ -28,7 +26,7 @@ public class Track implements Playable {
     private Recording recording;
 
     @DatabaseField(foreign = true, foreignAutoRefresh = true, canBeNull = false, columnName = "release_id")
-    private Release release;
+    private MusicRelease release;
 
     public Track() {}
 
@@ -36,20 +34,19 @@ public class Track implements Playable {
 
     @Override public String getPlayUri()    { return recording != null ? recording.getPlayUri() : null; }
     @Override public long   getDurationMs() { return durationMs > 0 ? durationMs : (recording != null ? recording.getDurationMs() : 0); }
-    @Override public String getTitle()      { return recording != null ? recording.getTitle() : ""; }
+    @Override public String getTitle()      { return recording != null ? recording.getName() : ""; }
 
     // ── Getters / setters ─────────────────────────────────────────────────────
 
-    public int       getId()                     { return id; }
-    public int       getTrackNumber()            { return trackNumber; }
-    public void      setTrackNumber(int v)       { this.trackNumber = v; }
-    public String    getSide()                   { return side; }
-    public void      setSide(String v)           { this.side = v; }
-    public void      setDurationMs(long v)       { this.durationMs = v; }
-    public Recording getRecording()              { return recording; }
-    public void      setRecording(Recording v)   { this.recording = v; }
-    public Release   getRelease()                { return release; }
-    public void      setRelease(Release v)       { this.release = v; }
+    public int          getTrackNumber()          { return trackNumber; }
+    public void         setTrackNumber(int v)      { this.trackNumber = v; }
+    public String       getSide()                  { return side; }
+    public void         setSide(String v)          { this.side = v; }
+    public void         setDurationMs(long v)      { this.durationMs = v; }
+    public Recording    getRecording()             { return recording; }
+    public void         setRecording(Recording v)  { this.recording = v; }
+    public MusicRelease getRelease()               { return release; }
+    public void         setRelease(MusicRelease v) { this.release = v; }
 
     @Override public String toString() { return trackNumber + ". " + getTitle(); }
 }

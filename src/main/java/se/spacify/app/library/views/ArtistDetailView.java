@@ -6,7 +6,7 @@ import se.spacify.db.DatabaseManager;
 import se.spacify.db.LibraryRepository;
 import se.spacify.db.entity.Artist;
 import se.spacify.db.entity.Recording;
-import se.spacify.db.entity.RecordingArtistCredit;
+import se.spacify.db.entity.RecordingCreatorCredit;
 import se.spacify.navigation.ViewStack;
 import se.spacify.service.media.PlaybackCoordinator;
 
@@ -56,9 +56,9 @@ public class ArtistDetailView extends AbstractMusicListView {
             if (artist == null) { setHeader("Artist not found"); return; }
             setHeader(artist.getName());
 
-            List<RecordingArtistCredit> credits = DatabaseManager.getInstance()
+            List<RecordingCreatorCredit> credits = DatabaseManager.getInstance()
                 .recordingArtistCreditDao().queryForEq("artist_id", artistId);
-            for (RecordingArtistCredit c : credits) {
+            for (RecordingCreatorCredit c : credits) {
                 Recording rec = c.getRecording();
                 if (rec == null) continue;
                 rows.add(rec);
