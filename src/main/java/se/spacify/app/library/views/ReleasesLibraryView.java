@@ -1,4 +1,5 @@
 package se.spacify.app.library.views;
+import se.spacify.app.music.controls.MusicTable;
 import se.spacify.app.music.views.AbstractMusicListView;
 
 import se.spacify.db.DatabaseManager;
@@ -20,23 +21,26 @@ public class ReleasesLibraryView extends AbstractMusicListView {
     }
     private final List<Release> rows = new ArrayList<>();
 
-    @Override protected String[] getColumns() {
-        return new String[]{"Name", "Artists", "Type", "Date"};
+    @Override protected List<MusicTable.Column> getColumns() {
+        return List.of(
+            column("name",    "Name"),
+            column("artists", "Artists"),
+            column("type",    "Type"),
+            column("date",    "Date"));
     }
 
     @Override
     protected void reload() {
         rows.clear();
-        model.setRowCount(0);
+        musicTable.clear();
         try {
             for (Release r : DatabaseManager.getInstance().releaseDao().queryForAll()) {
                 rows.add(r);
-                model.addRow(new Object[]{
-                    r.getTitle(),
-                    LibraryRepository.artistNamesForRelease(r),
-                    r.getType() != null ? r.getType().name() : "",
-                    r.getReleaseDate()
-                });
+                addRow(row()
+                    .set("name",    r.getTitle())
+                    .set("artists", LibraryRepository.artistNamesForRelease(r))
+                    .set("type",    r.getType() != null ? r.getType().name() : "")
+                    .set("date",    r.getReleaseDate()));
             }
         } catch (Exception e) {
             showError(e);

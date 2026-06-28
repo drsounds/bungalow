@@ -10,7 +10,7 @@ import com.j256.ormlite.table.DatabaseTable;
  * Identified globally by ISRC; local playback uses filePath.
  */
 @DatabaseTable(tableName = "recordings")
-public class Recording implements Playable {
+public class Recording extends Content implements Playable {
 
     @DatabaseField(generatedId = true)
     private int id;
@@ -32,16 +32,7 @@ public class Recording implements Playable {
     @DatabaseField(foreign = true, foreignAutoRefresh = true, canBeNull = true, columnName = "music_work_id")
     private MusicWork musicWork;
 
-    @ForeignCollectionField(eager = false)
-    private ForeignCollection<RecordingArtistCredit> artistCredits;
 
-    /**
-     * Display-only artist credit for transient (catalogue / discovery) recordings
-     * that aren't backed by DB {@link RecordingArtistCredit} rows. No
-     * {@code @DatabaseField}, so ORMLite ignores it; persisted recordings carry
-     * their artists in {@link #artistCredits} instead.
-     */
-    private String artistNames;
 
     public Recording() {}
 
@@ -70,9 +61,6 @@ public class Recording implements Playable {
     public void      setFilePath(String v)   { this.filePath = v; }
     public MusicWork getMusicWork()          { return musicWork; }
     public void      setMusicWork(MusicWork v) { this.musicWork = v; }
-    public ForeignCollection<RecordingArtistCredit> getArtistCredits() { return artistCredits; }
-    public String    getArtistNames()          { return artistNames; }
-    public void      setArtistNames(String v)  { this.artistNames = v; }
-
+    
     @Override public String toString() { return title; }
 }

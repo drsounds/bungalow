@@ -20,6 +20,7 @@ import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -49,6 +50,38 @@ public class MusicTable extends JPanel {
 	private static final int BUY_STREAM_COL_WIDTH = 94;
 	private static final int BUY_STREAM_ARROW_W   = 18;
 	private static final int LIB_TOGGLE_COL_WIDTH = 32;
+
+	/** Column key of the managed library-membership (✓/＋) toggle column. */
+	public static final String LIBRARY_TOGGLE_COLUMN = "spacify:library-toggle";
+	/** Column key of the managed trailing Buy/Stream column. */
+	public static final String BUY_STREAM_COLUMN     = "spacify:buy-stream";
+
+	/**
+	 * A caller-defined column: a stable {@code key} (used to address the column and
+	 * to bind row values, so a later view can reorder or drop columns without
+	 * touching its row-building code) and the {@code title} shown in the header.
+	 */
+	public record Column(String key, String title) {}
+
+	/**
+	 * Builder for a keyed table row. Values are bound to columns by key — order is
+	 * irrelevant and unset columns are left blank — so the same row-building code
+	 * works across views that present the columns in different orders or subsets.
+	 * Unlike {@link Map#of}, {@code null} values are allowed.
+	 */
+	public static final class Row {
+		private final Map<String, Object> values = new HashMap<>();
+		/** Bind {@code value} to the column with the given key; returns {@code this}. */
+		public Row set(String key, Object value) {
+			values.put(key, value);
+			return this;
+		}
+	}
+
+	/** Start a new keyed {@link Row}; fill it with {@link Row#set} and pass to {@link #addRow(Row)}. */
+	public static Row row() {
+		return new Row();
+	}
 
 	/**
 	 * Per-row playback metadata and interaction callbacks supplied by the embedding
@@ -82,8 +115,12 @@ public class MusicTable extends JPanel {
 		/** Fallback when the view produces no play-queue items (e.g. open a detail). */
 		default void onActivate(int row) {}
 
-		/** Single-click on a cell that isn't one of the managed columns. */
-		default void onCellClicked(int row, int col) {}
+		/**
+		 * Single-click on a cell that isn't one of the managed columns. {@code columnKey}
+		 * is the {@link Column#key()} of the clicked column (never a positional index),
+		 * or {@code null} if it couldn't be resolved.
+		 */
+		default void onCellClicked(int row, String columnKey) {}
 
 		/** Grouping options for the grouped presentation; read lazily, may be empty. */
 		default List<Grouping> groupings() { return List.of(); }
@@ -114,6 +151,10 @@ public class MusicTable extends JPanel {
 	private final int buyStreamCol;
 	/** Index of the optional library-membership (✓/＋) column, or -1 if absent. */
 	private final int libToggleCol;
+	/** Column key → model column index, for addressing columns without positions. */
+	private final Map<String, Integer> indexByKey;
+	/** Model column index → column key (the inverse of {@link #indexByKey}). */
+	private final String[] keyByIndex;
 
 	// ── Optional grouped presentation ───────────────────────────────────────────
 	private GroupedListPanel groupedPanel;
@@ -123,12 +164,14 @@ public class MusicTable extends JPanel {
 
 	/**
 	 * @param viewStack          used to navigate to a store when "Buy" is chosen
-	 * @param columns            the app's own column headers; the managed
-	 *                           (library-toggle / Buy-Stream) columns are appended
+	 * @param columns            the app's own columns (key + title); the managed
+	 *                           (library-toggle / Buy-Stream) columns are appended.
+	 *                           A later view can present these in any order or drop
+	 *                           some, and addressing stays stable via the keys.
 	 * @param showLibraryToggle  whether to include the ✓/＋ membership column
 	 * @param source             per-row playback metadata and callbacks
 	 */
-	public MusicTable(ViewStack viewStack, String[] columns, boolean showLibraryToggle, Source source) {
+	public MusicTable(ViewStack viewStack, List<Column> columns, boolean showLibraryToggle, Source source) {
 		super(new BorderLayout());
 		this.viewStack = viewStack;
 		this.source = source;
@@ -137,12 +180,31 @@ public class MusicTable extends JPanel {
 		// A trailing Buy/Stream column is appended to every table; its cells are
 		// rendered from per-row availability, not the row data, so rows added with
 		// the caller's column count are padded to fit. An optional library-toggle
-		// column precedes it.
-		String[] cols = new String[columns.length + (showLibraryToggle ? 1 : 0) + 1];
-		System.arraycopy(columns, 0, cols, 0, columns.length);
-		int idx = columns.length;
-		libToggleCol = showLibraryToggle ? idx++ : -1;
+		// column precedes it. Each column carries a stable key so rows are bound by
+		// key (see addRow) and views can reorder/omit columns freely.
+		String[] cols = new String[columns.size() + (showLibraryToggle ? 1 : 0) + 1];
+		keyByIndex = new String[cols.length];
+		indexByKey = new LinkedHashMap<>();
+		for (int i = 0; i < columns.size(); i++) {
+			Column c = columns.get(i);
+			cols[i] = c.title();
+			keyByIndex[i] = c.key();
+			indexByKey.put(c.key(), i);
+		}
+		int idx = columns.size();
+		if (showLibraryToggle) {
+			libToggleCol = idx;
+			cols[idx] = "";
+			keyByIndex[idx] = LIBRARY_TOGGLE_COLUMN;
+			indexByKey.put(LIBRARY_TOGGLE_COLUMN, idx);
+			idx++;
+		} else {
+			libToggleCol = -1;
+		}
 		buyStreamCol = idx;
+		cols[idx] = "";
+		keyByIndex[idx] = BUY_STREAM_COLUMN;
+		indexByKey.put(BUY_STREAM_COLUMN, idx);
 		model = new DefaultTableModel(cols, 0) {
 			private static final long serialVersionUID = 1L;
 			@Override
@@ -171,13 +233,14 @@ public class MusicTable extends JPanel {
 				int row = jtable.rowAtPoint(e.getPoint());
 				if (row < 0)
 					return;
-				int col = jtable.columnAtPoint(e.getPoint());
+				int viewCol = jtable.columnAtPoint(e.getPoint());
+				int col = viewCol < 0 ? -1 : jtable.convertColumnIndexToModel(viewCol);
 				if (e.getClickCount() == 2) {
 					activate(row);
 				} else if (e.getClickCount() == 1) {
 					if (col == libToggleCol && handleLibraryToggleClick(row)) return;
 					if (col == buyStreamCol && handleBuyStreamClick(row, e)) return;
-					source.onCellClicked(row, col);
+					source.onCellClicked(row, keyForColumn(col));
 				}
 			}
 
@@ -224,6 +287,36 @@ public class MusicTable extends JPanel {
 
 	/** The table model to fill; pad-tolerant of the caller's own column count. */
 	public DefaultTableModel getModel() { return model; }
+
+	/** Remove every row, leaving the columns intact. */
+	public void clear() { model.setRowCount(0); }
+
+	/**
+	 * Append a row whose values are bound to columns by key (see {@link #row()}).
+	 * Values land in their column regardless of the order set, columns left unset
+	 * are blank, and keys with no matching column are ignored — so the same call
+	 * works whatever order/subset of columns this table was built with.
+	 */
+	public void addRow(Row row) {
+		Object[] rowData = new Object[model.getColumnCount()];
+		for (Map.Entry<String, Object> e : row.values.entrySet()) {
+			Integer i = indexByKey.get(e.getKey());
+			if (i != null)
+				rowData[i] = e.getValue();
+		}
+		model.addRow(rowData);
+	}
+
+	/** Model column index for a column key, or -1 if this table has no such column. */
+	public int columnIndex(String key) {
+		Integer i = indexByKey.get(key);
+		return i != null ? i : -1;
+	}
+
+	/** The {@link Column#key()} for a model column index, or {@code null} if out of range. */
+	public String keyForColumn(int modelColumn) {
+		return (modelColumn >= 0 && modelColumn < keyByIndex.length) ? keyByIndex[modelColumn] : null;
+	}
 
 	/** The underlying table (for selection queries and repaints). */
 	public Table getTable() { return table; }

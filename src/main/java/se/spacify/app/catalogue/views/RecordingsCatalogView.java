@@ -4,6 +4,7 @@ import se.spacify.db.entity.Recording;
 import se.spacify.library.LibraryEvents;
 import se.spacify.navigation.ViewStack;
 import se.spacify.app.catalogue.service.MusicCatalogueService;
+import se.spacify.app.music.controls.MusicTable;
 import se.spacify.service.media.PlayRequest;
 
 import java.util.List;
@@ -22,9 +23,15 @@ public class RecordingsCatalogView extends AbstractCatalogView<Recording> {
 
     @Override protected String kind() { return "recordings"; }
     @Override protected String searchHint() { return "Search recordings…"; }
-    // Same columns as the library Recordings view, so every recording list reads
-    // the same: Name · Artists · ISRC · Duration.
-    @Override protected String[] getColumns() { return new String[]{"Name", "Artists", "ISRC", "Duration"}; }
+    // Same column keys as the library Recordings view, so every recording list
+    // reads the same: Name · Artists · ISRC · Duration.
+    @Override protected List<MusicTable.Column> getColumns() {
+        return List.of(
+            column("name",     "Name"),
+            column("artists",  "Artists"),
+            column("isrc",     "ISRC"),
+            column("duration", "Duration"));
+    }
 
     @Override
     protected List<Recording> fetch(MusicCatalogueService svc) {
@@ -34,8 +41,12 @@ public class RecordingsCatalogView extends AbstractCatalogView<Recording> {
     }
 
     @Override
-    protected Object[] toRow(Recording r) {
-        return new Object[]{ r.getTitle(), r.getArtistNames(), r.getIsrc(), fmtDuration(r.getDurationMs()) };
+    protected MusicTable.Row toRow(Recording r) {
+        return row()
+            .set("name",     r.getTitle())
+            .set("artists",  r.getArtistNames())
+            .set("isrc",     r.getIsrc())
+            .set("duration", fmtDuration(r.getDurationMs()));
     }
 
     @Override

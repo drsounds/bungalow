@@ -211,8 +211,27 @@ public abstract class AbstractMusicListView extends View {
 
 	// ── Hooks for subclasses ────────────────────────────────────────────────────
 
-	/** Column headers; called once during construction (must be constant). */
-	protected abstract String[] getColumns();
+	/**
+	 * The view's columns (key + title); called once during construction (must be
+	 * constant). Rows are filled by column key (see {@link #addRow}), so a later
+	 * view can reorder or drop columns without changing its row-building code.
+	 */
+	protected abstract List<MusicTable.Column> getColumns();
+
+	/** Convenience: a {@link MusicTable.Column} with the given key and header title. */
+	protected static MusicTable.Column column(String key, String title) {
+		return new MusicTable.Column(key, title);
+	}
+
+	/** Start a keyed row; fill with {@link MusicTable.Row#set} and pass to {@link #addRow}. */
+	protected static MusicTable.Row row() {
+		return MusicTable.row();
+	}
+
+	/** Append a keyed row to the table (values bound by column key, not position). */
+	protected void addRow(MusicTable.Row row) {
+		musicTable.addRow(row);
+	}
 
 	/** Clear and refill {@link #model} from the database. */
 	protected abstract void reload();
@@ -230,8 +249,9 @@ public abstract class AbstractMusicListView extends View {
 	protected void onActivate(int row) {
 	}
 
-	/** Invoked on a single click of a cell; default does nothing. */
-	protected void onCellClicked(int row, int col) {
+	/** Invoked on a single click of a cell; {@code columnKey} is the column's key
+	 *  (see {@link MusicTable.Column#key()}), not a position. Default does nothing. */
+	protected void onCellClicked(int row, String columnKey) {
 	}
 
 	// ── Library-membership toggle (✓/＋) — consistent across track lists ──────────
@@ -331,7 +351,7 @@ public abstract class AbstractMusicListView extends View {
 		@Override public boolean inLibraryAt(int row)       { return AbstractMusicListView.this.inLibraryAt(row); }
 		@Override public void toggleLibraryAt(int row)      { AbstractMusicListView.this.toggleLibraryAt(row); }
 		@Override public void onActivate(int row)           { AbstractMusicListView.this.onActivate(row); }
-		@Override public void onCellClicked(int row, int col) { AbstractMusicListView.this.onCellClicked(row, col); }
+		@Override public void onCellClicked(int row, String columnKey) { AbstractMusicListView.this.onCellClicked(row, columnKey); }
 		@Override public List<MusicTable.Grouping> groupings() { return AbstractMusicListView.this.groupings(); }
 	}
 

@@ -1,4 +1,5 @@
 package se.spacify.app.library.views;
+import se.spacify.app.music.controls.MusicTable;
 import se.spacify.app.music.views.AbstractMusicListView;
 
 import se.spacify.db.DatabaseManager;
@@ -26,20 +27,28 @@ public class LocalFileLibraryView extends AbstractMusicListView {
     }
     private final List<LocalFile> rows = new ArrayList<>();
 
-    @Override protected String[] getColumns() {
-        return new String[]{"Name", "Artist", "Release", "ISRC", "File"};
+    @Override protected List<MusicTable.Column> getColumns() {
+        return List.of(
+            column("name",    "Name"),
+            column("artist",  "Artist"),
+            column("release", "Release"),
+            column("isrc",    "ISRC"),
+            column("file",    "File"));
     }
 
     @Override
     protected void reload() {
         rows.clear();
-        model.setRowCount(0);
+        musicTable.clear();
         try {
             for (LocalFile f : DatabaseManager.getInstance().localFileDao().queryForAll()) {
                 rows.add(f);
-                model.addRow(new Object[]{
-                    f.getName(), f.getArtistName(), f.getReleaseName(), f.getIsrc(), f.getFilePath()
-                });
+                addRow(row()
+                    .set("name",    f.getName())
+                    .set("artist",  f.getArtistName())
+                    .set("release", f.getReleaseName())
+                    .set("isrc",    f.getIsrc())
+                    .set("file",    f.getFilePath()));
             }
         } catch (Exception e) {
             showError(e);

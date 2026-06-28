@@ -1,4 +1,5 @@
 package se.spacify.app.library.views;
+import se.spacify.app.music.controls.MusicTable;
 import se.spacify.app.music.views.AbstractMusicListView;
 
 import se.spacify.db.DatabaseManager;
@@ -31,8 +32,11 @@ public class ReleaseDetailView extends AbstractMusicListView {
 
     @Override protected boolean isEditable() { return false; }
 
-    @Override protected String[] getColumns() {
-        return new String[]{"#", "Recording", "Artists"};
+    @Override protected List<MusicTable.Column> getColumns() {
+        return List.of(
+            column("number",    "#"),
+            column("recording", "Recording"),
+            column("artists",   "Artists"));
     }
 
     @Override
@@ -44,7 +48,7 @@ public class ReleaseDetailView extends AbstractMusicListView {
     @Override
     protected void reload() {
         rows.clear();
-        model.setRowCount(0);
+        musicTable.clear();
         if (releaseId < 0) { setHeader(null); return; }
         try {
             Release release = DatabaseManager.getInstance().releaseDao().queryForId(releaseId);
@@ -57,11 +61,10 @@ public class ReleaseDetailView extends AbstractMusicListView {
             for (Track t : tracks) {
                 rows.add(t);
                 Recording rec = t.getRecording();
-                model.addRow(new Object[]{
-                    t.getTrackNumber(),
-                    rec != null ? rec.getTitle() : "",
-                    rec != null ? LibraryRepository.artistNamesForRecording(rec) : ""
-                });
+                addRow(row()
+                    .set("number",    t.getTrackNumber())
+                    .set("recording", rec != null ? rec.getTitle() : "")
+                    .set("artists",   rec != null ? LibraryRepository.artistNamesForRecording(rec) : ""));
             }
         } catch (Exception e) {
             showError(e);

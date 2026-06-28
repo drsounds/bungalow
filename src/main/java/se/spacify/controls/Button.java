@@ -27,6 +27,14 @@ public class Button extends Control<JButton> {
 
 	private boolean primary = false;
 
+	private String variant = "default";
+
+	public String getVariant() {
+		return variant;
+	}
+	public void setVariant(String variant) {
+		this.variant = variant;
+	}
 	public boolean getPrimary() { return primary; }
 	public void setPrimary(boolean value) { primary = value; }
 
@@ -135,6 +143,7 @@ public class Button extends Control<JButton> {
 			}
 			@Override public void mouseReleased(java.awt.event.MouseEvent e) { repaint(); }
 		};
+		component.setOpaque(false);
 		component.addMouseListener(mouse);
 		component.setRolloverEnabled(true);
 		component.setUI(new SpaceButtonUI());

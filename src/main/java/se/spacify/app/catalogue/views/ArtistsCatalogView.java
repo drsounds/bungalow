@@ -3,6 +3,7 @@ package se.spacify.app.catalogue.views;
 import se.spacify.db.entity.Artist;
 import se.spacify.navigation.ViewStack;
 import se.spacify.app.catalogue.service.MusicCatalogueService;
+import se.spacify.app.music.controls.MusicTable;
 
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
@@ -19,7 +20,9 @@ public class ArtistsCatalogView extends AbstractCatalogView<Artist> {
 
     @Override protected String kind() { return "artists"; }
     @Override protected String searchHint() { return "Search artists…"; }
-    @Override protected String[] getColumns() { return new String[]{"Artist"}; }
+    @Override protected List<MusicTable.Column> getColumns() {
+        return List.of(column("artist", "Artist"));
+    }
 
     @Override
     protected List<Artist> fetch(MusicCatalogueService svc) {
@@ -27,8 +30,8 @@ public class ArtistsCatalogView extends AbstractCatalogView<Artist> {
     }
 
     @Override
-    protected Object[] toRow(Artist a) {
-        return new Object[]{ a.getName() };
+    protected MusicTable.Row toRow(Artist a) {
+        return row().set("artist", a.getName());
     }
 
     @Override

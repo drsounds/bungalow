@@ -1,4 +1,5 @@
 package se.spacify.app.library.views;
+import se.spacify.app.music.controls.MusicTable;
 import se.spacify.app.music.views.AbstractMusicListView;
 
 import se.spacify.db.DatabaseManager;
@@ -33,8 +34,10 @@ public class ArtistDetailView extends AbstractMusicListView {
 
     @Override protected boolean isEditable() { return false; }
 
-    @Override protected String[] getColumns() {
-        return new String[]{"Recording", "Album"};
+    @Override protected List<MusicTable.Column> getColumns() {
+        return List.of(
+            column("recording", "Recording"),
+            column("album",     "Album"));
     }
 
     @Override
@@ -46,7 +49,7 @@ public class ArtistDetailView extends AbstractMusicListView {
     @Override
     protected void reload() {
         rows.clear();
-        model.setRowCount(0);
+        musicTable.clear();
         if (artistId < 0) { setHeader(null); return; }
         try {
             Artist artist = DatabaseManager.getInstance().artistDao().queryForId(artistId);
@@ -59,10 +62,9 @@ public class ArtistDetailView extends AbstractMusicListView {
                 Recording rec = c.getRecording();
                 if (rec == null) continue;
                 rows.add(rec);
-                model.addRow(new Object[]{
-                    rec.getTitle(),
-                    LibraryRepository.albumForRecording(rec)
-                });
+                addRow(row()
+                    .set("recording", rec.getTitle())
+                    .set("album",     LibraryRepository.albumForRecording(rec)));
             }
         } catch (Exception e) {
             showError(e);

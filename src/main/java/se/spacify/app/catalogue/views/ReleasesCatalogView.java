@@ -3,6 +3,7 @@ package se.spacify.app.catalogue.views;
 import se.spacify.db.entity.Release;
 import se.spacify.navigation.ViewStack;
 import se.spacify.app.catalogue.service.MusicCatalogueService;
+import se.spacify.app.music.controls.MusicTable;
 
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
@@ -19,7 +20,11 @@ public class ReleasesCatalogView extends AbstractCatalogView<Release> {
 
     @Override protected String kind() { return "releases"; }
     @Override protected String searchHint() { return "Search releases…"; }
-    @Override protected String[] getColumns() { return new String[]{"Release", "Date"}; }
+    @Override protected List<MusicTable.Column> getColumns() {
+        return List.of(
+            column("release", "Release"),
+            column("date",    "Date"));
+    }
 
     @Override
     protected List<Release> fetch(MusicCatalogueService svc) {
@@ -29,8 +34,10 @@ public class ReleasesCatalogView extends AbstractCatalogView<Release> {
     }
 
     @Override
-    protected Object[] toRow(Release r) {
-        return new Object[]{ r.getTitle(), r.getReleaseDate() };
+    protected MusicTable.Row toRow(Release r) {
+        return row()
+            .set("release", r.getTitle())
+            .set("date",    r.getReleaseDate());
     }
 
     @Override

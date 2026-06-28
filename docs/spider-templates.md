@@ -129,6 +129,26 @@ Markup becomes widgets through
 | `<view>` | [`TabbedPane`](../src/main/java/se/spacify/controls/TabbedPane.java) | children become tabs |
 | `<page>` | [`Panel`](../src/main/java/se/spacify/controls/Panel.java) | a tab; its `title`/`label` is the tab caption |
 | `<element>` / anything else | `Panel` | a plain container |
+| `<a.b.C>` (dotted) | the class `a.b.C` | inflated by reflection — see below |
+
+**Fully-qualified tags (Android-style).** A tag containing a `.` is treated as a
+class name and instantiated by reflection, exactly like a custom-view tag in
+Android layout XML. The class needs a public no-arg constructor and may be either a
+[`Control`](../src/main/java/se/spacify/controls/Control.java) (used directly) or a
+raw Swing/AWT `Component` (wrapped in a
+[`ComponentControl`](../src/main/java/se/spacify/controls/ComponentControl.java)):
+
+```xml
+<se.spacify.controls.GlossyButton>Buy</se.spacify.controls.GlossyButton>
+<javax.swing.JProgressBar/>
+```
+
+This lets a template mount any control or widget without first teaching the short
+vocabulary about it. The class is resolved via the **thread context classloader**
+first (so a control supplied by a separately-loaded plugin jar resolves), falling
+back to the framework's own loader for the built-ins. A missing class or one with no
+usable constructor fails loudly with an `IllegalArgumentException` naming the
+offending element.
 
 ### Reconciliation (React-style)
 

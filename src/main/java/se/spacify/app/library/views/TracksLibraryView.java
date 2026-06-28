@@ -1,4 +1,5 @@
 package se.spacify.app.library.views;
+import se.spacify.app.music.controls.MusicTable;
 import se.spacify.app.music.controls.MusicTable.GroupRef;
 import se.spacify.app.music.controls.MusicTable.Grouping;
 import se.spacify.app.music.views.AbstractMusicListView;
@@ -40,8 +41,12 @@ public class TracksLibraryView extends AbstractMusicListView {
     private static final GroupRef NOT_IN_PLAYLIST =
         new GroupRef("playlist:none", "Not in a playlist", "");
 
-    @Override protected String[] getColumns() {
-        return new String[]{"#", "Recording", "Artists", "Album"};
+    @Override protected List<MusicTable.Column> getColumns() {
+        return List.of(
+            column("number",    "#"),
+            column("recording", "Recording"),
+            column("artists",   "Artists"),
+            column("album",     "Album"));
     }
 
     @Override protected boolean supportsGrouping() { return true; }
@@ -75,7 +80,7 @@ public class TracksLibraryView extends AbstractMusicListView {
     @Override
     protected void reload() {
         rows.clear();
-        model.setRowCount(0);
+        musicTable.clear();
         rebuildPlaylistIndex();
         try {
             // Present albums coherently: group by release title, then within each
@@ -89,12 +94,11 @@ public class TracksLibraryView extends AbstractMusicListView {
             for (Track t : tracks) {
                 rows.add(t);
                 Recording rec = t.getRecording();
-                model.addRow(new Object[]{
-                    t.getTrackNumber(),
-                    rec != null ? rec.getTitle() : "",
-                    rec != null ? LibraryRepository.artistNamesForRecording(rec) : "",
-                    t.getRelease() != null ? t.getRelease().getTitle() : ""
-                });
+                addRow(row()
+                    .set("number",    t.getTrackNumber())
+                    .set("recording", rec != null ? rec.getTitle() : "")
+                    .set("artists",   rec != null ? LibraryRepository.artistNamesForRecording(rec) : "")
+                    .set("album",     t.getRelease() != null ? t.getRelease().getTitle() : ""));
             }
         } catch (Exception e) {
             showError(e);

@@ -289,8 +289,17 @@ public abstract class Control<T extends Component> {
 		control.setInnerXul(element);
 	}
 
-	/** Map a tag name to its control. {@code <element>} and unknown tags become a plain {@link Panel}. */
+	/**
+	 * Map a tag name to its control. A tag containing a {@code '.'} is treated as a
+	 * fully-qualified class name and instantiated by reflection (Android-style, e.g.
+	 * {@code <se.spacify.controls.GlossyButton>}); short names use the built-in
+	 * vocabulary below, with {@code <element>} and any unknown short tag becoming a
+	 * plain {@link Panel}.
+	 */
 	private static Control<?> createControl(String tag) {
+		if (tag.indexOf('.') >= 0) {
+			return instantiate(tag);
+		}
 		return switch (tag) {
 			case "button"               -> new Button();
 			case "hbox"                 -> new HBox();
@@ -300,6 +309,44 @@ public abstract class Control<T extends Component> {
 			case "input"                -> new TextField();
 			default                     -> new Panel();
 		};
+	}
+
+	/**
+	 * Reflectively build the control for a fully-qualified tag. The class must have a
+	 * public no-arg constructor and be either a {@link Control} (used directly) or a
+	 * Swing/AWT {@link Component} (wrapped in a {@link ComponentControl}).
+	 */
+	private static Control<?> instantiate(String className) {
+		try {
+			Object instance = loadClass(className).getDeclaredConstructor().newInstance();
+			if (instance instanceof Control<?> control) {
+				return control;
+			}
+			if (instance instanceof Component component) {
+				return new ComponentControl(component);
+			}
+			throw new IllegalArgumentException(
+				"XUL element <" + className + "> is neither a Control nor a Component");
+		} catch (ReflectiveOperationException e) {
+			throw new IllegalArgumentException("Cannot instantiate XUL element <" + className + ">", e);
+		}
+	}
+
+	/**
+	 * Resolve a fully-qualified XUL element class. The thread context classloader is
+	 * tried first so a {@link Control} (or component) supplied by a separately-loaded
+	 * plugin jar resolves; this class's own loader is the fallback for the built-ins.
+	 */
+	private static Class<?> loadClass(String className) throws ClassNotFoundException {
+		ClassLoader context = Thread.currentThread().getContextClassLoader();
+		if (context != null) {
+			try {
+				return Class.forName(className, true, context);
+			} catch (ClassNotFoundException notInContext) {
+				// Fall back to the loader that defined the control classes.
+			}
+		}
+		return Class.forName(className, true, Control.class.getClassLoader());
 	}
 
 	/** Push text into the controls that carry text; a no-op for the rest. */

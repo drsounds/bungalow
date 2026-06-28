@@ -1,4 +1,5 @@
 package se.spacify.app.downloads;
+import se.spacify.app.music.controls.MusicTable;
 import se.spacify.app.music.views.AbstractMusicListView;
 
 import se.spacify.broadcast.BroadcastManager;
@@ -33,14 +34,21 @@ public class DownloadsView extends AbstractMusicListView {
 
     @Override protected boolean isEditable() { return false; }
 
-    @Override protected String[] getColumns() {
-        return new String[]{"Name", "Artist", "Album", "Size", "Progress", "Speed", "Status"};
+    @Override protected List<MusicTable.Column> getColumns() {
+        return List.of(
+            column("name",     "Name"),
+            column("artist",   "Artist"),
+            column("album",    "Album"),
+            column("size",     "Size"),
+            column("progress", "Progress"),
+            column("speed",    "Speed"),
+            column("status",   "Status"));
     }
 
     @Override
     protected void reload() {
         rows.clear();
-        model.setRowCount(0);
+        musicTable.clear();
         try {
             List<Download> all = DatabaseManager.getInstance().downloadDao().queryForAll();
             all.sort(Comparator.comparingLong(Download::getCreatedAt).reversed());
@@ -48,16 +56,15 @@ public class DownloadsView extends AbstractMusicListView {
             for (Download d : all) {
                 rows.add(d);
                 long speed = svc != null ? svc.speedFor(d.getId()) : 0L;
-                model.addRow(new Object[]{
-                    d.getTitle() != null ? d.getTitle() : d.getFileName(),
-                    d.getArtist() != null ? d.getArtist() : "",
-                    d.getAlbum() != null ? d.getAlbum() : "",
-                    humanBytes(d.getTotalBytes() > 0 ? d.getTotalBytes() : d.getReceivedBytes()),
-                    d.getStatus() == Download.Status.DOWNLOADING && d.percent() >= 0 ? d.percent() + "%"
-                        : d.getStatus() == Download.Status.COMPLETE ? "100%" : "—",
-                    speed > 0 ? humanBytes(speed) + "/s" : "",
-                    statusText(d.getStatus())
-                });
+                addRow(row()
+                    .set("name",     d.getTitle() != null ? d.getTitle() : d.getFileName())
+                    .set("artist",   d.getArtist() != null ? d.getArtist() : "")
+                    .set("album",    d.getAlbum() != null ? d.getAlbum() : "")
+                    .set("size",     humanBytes(d.getTotalBytes() > 0 ? d.getTotalBytes() : d.getReceivedBytes()))
+                    .set("progress", d.getStatus() == Download.Status.DOWNLOADING && d.percent() >= 0 ? d.percent() + "%"
+                        : d.getStatus() == Download.Status.COMPLETE ? "100%" : "—")
+                    .set("speed",    speed > 0 ? humanBytes(speed) + "/s" : "")
+                    .set("status",   statusText(d.getStatus())));
             }
         } catch (Exception e) {
             showError(e);

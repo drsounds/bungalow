@@ -2,6 +2,7 @@ package se.spacify.app.catalogue.views;
 
 import se.spacify.navigation.ViewStack;
 import se.spacify.app.catalogue.service.MusicCatalogueService;
+import se.spacify.app.music.controls.MusicTable;
 import se.spacify.app.music.views.AbstractMusicListView;
 
 import javax.swing.JComponent;
@@ -96,7 +97,7 @@ public abstract class AbstractCatalogView<T> extends AbstractMusicListView {
         final long seq = ++requestSeq;
         final MusicCatalogueService svc = Service();
         rows.clear();
-        model.setRowCount(0);
+        musicTable.clear();
         if (svc == null) {
             setHeader("Catalogue unavailable");
             return;
@@ -112,10 +113,10 @@ public abstract class AbstractCatalogView<T> extends AbstractMusicListView {
                 List<T> items;
                 try { items = get(); } catch (Exception ex) { items = List.of(); }
                 rows.clear();
-                model.setRowCount(0);
+                musicTable.clear();
                 for (T it : items) {
                     rows.add(it);
-                    model.addRow(toRow(it));
+                    addRow(toRow(it));
                 }
                 setHeader(items.isEmpty() ? emptyHeader(svc) : resultHeader(svc, items.size()));
             }
@@ -125,8 +126,8 @@ public abstract class AbstractCatalogView<T> extends AbstractMusicListView {
     /** Fetch the rows; runs off the EDT, so blocking network I/O belongs here. */
     protected abstract List<T> fetch(MusicCatalogueService svc) throws Exception;
 
-    /** Build the table row for an item; runs on the EDT. */
-    protected abstract Object[] toRow(T item);
+    /** Build the keyed table row for an item (see {@link #row()}); runs on the EDT. */
+    protected abstract MusicTable.Row toRow(T item);
 
     // ── Header text (overridable per view) ──────────────────────────────────────
 
