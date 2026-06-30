@@ -17,6 +17,8 @@ import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
 import java.awt.*;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.Transferable;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
@@ -141,6 +143,12 @@ public class MusicTable extends JPanel {
 		GroupRef groupOf(int modelRow);
 	}
 
+	/** Notified when the user drags a flat-table row from one position to another. */
+	public interface ReorderHandler {
+		/** Move the item at {@code fromRow} so it lands at {@code toRow} (post-removal index). */
+		void reorder(int fromRow, int toRow);
+	}
+
 	private final ViewStack viewStack;
 	private final Source source;
 	private final DefaultTableModel model;
@@ -161,6 +169,12 @@ public class MusicTable extends JPanel {
 	private List<Grouping> cachedGroupings;
 	private Grouping currentGrouping;
 	private boolean grouped;
+
+	// ── Optional row drag-and-drop reorder ──────────────────────────────────────
+	/** Notified when a row is dragged to a new position; null disables reordering. */
+	private ReorderHandler reorderHandler;
+	private static final DataFlavor ROW_INDEX_FLAVOR =
+		new DataFlavor(Integer.class, "application/x-spacify-row-index");
 
 	/**
 	 * @param viewStack          used to navigate to a store when "Buy" is chosen
@@ -323,6 +337,29 @@ public class MusicTable extends JPanel {
 
 	/** The selected model row, or -1. */
 	public int getSelectedRow() { return jtable.getSelectedRow(); }
+
+	/** Select the given model row (no-op if out of range). */
+	public void selectRow(int row) {
+		if (row >= 0 && row < model.getRowCount()) jtable.setRowSelectionInterval(row, row);
+	}
+
+	/**
+	 * Enable row drag-and-drop reordering of the flat table, routing each drop to
+	 * {@code handler}; pass {@code null} to disable. Reordering is suppressed while
+	 * the grouped presentation is showing. The handler is expected to apply the move
+	 * and refresh the model (e.g. via the playlist service + its change event).
+	 */
+	public void setReorderHandler(ReorderHandler handler) {
+		this.reorderHandler = handler;
+		boolean on = handler != null;
+		jtable.setDragEnabled(on);
+		if (on) {
+			jtable.setDropMode(DropMode.INSERT_ROWS);
+			jtable.setTransferHandler(new RowReorderTransferHandler());
+		} else {
+			jtable.setTransferHandler(null);
+		}
+	}
 
 	/**
 	 * Call after the model has been (re)filled: sizes the managed columns (hiding
@@ -538,6 +575,45 @@ public class MusicTable extends JPanel {
 			component.setFocusable(false);
 			component.setMargin(new java.awt.Insets(0, 0, 0, 0));
 		}
+	}
+
+	// ── Row drag-and-drop reorder ────────────────────────────────────────────────
+
+	/** Exports the dragged model row index and forwards the drop to {@link #reorderHandler}. */
+	private final class RowReorderTransferHandler extends TransferHandler {
+		private static final long serialVersionUID = 1L;
+
+		@Override public int getSourceActions(JComponent c) { return MOVE; }
+
+		@Override protected Transferable createTransferable(JComponent c) {
+			return new RowIndexTransferable(jtable.getSelectedRow());
+		}
+
+		@Override public boolean canImport(TransferSupport support) {
+			return support.isDrop() && !grouped && support.isDataFlavorSupported(ROW_INDEX_FLAVOR);
+		}
+
+		@Override public boolean importData(TransferSupport support) {
+			if (!canImport(support) || reorderHandler == null) return false;
+			try {
+				int from = (Integer) support.getTransferable().getTransferData(ROW_INDEX_FLAVOR);
+				JTable.DropLocation dl = (JTable.DropLocation) support.getDropLocation();
+				int insert = dl.getRow();                 // 0..rowCount insert index
+				int to = insert > from ? insert - 1 : insert;
+				if (from < 0 || to < 0 || from == to) return false;
+				reorderHandler.reorder(from, to);
+				return true;
+			} catch (Exception e) {
+				return false;
+			}
+		}
+	}
+
+	/** A single model-row index carried during a reorder drag. */
+	private record RowIndexTransferable(Integer row) implements Transferable {
+		@Override public DataFlavor[] getTransferDataFlavors() { return new DataFlavor[]{ ROW_INDEX_FLAVOR }; }
+		@Override public boolean isDataFlavorSupported(DataFlavor f) { return ROW_INDEX_FLAVOR.equals(f); }
+		@Override public Object getTransferData(DataFlavor f) { return row; }
 	}
 
 	// ── Grouped presentation ─────────────────────────────────────────────────────

@@ -35,6 +35,19 @@ public class PlaylistView extends AbstractMusicListView {
     public PlaylistView(ViewStack viewStack) {
         super(viewStack);
         PlaylistEvents.addListener(onPlaylistsChanged);
+        musicTable.setReorderHandler(this::reorder);
+    }
+
+    /** Apply a drag-and-drop reorder, then keep the moved row selected. */
+    private void reorder(int from, int to) {
+        PlaylistService svc = ownerOf(currentId);
+        if (svc == null || !svc.isEditable()) return;
+        try {
+            svc.moveRow(currentId, from, to);
+            musicTable.selectRow(to);
+        } catch (Exception e) {
+            showError(e);
+        }
     }
 
     // ── Catalogue CRUD toolbar off; we manage playlist-level actions instead ────
