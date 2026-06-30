@@ -18,12 +18,13 @@ they only know **aspects** (capability interfaces).
 │                 discovers, activates, and *undoes* plugin contributions │
 ├───────────────────────────────────────────────────────────────────────┤
 │  contributions  Service · Concept · Feature · View · SidebarNode        │
-│                 Chrome · Skin · Design · Theme                          │
+│                 Entity · Chrome · Skin · Design · Theme                  │
 ├───────────────────────────────────────────────────────────────────────┤
 │  aspects        MediaService · MusicService · MusicCatalogueService     │
 │                 PlaylistService · AuthAspect  (capability interfaces)   │
 ├───────────────────────────────────────────────────────────────────────┤
-│  infra          DatabaseManager (ORMLite/SQLite) · web (JCEF) · controls│
+│  infra          DatabaseManager (ORMLite/SQLite connection + DAO registry)│
+│                 web (JCEF) · controls                                    │
 └───────────────────────────────────────────────────────────────────────┘
 ```
 
@@ -106,9 +107,17 @@ in [Playback & resolution](playback-and-resolution.md).
 
 ## Where state lives
 
-- **Library data** — SQLite via ORMLite, behind
-  [`DatabaseManager`](../src/main/java/se/spacify/db/DatabaseManager.java)
-  (`Artist`, `Release`, `Recording`, `Track`, `LocalFile`, `MusicServiceTrack`, …).
+- **Entity data** — SQLite via ORMLite. Entities are owned **per app/concept**,
+  not globally: each concept declares its entity classes in its own `model`
+  package and registers their tables on activation via
+  `ConceptContext.registerEntity(Class)` (e.g. the `music` concept owns the shared
+  content model — `Artist`/`Recording`/`MusicRelease`/`Track`/… in
+  [`app/music/model`](../src/main/java/se/spacify/app/music/model/) — while
+  `playlist`, `downloads`, `web`, `media` and `localmusic` each own their own
+  tables). [`DatabaseManager`](../src/main/java/se/spacify/db/DatabaseManager.java)
+  knows about no concrete entity; it just owns the connection and hands out cached,
+  table-creating DAOs via `dao(Class)`. See
+  [`db/PLANS.md`](../src/main/java/se/spacify/db/PLANS.md).
 - **Plugin enable/disable** — `~/.spacify/plugins/state.properties`.
 - **Per-plugin settings** — `~/.spacify/plugins/<id>.properties` via `PluginSettings`.
 - **Theme / tint / accent / selected design** — `~/.spacify/settings.properties`
