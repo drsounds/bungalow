@@ -4,9 +4,9 @@ import se.spacify.app.music.views.AbstractMusicListView;
 
 import se.spacify.db.DatabaseManager;
 import se.spacify.db.LibraryRepository;
-import se.spacify.db.entity.Recording;
-import se.spacify.db.entity.MusicRelease;
-import se.spacify.db.entity.Track;
+import se.spacify.app.music.model.Recording;
+import se.spacify.app.music.model.MusicRelease;
+import se.spacify.app.music.model.Track;
 import se.spacify.navigation.ViewStack;
 import se.spacify.service.media.PlayRequest;
 
@@ -51,12 +51,12 @@ public class ReleaseDetailView extends AbstractMusicListView {
         musicTable.clear();
         if (releaseId < 0) { setHeader(null); return; }
         try {
-            MusicRelease release = DatabaseManager.getInstance().releaseDao().queryForId(releaseId);
+            MusicRelease release = DatabaseManager.getInstance().dao(MusicRelease.class).queryForId(releaseId);
             if (release == null) { setHeader("Release not found"); return; }
             String artists = LibraryRepository.artistNamesForRelease(release);
             setHeader(artists.isBlank() ? release.getTitle() : release.getTitle() + " — " + artists);
 
-            List<Track> tracks = DatabaseManager.getInstance().trackDao().queryForEq("release_id", releaseId);
+            List<Track> tracks = DatabaseManager.getInstance().dao(Track.class).queryForEq("release_id", releaseId);
             tracks.sort(LibraryRepository.ALBUM_ORDER);
             for (Track t : tracks) {
                 rows.add(t);

@@ -37,6 +37,9 @@ public class PlaylistConcept implements Concept {
 
     @Override
     public void onActivate(ConceptContext ctx) {
+        ctx.registerEntity(se.spacify.app.playlist.model.Playlist.class);
+        ctx.registerEntity(se.spacify.app.playlist.model.PlaylistRow.class);
+
         ctx.registerView(new PlaylistView(getViewStack()));
 
         SidebarNode root = new SidebarNode("Playlists", "spacify:playlists");

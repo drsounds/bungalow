@@ -5,11 +5,11 @@ import se.spacify.aspect.Aspect;
 import se.spacify.aspect.AspectManager;
 import se.spacify.db.DatabaseManager;
 import se.spacify.db.LibraryRepository;
-import se.spacify.db.entity.Playable;
-import se.spacify.db.entity.Playlist;
-import se.spacify.db.entity.PlaylistRow;
-import se.spacify.db.entity.Recording;
-import se.spacify.db.entity.Track;
+import se.spacify.app.music.model.Playable;
+import se.spacify.app.playlist.model.Playlist;
+import se.spacify.app.playlist.model.PlaylistRow;
+import se.spacify.app.music.model.Recording;
+import se.spacify.app.music.model.Track;
 import se.spacify.app.playlist.PlaylistEvents;
 
 import java.sql.SQLException;
@@ -196,6 +196,6 @@ public class LocalPlaylistService implements PlaylistService {
         }
     }
 
-    private static Dao<Playlist, Integer>    playlistDao() { return DatabaseManager.getInstance().playlistDao(); }
-    private static Dao<PlaylistRow, Integer> rowDao()      { return DatabaseManager.getInstance().playlistRowDao(); }
+    private static Dao<Playlist, Integer>    playlistDao() { return DatabaseManager.getInstance().dao(Playlist.class); }
+    private static Dao<PlaylistRow, Integer> rowDao()      { return DatabaseManager.getInstance().dao(PlaylistRow.class); }
 }

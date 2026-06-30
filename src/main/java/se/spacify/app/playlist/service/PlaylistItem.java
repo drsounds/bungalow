@@ -1,6 +1,6 @@
 package se.spacify.app.playlist.service;
 
-import se.spacify.db.entity.Playable;
+import se.spacify.app.music.model.Playable;
 
 /**
  * A lightweight, display-ready {@link Playable} reconstructed from a persisted

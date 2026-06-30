@@ -271,6 +271,10 @@ public final class ApplicationManager {
 
         @Override public String pluginId() { return owner.descriptor.getId(); }
 
+        @Override public <T> com.j256.ormlite.dao.Dao<T, Integer> registerEntity(Class<T> entity) {
+            return se.spacify.db.DatabaseManager.getInstance().registerEntity(entity);
+        }
+
         @Override public ApplicationSettings settings() { return owner.settings; }
 
         @Override public ViewStack viewStack() { return viewStack; }

@@ -4,7 +4,7 @@ import se.spacify.app.music.views.AbstractMusicListView;
 
 import se.spacify.broadcast.BroadcastManager;
 import se.spacify.db.DatabaseManager;
-import se.spacify.db.entity.Download;
+import se.spacify.app.downloads.model.Download;
 import se.spacify.navigation.ViewStack;
 import se.spacify.service.media.PlayRequest;
 import se.spacify.controls.Button;
@@ -50,7 +50,7 @@ public class DownloadsView extends AbstractMusicListView {
         rows.clear();
         musicTable.clear();
         try {
-            List<Download> all = DatabaseManager.getInstance().downloadDao().queryForAll();
+            List<Download> all = DatabaseManager.getInstance().dao(Download.class).queryForAll();
             all.sort(Comparator.comparingLong(Download::getCreatedAt).reversed());
             DownloadService svc = service();
             for (Download d : all) {

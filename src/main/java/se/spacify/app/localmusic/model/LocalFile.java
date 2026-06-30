@@ -1,5 +1,6 @@
-package se.spacify.db.entity;
+package se.spacify.app.localmusic.model;
 
+import se.spacify.app.music.model.*;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 

@@ -7,8 +7,8 @@ import se.spacify.app.playlist.service.PlaylistItem;
 import se.spacify.app.playlist.service.PlaylistService;
 import se.spacify.controls.ToolBar;
 import se.spacify.controls.ToolButton;
-import se.spacify.db.entity.Playable;
-import se.spacify.db.entity.Playlist;
+import se.spacify.app.music.model.Playable;
+import se.spacify.app.playlist.model.Playlist;
 import se.spacify.navigation.ViewStack;
 import se.spacify.service.media.PlayRequest;
 

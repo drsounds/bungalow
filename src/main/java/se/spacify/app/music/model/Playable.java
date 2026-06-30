@@ -1,4 +1,4 @@
-package se.spacify.db.entity;
+package se.spacify.app.music.model;
 
 /**
  * Anything that can be queued for playback.

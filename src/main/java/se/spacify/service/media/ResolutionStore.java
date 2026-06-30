@@ -3,9 +3,9 @@ package se.spacify.service.media;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.stmt.Where;
 import se.spacify.db.DatabaseManager;
-import se.spacify.db.entity.MusicServiceTrack;
+import se.spacify.app.media.model.MusicServiceTrack;
 
-import se.spacify.db.entity.Track;
+import se.spacify.app.music.model.Track;
 
 import java.util.List;
 
@@ -20,7 +20,7 @@ final class ResolutionStore {
     private ResolutionStore() {}
 
     private static Dao<MusicServiceTrack, Integer> dao() {
-        return DatabaseManager.getInstance().musicServiceTrackDao();
+        return DatabaseManager.getInstance().dao(MusicServiceTrack.class);
     }
 
     /** The saved choice for this request, or {@code null} if none / on error. */

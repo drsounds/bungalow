@@ -15,7 +15,7 @@ import se.spacify.aspect.AspectManager;
 import se.spacify.broadcast.Broadcast;
 import se.spacify.broadcast.BroadcastManager;
 import se.spacify.db.DatabaseManager;
-import se.spacify.db.entity.Download;
+import se.spacify.app.downloads.model.Download;
 import se.spacify.service.Service;
 import se.spacify.ui.MainWindow;
 import se.spacify.web.CefRuntime;
@@ -220,12 +220,12 @@ public final class DownloadService implements Service {
     }
 
     private void save(Download row) {
-        try { DatabaseManager.getInstance().downloadDao().createOrUpdate(row); }
+        try { DatabaseManager.getInstance().dao(Download.class).createOrUpdate(row); }
         catch (Exception e) { System.err.println("Download persist failed: " + e); }
     }
 
     private Download byId(int id) {
-        try { return DatabaseManager.getInstance().downloadDao().queryForId(id); }
+        try { return DatabaseManager.getInstance().dao(Download.class).queryForId(id); }
         catch (Exception e) { return null; }
     }
 
@@ -282,8 +282,8 @@ public final class DownloadService implements Service {
         // A download in progress can't survive a restart — mark interrupted ones failed.
         try {
             DatabaseManager db = DatabaseManager.getInstance();
-            List<Download> active = db.downloadDao().queryForEq("status", Download.Status.DOWNLOADING.name());
-            for (Download d : active) { d.setStatus(Download.Status.FAILED); db.downloadDao().update(d); }
+            List<Download> active = db.dao(Download.class).queryForEq("status", Download.Status.DOWNLOADING.name());
+            for (Download d : active) { d.setStatus(Download.Status.FAILED); db.dao(Download.class).update(d); }
         } catch (Exception ignored) {}
     }
 }

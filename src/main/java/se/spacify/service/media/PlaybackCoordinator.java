@@ -1,7 +1,7 @@
 package se.spacify.service.media;
 
-import se.spacify.db.entity.LocalFile;
-import se.spacify.db.entity.MusicServiceTrack;
+import se.spacify.app.localmusic.model.LocalFile;
+import se.spacify.app.media.model.MusicServiceTrack;
 
 import se.spacify.app.localmusic.service.LocalMusicService;
 import se.spacify.app.media.service.MediaService;

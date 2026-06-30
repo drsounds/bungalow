@@ -4,9 +4,9 @@ import se.spacify.app.music.views.AbstractMusicListView;
 
 import se.spacify.db.DatabaseManager;
 import se.spacify.db.LibraryRepository;
-import se.spacify.db.entity.Artist;
-import se.spacify.db.entity.Recording;
-import se.spacify.db.entity.RecordingCreatorCredit;
+import se.spacify.app.music.model.Artist;
+import se.spacify.app.music.model.Recording;
+import se.spacify.app.music.model.RecordingCreatorCredit;
 import se.spacify.navigation.ViewStack;
 import se.spacify.service.media.PlaybackCoordinator;
 
@@ -52,12 +52,12 @@ public class ArtistDetailView extends AbstractMusicListView {
         musicTable.clear();
         if (artistId < 0) { setHeader(null); return; }
         try {
-            Artist artist = DatabaseManager.getInstance().artistDao().queryForId(artistId);
+            Artist artist = DatabaseManager.getInstance().dao(Artist.class).queryForId(artistId);
             if (artist == null) { setHeader("Artist not found"); return; }
             setHeader(artist.getName());
 
             List<RecordingCreatorCredit> credits = DatabaseManager.getInstance()
-                .recordingArtistCreditDao().queryForEq("artist_id", artistId);
+                .dao(RecordingCreatorCredit.class).queryForEq("artist_id", artistId);
             for (RecordingCreatorCredit c : credits) {
                 Recording rec = c.getRecording();
                 if (rec == null) continue;

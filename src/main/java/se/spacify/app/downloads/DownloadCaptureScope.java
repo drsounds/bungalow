@@ -2,7 +2,7 @@ package se.spacify.app.downloads;
 
 import java.io.File;
 
-import se.spacify.db.entity.Download;
+import se.spacify.app.downloads.model.Download;
 
 /**
  * A pluggable filter that claims certain downloads and handles them once

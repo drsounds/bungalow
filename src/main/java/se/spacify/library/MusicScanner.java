@@ -7,7 +7,8 @@ import org.jaudiotagger.tag.FieldKey;
 import org.jaudiotagger.tag.Tag;
 import se.spacify.db.DatabaseManager;
 import se.spacify.db.LibraryRepository;
-import se.spacify.db.entity.*;
+import se.spacify.app.music.model.*;
+import se.spacify.app.localmusic.model.LocalFile;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -112,16 +113,16 @@ public class MusicScanner {
     // ── Upsert helpers (count only newly created rows) ─────────────────────────────
 
     private Artist getOrCreateArtist(String name, ScanResult result) throws Exception {
-        List<Artist> existing = db().artistDao().queryForEq("name", name);
+        List<Artist> existing = db().dao(Artist.class).queryForEq("name", name);
         if (!existing.isEmpty()) return existing.get(0);
         Artist a = new Artist(name);
-        db().artistDao().create(a);
+        db().dao(Artist.class).create(a);
         result.artistsAdded++;
         return a;
     }
 
     private MusicRelease getOrCreateRelease(String title, String albumArtist, ScanResult result) throws Exception {
-        Dao<MusicRelease, Integer> dao = db().releaseDao();
+        Dao<MusicRelease, Integer> dao = db().dao(MusicRelease.class);
         for (MusicRelease r : dao.queryForEq("title", title)) {
             // Same title AND same album artist counts as the same release, so we
             // don't merge unrelated albums that happen to share a title.
@@ -136,29 +137,29 @@ public class MusicScanner {
         result.releasesAdded++;
         if (albumArtist != null && !albumArtist.isBlank()) {
             Artist a = getOrCreateArtist(albumArtist, result);
-            db().releaseArtistCreditDao().create(new ReleaseCreatorCredit(r, a, true, "performer"));
+            db().dao(ReleaseCreatorCredit.class).create(new ReleaseCreatorCredit(r, a, true, "performer"));
         }
         return r;
     }
 
     private Recording getOrCreateRecording(String isrc, String title, String filePath,
             long durationMs, Artist artist, ScanResult result) throws Exception {
-        Dao<Recording, Integer> dao = db().recordingDao();
+        Dao<Recording, Integer> dao = db().dao(Recording.class);
         List<Recording> existing = dao.queryForEq("isrc", isrc);
         if (!existing.isEmpty()) return existing.get(0);
         Recording rec = new Recording(title);
         rec.setIsrc(isrc);
         rec.setDurationMs(durationMs);
         dao.create(rec);
-        if (filePath != null) db().recordingFileDao().create(new RecordingFile(rec, filePath));
+        if (filePath != null) db().dao(RecordingFile.class).create(new RecordingFile(rec, filePath));
         result.recordingsAdded++;
-        db().recordingArtistCreditDao().create(new RecordingCreatorCredit(rec, artist, true, "performer"));
+        db().dao(RecordingCreatorCredit.class).create(new RecordingCreatorCredit(rec, artist, true, "performer"));
         return rec;
     }
 
     private void getOrCreateTrack(Recording recording, MusicRelease release, int trackNumber,
             long durationMs, ScanResult result) throws Exception {
-        Dao<Track, Integer> dao = db().trackDao();
+        Dao<Track, Integer> dao = db().dao(Track.class);
         List<Track> existing = dao.queryBuilder().where()
             .eq("recording_id", recording.getId())
             .and().eq("release_id", release.getId())
@@ -175,7 +176,7 @@ public class MusicScanner {
 
     private void getOrCreateLocalFile(String isrc, String name, String artistName,
             String releaseName, String filePath, ScanResult result) throws Exception {
-        Dao<LocalFile, Integer> dao = db().localFileDao();
+        Dao<LocalFile, Integer> dao = db().dao(LocalFile.class);
         if (!dao.queryForEq("isrc", isrc).isEmpty()) return;
         if (!dao.queryForEq("file_path", filePath).isEmpty()) return;
         LocalFile f = new LocalFile(name, filePath);

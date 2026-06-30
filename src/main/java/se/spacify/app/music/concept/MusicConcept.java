@@ -9,6 +9,14 @@ import se.spacify.concept.Concept;
 import se.spacify.concept.ConceptContext;
 import se.spacify.navigation.ViewStack;
 import se.spacify.app.Application;
+import se.spacify.app.music.model.Artist;
+import se.spacify.app.music.model.MusicWork;
+import se.spacify.app.music.model.Recording;
+import se.spacify.app.music.model.RecordingFile;
+import se.spacify.app.music.model.MusicRelease;
+import se.spacify.app.music.model.Track;
+import se.spacify.app.music.model.RecordingCreatorCredit;
+import se.spacify.app.music.model.ReleaseCreatorCredit;
 
 public class MusicConcept implements Concept {
     private Application plugin;
@@ -26,6 +34,16 @@ public class MusicConcept implements Concept {
  
     @Override
     public void onActivate(ConceptContext ctx) {
+        // The shared music/content model: this concept owns these tables; other
+        // apps (library, catalogue, localmusic, media) read them through the DAO.
+        ctx.registerEntity(Artist.class);
+        ctx.registerEntity(MusicWork.class);
+        ctx.registerEntity(Recording.class);
+        ctx.registerEntity(RecordingFile.class);
+        ctx.registerEntity(MusicRelease.class);
+        ctx.registerEntity(Track.class);
+        ctx.registerEntity(RecordingCreatorCredit.class);
+        ctx.registerEntity(ReleaseCreatorCredit.class);
     }
 
     @Override

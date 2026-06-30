@@ -1,6 +1,6 @@
 package se.spacify.service.media;
 
-import se.spacify.db.entity.Track;
+import se.spacify.app.music.model.Track;
 
 /**
  * The full context of a request to play one track, carried from the originating

@@ -1,7 +1,7 @@
 package se.spacify.db;
 
 import com.j256.ormlite.dao.Dao;
-import se.spacify.db.entity.*;
+import se.spacify.app.music.model.*;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -38,7 +38,7 @@ public final class LibraryRepository {
     public static String filePathForRecording(Recording r) {
         if (r == null) return null;
         try {
-            List<RecordingFile> files = db().recordingFileDao().queryForEq("recording_id", r.getId());
+            List<RecordingFile> files = db().dao(RecordingFile.class).queryForEq("recording_id", r.getId());
             return files.isEmpty() ? null : files.get(0).getFilePath();
         } catch (SQLException e) {
             return null;
@@ -48,7 +48,7 @@ public final class LibraryRepository {
     /** Replace the local file backing a recording (clearing it when {@code filePath} is blank). */
     public static void setFilePathForRecording(Recording r, String filePath) throws SQLException {
         if (r == null) return;
-        Dao<RecordingFile, Integer> dao = db().recordingFileDao();
+        Dao<RecordingFile, Integer> dao = db().dao(RecordingFile.class);
         for (RecordingFile f : dao.queryForEq("recording_id", r.getId())) dao.delete(f);
         if (filePath != null && !filePath.isBlank()) dao.create(new RecordingFile(r, filePath));
     }
@@ -59,7 +59,7 @@ public final class LibraryRepository {
     public static String artistNamesForRecording(Recording r) {
         try {
             List<RecordingCreatorCredit> credits =
-                db().recordingArtistCreditDao().queryForEq("recording_id", r.getId());
+                db().dao(RecordingCreatorCredit.class).queryForEq("recording_id", r.getId());
             return credits.stream()
                 .sorted(Comparator.comparing(RecordingCreatorCredit::isPrimary).reversed())
                 .map(c -> c.getArtist() != null ? c.getArtist().getName() : "")
@@ -75,7 +75,7 @@ public final class LibraryRepository {
     public static String artistNamesForRelease(MusicRelease r) {
         try {
             List<ReleaseCreatorCredit> credits =
-                db().releaseArtistCreditDao().queryForEq("release_id", r.getId());
+                db().dao(ReleaseCreatorCredit.class).queryForEq("release_id", r.getId());
             return credits.stream()
                 .sorted(Comparator.comparing(ReleaseCreatorCredit::isPrimary).reversed())
                 .map(c -> c.getArtist() != null ? c.getArtist().getName() : "")
@@ -90,7 +90,7 @@ public final class LibraryRepository {
     /** The first primary artist name for a recording, or "" if none. */
     public static String primaryArtistForRecording(Recording r) {
         try {
-            return db().recordingArtistCreditDao().queryForEq("recording_id", r.getId()).stream()
+            return db().dao(RecordingCreatorCredit.class).queryForEq("recording_id", r.getId()).stream()
                 .filter(RecordingCreatorCredit::isPrimary)
                 .map(c -> c.getArtist() != null ? c.getArtist().getName() : "")
                 .filter(n -> !n.isBlank())
@@ -104,7 +104,7 @@ public final class LibraryRepository {
     /** Comma-joined titles of releases this recording appears on (via tracks). */
     public static String albumForRecording(Recording r) {
         try {
-            List<Track> tracks = db().trackDao().queryForEq("recording_id", r.getId());
+            List<Track> tracks = db().dao(Track.class).queryForEq("recording_id", r.getId());
             LinkedHashSet<String> titles = new LinkedHashSet<>();
             for (Track t : tracks) {
                 if (t.getRelease() != null && t.getRelease().getTitle() != null) {
@@ -122,10 +122,10 @@ public final class LibraryRepository {
     /** Find an artist by exact name, creating one if none exists. */
     public static Artist findOrCreateArtist(String name) throws SQLException {
         String trimmed = name.trim();
-        List<Artist> existing = db().artistDao().queryForEq("name", trimmed);
+        List<Artist> existing = db().dao(Artist.class).queryForEq("name", trimmed);
         if (!existing.isEmpty()) return existing.get(0);
         Artist a = new Artist(trimmed);
-        db().artistDao().create(a);
+        db().dao(Artist.class).create(a);
         return a;
     }
 
@@ -142,7 +142,7 @@ public final class LibraryRepository {
 
     /** Replace a recording's primary artist credits with the given names. */
     public static void setRecordingArtists(Recording r, List<String> names) throws SQLException {
-        Dao<RecordingCreatorCredit, Integer> dao = db().recordingArtistCreditDao();
+        Dao<RecordingCreatorCredit, Integer> dao = db().dao(RecordingCreatorCredit.class);
         dao.delete(dao.queryForEq("recording_id", r.getId()));
         for (String n : names) {
             Artist a = findOrCreateArtist(n);
@@ -152,7 +152,7 @@ public final class LibraryRepository {
 
     /** Replace a release's primary artist credits with the given names. */
     public static void setReleaseArtists(MusicRelease r, List<String> names) throws SQLException {
-        Dao<ReleaseCreatorCredit, Integer> dao = db().releaseArtistCreditDao();
+        Dao<ReleaseCreatorCredit, Integer> dao = db().dao(ReleaseCreatorCredit.class);
         dao.delete(dao.queryForEq("release_id", r.getId()));
         for (String n : names) {
             Artist a = findOrCreateArtist(n);

@@ -1,4 +1,4 @@
-package se.spacify.db.entity;
+package se.spacify.app.downloads.model;
 
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;

@@ -1,6 +1,6 @@
 package se.spacify.app.catalogue.views;
 import se.spacify.db.DatabaseManager;
-import se.spacify.db.entity.Recording;
+import se.spacify.app.music.model.Recording;
 import se.spacify.library.LibraryEvents;
 import se.spacify.navigation.ViewStack;
 import se.spacify.app.catalogue.service.MusicCatalogueService;
@@ -91,11 +91,11 @@ public class RecordingsCatalogView extends AbstractCatalogView<Recording> {
     private Recording findLocal(Recording r) {
         try {
             if (r.getIsrc() != null) {
-                List<Recording> byIsrc = DatabaseManager.getInstance().recordingDao()
+                List<Recording> byIsrc = DatabaseManager.getInstance().dao(Recording.class)
                         .queryForEq("isrc", r.getIsrc());
                 if (!byIsrc.isEmpty()) return byIsrc.get(0);
             }
-            List<Recording> byTitle = DatabaseManager.getInstance().recordingDao()
+            List<Recording> byTitle = DatabaseManager.getInstance().dao(Recording.class)
                     .queryForEq("title", r.getTitle());
             return byTitle.isEmpty() ? null : byTitle.get(0);
         } catch (Exception e) {
@@ -108,7 +108,7 @@ public class RecordingsCatalogView extends AbstractCatalogView<Recording> {
             Recording copy = new Recording(r.getTitle());
             copy.setIsrc(r.getIsrc());
             copy.setDurationMs(r.getDurationMs());
-            DatabaseManager.getInstance().recordingDao().create(copy);
+            DatabaseManager.getInstance().dao(Recording.class).create(copy);
         } catch (Exception e) {
             showError(e);
         }
@@ -117,7 +117,7 @@ public class RecordingsCatalogView extends AbstractCatalogView<Recording> {
     private void removeFromLibrary(Recording r) {
         try {
             Recording local = findLocal(r);
-            if (local != null) DatabaseManager.getInstance().recordingDao().delete(local);
+            if (local != null) DatabaseManager.getInstance().dao(Recording.class).delete(local);
         } catch (Exception e) {
             showError(e);
         }

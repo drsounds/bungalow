@@ -3,7 +3,7 @@ import se.spacify.app.music.controls.MusicTable;
 import se.spacify.app.music.views.AbstractMusicListView;
 
 import se.spacify.db.DatabaseManager;
-import se.spacify.db.entity.LocalFile;
+import se.spacify.app.localmusic.model.LocalFile;
 import se.spacify.navigation.ViewStack;
 import se.spacify.service.media.PlaybackCoordinator;
 
@@ -41,7 +41,7 @@ public class LocalFileLibraryView extends AbstractMusicListView {
         rows.clear();
         musicTable.clear();
         try {
-            for (LocalFile f : DatabaseManager.getInstance().localFileDao().queryForAll()) {
+            for (LocalFile f : DatabaseManager.getInstance().dao(LocalFile.class).queryForAll()) {
                 rows.add(f);
                 addRow(row()
                     .set("name",    f.getName())
@@ -74,7 +74,7 @@ public class LocalFileLibraryView extends AbstractMusicListView {
             f.setArtistName(blankToNull(artist.getText()));
             f.setReleaseName(blankToNull(release.getText()));
             f.setIsrc(blankToNull(isrc.getText()));
-            DatabaseManager.getInstance().localFileDao().create(f);
+            DatabaseManager.getInstance().dao(LocalFile.class).create(f);
         } catch (Exception e) {
             showError(e);
         }
@@ -99,7 +99,7 @@ public class LocalFileLibraryView extends AbstractMusicListView {
             f.setReleaseName(blankToNull(release.getText()));
             f.setIsrc(blankToNull(isrc.getText()));
             f.setFilePath(path.getText().trim());
-            DatabaseManager.getInstance().localFileDao().update(f);
+            DatabaseManager.getInstance().dao(LocalFile.class).update(f);
         } catch (Exception e) {
             showError(e);
         }
@@ -110,7 +110,7 @@ public class LocalFileLibraryView extends AbstractMusicListView {
         LocalFile f = rows.get(row);
         if (!confirmDelete("local file \"" + f.getName() + "\"")) return;
         try {
-            DatabaseManager.getInstance().localFileDao().delete(f);
+            DatabaseManager.getInstance().dao(LocalFile.class).delete(f);
         } catch (Exception e) {
             showError(e);
         }

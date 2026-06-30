@@ -1,6 +1,6 @@
 package se.spacify.app.catalogue.views;
 
-import se.spacify.db.entity.MusicRelease;
+import se.spacify.app.music.model.MusicRelease;
 import se.spacify.navigation.ViewStack;
 import se.spacify.app.catalogue.service.MusicCatalogueService;
 import se.spacify.app.music.controls.MusicTable;

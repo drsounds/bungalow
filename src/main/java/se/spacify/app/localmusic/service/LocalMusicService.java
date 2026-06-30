@@ -4,9 +4,9 @@ import se.spacify.aspect.Aspect;
 import se.spacify.aspect.AspectManager;
 import se.spacify.db.DatabaseManager;
 import se.spacify.db.LibraryRepository;
-import se.spacify.db.entity.LocalFile;
-import se.spacify.db.entity.Recording;
-import se.spacify.db.entity.RecordingCreatorCredit;
+import se.spacify.app.localmusic.model.LocalFile;
+import se.spacify.app.music.model.Recording;
+import se.spacify.app.music.model.RecordingCreatorCredit;
 import se.spacify.app.Application;
 import se.spacify.service.media.PlaybackSupport;
 
@@ -116,11 +116,11 @@ public class LocalMusicService implements MusicService {
     public void loadByIsrc(String isrc) {
         try {
             // Prefer a dedicated local file row — it carries its own metadata.
-            List<LocalFile> files = DatabaseManager.getInstance().localFileDao()
+            List<LocalFile> files = DatabaseManager.getInstance().dao(LocalFile.class)
                 .queryForEq("isrc", isrc);
             if (!files.isEmpty()) { loadLocalFile(files.get(0)); return; }
 
-            List<Recording> results = DatabaseManager.getInstance().recordingDao()
+            List<Recording> results = DatabaseManager.getInstance().dao(Recording.class)
                 .queryForEq("isrc", isrc);
             if (results.isEmpty()) { playback.fireError(new Exception("No recording found for ISRC: " + isrc)); return; }
             Recording rec = results.get(0);
@@ -157,7 +157,7 @@ public class LocalMusicService implements MusicService {
     public Recording lookupByTitleArtist(String title, String artist) {
         if (title == null || title.isBlank()) return null;
         try {
-            for (Recording r : DatabaseManager.getInstance().recordingDao().queryForAll()) {
+            for (Recording r : DatabaseManager.getInstance().dao(Recording.class).queryForAll()) {
                 if (r.getTitle() == null || !r.getTitle().equalsIgnoreCase(title)) continue;
                 if (artist == null || artist.isBlank()) return r;
                 if (primaryArtist(r).equalsIgnoreCase(artist)) return r;
@@ -171,13 +171,13 @@ public class LocalMusicService implements MusicService {
     @Override
     public Recording lookup(String isrc) {
         try {
-            Recording rec = DatabaseManager.getInstance().recordingDao()
+            Recording rec = DatabaseManager.getInstance().dao(Recording.class)
                 .queryForEq("isrc", isrc).stream().findFirst().orElse(null);
             if (rec != null) return rec;
 
             // A local file with this ISRC is also playable here — return a
             // lightweight, unpersisted Recording as a "can play" token.
-            LocalFile f = DatabaseManager.getInstance().localFileDao()
+            LocalFile f = DatabaseManager.getInstance().dao(LocalFile.class)
                 .queryForEq("isrc", isrc).stream().findFirst().orElse(null);
             if (f != null) {
                 Recording token = new Recording(f.getName());
@@ -250,7 +250,7 @@ public class LocalMusicService implements MusicService {
 
     private String primaryArtist(Recording rec) {
         try {
-            return DatabaseManager.getInstance().recordingArtistCreditDao()
+            return DatabaseManager.getInstance().dao(RecordingCreatorCredit.class)
                 .queryForEq("recording_id", rec.getId()).stream()
                 .filter(RecordingCreatorCredit::isPrimary)
                 .findFirst()

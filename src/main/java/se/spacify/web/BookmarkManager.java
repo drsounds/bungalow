@@ -2,7 +2,7 @@ package se.spacify.web;
 
 import com.j256.ormlite.dao.Dao;
 import se.spacify.db.DatabaseManager;
-import se.spacify.db.entity.Bookmark;
+import se.spacify.app.web.model.Bookmark;
 
 import java.util.List;
 
@@ -25,7 +25,7 @@ public final class BookmarkManager {
     private BookmarkManager() {}
 
     private static Dao<Bookmark, Integer> dao() {
-        return DatabaseManager.getInstance().bookmarkDao();
+        return DatabaseManager.getInstance().dao(Bookmark.class);
     }
 
     private static Bookmark find(String spacifyUri) {

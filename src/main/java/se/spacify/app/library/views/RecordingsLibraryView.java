@@ -4,7 +4,8 @@ import se.spacify.app.music.views.AbstractMusicListView;
 
 import se.spacify.db.DatabaseManager;
 import se.spacify.db.LibraryRepository;
-import se.spacify.db.entity.Recording;
+import se.spacify.app.music.model.Recording;
+import se.spacify.app.music.model.RecordingCreatorCredit;
 import se.spacify.navigation.ViewStack;
 import se.spacify.service.media.PlayRequest;
 
@@ -34,7 +35,7 @@ public class RecordingsLibraryView extends AbstractMusicListView {
         rows.clear();
         musicTable.clear();
         try {
-            for (Recording r : DatabaseManager.getInstance().recordingDao().queryForAll()) {
+            for (Recording r : DatabaseManager.getInstance().dao(Recording.class).queryForAll()) {
                 rows.add(r);
                 addRow(row()
                     .set("name",     r.getTitle())
@@ -62,7 +63,7 @@ public class RecordingsLibraryView extends AbstractMusicListView {
             Recording r = new Recording(title.getText().trim());
             r.setIsrc(blankToNull(isrc.getText()));
             r.setDurationMs(parseDuration(duration.getText()));
-            DatabaseManager.getInstance().recordingDao().create(r);
+            DatabaseManager.getInstance().dao(Recording.class).create(r);
             LibraryRepository.setFilePathForRecording(r, blankToNull(filePath.getText()));
             LibraryRepository.setRecordingArtists(r, LibraryRepository.parseArtistNames(artists.getText()));
         } catch (Exception e) {
@@ -86,7 +87,7 @@ public class RecordingsLibraryView extends AbstractMusicListView {
             r.setTitle(title.getText().trim());
             r.setIsrc(blankToNull(isrc.getText()));
             r.setDurationMs(parseDuration(duration.getText()));
-            DatabaseManager.getInstance().recordingDao().update(r);
+            DatabaseManager.getInstance().dao(Recording.class).update(r);
             LibraryRepository.setFilePathForRecording(r, blankToNull(filePath.getText()));
             LibraryRepository.setRecordingArtists(r, LibraryRepository.parseArtistNames(artists.getText()));
         } catch (Exception e) {
@@ -99,9 +100,9 @@ public class RecordingsLibraryView extends AbstractMusicListView {
         Recording r = rows.get(row);
         if (!confirmDelete("recording \"" + r.getTitle() + "\"")) return;
         try {
-            DatabaseManager.getInstance().recordingArtistCreditDao().delete(
-                DatabaseManager.getInstance().recordingArtistCreditDao().queryForEq("recording_id", r.getId()));
-            DatabaseManager.getInstance().recordingDao().delete(r);
+            DatabaseManager.getInstance().dao(RecordingCreatorCredit.class).delete(
+                DatabaseManager.getInstance().dao(RecordingCreatorCredit.class).queryForEq("recording_id", r.getId()));
+            DatabaseManager.getInstance().dao(Recording.class).delete(r);
         } catch (Exception e) {
             showError(e);
         }

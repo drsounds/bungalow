@@ -2,7 +2,7 @@ package se.spacify.app.youtube;
 
 import se.spacify.aspect.Aspect;
 import se.spacify.aspect.AspectManager;
-import se.spacify.db.entity.Recording;
+import se.spacify.app.music.model.Recording;
 import se.spacify.app.ApplicationSettings;
 import se.spacify.app.media.service.MediaServicePlayerComponent;
 import se.spacify.app.music.service.MusicService;

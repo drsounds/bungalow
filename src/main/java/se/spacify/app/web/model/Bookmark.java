@@ -1,4 +1,4 @@
-package se.spacify.db.entity;
+package se.spacify.app.web.model;
 
 import com.j256.ormlite.dao.ForeignCollection;
 import com.j256.ormlite.field.DataType;

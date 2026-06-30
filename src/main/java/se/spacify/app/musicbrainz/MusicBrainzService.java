@@ -7,9 +7,9 @@ import com.google.gson.JsonParser;
 
 import se.spacify.aspect.Aspect;
 import se.spacify.aspect.AspectManager;
-import se.spacify.db.entity.Artist;
-import se.spacify.db.entity.Recording;
-import se.spacify.db.entity.MusicRelease;
+import se.spacify.app.music.model.Artist;
+import se.spacify.app.music.model.Recording;
+import se.spacify.app.music.model.MusicRelease;
 import se.spacify.app.catalogue.service.MusicCatalogueService;
 
 import java.net.URI;

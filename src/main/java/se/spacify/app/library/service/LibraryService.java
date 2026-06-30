@@ -1,10 +1,10 @@
 package se.spacify.app.library.service;
 
-import se.spacify.db.entity.Artist;
-import se.spacify.db.entity.LocalFile;
-import se.spacify.db.entity.Recording;
-import se.spacify.db.entity.MusicRelease;
-import se.spacify.db.entity.Track;
+import se.spacify.app.music.model.Artist;
+import se.spacify.app.localmusic.model.LocalFile;
+import se.spacify.app.music.model.Recording;
+import se.spacify.app.music.model.MusicRelease;
+import se.spacify.app.music.model.Track;
 import se.spacify.service.Service;
 
 import java.util.List;

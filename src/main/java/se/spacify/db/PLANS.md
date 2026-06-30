@@ -1,1 +1,1 @@
-Also, I want to migrate the database entities and migrations so they are per app instead of global database migration and entity model, so apps can define new database tables and entities
+Migrate the structure of database entities and migrations in the code so they are per app instead of global database migration and entity model, so apps can define new database tables and entities and all entity definitions are inside per app/concept 

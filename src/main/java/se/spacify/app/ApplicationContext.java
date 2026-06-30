@@ -20,7 +20,7 @@ public interface ApplicationContext {
 
     /** This plugin's java-namespace id, e.g. {@code se.spacify.app.library}. */
     String pluginId();
-    
+
     void registerChrome(Chrome c);
 
     void registerDesign(Design d);

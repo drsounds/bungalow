@@ -21,7 +21,10 @@ public interface ConceptContext {
 
     /** This plugin's java-namespace id, e.g. {@code se.spacify.app.library}. */
     String pluginId();
-    
+
+    /** Ensure this plugin's entity table exists (created if absent); returns its DAO. */
+    <T> com.j256.ormlite.dao.Dao<T, Integer> registerEntity(Class<T> entity);
+
     void registerChrome(Chrome c);
 
     void registerDesign(Design d);

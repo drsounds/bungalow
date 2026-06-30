@@ -2,7 +2,7 @@ package se.spacify.app.music.service;
 
 import java.util.List;
 
-import se.spacify.db.entity.Recording;
+import se.spacify.app.music.model.Recording;
 import se.spacify.app.media.service.MediaService;
 
 /**

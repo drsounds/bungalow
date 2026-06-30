@@ -10,8 +10,8 @@ import se.spacify.aspect.AspectManager;
 import se.spacify.concept.Concept;
 import se.spacify.concept.ConceptContext;
 import se.spacify.db.DatabaseManager;
-import se.spacify.db.entity.Artist;
-import se.spacify.db.entity.MusicRelease;
+import se.spacify.app.music.model.Artist;
+import se.spacify.app.music.model.MusicRelease;
 import se.spacify.library.LibraryEvents;
 import se.spacify.navigation.ViewStack;
 import se.spacify.navigation.SidebarNode;
@@ -84,7 +84,7 @@ public class LibraryConcept implements Concept {
     private static List<SidebarNode> releaseNodes() {
         List<SidebarNode> out = new ArrayList<>();
         try {
-            for (MusicRelease r : DatabaseManager.getInstance().releaseDao().queryForAll()) {
+            for (MusicRelease r : DatabaseManager.getInstance().dao(MusicRelease.class).queryForAll()) {
                 out.add(new SidebarNode(r.getTitle(), "spacify:library:release:" + r.getId()));
             }
         } catch (Exception ignored) {}
@@ -94,7 +94,7 @@ public class LibraryConcept implements Concept {
     private static List<SidebarNode> artistNodes() {
         List<SidebarNode> out = new ArrayList<>();
         try {
-            for (Artist a : DatabaseManager.getInstance().artistDao().queryForAll()) {
+            for (Artist a : DatabaseManager.getInstance().dao(Artist.class).queryForAll()) {
                 out.add(new SidebarNode(a.getName(), "spacify:library:artist:" + a.getId()));
             }
         } catch (Exception ignored) {}

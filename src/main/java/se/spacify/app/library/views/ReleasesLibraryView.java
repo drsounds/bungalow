@@ -4,8 +4,9 @@ import se.spacify.app.music.views.AbstractMusicListView;
 
 import se.spacify.db.DatabaseManager;
 import se.spacify.db.LibraryRepository;
-import se.spacify.db.entity.MusicRelease;
-import se.spacify.db.entity.MusicRelease.ReleaseType;
+import se.spacify.app.music.model.MusicRelease;
+import se.spacify.app.music.model.ReleaseCreatorCredit;
+import se.spacify.app.music.model.MusicRelease.ReleaseType;
 import se.spacify.navigation.ViewStack;
 
 import javax.swing.*;
@@ -34,7 +35,7 @@ public class ReleasesLibraryView extends AbstractMusicListView {
         rows.clear();
         musicTable.clear();
         try {
-            for (MusicRelease r : DatabaseManager.getInstance().releaseDao().queryForAll()) {
+            for (MusicRelease r : DatabaseManager.getInstance().dao(MusicRelease.class).queryForAll()) {
                 rows.add(r);
                 addRow(row()
                     .set("name",    r.getTitle())
@@ -65,7 +66,7 @@ public class ReleasesLibraryView extends AbstractMusicListView {
             r.setReleaseDate(blankToNull(date.getText()));
             r.setUpc(blankToNull(upc.getText()));
             r.setMbid(blankToNull(mbid.getText()));
-            DatabaseManager.getInstance().releaseDao().create(r);
+            DatabaseManager.getInstance().dao(MusicRelease.class).create(r);
             LibraryRepository.setReleaseArtists(r, LibraryRepository.parseArtistNames(artists.getText()));
         } catch (Exception e) {
             showError(e);
@@ -92,7 +93,7 @@ public class ReleasesLibraryView extends AbstractMusicListView {
             r.setReleaseDate(blankToNull(date.getText()));
             r.setUpc(blankToNull(upc.getText()));
             r.setMbid(blankToNull(mbid.getText()));
-            DatabaseManager.getInstance().releaseDao().update(r);
+            DatabaseManager.getInstance().dao(MusicRelease.class).update(r);
             LibraryRepository.setReleaseArtists(r, LibraryRepository.parseArtistNames(artists.getText()));
         } catch (Exception e) {
             showError(e);
@@ -104,9 +105,9 @@ public class ReleasesLibraryView extends AbstractMusicListView {
         MusicRelease r = rows.get(row);
         if (!confirmDelete("release \"" + r.getTitle() + "\"")) return;
         try {
-            DatabaseManager.getInstance().releaseArtistCreditDao().delete(
-                DatabaseManager.getInstance().releaseArtistCreditDao().queryForEq("release_id", r.getId()));
-            DatabaseManager.getInstance().releaseDao().delete(r);
+            DatabaseManager.getInstance().dao(ReleaseCreatorCredit.class).delete(
+                DatabaseManager.getInstance().dao(ReleaseCreatorCredit.class).queryForEq("release_id", r.getId()));
+            DatabaseManager.getInstance().dao(MusicRelease.class).delete(r);
         } catch (Exception e) {
             showError(e);
         }

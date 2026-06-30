@@ -5,12 +5,12 @@ import se.spacify.app.music.controls.MusicTable.Grouping;
 import se.spacify.app.music.views.AbstractMusicListView;
 import se.spacify.db.DatabaseManager;
 import se.spacify.db.LibraryRepository;
-import se.spacify.db.entity.Playable;
-import se.spacify.db.entity.Recording;
-import se.spacify.db.entity.MusicRelease;
-import se.spacify.db.entity.Track;
+import se.spacify.app.music.model.Playable;
+import se.spacify.app.music.model.Recording;
+import se.spacify.app.music.model.MusicRelease;
+import se.spacify.app.music.model.Track;
 import se.spacify.navigation.ViewStack;
-import se.spacify.db.entity.Playlist;
+import se.spacify.app.playlist.model.Playlist;
 import se.spacify.app.playlist.service.PlaylistService;
 import se.spacify.controls.ToolButton;
 import se.spacify.service.media.PlayRequest;
@@ -86,7 +86,7 @@ public class TracksLibraryView extends AbstractMusicListView {
         try {
             // Present albums coherently: group by release title, then within each
             // album fall back to the canonical side/track-number ascending order.
-            List<Track> tracks = new ArrayList<>(DatabaseManager.getInstance().trackDao().queryForAll());
+            List<Track> tracks = new ArrayList<>(DatabaseManager.getInstance().dao(Track.class).queryForAll());
             tracks.sort(Comparator.comparing(
                     (Track t) -> t.getRelease() != null && t.getRelease().getTitle() != null
                             ? t.getRelease().getTitle() : "",
@@ -128,8 +128,8 @@ public class TracksLibraryView extends AbstractMusicListView {
     @Override
     protected void onAdd() {
         try {
-            List<Recording> recordings = DatabaseManager.getInstance().recordingDao().queryForAll();
-            List<MusicRelease>   releases   = DatabaseManager.getInstance().releaseDao().queryForAll();
+            List<Recording> recordings = DatabaseManager.getInstance().dao(Recording.class).queryForAll();
+            List<MusicRelease>   releases   = DatabaseManager.getInstance().dao(MusicRelease.class).queryForAll();
             if (recordings.isEmpty() || releases.isEmpty()) {
                 JOptionPane.showMessageDialog(getComponent(),
                     "Add at least one recording and one release first.",
@@ -151,7 +151,7 @@ public class TracksLibraryView extends AbstractMusicListView {
             t.setDurationMs(parseDuration(duration.getText()));
             t.setRecording((Recording) recCombo.getSelectedItem());
             t.setRelease((MusicRelease) relCombo.getSelectedItem());
-            DatabaseManager.getInstance().trackDao().create(t);
+            DatabaseManager.getInstance().dao(Track.class).create(t);
         } catch (Exception e) {
             showError(e);
         }
@@ -161,8 +161,8 @@ public class TracksLibraryView extends AbstractMusicListView {
     protected void onEdit(int row) {
         Track t = rows.get(row);
         try {
-            List<Recording> recordings = DatabaseManager.getInstance().recordingDao().queryForAll();
-            List<MusicRelease>   releases   = DatabaseManager.getInstance().releaseDao().queryForAll();
+            List<Recording> recordings = DatabaseManager.getInstance().dao(Recording.class).queryForAll();
+            List<MusicRelease>   releases   = DatabaseManager.getInstance().dao(MusicRelease.class).queryForAll();
             JTextField number = new JTextField(String.valueOf(t.getTrackNumber()));
             JTextField side   = new JTextField(t.getSide());
             JTextField duration = new JTextField(fmtDuration(t.getDurationMs()));
@@ -179,7 +179,7 @@ public class TracksLibraryView extends AbstractMusicListView {
             t.setDurationMs(parseDuration(duration.getText()));
             t.setRecording((Recording) recCombo.getSelectedItem());
             t.setRelease((MusicRelease) relCombo.getSelectedItem());
-            DatabaseManager.getInstance().trackDao().update(t);
+            DatabaseManager.getInstance().dao(Track.class).update(t);
         } catch (Exception e) {
             showError(e);
         }
@@ -190,7 +190,7 @@ public class TracksLibraryView extends AbstractMusicListView {
         Track t = rows.get(row);
         if (!confirmDelete("track #" + t.getTrackNumber())) return;
         try {
-            DatabaseManager.getInstance().trackDao().delete(t);
+            DatabaseManager.getInstance().dao(Track.class).delete(t);
         } catch (Exception e) {
             showError(e);
         }

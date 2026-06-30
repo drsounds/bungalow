@@ -4,7 +4,7 @@ import java.io.File;
 
 import se.spacify.aspect.Aspect;
 import se.spacify.aspect.AspectManager;
-import se.spacify.db.entity.Download;
+import se.spacify.app.downloads.model.Download;
 import se.spacify.library.MusicScanner;
 import se.spacify.app.downloads.DownloadCaptureScope;
 import se.spacify.app.downloads.PendingDownload;

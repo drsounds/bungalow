@@ -1,4 +1,4 @@
-package se.spacify.db.entity;
+package se.spacify.app.music.model;
 
 /**
  * Abstract, generic base for a published release of some content type — the

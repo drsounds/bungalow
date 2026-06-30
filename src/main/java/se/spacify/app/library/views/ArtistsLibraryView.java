@@ -3,7 +3,7 @@ import se.spacify.app.music.controls.MusicTable;
 import se.spacify.app.music.views.AbstractMusicListView;
 
 import se.spacify.db.DatabaseManager;
-import se.spacify.db.entity.Artist;
+import se.spacify.app.music.model.Artist;
 import se.spacify.navigation.ViewStack;
 
 import javax.swing.*;
@@ -31,7 +31,7 @@ public class ArtistsLibraryView extends AbstractMusicListView {
         rows.clear();
         musicTable.clear();
         try {
-            for (Artist a : DatabaseManager.getInstance().artistDao().queryForAll()) {
+            for (Artist a : DatabaseManager.getInstance().dao(Artist.class).queryForAll()) {
                 rows.add(a);
                 addRow(row()
                     .set("name", a.getName())
@@ -56,7 +56,7 @@ public class ArtistsLibraryView extends AbstractMusicListView {
             Artist a = new Artist(name.getText().trim());
             a.setIsni(blankToNull(isni.getText()));
             a.setMbid(blankToNull(mbid.getText()));
-            DatabaseManager.getInstance().artistDao().create(a);
+            DatabaseManager.getInstance().dao(Artist.class).create(a);
         } catch (Exception e) {
             showError(e);
         }
@@ -76,7 +76,7 @@ public class ArtistsLibraryView extends AbstractMusicListView {
             a.setName(name.getText().trim());
             a.setIsni(blankToNull(isni.getText()));
             a.setMbid(blankToNull(mbid.getText()));
-            DatabaseManager.getInstance().artistDao().update(a);
+            DatabaseManager.getInstance().dao(Artist.class).update(a);
         } catch (Exception e) {
             showError(e);
         }
@@ -87,7 +87,7 @@ public class ArtistsLibraryView extends AbstractMusicListView {
         Artist a = rows.get(row);
         if (!confirmDelete("artist \"" + a.getName() + "\"")) return;
         try {
-            DatabaseManager.getInstance().artistDao().delete(a);
+            DatabaseManager.getInstance().dao(Artist.class).delete(a);
         } catch (Exception e) {
             showError(e);
         }

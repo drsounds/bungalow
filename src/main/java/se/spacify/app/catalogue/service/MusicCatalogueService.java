@@ -1,8 +1,8 @@
 package se.spacify.app.catalogue.service;
 
-import se.spacify.db.entity.Artist;
-import se.spacify.db.entity.Recording;
-import se.spacify.db.entity.MusicRelease;
+import se.spacify.app.music.model.Artist;
+import se.spacify.app.music.model.Recording;
+import se.spacify.app.music.model.MusicRelease;
 import se.spacify.service.Service;
 
 import java.util.List;
