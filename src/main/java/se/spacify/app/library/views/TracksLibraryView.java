@@ -12,6 +12,7 @@ import se.spacify.db.entity.Track;
 import se.spacify.navigation.ViewStack;
 import se.spacify.db.entity.Playlist;
 import se.spacify.app.playlist.service.PlaylistService;
+import se.spacify.controls.ToolButton;
 import se.spacify.service.media.PlayRequest;
 
 import javax.swing.*;
@@ -204,6 +205,57 @@ public class TracksLibraryView extends AbstractMusicListView {
         String artist = rec != null ? LibraryRepository.primaryArtistForRecording(rec) : "";
         // Carry the local Track so a remembered "Play with…" pick binds by FK.
         return new PlayRequest(t, isrc, title, artist, t.getPlayUri(), t.getDurationMs());
+    }
+
+    // ── Add to playlist ─────────────────────────────────────────────────────────
+
+    @Override
+    protected JComponent toolbarAccessory() {
+        ToolButton add = new ToolButton("Add to playlist");
+        add.getComponent().addActionListener(e -> addSelectedToPlaylist());
+        return add.getComponent();
+    }
+
+    private void addSelectedToPlaylist() {
+        int row = table.getSelectedRow();
+        if (row < 0) {
+            JOptionPane.showMessageDialog(getComponent(), "Select a track first.",
+                    "Add to playlist", JOptionPane.INFORMATION_MESSAGE);
+            return;
+        }
+        PlaylistService svc = editablePlaylistService();
+        if (svc == null) {
+            JOptionPane.showMessageDialog(getComponent(), "No editable playlist is available.",
+                    "Add to playlist", JOptionPane.INFORMATION_MESSAGE);
+            return;
+        }
+        Track t = rows.get(row);
+        final String NEW = "＋ New playlist…";
+        List<Object> options = new ArrayList<>(svc.getPlaylists());
+        options.add(NEW);
+        Object choice = JOptionPane.showInputDialog(getComponent(), "Add to playlist:", "Add to playlist",
+                JOptionPane.PLAIN_MESSAGE, null, options.toArray(), options.get(0));
+        if (choice == null) return;
+        try {
+            Playlist target;
+            if (NEW.equals(choice)) {
+                String name = JOptionPane.showInputDialog(getComponent(), "Playlist name:", "New Playlist",
+                        JOptionPane.PLAIN_MESSAGE);
+                if (name == null || name.isBlank()) return;
+                target = svc.createPlaylist(name.trim());
+            } else {
+                target = (Playlist) choice;
+            }
+            svc.addToPlaylist(target.getPublicId(), t);
+        } catch (Exception e) {
+            showError(e);
+        }
+    }
+
+    private PlaylistService editablePlaylistService() {
+        for (PlaylistService svc : getViewStack().getMainWindow().getServiceManager().getServices(PlaylistService.class))
+            if (svc.isEditable()) return svc;
+        return null;
     }
 
     private static void selectById(JComboBox<Recording> combo, int id) {

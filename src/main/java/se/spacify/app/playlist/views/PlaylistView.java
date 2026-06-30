@@ -1,43 +1,204 @@
 package se.spacify.app.playlist.views;
 
-import se.spacify.navigation.View;
+import se.spacify.app.music.controls.MusicTable;
+import se.spacify.app.music.views.AbstractMusicListView;
+import se.spacify.app.playlist.PlaylistEvents;
+import se.spacify.app.playlist.service.PlaylistItem;
+import se.spacify.app.playlist.service.PlaylistService;
+import se.spacify.controls.ToolBar;
+import se.spacify.controls.ToolButton;
+import se.spacify.db.entity.Playable;
+import se.spacify.db.entity.Playlist;
 import se.spacify.navigation.ViewStack;
+import se.spacify.service.media.PlayRequest;
 
 import javax.swing.*;
-import java.awt.*;
+import java.util.ArrayList;
+import java.util.List;
 
-public class PlaylistView extends View {
+/**
+ * Shows a single playlist (navigated via {@code spacify:playlist:<uuid>}): its
+ * ordered items in a {@link MusicTable} with play-on-activate, plus playlist-level
+ * actions (rename, delete, remove item, reorder) wired to the owning
+ * {@link PlaylistService}. The special URI {@code spacify:playlist:new} prompts
+ * for a name, creates a playlist and navigates to it. Mutations elsewhere refresh
+ * this view via {@link PlaylistEvents}.
+ */
+public class PlaylistView extends AbstractMusicListView {
 
-    private final JLabel titleLabel;
+    private static final String PREFIX = "spacify:playlist:";
+
+    private final List<Playable> items = new ArrayList<>();
+    private String currentId;
+    private final Runnable onPlaylistsChanged = this::onExternalChange;
 
     public PlaylistView(ViewStack viewStack) {
         super(viewStack);
-        getComponent().setLayout(new BorderLayout(0, 12));
-        getComponent().setOpaque(false);
-        getComponent().setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+        PlaylistEvents.addListener(onPlaylistsChanged);
+    }
 
-        titleLabel = new JLabel("Playlist");
-        titleLabel.setFont(titleLabel.getFont().deriveFont(Font.BOLD, 20f));
-        titleLabel.setForeground(Color.WHITE);
-        getComponent().add(titleLabel, BorderLayout.NORTH);
+    // ── Catalogue CRUD toolbar off; we manage playlist-level actions instead ────
 
-        JLabel placeholder = new JLabel("No tracks yet.", SwingConstants.CENTER);
-        placeholder.setForeground(new Color(160, 160, 160));
-        getComponent().add(placeholder, BorderLayout.CENTER);
+    @Override protected boolean isEditable() { return false; }
+
+    @Override protected List<MusicTable.Column> getColumns() {
+        return List.of(
+            column("number",   "#"),
+            column("title",    "Title"),
+            column("artist",   "Artist"),
+            column("duration", "Duration"));
     }
 
     @Override
-    public boolean acceptsUri(String uri) {
-        return uri != null && uri.matches("spacify:playlist:.*");
+    protected JComponent toolbarAccessory() {
+        ToolBar bar = new ToolBar();
+        ToolButton rename = new ToolButton("Rename");
+        ToolButton delete = new ToolButton("Delete");
+        ToolButton remove = new ToolButton("Remove");
+        ToolButton up     = new ToolButton("Up");
+        ToolButton down   = new ToolButton("Down");
+        rename.getComponent().addActionListener(e -> renamePlaylist());
+        delete.getComponent().addActionListener(e -> deletePlaylist());
+        remove.getComponent().addActionListener(e -> removeSelected());
+        up.getComponent().addActionListener(e -> move(-1));
+        down.getComponent().addActionListener(e -> move(+1));
+        bar.add(rename);
+        bar.add(delete);
+        bar.getComponent().addSeparator();
+        bar.add(remove);
+        bar.add(up);
+        bar.add(down);
+        return bar.getComponent();
+    }
+
+    // ── Navigation ──────────────────────────────────────────────────────────────
+
+    @Override public boolean acceptsUri(String uri) {
+        return uri != null && uri.startsWith(PREFIX);
     }
 
     @Override
     public void navigate(String uri) {
-        String id = uri.replaceFirst("spacify:playlist:", "");
-        titleLabel.setText("Playlist: " + id);
+        if (uri == null || !uri.startsWith(PREFIX)) return;
+        String id = uri.substring(PREFIX.length());
+        if (id.equals("new")) { createPlaylist(); return; }
+        currentId = id;
+        reloadAndRegroup();
     }
 
+    @Override public String getTitle() { return "Playlist"; }
+
+    // ── Rendering ───────────────────────────────────────────────────────────────
 
     @Override
-    public String getTitle() { return "Playlist"; }
+    protected void reload() {
+        items.clear();
+        musicTable.clear();
+        if (currentId == null) { setHeader("Playlist"); return; }
+        PlaylistService svc = ownerOf(currentId);
+        Playlist pl = svc != null ? svc.getPlaylist(currentId) : null;
+        if (pl == null) { setHeader("Playlist not found"); return; }
+        setHeader(pl.getName());
+        int n = 1;
+        for (Playable item : pl.getItems()) {
+            items.add(item);
+            addRow(row()
+                .set("number",   n++)
+                .set("title",    item.getTitle())
+                .set("artist",   artistOf(item))
+                .set("duration", fmtDuration(item.getDurationMs())));
+        }
+    }
+
+    @Override
+    protected PlayRequest playRequestAt(int row) {
+        if (row < 0 || row >= items.size()) return null;
+        Playable it = items.get(row);
+        return new PlayRequest(null, null, it.getTitle(), artistOf(it), it.getPlayUri(), it.getDurationMs());
+    }
+
+    // ── Playlist-level actions ──────────────────────────────────────────────────
+
+    private void createPlaylist() {
+        PlaylistService svc = editableService();
+        if (svc == null) { showError(new Exception("No editable playlist service available")); return; }
+        String name = JOptionPane.showInputDialog(getComponent(), "Playlist name:", "New Playlist",
+                JOptionPane.PLAIN_MESSAGE);
+        if (name == null || name.isBlank()) return;
+        try {
+            Playlist pl = svc.createPlaylist(name.trim());
+            getViewStack().navigate(PREFIX + pl.getPublicId());
+        } catch (Exception e) { showError(e); }
+    }
+
+    private void renamePlaylist() {
+        PlaylistService svc = ownerOf(currentId);
+        if (svc == null || !svc.isEditable()) return;
+        Playlist pl = svc.getPlaylist(currentId);
+        String current = pl != null ? pl.getName() : "";
+        Object input = JOptionPane.showInputDialog(getComponent(), "Playlist name:", "Rename Playlist",
+                JOptionPane.PLAIN_MESSAGE, null, null, current);
+        if (!(input instanceof String name) || name.isBlank()) return;
+        try { svc.renamePlaylist(currentId, name.trim()); } catch (Exception e) { showError(e); }
+    }
+
+    private void deletePlaylist() {
+        PlaylistService svc = ownerOf(currentId);
+        if (svc == null || !svc.isEditable()) return;
+        if (!confirmDelete("this playlist")) return;
+        try {
+            svc.deletePlaylist(currentId);
+            currentId = null;
+            getViewStack().navigate("spacify:library");
+        } catch (Exception e) { showError(e); }
+    }
+
+    private void removeSelected() {
+        int row = table.getSelectedRow();
+        PlaylistService svc = ownerOf(currentId);
+        if (row < 0 || svc == null || !svc.isEditable()) return;
+        try { svc.removeFromPlaylist(currentId, row); } catch (Exception e) { showError(e); }
+    }
+
+    private void move(int delta) {
+        int row = table.getSelectedRow();
+        PlaylistService svc = ownerOf(currentId);
+        if (row < 0 || svc == null || !svc.isEditable()) return;
+        int target = row + delta;
+        if (target < 0 || target >= items.size()) return;
+        try {
+            svc.moveRow(currentId, row, target);
+            table.getSelectionModel().setSelectionInterval(target, target);
+        } catch (Exception e) { showError(e); }
+    }
+
+    // ── Helpers ─────────────────────────────────────────────────────────────────
+
+    /** Refresh only when a change concerns the playlist currently shown. */
+    private void onExternalChange() {
+        if (currentId != null) reloadAndRegroup();
+    }
+
+    private static String artistOf(Playable item) {
+        return item instanceof PlaylistItem pi && pi.getArtist() != null ? pi.getArtist() : "";
+    }
+
+    private List<PlaylistService> services() {
+        return getViewStack().getMainWindow().getServiceManager().getServices(PlaylistService.class);
+    }
+
+    /** The service that owns the playlist with the given id, or null. */
+    private PlaylistService ownerOf(String id) {
+        if (id == null) return null;
+        for (PlaylistService svc : services()) {
+            try { if (svc.getPlaylist(id) != null) return svc; } catch (Exception ignored) {}
+        }
+        return null;
+    }
+
+    /** The first editable playlist service (the local store), or null. */
+    private PlaylistService editableService() {
+        for (PlaylistService svc : services()) if (svc.isEditable()) return svc;
+        return null;
+    }
 }

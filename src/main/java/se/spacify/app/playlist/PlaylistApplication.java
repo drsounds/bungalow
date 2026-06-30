@@ -3,8 +3,6 @@ package se.spacify.app.playlist;
 import se.spacify.aspect.Aspect;
 import se.spacify.aspect.AspectManager;
 
-import se.spacify.library.LibraryEvents;
-
 import se.spacify.app.Application;
 import se.spacify.app.ApplicationContext;
 
@@ -12,32 +10,28 @@ import se.spacify.app.playlist.concept.PlaylistConcept;
 import se.spacify.app.playlist.service.LocalPlaylistService;
 
 /**
- * Built-in plugin providing the music library: the data-backed views (tracks,
- * recordings, releases, artists, local files, detail pages, search, playlists)
- * registered into the {@code spacify:library*} URI space, plus the "Your Library"
- * sidebar subtree with live Releases/Artists lists kept in sync via
- * {@link LibraryEvents}.
+ * Built-in plugin providing playlists: the database-backed
+ * {@link LocalPlaylistService} (the editable local store) plus the
+ * {@link PlaylistConcept} that contributes the "Playlists" sidebar subtree and
+ * the {@code spacify:playlist:<uuid>} view.
  */
 public class PlaylistApplication extends Application {
 
-
     @Override
     public String getId() {
-        // TODO Auto-generated method stub
-        return "music";
+        return "playlist";
     }
 
     @Override
     public String getName() {
-        // TODO Auto-generated method stub
-        return "Music";
+        return "Playlists";
     }
 
     @Override
     public void onRegister(AspectManager<? extends Aspect> aspectManager) {
-        // TODO Auto-generated method stub
-
+        // No aspect-manager wiring needed.
     }
+
     @Override
     public void onActivate(ApplicationContext ctx) {
         ctx.registerService(new LocalPlaylistService());

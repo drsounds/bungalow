@@ -24,7 +24,6 @@ import se.spacify.app.library.views.RecordingsLibraryView;
 import se.spacify.app.library.views.ReleaseDetailView;
 import se.spacify.app.library.views.ReleasesLibraryView;
 import se.spacify.app.library.views.TracksLibraryView;
-import se.spacify.app.playlist.views.PlaylistView;
 
 public class LibraryConcept implements Concept {
     private Application plugin;
@@ -55,7 +54,6 @@ public class LibraryConcept implements Concept {
         ctx.registerView(new LocalFileLibraryView(getViewStack()));
         ctx.registerView(new ReleaseDetailView(getViewStack()));
         ctx.registerView(new ArtistDetailView(getViewStack()));
-        ctx.registerView(new PlaylistView(getViewStack()));
 
         SidebarNode lib = new SidebarNode("Your Library", "spacify:library");
         lib.addChild(new SidebarNode("Tracks",      "spacify:library:tracks"));

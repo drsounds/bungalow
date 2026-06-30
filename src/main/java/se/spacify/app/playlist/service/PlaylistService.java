@@ -48,4 +48,9 @@ public interface PlaylistService extends Service {
     default void removeFromPlaylist(String playlistId, int index) {
         throw new UnsupportedOperationException("playlist Service is read-only");
     }
+
+    /** Move the item at {@code from} to {@code to}, re-packing positions. */
+    default void moveRow(String playlistId, int from, int to) {
+        throw new UnsupportedOperationException("playlist Service is read-only");
+    }
 }

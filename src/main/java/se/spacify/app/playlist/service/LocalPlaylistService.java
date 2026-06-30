@@ -9,6 +9,7 @@ import se.spacify.db.entity.Playable;
 import se.spacify.db.entity.Playlist;
 import se.spacify.db.entity.PlaylistRow;
 import se.spacify.db.entity.Recording;
+import se.spacify.db.entity.Track;
 import se.spacify.app.playlist.PlaylistEvents;
 
 import java.sql.SQLException;
@@ -104,7 +105,7 @@ public class LocalPlaylistService implements PlaylistService {
             PlaylistRow row = new PlaylistRow(pl, rowsOf(pl).size(), item.getPlayUri());
             row.setTitle(item.getTitle());
             row.setDurationMs(item.getDurationMs());
-            if (item instanceof Recording rec) row.setArtist(LibraryRepository.artistNamesForRecording(rec));
+            row.setArtist(artistOf(item));
             rowDao().create(row);
             PlaylistEvents.fireChanged();
         } catch (SQLException e) {
@@ -132,7 +133,35 @@ public class LocalPlaylistService implements PlaylistService {
         }
     }
 
+    @Override
+    public void moveRow(String playlistId, int from, int to) {
+        Playlist pl = require(playlistId);
+        try {
+            List<PlaylistRow> rows = rowsOf(pl);
+            if (from < 0 || from >= rows.size() || to < 0 || to >= rows.size() || from == to) return;
+            PlaylistRow moved = rows.remove(from);
+            rows.add(to, moved);
+            Dao<PlaylistRow, Integer> rowDao = rowDao();
+            for (int i = 0; i < rows.size(); i++) {
+                PlaylistRow r = rows.get(i);
+                if (r.getPosition() != i) { r.setPosition(i); rowDao.update(r); }
+            }
+            PlaylistEvents.fireChanged();
+        } catch (SQLException e) {
+            throw new RuntimeException("Failed to reorder playlist", e);
+        }
+    }
+
     // ── Internals ─────────────────────────────────────────────────────────────
+
+    /** Best-effort artist string for the denormalised row metadata. */
+    private static String artistOf(Playable item) {
+        if (item instanceof Recording rec) return LibraryRepository.artistNamesForRecording(rec);
+        if (item instanceof Track t && t.getRecording() != null)
+            return LibraryRepository.artistNamesForRecording(t.getRecording());
+        if (item instanceof PlaylistItem pi) return pi.getArtist();
+        return null;
+    }
 
     private Playlist find(String id) {
         if (id == null) return null;
@@ -160,7 +189,8 @@ public class LocalPlaylistService implements PlaylistService {
     private void loadItems(Playlist pl) {
         try {
             pl.getItems().clear();
-            for (PlaylistRow r : rowsOf(pl)) pl.getItems().add(new RowItem(r));
+            for (PlaylistRow r : rowsOf(pl))
+                pl.getItems().add(new PlaylistItem(r.getContentUri(), r.getTitle(), r.getArtist(), r.getDurationMs()));
         } catch (SQLException e) {
             throw new RuntimeException("Failed to load playlist items", e);
         }
@@ -168,12 +198,4 @@ public class LocalPlaylistService implements PlaylistService {
 
     private static Dao<Playlist, Integer>    playlistDao() { return DatabaseManager.getInstance().playlistDao(); }
     private static Dao<PlaylistRow, Integer> rowDao()      { return DatabaseManager.getInstance().playlistRowDao(); }
-
-    /** Lightweight {@link Playable} reconstructed from a persisted row. */
-    private record RowItem(String uri, String title, long durationMs) implements Playable {
-        RowItem(PlaylistRow r) { this(r.getContentUri(), r.getTitle(), r.getDurationMs()); }
-        @Override public String getPlayUri()    { return uri; }
-        @Override public String getTitle()      { return title; }
-        @Override public long   getDurationMs() { return durationMs; }
-    }
 }

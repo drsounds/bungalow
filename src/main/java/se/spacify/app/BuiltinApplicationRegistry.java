@@ -25,6 +25,10 @@ final class BuiltinApplicationRegistry {
             "se.spacify.app.localmusic.LocalMusicApplication", cl));
         list.add(builtin("se.spacify.app.library", "Music Library", "1.0.0",
             "se.spacify.app.library.LibraryApplication", cl));
+        // After the library so its catalogue model is present; owns the Playlists
+        // sidebar subtree and the editable local playlist store.
+        list.add(builtin("se.spacify.app.playlist", "Playlists", "1.0.0",
+            "se.spacify.app.playlist.PlaylistApplication", cl));
         list.add(builtin("se.spacify.app.search", "Search", "1.0.0",
             "se.spacify.app.search.SearchApplication", cl));
         list.add(builtin("se.spacify.app.web", "Web & Sites", "1.0.0",
