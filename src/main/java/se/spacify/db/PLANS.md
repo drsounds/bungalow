@@ -1,0 +1,1 @@
+Also, I want to migrate the database entities and migrations so they are per app instead of global database migration and entity model, so apps can define new database tables and entities
