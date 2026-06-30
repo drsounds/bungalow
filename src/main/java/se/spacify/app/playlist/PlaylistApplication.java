@@ -9,6 +9,7 @@ import se.spacify.app.Application;
 import se.spacify.app.ApplicationContext;
 
 import se.spacify.app.playlist.concept.PlaylistConcept;
+import se.spacify.app.playlist.service.LocalPlaylistService;
 
 /**
  * Built-in plugin providing the music library: the data-backed views (tracks,
@@ -39,6 +40,7 @@ public class PlaylistApplication extends Application {
     }
     @Override
     public void onActivate(ApplicationContext ctx) {
+        ctx.registerService(new LocalPlaylistService());
         ctx.registerConcept(new PlaylistConcept(this));
     }
 }

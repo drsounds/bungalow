@@ -23,6 +23,17 @@ public class PlaylistRow extends ContentCollectionRow<Content<?>> {
     @DatabaseField(canBeNull = false, columnName = "content_uri")
     private String contentUri;
 
+    // Denormalised display metadata so a row rebuilds into a Playable without a
+    // cross-service lookup (the referenced content may live on a remote service).
+    @DatabaseField(canBeNull = true)
+    private String title;
+
+    @DatabaseField(canBeNull = true)
+    private String artist;
+
+    @DatabaseField(columnName = "duration_ms")
+    private long durationMs;
+
     public PlaylistRow() {}
 
     public PlaylistRow(Playlist playlist, int position, String contentUri) {
@@ -38,4 +49,10 @@ public class PlaylistRow extends ContentCollectionRow<Content<?>> {
     public void     setPlaylistName(String v) { this.playlistName = v; }
     public String   getContentUri()         { return contentUri; }
     public void     setContentUri(String v) { this.contentUri = v; }
+    public String   getTitle()              { return title; }
+    public void     setTitle(String v)      { this.title = v; }
+    public String   getArtist()             { return artist; }
+    public void     setArtist(String v)     { this.artist = v; }
+    public long     getDurationMs()         { return durationMs; }
+    public void     setDurationMs(long v)   { this.durationMs = v; }
 }

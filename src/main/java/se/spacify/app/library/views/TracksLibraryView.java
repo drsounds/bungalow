@@ -114,7 +114,7 @@ public class TracksLibraryView extends AbstractMusicListView {
         playlistByUri.clear();
         for (PlaylistService svc : getViewStack().getMainWindow().getServiceManager().getServices(PlaylistService.class)) {
             for (Playlist pl : svc.getPlaylists()) {
-                GroupRef ref = new GroupRef("playlist:" + pl.getId(), pl.getName(),
+                GroupRef ref = new GroupRef("playlist:" + pl.getPublicId(), pl.getName(),
                         pl.getItems().size() + " tracks");
                 for (Playable item : pl.getItems()) {
                     String uri = item.getPlayUri();
