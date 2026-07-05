@@ -109,8 +109,10 @@ public class DatabaseManager {
 
             boolean addedName = false;
             for (FieldType ft : info.getFieldTypes()) {
+                // ForeignCollection fields (e.g. Playlist.rows) are not columns.
+                if (ft.isForeignCollection()) continue;
                 String col = ft.getColumnName();
-                if (existing.contains(col.toLowerCase(Locale.ROOT))) continue;
+                if (col == null || existing.contains(col.toLowerCase(Locale.ROOT))) continue;
                 dao.executeRawNoArgs(
                     "ALTER TABLE `" + table + "` ADD COLUMN `" + col + "` " + sqlTypeFor(ft));
                 if ("name".equalsIgnoreCase(col)) addedName = true;
@@ -121,7 +123,8 @@ public class DatabaseManager {
                 dao.executeRawNoArgs(
                     "UPDATE `" + table + "` SET `name` = `title` WHERE `name` IS NULL");
             }
-        } catch (SQLException e) {
+        } catch (Exception e) {
+            // Best-effort migration: never let a reconcile hiccup break activation.
             System.err.println("Schema reconcile skipped for " + table + ": " + e.getMessage());
         }
     }
@@ -142,14 +145,20 @@ public class DatabaseManager {
         return cols;
     }
 
-    /** A SQLite column type for a field; SQLite is dynamically typed so this is only affinity. */
+    /**
+     * A SQLite column type for a field. Derived from the Java field type (not
+     * {@code ft.getSqlType()}, whose converter is null for some fields) — and SQLite
+     * is dynamically typed anyway, so this only sets column affinity. Foreign keys
+     * point at an {@code int} generated id, so they get {@code INTEGER}.
+     */
     private static String sqlTypeFor(FieldType ft) {
-        return switch (ft.getSqlType()) {
-            case INTEGER, BOOLEAN -> "INTEGER";
-            case LONG            -> "BIGINT";
-            case DOUBLE, FLOAT   -> "DOUBLE";
-            default              -> "VARCHAR";
-        };
+        if (ft.isForeign()) return "INTEGER";
+        Class<?> t = ft.getType();
+        if (t == int.class  || t == Integer.class || t == boolean.class || t == Boolean.class
+         || t == short.class || t == Short.class  || t == byte.class    || t == Byte.class) return "INTEGER";
+        if (t == long.class || t == Long.class) return "BIGINT";
+        if (t == float.class || t == Float.class || t == double.class || t == Double.class) return "DOUBLE";
+        return "VARCHAR";
     }
 
     /**
