@@ -168,5 +168,5 @@ public class SearchView extends View {
     }
 
     @Override
-    public String getTitle() { return "Search"; }
+    public String getName() { return "Search"; }
 }

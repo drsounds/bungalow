@@ -18,5 +18,5 @@ public class SPServiceWebView extends SPWebView {
 
     @Override protected String  prefix()           { return SiteUri.STORE_PREFIX; }
     @Override protected boolean supportsBookmarks() { return false; }
-    @Override public    String  getTitle()          { return "Store"; }
+    @Override public    String  getName()          { return "Store"; }
 }

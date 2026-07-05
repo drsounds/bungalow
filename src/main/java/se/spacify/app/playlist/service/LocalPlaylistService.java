@@ -103,7 +103,7 @@ public class LocalPlaylistService implements PlaylistService {
         if (item == null) return;
         try {
             PlaylistRow row = new PlaylistRow(pl, rowsOf(pl).size(), item.getPlayUri());
-            row.setTitle(item.getTitle());
+            row.setName(item.getName());
             row.setDurationMs(item.getDurationMs());
             row.setArtist(artistOf(item));
             rowDao().create(row);
@@ -190,7 +190,7 @@ public class LocalPlaylistService implements PlaylistService {
         try {
             pl.getItems().clear();
             for (PlaylistRow r : rowsOf(pl))
-                pl.getItems().add(new PlaylistItem(r.getContentUri(), r.getTitle(), r.getArtist(), r.getDurationMs()));
+                pl.getItems().add(new PlaylistItem(r.getContentUri(), r.getName(), r.getArtist(), r.getDurationMs()));
         } catch (SQLException e) {
             throw new RuntimeException("Failed to load playlist items", e);
         }

@@ -45,7 +45,7 @@ public class Recording extends Content<RecordingCreatorCredit> implements Playab
     }
 
     @Override public long getDurationMs() { return durationMs; }
-    // getTitle() is provided by Node and satisfies Playable.
+    // getName() is provided by Node and satisfies Playable.
 
     // ── Getters / setters ─────────────────────────────────────────────────────
 

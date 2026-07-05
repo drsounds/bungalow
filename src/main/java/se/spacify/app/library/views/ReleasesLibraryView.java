@@ -38,7 +38,7 @@ public class ReleasesLibraryView extends AbstractMusicListView {
             for (MusicRelease r : DatabaseManager.getInstance().dao(MusicRelease.class).queryForAll()) {
                 rows.add(r);
                 addRow(row()
-                    .set("name",    r.getTitle())
+                    .set("name",    r.getName())
                     .set("artists", LibraryRepository.artistNamesForRelease(r))
                     .set("type",    r.getType() != null ? r.getType().name() : "")
                     .set("date",    r.getReleaseDate()));
@@ -76,7 +76,7 @@ public class ReleasesLibraryView extends AbstractMusicListView {
     @Override
     protected void onEdit(int row) {
         MusicRelease r = rows.get(row);
-        JTextField title   = new JTextField(r.getTitle());
+        JTextField title   = new JTextField(r.getName());
         JTextField artists = new JTextField(LibraryRepository.artistNamesForRelease(r));
         JComboBox<ReleaseType> type = new JComboBox<>(ReleaseType.values());
         if (r.getType() != null) type.setSelectedItem(r.getType());
@@ -88,7 +88,7 @@ public class ReleasesLibraryView extends AbstractMusicListView {
                 new JComponent[]{title, artists, type, date, upc, mbid})) return;
         if (title.getText().isBlank()) return;
         try {
-            r.setTitle(title.getText().trim());
+            r.setName(title.getText().trim());
             r.setType((ReleaseType) type.getSelectedItem());
             r.setReleaseDate(blankToNull(date.getText()));
             r.setUpc(blankToNull(upc.getText()));
@@ -103,7 +103,7 @@ public class ReleasesLibraryView extends AbstractMusicListView {
     @Override
     protected void onDelete(int row) {
         MusicRelease r = rows.get(row);
-        if (!confirmDelete("release \"" + r.getTitle() + "\"")) return;
+        if (!confirmDelete("release \"" + r.getName() + "\"")) return;
         try {
             DatabaseManager.getInstance().dao(ReleaseCreatorCredit.class).delete(
                 DatabaseManager.getInstance().dao(ReleaseCreatorCredit.class).queryForEq("release_id", r.getId()));
@@ -118,5 +118,5 @@ public class ReleasesLibraryView extends AbstractMusicListView {
     }
 
     @Override public boolean acceptsUri(String uri) { return "spacify:library:releases".equals(uri); }
-    @Override public String getTitle() { return "Releases"; }
+    @Override public String getName() { return "Releases"; }
 }

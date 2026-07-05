@@ -63,7 +63,7 @@ public class ArtistDetailView extends AbstractMusicListView {
                 if (rec == null) continue;
                 rows.add(rec);
                 addRow(row()
-                    .set("recording", rec.getTitle())
+                    .set("recording", rec.getName())
                     .set("album",     LibraryRepository.albumForRecording(rec)));
             }
         } catch (Exception e) {
@@ -74,9 +74,9 @@ public class ArtistDetailView extends AbstractMusicListView {
     @Override
     protected PlayQueueItem queueItemAt(int row) {
         Recording rec = rows.get(row);
-        return new PlayQueueItem(rec.getPlayUri(), rec.getTitle(),
+        return new PlayQueueItem(rec.getPlayUri(), rec.getName(),
                 LibraryRepository.artistNamesForRecording(rec), rec.getDurationMs(), () -> {
-            if (!PlaybackCoordinator.play(rec.getIsrc(), rec.getTitle(),
+            if (!PlaybackCoordinator.play(rec.getIsrc(), rec.getName(),
                     LibraryRepository.primaryArtistForRecording(rec))) {
                 PlaybackCoordinator.playUri(rec.getPlayUri());
             }
@@ -84,5 +84,5 @@ public class ArtistDetailView extends AbstractMusicListView {
     }
 
     @Override public boolean acceptsUri(String uri) { return uri != null && URI.matcher(uri).matches(); }
-    @Override public String getTitle() { return "Artist"; }
+    @Override public String getName() { return "Artist"; }
 }

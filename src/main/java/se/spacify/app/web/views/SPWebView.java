@@ -80,7 +80,7 @@ public class SPWebView extends View {
         }
     }
 
-    @Override public String getTitle() { return "Web"; }
+    @Override public String getName() { return "Web"; }
 
     // ── History delegation (app ◄ ► drive the browser) ───────────────────────────
 

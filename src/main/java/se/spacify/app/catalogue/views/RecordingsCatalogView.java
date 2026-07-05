@@ -43,7 +43,7 @@ public class RecordingsCatalogView extends AbstractCatalogView<Recording> {
     @Override
     protected MusicTable.Row toRow(Recording r) {
         return row()
-            .set("name",     r.getTitle())
+            .set("name",     r.getName())
             .set("artists",  r.getArtistNames())
             .set("isrc",     r.getIsrc())
             .set("duration", fmtDuration(r.getDurationMs()));
@@ -54,7 +54,7 @@ public class RecordingsCatalogView extends AbstractCatalogView<Recording> {
         Recording r = rows.get(row);
         // Transient catalogue recording — no local Track; keyed by ISRC/URI.
         String artist = r.getArtistNames() != null ? r.getArtistNames() : "";
-        return new PlayRequest(null, r.getIsrc(), r.getTitle(), artist, r.getPlayUri(), r.getDurationMs());
+        return new PlayRequest(null, r.getIsrc(), r.getName(), artist, r.getPlayUri(), r.getDurationMs());
     }
 
     // ── Library-membership toggle (the shared ✓/＋ column) ───────────────────────
@@ -96,7 +96,7 @@ public class RecordingsCatalogView extends AbstractCatalogView<Recording> {
                 if (!byIsrc.isEmpty()) return byIsrc.get(0);
             }
             List<Recording> byTitle = DatabaseManager.getInstance().dao(Recording.class)
-                    .queryForEq("title", r.getTitle());
+                    .queryForEq("title", r.getName());
             return byTitle.isEmpty() ? null : byTitle.get(0);
         } catch (Exception e) {
             return null;
@@ -105,7 +105,7 @@ public class RecordingsCatalogView extends AbstractCatalogView<Recording> {
 
     private void addToLibrary(Recording r) {
         try {
-            Recording copy = new Recording(r.getTitle());
+            Recording copy = new Recording(r.getName());
             copy.setIsrc(r.getIsrc());
             copy.setDurationMs(r.getDurationMs());
             DatabaseManager.getInstance().dao(Recording.class).create(copy);
@@ -123,5 +123,5 @@ public class RecordingsCatalogView extends AbstractCatalogView<Recording> {
         }
     }
 
-    @Override public String getTitle() { return "Catalogue Recordings"; }
+    @Override public String getName() { return "Catalogue Recordings"; }
 }

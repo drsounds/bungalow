@@ -54,7 +54,7 @@ public class ReleaseDetailView extends AbstractMusicListView {
             MusicRelease release = DatabaseManager.getInstance().dao(MusicRelease.class).queryForId(releaseId);
             if (release == null) { setHeader("Release not found"); return; }
             String artists = LibraryRepository.artistNamesForRelease(release);
-            setHeader(artists.isBlank() ? release.getTitle() : release.getTitle() + " — " + artists);
+            setHeader(artists.isBlank() ? release.getName() : release.getName() + " — " + artists);
 
             List<Track> tracks = DatabaseManager.getInstance().dao(Track.class).queryForEq("release_id", releaseId);
             tracks.sort(LibraryRepository.ALBUM_ORDER);
@@ -63,7 +63,7 @@ public class ReleaseDetailView extends AbstractMusicListView {
                 Recording rec = t.getRecording();
                 addRow(row()
                     .set("number",    t.getTrackNumber())
-                    .set("recording", rec != null ? rec.getTitle() : "")
+                    .set("recording", rec != null ? rec.getName() : "")
                     .set("artists",   rec != null ? LibraryRepository.artistNamesForRecording(rec) : ""));
             }
         } catch (Exception e) {
@@ -76,11 +76,11 @@ public class ReleaseDetailView extends AbstractMusicListView {
         Track t = rows.get(row);
         Recording rec = t.getRecording();
         String isrc   = rec != null ? rec.getIsrc()  : null;
-        String title  = rec != null ? rec.getTitle() : "";
+        String title  = rec != null ? rec.getName() : "";
         String artist = rec != null ? LibraryRepository.primaryArtistForRecording(rec) : "";
         return new PlayRequest(t, isrc, title, artist, t.getPlayUri(), t.getDurationMs());
     }
 
     @Override public boolean acceptsUri(String uri) { return uri != null && URI.matcher(uri).matches(); }
-    @Override public String getTitle() { return "Release"; }
+    @Override public String getName() { return "Release"; }
 }

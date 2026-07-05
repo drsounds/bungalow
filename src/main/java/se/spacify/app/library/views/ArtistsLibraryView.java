@@ -98,5 +98,5 @@ public class ArtistsLibraryView extends AbstractMusicListView {
     }
 
     @Override public boolean acceptsUri(String uri) { return "spacify:library:artists".equals(uri); }
-    @Override public String getTitle() { return "Artists"; }
+    @Override public String getName() { return "Artists"; }
 }

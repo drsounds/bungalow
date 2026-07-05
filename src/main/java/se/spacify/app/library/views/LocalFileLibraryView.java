@@ -143,5 +143,5 @@ public class LocalFileLibraryView extends AbstractMusicListView {
     }
 
     @Override public boolean acceptsUri(String uri) { return "spacify:library:local".equals(uri); }
-    @Override public String getTitle() { return "Local Files"; }
+    @Override public String getName() { return "Local Files"; }
 }

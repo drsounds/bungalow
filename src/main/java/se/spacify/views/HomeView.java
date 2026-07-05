@@ -30,5 +30,5 @@ public class HomeView extends View {
 
 
     @Override
-    public String getTitle() { return "Home"; }
+    public String getName() { return "Home"; }
 }

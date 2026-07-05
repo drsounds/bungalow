@@ -1,15 +1,22 @@
 package se.spacify.db;
 
+import com.j256.ormlite.dao.BaseDaoImpl;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.DaoManager;
+import com.j256.ormlite.dao.GenericRawResults;
+import com.j256.ormlite.field.FieldType;
 import com.j256.ormlite.jdbc.JdbcConnectionSource;
 import com.j256.ormlite.support.ConnectionSource;
+import com.j256.ormlite.table.TableInfo;
 import com.j256.ormlite.table.TableUtils;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.sql.SQLException;
+import java.util.HashSet;
+import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -70,11 +77,79 @@ public class DatabaseManager {
         return (Dao<T, Integer>) daoCache.computeIfAbsent(entity, c -> {
             try {
                 TableUtils.createTableIfNotExists(connectionSource, c);
-                return DaoManager.createDao(connectionSource, c);
+                Dao<?, ?> d = DaoManager.createDao(connectionSource, c);
+                reconcileColumns(d);
+                return d;
             } catch (SQLException e) {
                 throw new RuntimeException("Failed to register entity " + c.getName(), e);
             }
         });
+    }
+
+    // ── Lightweight schema migration ──────────────────────────────────────────────
+
+    /**
+     * Bring an existing table up to its entity's current fields without dropping
+     * data: {@code createTableIfNotExists} only creates missing tables, never
+     * alters existing ones, so a table written by an older build can lack columns
+     * the code now reads (e.g. the {@code name}/{@code version} columns the
+     * {@code Node} base added). For each {@link com.j256.ormlite.field.DatabaseField}
+     * column absent from the live table we {@code ALTER TABLE … ADD COLUMN} it
+     * (nullable, so existing rows are fine), then backfill the one documented rename
+     * — legacy {@code title} → {@code name}. New/fresh tables already match, so this
+     * is a no-op for them.
+     */
+    private void reconcileColumns(Dao<?, ?> dao) {
+        if (!(dao instanceof BaseDaoImpl<?, ?> impl)) return;
+        TableInfo<?, ?> info = impl.getTableInfo();
+        String table = info.getTableName();
+        try {
+            Set<String> existing = existingColumns(dao, table);
+            if (existing.isEmpty()) return; // table not readable / just created empty — leave it
+
+            boolean addedName = false;
+            for (FieldType ft : info.getFieldTypes()) {
+                String col = ft.getColumnName();
+                if (existing.contains(col.toLowerCase(Locale.ROOT))) continue;
+                dao.executeRawNoArgs(
+                    "ALTER TABLE `" + table + "` ADD COLUMN `" + col + "` " + sqlTypeFor(ft));
+                if ("name".equalsIgnoreCase(col)) addedName = true;
+            }
+
+            // Legacy title→name rename: carry the old display value over.
+            if (addedName && existing.contains("title")) {
+                dao.executeRawNoArgs(
+                    "UPDATE `" + table + "` SET `name` = `title` WHERE `name` IS NULL");
+            }
+        } catch (SQLException e) {
+            System.err.println("Schema reconcile skipped for " + table + ": " + e.getMessage());
+        }
+    }
+
+    /** Lower-cased set of the columns currently present in {@code table}. */
+    private Set<String> existingColumns(Dao<?, ?> dao, String table) throws SQLException {
+        Set<String> cols = new HashSet<>();
+        try (GenericRawResults<String[]> res =
+                 dao.queryRaw("PRAGMA table_info(`" + table + "`)")) {
+            for (String[] row : res) {
+                // PRAGMA table_info columns: cid, name, type, notnull, dflt_value, pk
+                if (row.length > 1 && row[1] != null) cols.add(row[1].toLowerCase(Locale.ROOT));
+            }
+        } catch (Exception e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        return cols;
+    }
+
+    /** A SQLite column type for a field; SQLite is dynamically typed so this is only affinity. */
+    private static String sqlTypeFor(FieldType ft) {
+        return switch (ft.getSqlType()) {
+            case INTEGER, BOOLEAN -> "INTEGER";
+            case LONG            -> "BIGINT";
+            case DOUBLE, FLOAT   -> "DOUBLE";
+            default              -> "VARCHAR";
+        };
     }
 
     /**

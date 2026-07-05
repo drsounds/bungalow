@@ -25,7 +25,7 @@ public final class PlaylistItem implements Playable {
     }
 
     @Override public String getPlayUri()    { return uri; }
-    @Override public String getTitle()      { return title; }
+    @Override public String getName()      { return title; }
     @Override public long   getDurationMs() { return durationMs; }
 
     public String getArtist() { return artist; }

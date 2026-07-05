@@ -45,7 +45,7 @@ public final class CatalogueSearchProvider implements SearchProvider {
                 n = 0;
                 for (MusicRelease r : svc.searchReleases(query)) {
                     if (r.getMbid() == null || n++ >= LIMIT) break;
-                    out.add(new SearchResult(EntityKind.RELEASE, r.getTitle(),
+                    out.add(new SearchResult(EntityKind.RELEASE, r.getName(),
                         LibraryRepository.artistNamesForRelease(r),
                         "spacify:catalog:" + svc.getId() + ":recordings?release=" + enc(r.getMbid()), svc.getName()));
                 }

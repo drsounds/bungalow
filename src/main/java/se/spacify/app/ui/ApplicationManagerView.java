@@ -202,6 +202,6 @@ public class ApplicationManagerView extends View {
 
     @Override public boolean acceptsUri(String uri) { return "spacify:apps".equals(uri); }
     @Override public void navigate(String uri) {}
-    @Override public String getTitle() { return "Apps"; }
+    @Override public String getName() { return "Apps"; }
     @Override public void onShow() { refresh(); }
 }

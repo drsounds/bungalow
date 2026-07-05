@@ -28,10 +28,10 @@ public interface MusicService extends MediaService {
     default List<Candidate> findCandidates(String isrc, String title, String artist) {
         if (isrc != null && !isrc.isBlank()) {
             Recording r = lookup(isrc);
-            if (r != null) return List.of(new Candidate(null, r.getTitle(), title, true));
+            if (r != null) return List.of(new Candidate(null, r.getName(), title, true));
         }
         Recording r = lookupByTitleArtist(title, artist);
-        if (r != null) return List.of(new Candidate(null, r.getTitle(), artist, false));
+        if (r != null) return List.of(new Candidate(null, r.getName(), artist, false));
         return List.of();
     }
 

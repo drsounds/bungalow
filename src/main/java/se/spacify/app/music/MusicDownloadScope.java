@@ -31,7 +31,7 @@ public final class MusicDownloadScope implements Service, DownloadCaptureScope {
     @Override
     public void onCompleted(File file, PendingDownload source, Download row) throws Exception {
         MusicScanner.Imported m = new MusicScanner().importFile(file);
-        row.setTitle(m.title());
+        row.setName(m.title());
         row.setArtist(m.artist());
         row.setAlbum(m.album());
     }

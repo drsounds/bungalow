@@ -67,7 +67,7 @@ public final class BookmarkManager {
                     dao().create(root);
                 } else {                       // promote a container to an explicit bookmark
                     root.setAutoCreated(false);
-                    if (pageTitle != null && !pageTitle.isBlank()) root.setTitle(pageTitle);
+                    if (pageTitle != null && !pageTitle.isBlank()) root.setName(pageTitle);
                     dao().update(root);
                 }
             } else {

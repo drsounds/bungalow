@@ -63,7 +63,7 @@ public class TracksLibraryView extends AbstractMusicListView {
         @Override public GroupRef groupOf(int row) {
             MusicRelease r = rows.get(row).getRelease();
             if (r == null) return new GroupRef("release:none", "Unknown release", "");
-            return new GroupRef("release:" + r.getId(), r.getTitle(),
+            return new GroupRef("release:" + r.getId(), r.getName(),
                     LibraryRepository.artistNamesForRelease(r));
         }
     };
@@ -88,8 +88,8 @@ public class TracksLibraryView extends AbstractMusicListView {
             // album fall back to the canonical side/track-number ascending order.
             List<Track> tracks = new ArrayList<>(DatabaseManager.getInstance().dao(Track.class).queryForAll());
             tracks.sort(Comparator.comparing(
-                    (Track t) -> t.getRelease() != null && t.getRelease().getTitle() != null
-                            ? t.getRelease().getTitle() : "",
+                    (Track t) -> t.getRelease() != null && t.getRelease().getName() != null
+                            ? t.getRelease().getName() : "",
                     String.CASE_INSENSITIVE_ORDER)
                 .thenComparing(LibraryRepository.ALBUM_ORDER));
             for (Track t : tracks) {
@@ -97,9 +97,9 @@ public class TracksLibraryView extends AbstractMusicListView {
                 Recording rec = t.getRecording();
                 addRow(row()
                     .set("number",    t.getTrackNumber())
-                    .set("recording", rec != null ? rec.getTitle() : "")
+                    .set("recording", rec != null ? rec.getName() : "")
                     .set("artists",   rec != null ? LibraryRepository.artistNamesForRecording(rec) : "")
-                    .set("album",     t.getRelease() != null ? t.getRelease().getTitle() : ""));
+                    .set("album",     t.getRelease() != null ? t.getRelease().getName() : ""));
             }
         } catch (Exception e) {
             showError(e);
@@ -201,7 +201,7 @@ public class TracksLibraryView extends AbstractMusicListView {
         Track t = rows.get(row);
         Recording rec = t.getRecording();
         String isrc   = rec != null ? rec.getIsrc()  : null;
-        String title  = rec != null ? rec.getTitle() : "";
+        String title  = rec != null ? rec.getName() : "";
         String artist = rec != null ? LibraryRepository.primaryArtistForRecording(rec) : "";
         // Carry the local Track so a remembered "Play with…" pick binds by FK.
         return new PlayRequest(t, isrc, title, artist, t.getPlayUri(), t.getDurationMs());
@@ -281,5 +281,5 @@ public class TracksLibraryView extends AbstractMusicListView {
     @Override public boolean acceptsUri(String uri) {
         return uri != null && uri.matches("spacify:library(:tracks)?");
     }
-    @Override public String getTitle() { return "Tracks"; }
+    @Override public String getName() { return "Tracks"; }
 }

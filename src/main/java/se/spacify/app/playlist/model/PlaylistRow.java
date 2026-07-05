@@ -50,8 +50,8 @@ public class PlaylistRow extends ContentCollectionRow<Content<?>> {
     public void     setPlaylistName(String v) { this.playlistName = v; }
     public String   getContentUri()         { return contentUri; }
     public void     setContentUri(String v) { this.contentUri = v; }
-    public String   getTitle()              { return title; }
-    public void     setTitle(String v)      { this.title = v; }
+    public String   getName()              { return title; }
+    public void     setName(String v)      { this.title = v; }
     public String   getArtist()             { return artist; }
     public void     setArtist(String v)     { this.artist = v; }
     public long     getDurationMs()         { return durationMs; }

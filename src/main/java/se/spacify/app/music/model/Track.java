@@ -34,7 +34,7 @@ public class Track extends ContentCollectionRow<Recording> implements Playable {
 
     @Override public String getPlayUri()    { return recording != null ? recording.getPlayUri() : null; }
     @Override public long   getDurationMs() { return durationMs > 0 ? durationMs : (recording != null ? recording.getDurationMs() : 0); }
-    @Override public String getTitle()      { return recording != null ? recording.getName() : ""; }
+    @Override public String getName()      { return recording != null ? recording.getName() : ""; }
 
     // ── Getters / setters ─────────────────────────────────────────────────────
 
@@ -48,5 +48,5 @@ public class Track extends ContentCollectionRow<Recording> implements Playable {
     public MusicRelease getRelease()               { return release; }
     public void         setRelease(MusicRelease v) { this.release = v; }
 
-    @Override public String toString() { return trackNumber + ". " + getTitle(); }
+    @Override public String toString() { return trackNumber + ". " + getName(); }
 }

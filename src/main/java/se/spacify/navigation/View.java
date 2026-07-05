@@ -27,7 +27,7 @@ public abstract class View extends Panel {
 
 	public abstract void navigate(String uri);
 
-	public String getTitle() {
+	public String getName() {
 		return "";
 	}
 

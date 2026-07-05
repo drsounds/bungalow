@@ -23,7 +23,7 @@ public abstract class View extends Panel {
     public abstract boolean acceptsUri(String uri);   // "is this URI mine?"
     public abstract void    navigate(String uri);     // "render this URI"
     public JComponent getComponent() { return this; } // the View itself by default
-    public String getTitle() { return ""; }
+    public String getName() { return ""; }
     public void onShow() {}  public void onHide() {}
 
     // Views with their own history (e.g. the embedded browser) opt in:

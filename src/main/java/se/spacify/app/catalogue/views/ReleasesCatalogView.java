@@ -36,7 +36,7 @@ public class ReleasesCatalogView extends AbstractCatalogView<MusicRelease> {
     @Override
     protected MusicTable.Row toRow(MusicRelease r) {
         return row()
-            .set("release", r.getTitle())
+            .set("release", r.getName())
             .set("date",    r.getReleaseDate());
     }
 
@@ -56,5 +56,5 @@ public class ReleasesCatalogView extends AbstractCatalogView<MusicRelease> {
             : svc.getName() + " — no releases for \"" + query() + "\"";
     }
 
-    @Override public String getTitle() { return "Catalogue Releases"; }
+    @Override public String getName() { return "Catalogue Releases"; }
 }

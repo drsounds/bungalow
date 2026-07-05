@@ -49,5 +49,5 @@ public class ArtistsCatalogView extends AbstractCatalogView<Artist> {
             : svc.getName() + " — no artists for \"" + query() + "\"";
     }
 
-    @Override public String getTitle() { return "Catalogue Artists"; }
+    @Override public String getName() { return "Catalogue Artists"; }
 }

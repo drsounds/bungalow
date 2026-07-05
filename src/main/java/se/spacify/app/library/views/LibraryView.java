@@ -61,5 +61,5 @@ public class LibraryView extends View {
 
     @Override public boolean acceptsUri(String uri) { return uri != null && uri.matches("spacify:library.*"); }
     @Override public void navigate(String uri) {}
-    @Override public String getTitle() { return "Your Library"; }
+    @Override public String getName() { return "Your Library"; }
 }

@@ -10,5 +10,5 @@ public interface Playable {
 
     long getDurationMs();
 
-    String getTitle();
+    String getName();
 }

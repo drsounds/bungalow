@@ -85,7 +85,7 @@ public class LibraryConcept implements Concept {
         List<SidebarNode> out = new ArrayList<>();
         try {
             for (MusicRelease r : DatabaseManager.getInstance().dao(MusicRelease.class).queryForAll()) {
-                out.add(new SidebarNode(r.getTitle(), "spacify:library:release:" + r.getId()));
+                out.add(new SidebarNode(r.getName(), "spacify:library:release:" + r.getId()));
             }
         } catch (Exception ignored) {}
         return out;

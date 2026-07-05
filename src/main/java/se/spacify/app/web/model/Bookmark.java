@@ -58,8 +58,8 @@ public class Bookmark {
     public void     setHost(String v)        { this.host = v; }
     public String   getSpacifyUri()          { return spacifyUri; }
     public void     setSpacifyUri(String v)  { this.spacifyUri = v; }
-    public String   getTitle()               { return title; }
-    public void     setTitle(String v)       { this.title = v; }
+    public String   getName()               { return title; }
+    public void     setName(String v)       { this.title = v; }
     public byte[]   getFavicon()             { return favicon; }
     public void     setFavicon(byte[] v)     { this.favicon = v; }
     public boolean  isAutoCreated()          { return autoCreated; }

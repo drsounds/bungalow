@@ -158,7 +158,7 @@ public class LocalMusicService implements MusicService {
         if (title == null || title.isBlank()) return null;
         try {
             for (Recording r : DatabaseManager.getInstance().dao(Recording.class).queryForAll()) {
-                if (r.getTitle() == null || !r.getTitle().equalsIgnoreCase(title)) continue;
+                if (r.getName() == null || !r.getName().equalsIgnoreCase(title)) continue;
                 if (artist == null || artist.isBlank()) return r;
                 if (primaryArtist(r).equalsIgnoreCase(artist)) return r;
             }

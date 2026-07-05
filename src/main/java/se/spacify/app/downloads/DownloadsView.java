@@ -57,7 +57,7 @@ public class DownloadsView extends AbstractMusicListView {
                 rows.add(d);
                 long speed = svc != null ? svc.speedFor(d.getId()) : 0L;
                 addRow(row()
-                    .set("name",     d.getTitle() != null ? d.getTitle() : d.getFileName())
+                    .set("name",     d.getName() != null ? d.getName() : d.getFileName())
                     .set("artist",   d.getArtist() != null ? d.getArtist() : "")
                     .set("album",    d.getAlbum() != null ? d.getAlbum() : "")
                     .set("size",     humanBytes(d.getTotalBytes() > 0 ? d.getTotalBytes() : d.getReceivedBytes()))
@@ -88,7 +88,7 @@ public class DownloadsView extends AbstractMusicListView {
         Download d = rows.get(row);
         if (d.getStatus() != Download.Status.COMPLETE || d.getFilePath() == null) return null;
         String uri = "spacify:local:" + d.getFilePath();
-        return new PlayRequest(null, null, d.getTitle() != null ? d.getTitle() : d.getFileName(),
+        return new PlayRequest(null, null, d.getName() != null ? d.getName() : d.getFileName(),
                 d.getArtist() != null ? d.getArtist() : "", uri, 0);
     }
 
@@ -161,5 +161,5 @@ public class DownloadsView extends AbstractMusicListView {
     }
 
     @Override public boolean acceptsUri(String uri) { return "spacify:downloads".equals(uri); }
-    @Override public String getTitle() { return "Downloads"; }
+    @Override public String getName() { return "Downloads"; }
 }

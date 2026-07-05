@@ -109,5 +109,5 @@ public class NowPlayingView extends View {
     }
 
     @Override
-    public String getTitle() { return "Now Playing"; }
+    public String getName() { return "Now Playing"; }
 }

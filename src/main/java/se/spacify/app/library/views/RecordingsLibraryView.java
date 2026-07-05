@@ -38,7 +38,7 @@ public class RecordingsLibraryView extends AbstractMusicListView {
             for (Recording r : DatabaseManager.getInstance().dao(Recording.class).queryForAll()) {
                 rows.add(r);
                 addRow(row()
-                    .set("name",     r.getTitle())
+                    .set("name",     r.getName())
                     .set("artists",  LibraryRepository.artistNamesForRecording(r))
                     .set("isrc",     r.getIsrc())
                     .set("duration", fmtDuration(r.getDurationMs())));
@@ -74,7 +74,7 @@ public class RecordingsLibraryView extends AbstractMusicListView {
     @Override
     protected void onEdit(int row) {
         Recording r = rows.get(row);
-        JTextField title    = new JTextField(r.getTitle());
+        JTextField title    = new JTextField(r.getName());
         JTextField artists  = new JTextField(LibraryRepository.artistNamesForRecording(r));
         JTextField isrc     = new JTextField(r.getIsrc());
         JTextField duration = new JTextField(fmtDuration(r.getDurationMs()));
@@ -84,7 +84,7 @@ public class RecordingsLibraryView extends AbstractMusicListView {
                 new JComponent[]{title, artists, isrc, duration, filePath})) return;
         if (title.getText().isBlank()) return;
         try {
-            r.setTitle(title.getText().trim());
+            r.setName(title.getText().trim());
             r.setIsrc(blankToNull(isrc.getText()));
             r.setDurationMs(parseDuration(duration.getText()));
             DatabaseManager.getInstance().dao(Recording.class).update(r);
@@ -98,7 +98,7 @@ public class RecordingsLibraryView extends AbstractMusicListView {
     @Override
     protected void onDelete(int row) {
         Recording r = rows.get(row);
-        if (!confirmDelete("recording \"" + r.getTitle() + "\"")) return;
+        if (!confirmDelete("recording \"" + r.getName() + "\"")) return;
         try {
             DatabaseManager.getInstance().dao(RecordingCreatorCredit.class).delete(
                 DatabaseManager.getInstance().dao(RecordingCreatorCredit.class).queryForEq("recording_id", r.getId()));
@@ -112,7 +112,7 @@ public class RecordingsLibraryView extends AbstractMusicListView {
     protected PlayRequest playRequestAt(int row) {
         Recording r = rows.get(row);
         // No local Track here; the saved "Play with…" pick is keyed by ISRC/URI.
-        return new PlayRequest(null, r.getIsrc(), r.getTitle(),
+        return new PlayRequest(null, r.getIsrc(), r.getName(),
                 LibraryRepository.primaryArtistForRecording(r), r.getPlayUri(), r.getDurationMs());
     }
 
@@ -121,5 +121,5 @@ public class RecordingsLibraryView extends AbstractMusicListView {
     }
 
     @Override public boolean acceptsUri(String uri) { return "spacify:library:recordings".equals(uri); }
-    @Override public String getTitle() { return "Recordings"; }
+    @Override public String getName() { return "Recordings"; }
 }

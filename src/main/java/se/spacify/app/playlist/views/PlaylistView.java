@@ -99,7 +99,7 @@ public class PlaylistView extends AbstractMusicListView {
         reloadAndRegroup();
     }
 
-    @Override public String getTitle() { return "Playlist"; }
+    @Override public String getName() { return "Playlist"; }
 
     // ── Rendering ───────────────────────────────────────────────────────────────
 
@@ -117,7 +117,7 @@ public class PlaylistView extends AbstractMusicListView {
             items.add(item);
             addRow(row()
                 .set("number",   n++)
-                .set("title",    item.getTitle())
+                .set("title",    item.getName())
                 .set("artist",   artistOf(item))
                 .set("duration", fmtDuration(item.getDurationMs())));
         }
@@ -127,7 +127,7 @@ public class PlaylistView extends AbstractMusicListView {
     protected PlayRequest playRequestAt(int row) {
         if (row < 0 || row >= items.size()) return null;
         Playable it = items.get(row);
-        return new PlayRequest(null, null, it.getTitle(), artistOf(it), it.getPlayUri(), it.getDurationMs());
+        return new PlayRequest(null, null, it.getName(), artistOf(it), it.getPlayUri(), it.getDurationMs());
     }
 
     // ── Playlist-level actions ──────────────────────────────────────────────────

@@ -41,7 +41,7 @@ public class TestAppView extends TabBarView {
     }
 
     @Override
-    public String getTitle() {
+    public String getName() {
         return "Test App";
     }
 

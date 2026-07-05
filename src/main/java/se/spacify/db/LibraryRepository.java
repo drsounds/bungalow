@@ -107,8 +107,8 @@ public final class LibraryRepository {
             List<Track> tracks = db().dao(Track.class).queryForEq("recording_id", r.getId());
             LinkedHashSet<String> titles = new LinkedHashSet<>();
             for (Track t : tracks) {
-                if (t.getRelease() != null && t.getRelease().getTitle() != null) {
-                    titles.add(t.getRelease().getTitle());
+                if (t.getRelease() != null && t.getRelease().getName() != null) {
+                    titles.add(t.getRelease().getName());
                 }
             }
             return String.join(", ", titles);

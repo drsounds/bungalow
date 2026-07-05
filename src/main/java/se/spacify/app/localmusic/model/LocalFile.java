@@ -44,12 +44,13 @@ public class LocalFile implements Playable {
 
     @Override public String getPlayUri()    { return filePath != null ? "spacify:local:" + filePath : null; }
     @Override public long   getDurationMs() { return 0; }
-    @Override public String getTitle()      { return name; }
+    @Override public String getName()      { return name; }
 
     // ── Getters / setters ─────────────────────────────────────────────────────
 
     public int    getId()                  { return id; }
-    public String getName()                { return name; }
+    public String getTitle()                { return name; }
+    public void   setTitle(String v)        { this.name = v; }
     public void   setName(String v)        { this.name = v; }
     public String getArtistName()          { return artistName; }
     public void   setArtistName(String v)  { this.artistName = v; }

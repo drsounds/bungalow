@@ -38,12 +38,12 @@ public final class LibrarySearchProvider implements SearchProvider {
                     "spacify:library:artist:" + a.getId(), getName()));
             }
             for (MusicRelease r : db.dao(MusicRelease.class).queryBuilder().limit(LIMIT).where().like("title", like).query()) {
-                out.add(new SearchResult(EntityKind.RELEASE, r.getTitle(),
+                out.add(new SearchResult(EntityKind.RELEASE, r.getName(),
                     LibraryRepository.artistNamesForRelease(r),
                     "spacify:library:release:" + r.getId(), getName()));
             }
             for (Recording rec : db.dao(Recording.class).queryBuilder().limit(LIMIT).where().like("title", like).query()) {
-                out.add(new SearchResult(EntityKind.RECORDING, rec.getTitle(),
+                out.add(new SearchResult(EntityKind.RECORDING, rec.getName(),
                     LibraryRepository.artistNamesForRecording(rec), releaseUri(db, rec), getName()));
             }
         } catch (Exception ignored) {

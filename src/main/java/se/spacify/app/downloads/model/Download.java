@@ -82,8 +82,8 @@ public class Download {
     public long    getTotalBytes()    { return totalBytes; }
     public void    setTotalBytes(long v) { this.totalBytes = v; }
 
-    public String  getTitle()         { return title; }
-    public void    setTitle(String v) { this.title = v; }
+    public String  getName()         { return title; }
+    public void    setName(String v) { this.title = v; }
     public String  getArtist()        { return artist; }
     public void    setArtist(String v){ this.artist = v; }
     public String  getAlbum()         { return album; }
