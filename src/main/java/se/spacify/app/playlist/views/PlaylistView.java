@@ -8,6 +8,7 @@ import se.spacify.app.playlist.service.PlaylistService;
 import se.spacify.controls.ToolBar;
 import se.spacify.controls.ToolButton;
 import se.spacify.app.music.model.Playable;
+import se.spacify.app.music.model.PlayableRef;
 import se.spacify.app.playlist.model.Playlist;
 import se.spacify.navigation.ViewStack;
 import se.spacify.service.media.PlayRequest;
@@ -36,6 +37,29 @@ public class PlaylistView extends AbstractMusicListView {
         super(viewStack);
         PlaylistEvents.addListener(onPlaylistsChanged);
         musicTable.setReorderHandler(this::reorder);
+        musicTable.setAddHandler(this::addDropped);
+    }
+
+    /**
+     * Accept a {@link PlayableRef} dragged in from another list. A plain item is
+     * inserted at the drop position; an expandable one (a release/playlist) adds
+     * its one kind-tagged row by default, or — when the expand (Alt) modifier was
+     * held — appends each of its children instead.
+     */
+    private void addDropped(PlayableRef ref, boolean expand, int index) {
+        PlaylistService svc = ownerOf(currentId);
+        if (svc == null || !svc.isEditable()) return;
+        try {
+            if (expand && ref.isExpandable()) {
+                for (Playable child : ref.expansion()) svc.addToPlaylist(currentId, child);
+            } else {
+                int appendedAt = items.size();   // where the appended row will land
+                svc.addToPlaylist(currentId, ref, ref.getKind() != null ? ref.getKind().id() : null);
+                if (index >= 0 && index < appendedAt) svc.moveRow(currentId, appendedAt, index);
+            }
+        } catch (Exception e) {
+            showError(e);
+        }
     }
 
     /** Apply a drag-and-drop reorder, then keep the moved row selected. */

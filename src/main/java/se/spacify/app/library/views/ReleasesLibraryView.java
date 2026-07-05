@@ -5,7 +5,11 @@ import se.spacify.app.music.views.AbstractMusicListView;
 import se.spacify.db.DatabaseManager;
 import se.spacify.db.LibraryRepository;
 import se.spacify.app.music.model.MusicRelease;
+import se.spacify.app.music.model.Playable;
+import se.spacify.app.music.model.PlayableKind;
+import se.spacify.app.music.model.PlayableRef;
 import se.spacify.app.music.model.ReleaseCreatorCredit;
+import se.spacify.app.music.model.Track;
 import se.spacify.app.music.model.MusicRelease.ReleaseType;
 import se.spacify.navigation.ViewStack;
 
@@ -111,6 +115,26 @@ public class ReleasesLibraryView extends AbstractMusicListView {
         } catch (Exception e) {
             showError(e);
         }
+    }
+
+    /**
+     * A release drags as a single {@link PlayableKind#RELEASE} item (URI
+     * {@code spacify:release:<id>}); its tracks form the {@link PlayableRef#expansion()}
+     * that replaces it when the drop's expand (Alt) modifier is held.
+     */
+    @Override
+    protected PlayableRef dragItemAt(int row) {
+        MusicRelease r = rows.get(row);
+        String artists = LibraryRepository.artistNamesForRelease(r);
+        List<Playable> tracks = new ArrayList<>();
+        long total = 0;
+        try {
+            List<Track> ts = DatabaseManager.getInstance().dao(Track.class).queryForEq("release_id", r.getId());
+            ts.sort(LibraryRepository.ALBUM_ORDER);
+            for (Track t : ts) { tracks.add(t); total += t.getDurationMs(); }
+        } catch (Exception ignored) {}
+        return new PlayableRef(PlayableKind.RELEASE, "spacify:release:" + r.getId(),
+                r.getName(), artists, total, tracks);
     }
 
     private static String blankToNull(String s) {

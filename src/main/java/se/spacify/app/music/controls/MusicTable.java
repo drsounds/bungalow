@@ -10,6 +10,8 @@ import se.spacify.service.media.PlayQueue;
 import se.spacify.service.media.PlayQueueItem;
 import se.spacify.service.media.PlayRequest;
 import se.spacify.service.media.TrackAvailability;
+import se.spacify.app.music.model.PlayableKind;
+import se.spacify.app.music.model.PlayableRef;
 import se.spacify.ui.theme.ThemeManager;
 import se.spacify.ui.theme.ThemedTableCellRenderer;
 
@@ -108,6 +110,23 @@ public class MusicTable extends JPanel {
 					() -> PlaybackCoordinator.resolveAndPlay(req), req);
 		}
 
+		/**
+		 * A draggable, kind-tagged reference for the model row — the payload when the
+		 * row is dragged into a playlist — or {@code null} if the row can't be added.
+		 * The default derives a {@link PlayableKind#TRACK} reference from
+		 * {@link #playRequestAt} (kind inferred from its play URI), with no expansion;
+		 * views whose rows are releases/playlists override this to tag the kind and
+		 * supply the expansion added when the drop's expand modifier is held.
+		 */
+		default PlayableRef dragItemAt(int row) {
+			PlayRequest req = playRequestAt(row);
+			if (req == null)
+				return null;
+			String uri = req.key();
+			return new PlayableRef(PlayableKind.fromUri(uri), uri,
+					req.title(), req.artist(), req.durationMs(), List.of());
+		}
+
 		/** Whether the row's track is saved in the local library (drives ✓ vs ＋). */
 		default boolean inLibraryAt(int row) { return false; }
 
@@ -149,6 +168,28 @@ public class MusicTable extends JPanel {
 		void reorder(int fromRow, int toRow);
 	}
 
+	/** Notified when a {@link PlayableRef} from another list is dropped into this table. */
+	public interface AddHandler {
+		/**
+		 * Add {@code ref} at insert index {@code index} (0..rowCount, the position the
+		 * drop indicated); when {@code expand} is set and the ref is expandable, its
+		 * {@link PlayableRef#expansion()} children are added instead of the ref itself.
+		 */
+		void add(PlayableRef ref, boolean expand, int index);
+	}
+
+	/**
+	 * The cross-view drag payload: a {@link PlayableRef} plus whether the expand
+	 * modifier was held at drag start. Exposed (with {@link #PLAYABLE_REF_FLAVOR})
+	 * so external drop targets — e.g. the sidebar's playlist nodes — can accept a
+	 * row dragged out of any music list.
+	 */
+	public record PlaylistDrag(PlayableRef ref, boolean expand) {}
+
+	/** Local-JVM data flavor carrying a {@link PlaylistDrag} out of a music list. */
+	public static final DataFlavor PLAYABLE_REF_FLAVOR =
+		new DataFlavor(PlaylistDrag.class, "application/x-spacify-playlist-drag");
+
 	private final ViewStack viewStack;
 	private final Source source;
 	private final DefaultTableModel model;
@@ -170,9 +211,13 @@ public class MusicTable extends JPanel {
 	private Grouping currentGrouping;
 	private boolean grouped;
 
-	// ── Optional row drag-and-drop reorder ──────────────────────────────────────
+	// ── Drag-and-drop: reorder within, plus export/import of playlist refs ───────
 	/** Notified when a row is dragged to a new position; null disables reordering. */
 	private ReorderHandler reorderHandler;
+	/** Notified when a ref from another list is dropped here; null disables adding. */
+	private AddHandler addHandler;
+	/** Whether the expand modifier (Alt) was down at the last mouse press (drag start). */
+	private boolean lastPressExpand;
 	private static final DataFlavor ROW_INDEX_FLAVOR =
 		new DataFlavor(Integer.class, "application/x-spacify-row-index");
 
@@ -258,7 +303,7 @@ public class MusicTable extends JPanel {
 				}
 			}
 
-			@Override public void mousePressed(MouseEvent e)  { maybeShowRowMenu(e); }
+			@Override public void mousePressed(MouseEvent e)  { lastPressExpand = e.isAltDown(); maybeShowRowMenu(e); }
 			@Override public void mouseReleased(MouseEvent e) { maybeShowRowMenu(e); }
 		});
 
@@ -290,6 +335,13 @@ public class MusicTable extends JPanel {
 		scroll.setOpaque(true);
 		scroll.getViewport().setOpaque(true);
 		add(scroll, BorderLayout.CENTER);
+
+		// Drag-and-drop: every music list can export its rows so they can be dropped
+		// into a playlist (sidebar node or an open playlist view). The import side —
+		// reorder within, or add dropped refs — is opt-in per view via
+		// setReorderHandler / setAddHandler.
+		jtable.setDragEnabled(true);
+		jtable.setTransferHandler(new MusicTableTransferHandler());
 
 		updateColors();
 		ThemeManager.addChangeListener(this::updateColors);
@@ -351,14 +403,19 @@ public class MusicTable extends JPanel {
 	 */
 	public void setReorderHandler(ReorderHandler handler) {
 		this.reorderHandler = handler;
-		boolean on = handler != null;
-		jtable.setDragEnabled(on);
-		if (on) {
-			jtable.setDropMode(DropMode.INSERT_ROWS);
-			jtable.setTransferHandler(new RowReorderTransferHandler());
-		} else {
-			jtable.setTransferHandler(null);
-		}
+		if (handler != null) jtable.setDropMode(DropMode.INSERT_ROWS);
+	}
+
+	/**
+	 * Accept {@link PlayableRef}s dragged out of any music list and dropped onto this
+	 * table, routing each to {@code handler} (e.g. add it to the playlist shown here);
+	 * pass {@code null} to disable. Independent of {@link #setReorderHandler}: a view
+	 * may enable both, in which case a drag originating from this same table reorders
+	 * while a drag from elsewhere adds.
+	 */
+	public void setAddHandler(AddHandler handler) {
+		this.addHandler = handler;
+		if (handler != null) jtable.setDropMode(DropMode.INSERT_ROWS);
 	}
 
 	/**
@@ -577,43 +634,82 @@ public class MusicTable extends JPanel {
 		}
 	}
 
-	// ── Row drag-and-drop reorder ────────────────────────────────────────────────
+	// ── Row drag-and-drop: export refs, import reorders / adds ───────────────────
 
-	/** Exports the dragged model row index and forwards the drop to {@link #reorderHandler}. */
-	private final class RowReorderTransferHandler extends TransferHandler {
+	/**
+	 * Exports the dragged row as a {@link PlaylistDrag} (for dropping into a
+	 * playlist) and, when reorder is enabled, the row index too; on import, a
+	 * within-table drag (carrying a row index, reorder enabled) reorders, while any
+	 * other ref drop is added via {@link #addHandler}.
+	 */
+	private final class MusicTableTransferHandler extends TransferHandler {
 		private static final long serialVersionUID = 1L;
 
-		@Override public int getSourceActions(JComponent c) { return MOVE; }
+		@Override public int getSourceActions(JComponent c) { return COPY_OR_MOVE; }
 
 		@Override protected Transferable createTransferable(JComponent c) {
-			return new RowIndexTransferable(jtable.getSelectedRow());
+			int row = jtable.getSelectedRow();
+			if (row < 0) return null;
+			PlayableRef ref = source.dragItemAt(row);
+			// Only carry a row index when this table can reorder itself.
+			Integer rowIndex = reorderHandler != null ? row : null;
+			if (ref == null && rowIndex == null) return null;
+			PlaylistDrag drag = ref != null ? new PlaylistDrag(ref, lastPressExpand) : null;
+			return new MusicTransferable(drag, rowIndex);
 		}
 
 		@Override public boolean canImport(TransferSupport support) {
-			return support.isDrop() && !grouped && support.isDataFlavorSupported(ROW_INDEX_FLAVOR);
+			if (!support.isDrop()) return false;
+			if (reorderHandler != null && !grouped && support.isDataFlavorSupported(ROW_INDEX_FLAVOR))
+				return true;
+			return addHandler != null && support.isDataFlavorSupported(PLAYABLE_REF_FLAVOR);
 		}
 
 		@Override public boolean importData(TransferSupport support) {
-			if (!canImport(support) || reorderHandler == null) return false;
+			if (!canImport(support)) return false;
+			int insert = ((JTable.DropLocation) support.getDropLocation()).getRow(); // 0..rowCount
 			try {
-				int from = (Integer) support.getTransferable().getTransferData(ROW_INDEX_FLAVOR);
-				JTable.DropLocation dl = (JTable.DropLocation) support.getDropLocation();
-				int insert = dl.getRow();                 // 0..rowCount insert index
-				int to = insert > from ? insert - 1 : insert;
-				if (from < 0 || to < 0 || from == to) return false;
-				reorderHandler.reorder(from, to);
-				return true;
+				// A drag from this same table (row index present, reorder on) reorders;
+				// anything else carrying a ref is an add from another list.
+				if (reorderHandler != null && !grouped
+						&& support.isDataFlavorSupported(ROW_INDEX_FLAVOR)) {
+					int from = (Integer) support.getTransferable().getTransferData(ROW_INDEX_FLAVOR);
+					int to = insert > from ? insert - 1 : insert;
+					if (from < 0 || to < 0 || from == to) return false;
+					reorderHandler.reorder(from, to);
+					return true;
+				}
+				if (addHandler != null && support.isDataFlavorSupported(PLAYABLE_REF_FLAVOR)) {
+					PlaylistDrag drag = (PlaylistDrag) support.getTransferable()
+							.getTransferData(PLAYABLE_REF_FLAVOR);
+					if (drag == null || drag.ref() == null) return false;
+					addHandler.add(drag.ref(), drag.expand(), insert);
+					return true;
+				}
 			} catch (Exception e) {
 				return false;
 			}
+			return false;
 		}
 	}
 
-	/** A single model-row index carried during a reorder drag. */
-	private record RowIndexTransferable(Integer row) implements Transferable {
-		@Override public DataFlavor[] getTransferDataFlavors() { return new DataFlavor[]{ ROW_INDEX_FLAVOR }; }
-		@Override public boolean isDataFlavorSupported(DataFlavor f) { return ROW_INDEX_FLAVOR.equals(f); }
-		@Override public Object getTransferData(DataFlavor f) { return row; }
+	/** Carries the cross-view ref payload and, for within-table reorders, the row index. */
+	private record MusicTransferable(PlaylistDrag drag, Integer rowIndex) implements Transferable {
+		@Override public DataFlavor[] getTransferDataFlavors() {
+			List<DataFlavor> flavors = new ArrayList<>(2);
+			if (drag != null)     flavors.add(PLAYABLE_REF_FLAVOR);
+			if (rowIndex != null) flavors.add(ROW_INDEX_FLAVOR);
+			return flavors.toArray(new DataFlavor[0]);
+		}
+		@Override public boolean isDataFlavorSupported(DataFlavor f) {
+			return (drag != null && PLAYABLE_REF_FLAVOR.equals(f))
+				|| (rowIndex != null && ROW_INDEX_FLAVOR.equals(f));
+		}
+		@Override public Object getTransferData(DataFlavor f) {
+			if (PLAYABLE_REF_FLAVOR.equals(f)) return drag;
+			if (ROW_INDEX_FLAVOR.equals(f))    return rowIndex;
+			return null;
+		}
 	}
 
 	// ── Grouped presentation ─────────────────────────────────────────────────────

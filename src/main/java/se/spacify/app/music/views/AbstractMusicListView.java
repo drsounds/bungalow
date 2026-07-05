@@ -8,6 +8,8 @@ import se.spacify.navigation.View;
 import se.spacify.navigation.ViewStack;
 import se.spacify.app.library.views.LibraryScanAction;
 import se.spacify.app.music.controls.MusicTable;
+import se.spacify.app.music.model.PlayableKind;
+import se.spacify.app.music.model.PlayableRef;
 import se.spacify.service.media.PlaybackCoordinator;
 import se.spacify.service.media.PlayQueueItem;
 import se.spacify.service.media.PlayRequest;
@@ -301,6 +303,22 @@ public abstract class AbstractMusicListView extends View {
 				() -> PlaybackCoordinator.resolveAndPlay(req), req);
 	}
 
+	/**
+	 * The kind-tagged {@link PlayableRef} dragged when this row is dropped into a
+	 * playlist, or {@code null} if the row isn't draggable. The default derives a
+	 * {@link PlayableKind#TRACK} reference from {@link #playRequestAt}; views whose
+	 * rows are releases/playlists override this to tag the kind and supply the
+	 * expansion added when the drop's expand (Alt) modifier is held.
+	 */
+	protected PlayableRef dragItemAt(int row) {
+		PlayRequest req = playRequestAt(row);
+		if (req == null)
+			return null;
+		String uri = req.key();
+		return new PlayableRef(PlayableKind.fromUri(uri), uri,
+				req.title(), req.artist(), req.durationMs(), List.of());
+	}
+
 	/** Repopulate the model, then refresh the table (managed columns + grouping). */
 	protected void reloadAndRegroup() {
 		reload();
@@ -348,6 +366,7 @@ public abstract class AbstractMusicListView extends View {
 	private final class SourceAdapter implements MusicTable.Source {
 		@Override public PlayRequest playRequestAt(int row) { return AbstractMusicListView.this.playRequestAt(row); }
 		@Override public PlayQueueItem queueItemAt(int row) { return AbstractMusicListView.this.queueItemAt(row); }
+		@Override public PlayableRef dragItemAt(int row)    { return AbstractMusicListView.this.dragItemAt(row); }
 		@Override public boolean inLibraryAt(int row)       { return AbstractMusicListView.this.inLibraryAt(row); }
 		@Override public void toggleLibraryAt(int row)      { AbstractMusicListView.this.toggleLibraryAt(row); }
 		@Override public void onActivate(int row)           { AbstractMusicListView.this.onActivate(row); }

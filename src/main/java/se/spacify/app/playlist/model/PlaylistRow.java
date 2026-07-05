@@ -24,6 +24,14 @@ public class PlaylistRow extends ContentCollectionRow<Content<?>> {
     @DatabaseField(canBeNull = false, columnName = "content_uri")
     private String contentUri;
 
+    /**
+     * The kind of playable this row references (see {@link se.spacify.app.music.model.PlayableKind}),
+     * stored as its lower-case id. Nullable for rows written before the column
+     * existed — those recover the kind from {@link #contentUri}'s scheme.
+     */
+    @DatabaseField(canBeNull = true)
+    private String kind;
+
     // Denormalised display metadata so a row rebuilds into a Playable without a
     // cross-service lookup (the referenced content may live on a remote service).
     @DatabaseField(canBeNull = true)
@@ -50,6 +58,8 @@ public class PlaylistRow extends ContentCollectionRow<Content<?>> {
     public void     setPlaylistName(String v) { this.playlistName = v; }
     public String   getContentUri()         { return contentUri; }
     public void     setContentUri(String v) { this.contentUri = v; }
+    public String   getKind()               { return kind; }
+    public void     setKind(String v)       { this.kind = v; }
     public String   getName()              { return title; }
     public void     setName(String v)      { this.title = v; }
     public String   getArtist()             { return artist; }

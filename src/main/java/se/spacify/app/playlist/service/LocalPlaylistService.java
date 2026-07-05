@@ -6,6 +6,8 @@ import se.spacify.aspect.AspectManager;
 import se.spacify.db.DatabaseManager;
 import se.spacify.db.LibraryRepository;
 import se.spacify.app.music.model.Playable;
+import se.spacify.app.music.model.PlayableKind;
+import se.spacify.app.music.model.PlayableRef;
 import se.spacify.app.playlist.model.Playlist;
 import se.spacify.app.playlist.model.PlaylistRow;
 import se.spacify.app.music.model.Recording;
@@ -98,7 +100,7 @@ public class LocalPlaylistService implements PlaylistService {
     }
 
     @Override
-    public void addToPlaylist(String playlistId, Playable item) {
+    public void addToPlaylist(String playlistId, Playable item, String kind) {
         Playlist pl = require(playlistId);
         if (item == null) return;
         try {
@@ -106,11 +108,20 @@ public class LocalPlaylistService implements PlaylistService {
             row.setName(item.getName());
             row.setDurationMs(item.getDurationMs());
             row.setArtist(artistOf(item));
+            row.setKind(kindOf(item, kind));
             rowDao().create(row);
             PlaylistEvents.fireChanged();
         } catch (SQLException e) {
             throw new RuntimeException("Failed to add to playlist", e);
         }
+    }
+
+    /** The stored kind id: the caller's when given, else derived from the play URI. */
+    private static String kindOf(Playable item, String kind) {
+        if (kind != null && !kind.isBlank()) return kind;
+        if (item instanceof PlayableRef ref && ref.getKind() != null) return ref.getKind().id();
+        PlayableKind derived = PlayableKind.fromUri(item.getPlayUri());
+        return derived != null ? derived.id() : null;
     }
 
     @Override

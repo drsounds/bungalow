@@ -41,6 +41,15 @@ public interface PlaylistService extends Service {
     }
 
     default void addToPlaylist(String playlistId, Playable item) {
+        addToPlaylist(playlistId, item, null);
+    }
+
+    /**
+     * Add {@code item}, recording {@code kind} (a {@link se.spacify.app.music.model.PlayableKind}
+     * id) so the row remembers what it references. A {@code null} kind is derived
+     * from the item's play URI. Read-only providers throw.
+     */
+    default void addToPlaylist(String playlistId, Playable item, String kind) {
         throw new UnsupportedOperationException("playlist Service is read-only");
     }
 

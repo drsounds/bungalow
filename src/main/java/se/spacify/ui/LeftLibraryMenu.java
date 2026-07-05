@@ -7,6 +7,10 @@ import se.spacify.library.LibraryEvents;
 import se.spacify.navigation.NavigationListener;
 import se.spacify.navigation.ViewStack;
 import se.spacify.app.library.views.LibraryScanAction;
+import se.spacify.app.music.controls.MusicTable;
+import se.spacify.app.music.model.Playable;
+import se.spacify.app.music.model.PlayableRef;
+import se.spacify.app.playlist.service.PlaylistService;
 import se.spacify.navigation.SidebarNode;
 import se.spacify.ui.theme.ThemeManager;
 import se.spacify.controls.Panel;
@@ -120,6 +124,10 @@ public class LeftLibraryMenu extends Panel implements NavigationListener {
                 }
             }
         });
+
+        // Accept content dragged out of any music list, dropped onto a playlist node.
+        tree.getComponent().setDropMode(DropMode.ON);
+        tree.getComponent().setTransferHandler(new PlaylistDropHandler());
 
         scroll = new JScrollPane(tree.getComponent());
         scroll.setBorder(BorderFactory.createEmptyBorder());
@@ -247,5 +255,67 @@ public class LeftLibraryMenu extends Panel implements NavigationListener {
             if (selectNodeForUri(uri, (DefaultMutableTreeNode) node.getChildAt(i))) return true;
         }
         return false;
+    }
+
+    // ── Drop-to-playlist ──────────────────────────────────────────────────────
+
+    private static final String PLAYLIST_PREFIX = "spacify:playlist:";
+
+    /** Accepts a {@link MusicTable.PlaylistDrag} dropped onto a playlist node. */
+    private final class PlaylistDropHandler extends TransferHandler {
+        private static final long serialVersionUID = 1L;
+
+        @Override
+        public boolean canImport(TransferSupport support) {
+            return support.isDrop()
+                && support.isDataFlavorSupported(MusicTable.PLAYABLE_REF_FLAVOR)
+                && playlistIdAt(support) != null;
+        }
+
+        @Override
+        public boolean importData(TransferSupport support) {
+            if (!canImport(support)) return false;
+            String id = playlistIdAt(support);
+            PlaylistService svc = editablePlaylistOwning(id);
+            if (svc == null) return false;
+            try {
+                MusicTable.PlaylistDrag drag = (MusicTable.PlaylistDrag)
+                    support.getTransferable().getTransferData(MusicTable.PLAYABLE_REF_FLAVOR);
+                if (drag == null || drag.ref() == null) return false;
+                PlayableRef ref = drag.ref();
+                if (drag.expand() && ref.isExpandable()) {
+                    for (Playable child : ref.expansion()) svc.addToPlaylist(id, child);
+                } else {
+                    svc.addToPlaylist(id, ref, ref.getKind() != null ? ref.getKind().id() : null);
+                }
+                return true;
+            } catch (Exception e) {
+                return false;
+            }
+        }
+    }
+
+    /** The playlist id of the node under the drop, or null if it isn't a playlist node. */
+    private String playlistIdAt(TransferHandler.TransferSupport support) {
+        if (!(support.getDropLocation() instanceof JTree.DropLocation dl)) return null;
+        TreePath path = dl.getPath();
+        if (path == null) return null;
+        if (path.getLastPathComponent() instanceof DefaultMutableTreeNode n
+                && n.getUserObject() instanceof SidebarNode sn) {
+            String uri = sn.getUri();
+            if (uri != null && uri.startsWith(PLAYLIST_PREFIX) && !uri.equals(PLAYLIST_PREFIX + "new"))
+                return uri.substring(PLAYLIST_PREFIX.length());
+        }
+        return null;
+    }
+
+    /** The editable playlist service that owns {@code id}, or null. */
+    private PlaylistService editablePlaylistOwning(String id) {
+        for (PlaylistService svc : viewStack.getMainWindow().getServiceManager().getServices(PlaylistService.class)) {
+            try {
+                if (svc.isEditable() && svc.getPlaylist(id) != null) return svc;
+            } catch (Exception ignored) {}
+        }
+        return null;
     }
 }
