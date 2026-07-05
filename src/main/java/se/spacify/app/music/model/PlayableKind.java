@@ -34,14 +34,18 @@ public enum PlayableKind {
     }
 
     /**
-     * Derive the kind from a {@code spacify:} content URI's scheme:
-     * {@code spacify:recording:…}→{@link #TRACK}, {@code spacify:release:…}→
-     * {@link #RELEASE}, {@code spacify:playlist:…}→{@link #PLAYLIST}. Defaults to
-     * {@link #TRACK} for anything else playable, and {@code null} for a null URI.
+     * Derive the kind from a content URI's scheme. For {@code musik:} URIs
+     * (RFC-0002): {@code musik:upc:…}→{@link #RELEASE}, anything else
+     * {@code musik:…}→{@link #TRACK}. For legacy {@code spacify:} content URIs:
+     * {@code spacify:release:…}→{@link #RELEASE}, {@code spacify:playlist:…}→
+     * {@link #PLAYLIST}. Defaults to {@link #TRACK} for anything else playable,
+     * and {@code null} for a null URI.
      */
     public static PlayableKind fromUri(String uri) {
         if (uri == null)
             return null;
+        if (uri.startsWith("musik:upc:"))        return RELEASE;
+        if (uri.startsWith("musik:"))            return TRACK;
         if (uri.startsWith("spacify:release:"))  return RELEASE;
         if (uri.startsWith("spacify:playlist:")) return PLAYLIST;
         return TRACK;

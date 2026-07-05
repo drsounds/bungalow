@@ -102,8 +102,10 @@ View (e.g. TracksLibraryView)
 
 No layer names a vendor. The view produces a vendor-neutral `PlayRequest`; the
 coordinator resolves it across whatever `MusicService`s happen to be installed;
-the chosen back-end becomes active and the transport UI follows it. Full detail
-in [Playback & resolution](playback-and-resolution.md).
+the chosen back-end becomes active and the transport UI follows it. Content itself
+is named vendor-neutrally too, by a [`musik:` URI](musik-uri-scheme.md) (e.g.
+`musik:isrc:<ISRC>`) — the portable identifier stored in playlists and carried in
+drag payloads. Full detail in [Playback & resolution](playback-and-resolution.md).
 
 ## Where state lives
 

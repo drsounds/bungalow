@@ -125,9 +125,18 @@ public final class PlaybackCoordinator {
         ms.play();
     }
 
-    /** Play an arbitrary spacify: URI, routing by scheme to the Service that handles it. */
+    /** Play an arbitrary content URI, routing by scheme to the Service that handles it. */
     public static boolean playUri(String uri) {
         if (uri == null) return false;
+        // A musik: (or legacy spacify:recording:isrc:) URI names portable identity,
+        // not a vendor target: resolve it to a PlayRequest and play by identifier /
+        // metadata across the installed Services (RFC-0002 §8).
+        if (se.spacify.app.music.net.MusikUri.isContentUri(uri)) {
+            PlayRequest req = se.spacify.app.music.net.MusikUri.toPlayRequest(uri);
+            if (req == null) return false;
+            if (req.isrc() != null && playByIsrc(req.isrc())) return true;
+            return playByMetadata(req.title(), req.artist());
+        }
         // YouTube URIs must play on the YouTube service, not the first media one.
         if (uri.startsWith("spacify:youtube:")) {
             MusicService yt = findService("se.spacify.app.youtube");

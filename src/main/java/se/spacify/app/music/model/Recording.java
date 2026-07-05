@@ -41,7 +41,8 @@ public class Recording extends Content<RecordingCreatorCredit> implements Playab
 
     @Override
     public String getPlayUri() {
-        return isrc != null ? "spacify:recording:isrc:" + isrc : null;
+        // The canonical, portable content identifier for a recording (RFC-0002).
+        return isrc != null ? se.spacify.app.music.net.MusikUri.isrc(isrc).toString() : null;
     }
 
     @Override public long getDurationMs() { return durationMs; }

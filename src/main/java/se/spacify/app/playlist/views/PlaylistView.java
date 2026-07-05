@@ -151,7 +151,10 @@ public class PlaylistView extends AbstractMusicListView {
     protected PlayRequest playRequestAt(int row) {
         if (row < 0 || row >= items.size()) return null;
         Playable it = items.get(row);
-        return new PlayRequest(null, null, it.getName(), artistOf(it), it.getPlayUri(), it.getDurationMs());
+        // Recover the portable ISRC from a musik: content URI so the item resolves
+        // by identifier across Services, not just by its stored title/artist.
+        String isrc = se.spacify.app.music.net.MusikUri.isrcOf(it.getPlayUri());
+        return new PlayRequest(null, isrc, it.getName(), artistOf(it), it.getPlayUri(), it.getDurationMs());
     }
 
     // ── Playlist-level actions ──────────────────────────────────────────────────

@@ -107,8 +107,10 @@ public class LocalMusicService implements MusicService {
         if (uri == null) return;
         if (uri.startsWith("spacify:local:")) {
             loadFile(new File(uri.substring("spacify:local:".length())), null, null, null);
-        } else if (uri.startsWith("spacify:recording:isrc:")) {
-            loadByIsrc(uri.substring("spacify:recording:isrc:".length()));
+        } else {
+            // musik:isrc:<ISRC> (canonical) or the legacy spacify:recording:isrc: form.
+            String isrc = se.spacify.app.music.net.MusikUri.isrcOf(uri);
+            if (isrc != null) loadByIsrc(isrc);
         }
     }
 

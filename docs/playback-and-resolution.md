@@ -18,6 +18,13 @@ whatever identity it has — `isrc`, `title`, `artist`, an optional `fallbackUri
 `durationMs`, and (if it came from the local DB) the `Track`. Library views
 override `playRequestAt(row)` to build one.
 
+That identity is expressed portably as a [`musik:` URI](musik-uri-scheme.md): a
+recording's play URI is `musik:isrc:<ISRC>`, and `MusikUri.toPlayRequest` /
+`MusikUri.isrcOf` turn such a URI back into a `PlayRequest` (extracting the ISRC or
+title/artist coordinates), so a stored playlist row or a dropped drag payload
+resolves across Services exactly like a live library row. `PlaybackCoordinator.playUri`
+routes a `musik:` URI through this same resolver.
+
 ## The PlayQueue
 
 `PlayQueue` is the listening layer: an ordered list of `PlayQueueItem`s, a current

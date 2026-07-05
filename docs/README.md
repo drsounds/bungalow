@@ -50,7 +50,10 @@ even the whole look-and-feel are "apps" that plug in.
    re-chromeable UI selected at runtime.
 7. [Playback & resolution](playback-and-resolution.md) — the play queue and the
    "Play with…" cross-service resolver.
-8. [Status & roadmap](status-and-roadmap.md) — what is wired today, the known
+8. [The `musik:` URI scheme](musik-uri-scheme.md) — the portable, service-agnostic
+   way content is named (recordings, works, releases, artists, facets); formal
+   spec in [RFC-0002](../src/main/java/se/spacify/app/music/spec/RFC-0002-musik-uri-scheme.md).
+9. [Status & roadmap](status-and-roadmap.md) — what is wired today, the known
    gaps in the in-progress refactor, and where the ecosystem is headed.
 
 ## Vocabulary at a glance
