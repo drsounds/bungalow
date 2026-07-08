@@ -5,6 +5,7 @@
 | **Status** | **Accepted — v1 frozen** (one external dependency: register the canonical domain, §11.1) |
 | **Created** | 2026-06-30 |
 | **Accepted** | 2026-06-30 |
+| **Revised** | 2026-07-05 — content references adopt the `musik:` scheme ([RFC-0002](../../music/spec/RFC-0002-musik-uri-scheme.md)); legacy `spacify:` content refs remain accepted (§7). |
 | **Author(s)** | Alexander Forselius (@drsounds) |
 | **Source sketch** | [UNIVERSAL_PLAYLIST_SHARING.md](UNIVERSAL_PLAYLIST_SHARING.md) |
 | **Scope** | The **UPSL URI scheme** and its federation guidelines. This is a wire-format spec; it deliberately does **not** prescribe how any particular application resolves, stores, or renders a UPSL. |
@@ -122,31 +123,39 @@ further `:`), which keeps the optional `:sig:` separator unambiguous (§5).
 
 ## 7. Content references
 
-Each `content-ref`, once Base62-decoded, is a URI in the identifier/name lookup
-space. A conforming reader **MUST** support at least:
+Each `content-ref`, once Base62-decoded, is a [`musik:` URI](../../music/spec/RFC-0002-musik-uri-scheme.md)
+in the identifier/name lookup space. A conforming reader **MUST** support at least:
 
 | Form | Meaning |
 |---|---|
-| `spacify:isrc:<isrc>` | A recording by ISRC — the canonical, portable key. **Preferred** (most compact). |
-| `spacify:artist:<artist>:release:<release>:track:<n>:recording:<recording>:version:[<version>]` | A recording by human-readable names + position, with an **optional** recording version in `[ ]`. Fallback when no ISRC is known. |
+| `musik:isrc:<isrc>` | A recording by ISRC — the canonical, portable key. **Preferred** (most compact). |
+| `musik:artist:<artist>:release:<release>:track:<n>:name:<recording>[:version:<version>]` | A recording by human-readable names + position (RFC-0002 §6), with an **optional** version. Fallback when no ISRC is known. |
 | `https:` / `http:` | An external resource (video, store page, …). |
 
 ```abnf
 content-uri = isrc-ref / name-ref / web-ref
-isrc-ref    = "spacify:isrc:" 1*VCHAR
-name-ref    = "spacify:artist:" seg ":release:" seg ":track:" 1*DIGIT
-              ":recording:" seg ":version:" "[" [ version ] "]"
-seg         = 1*VCHAR        ; a name; the whole content-ref is Base62-wrapped
+isrc-ref    = "musik:isrc:" 1*VCHAR
+name-ref    = "musik:artist:" seg ":release:" seg [ ":track:" 1*2DIGIT ]
+              ":name:" seg [ ":version:" seg ]
+seg         = PCTTEXT       ; percent-encoded name (RFC-0002 §4.1)
 web-ref     = ( "http" / "https" ) "://" 1*VCHAR
 ```
 
-The `:` and `[ ]` inside a `name-ref` are inert: the entire `content-ref` is one
-Base62 leaf in the body, so they are not body delimiters.
+The `:` inside a `name-ref` is inert: every name segment is percent-encoded
+(RFC-0002 §4.1) and the entire `content-ref` is one Base62 leaf in the body, so no
+inner `:` is ever a body delimiter.
 
-**Version matching.** For a `name-ref`: empty `version:[]` ⇒ resolve the **newest**
-known recording of that work; a present-and-found version ⇒ exact match; a
-present-but-missing version ⇒ resolve newest and present the item as
-**approximate** (do not silently drop it).
+**Version matching.** For a `name-ref`: an absent `:version:` ⇒ resolve the
+**newest / primary** known recording of that name; a present-and-found version ⇒
+exact match; a present-but-missing version ⇒ resolve the primary and present the
+item as **approximate** (do not silently drop it).
+
+> **Content scheme (RFC-0002).** Content refs are `musik:` URIs as of this
+> revision; the scheme is specified in
+> [RFC-0002](../../music/spec/RFC-0002-musik-uri-scheme.md). For links minted
+> before it, a reader **SHOULD** also accept the legacy `spacify:isrc:` /
+> `spacify:recording:isrc:` and `spacify:artist:…:recording:…:version:[…]` forms
+> and treat them as equivalent.
 
 ## 8. HTTPS mirror & hosted form
 
@@ -265,8 +274,8 @@ A two-item playlist by `@drsounds@mastodon.social` named *Roadtrip*
 ```
 body (B62/B64U shown symbolically):
   B62("Roadtrip"):description:B62("Summer bangers"):uris:
-    B62("spacify:isrc:GBAAA0000001"),
-    B62("spacify:artist:Aphex Twin:release:SAW 85-92:track:1:recording:Xtal:version:[]")
+    B62("musik:isrc:GBAAA0000001"),
+    B62("musik:artist:Aphex%20Twin:release:SAW%2085-92:track:1:name:Xtal")
 
 embedded UPSL (signed):
   spacify:federated:user:@drsounds@mastodon.social:playlist:8f2b…-uuid:<body>:sig:<B64U(sig)>

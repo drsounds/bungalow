@@ -28,6 +28,8 @@ import se.spacify.app.spider.Request;
  *   <li>{@code action} — the postback action name (the {@code onclick} value), or
  *       {@code ""} for a plain load; lets a template branch on what was clicked.</li>
  *   <li>{@code data} — a table of the request's input data (see {@link Request#getData()}).</li>
+ *   <li>{@code model} — the controller-supplied model table (see
+ *       {@link se.spacify.app.spider.controller.Controller#data(Request)}).</li>
  * </ul>
  */
 public final class TemplateEngine {
@@ -35,17 +37,23 @@ public final class TemplateEngine {
     private TemplateEngine() {
     }
 
-    /** Compile, run and parse {@code template} against {@code request}, returning its root element. */
+    /** Compile, run and parse {@code template} against {@code request} with no model, returning its root element. */
     public static Element render(String template, Request request) {
+        return render(template, request, null);
+    }
+
+    /** Compile, run and parse {@code template} against {@code request} and {@code model}, returning its root element. */
+    public static Element render(String template, Request request, Map<String, Object> model) {
         String lua = LuaPreprocessor.compile(template);
-        String markup = run(lua, request);
+        String markup = run(lua, request, model);
         return parse(markup);
     }
 
-    /** Run the compiled Lua chunk with the request bound into the globals; returns the emitted markup. */
-    private static String run(String luaSource, Request request) {
+    /** Run the compiled Lua chunk with the request and model bound into the globals; returns the emitted markup. */
+    private static String run(String luaSource, Request request, Map<String, Object> model) {
         Globals globals = JsePlatform.standardGlobals();
         bindRequest(globals, request);
+        globals.set("model", toTable(model));
         LuaValue chunk = globals.load(luaSource, "spider-template");
         return chunk.call().tojstring();
     }
@@ -87,6 +95,7 @@ public final class TemplateEngine {
             case null              -> LuaValue.NIL;
             case Number n          -> LuaValue.valueOf(n.doubleValue());
             case Boolean b         -> LuaValue.valueOf(b);
+            case Map<?, ?> nested  -> toTable(nested);
             default                -> LuaValue.valueOf(value.toString());
         };
     }

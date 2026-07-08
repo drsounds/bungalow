@@ -6,6 +6,7 @@ import static org.junit.Assert.assertNotNull;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.junit.Test;
 import org.w3c.dom.Element;
@@ -32,7 +33,7 @@ public class SpiderTemplateTest {
         protected String template(Request request) {
             return """
                 <view>
-                    <page id="overview" title="Overview">
+                    <page id="overview" title="${model.title}">
                         <text>${string.upper("hi")}</text>
                         % for i,3 do
                         <text>${i}</text>
@@ -41,6 +42,11 @@ public class SpiderTemplateTest {
                         <button onclick="refresh">Refresh</button>
                     </page>
                 </view>""";
+        }
+
+        @Override
+        protected Map<String, Object> data(Request request) {
+            return Map.of("title", "Overview");
         }
     }
 
