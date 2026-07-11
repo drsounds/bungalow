@@ -45,7 +45,7 @@ public class MainWindow extends JFrame {
     public ViewStack getViewStack() { return viewStack; }
     private NowPlayingView nowPlayingView;
     public NowPlayingView getNowPlayingView() { return nowPlayingView; }
-    /** The footer is built and owned by the active Chrome. */
+    /** The footer is built and owned by the active chrome. */
     public AppFooter getAppFooter() { return getChrome() != null ? getChrome().getAppFooter() : null; }
     public LeftLibraryMenu getLeftLibraryMenu() { return leftLibraryMenu; }
     public void setViewStack(ViewStack viewStack) {

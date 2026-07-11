@@ -1,4 +1,4 @@
-package se.spacify.views;
+package se.spacify.app.views;
 
 import se.spacify.navigation.View;
 import se.spacify.navigation.ViewStack;
@@ -23,7 +23,7 @@ public class HomeView extends View {
     @Override
     public boolean acceptsUri(String uri) {
         return uri != null && uri.matches("spacify:(home|//)");
-    }
+    }   
 
     @Override
     public void navigate(String uri) {}
