@@ -112,7 +112,7 @@ public class WMP10Skin extends WMPSkin {
 		}
 		
 		int width = control.getComponent().getWidth(), height = control.getComponent().getHeight();
-		// Darker outer rim, slightly inset face sits on top of it.
+		// Darker outer rim, slightly insets face sits on top of it.
 		//Ellipse2D outer = new Ellipse2D.Float(x, y, d, d);
 		
 		g2.setPaint(new GradientPaint(x, y, ThemeManager.tintDark(0.9f), x, y + d, ThemeManager.tintDark(0.5f)));

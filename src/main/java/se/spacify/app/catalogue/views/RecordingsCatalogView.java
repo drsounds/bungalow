@@ -30,6 +30,7 @@ public class RecordingsCatalogView extends AbstractCatalogView<Recording> {
             column("name",     "Name"),
             column("artists",  "Artists"),
             column("isrc",     "ISRC"),
+            column("spacify:buy-stream", "Buy/Stream"),
             column("duration", "Duration"));
     }
 

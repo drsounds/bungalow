@@ -1,4 +1,4 @@
-package se.spacify.app.playlist.views;
+	package se.spacify.app.playlist.views;
 
 import se.spacify.app.music.controls.MusicTable;
 import se.spacify.app.music.views.AbstractMusicListView;
@@ -83,7 +83,9 @@ public class PlaylistView extends AbstractMusicListView {
             column("number",   "#"),
             column("title",    "Title"),
             column("artist",   "Artist"),
-            column("duration", "Duration"));
+            column("duration", "Duration"),
+            column("spacify:buy-stream", "Buy/Stream")
+        );
     }
 
     @Override

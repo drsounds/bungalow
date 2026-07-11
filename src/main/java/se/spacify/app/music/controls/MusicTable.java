@@ -210,6 +210,8 @@ public class MusicTable extends JPanel {
 	private List<Grouping> cachedGroupings;
 	private Grouping currentGrouping;
 	private boolean grouped;
+	/** Coalesces bursts of model changes into a single managed-column sync. */
+	private boolean managedSyncPending;
 
 	// ── Drag-and-drop: reorder within, plus export/import of playlist refs ───────
 	/** Notified when a row is dragged to a new position; null disables reordering. */
@@ -347,6 +349,10 @@ public class MusicTable extends JPanel {
 		ThemeManager.addChangeListener(this::updateColors);
 		// Repaint so the now-playing row highlight follows the active track.
 		PlayQueue.getInstance().addChangeListener(jtable::repaint);
+		// Keep the managed columns (and grouped view) in sync automatically whenever
+		// the model changes — including async / out-of-band fills — so callers never
+		// have to remember to call refresh().
+		model.addTableModelListener(e -> scheduleManagedSync());
 	}
 
 	// ── Public API ──────────────────────────────────────────────────────────────
@@ -419,11 +425,29 @@ public class MusicTable extends JPanel {
 	}
 
 	/**
-	 * Call after the model has been (re)filled: sizes the managed columns (hiding
-	 * them when no row is playable) and, if the grouped view is showing, rebuilds
-	 * its sections.
+	 * Re-sync the managed columns (and the grouped view) with the current model
+	 * <em>immediately</em>. This now happens automatically whenever the model
+	 * changes — a {@code TableModelListener} registered in the constructor covers
+	 * sync, async and out-of-band fills — so callers no longer need to invoke it;
+	 * it remains public only for a synchronous sync when one is specifically wanted.
 	 */
 	public void refresh() {
+		syncManaged();
+	}
+
+	/** Coalesce a burst of model changes into a single managed sync on the EDT. */
+	private void scheduleManagedSync() {
+		if (managedSyncPending)
+			return;
+		managedSyncPending = true;
+		SwingUtilities.invokeLater(() -> { managedSyncPending = false; syncManaged(); });
+	}
+
+	/**
+	 * Size the managed columns (Buy/Stream, library-toggle) for the current rows,
+	 * hiding them when no row is playable, and rebuild the grouped view if showing.
+	 */
+	private void syncManaged() {
 		boolean any = false;
 		for (int r = 0; r < model.getRowCount(); r++) {
 			if (source.playRequestAt(r) != null) { any = true; break; }

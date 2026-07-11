@@ -119,6 +119,9 @@ public abstract class AbstractCatalogView<T> extends AbstractMusicListView {
                     addRow(toRow(it));
                 }
                 setHeader(items.isEmpty() ? emptyHeader(svc) : resultHeader(svc, items.size()));
+                // The managed Buy/Stream and library-toggle columns re-size themselves
+                // when the model changes (MusicTable's TableModelListener), so these
+                // async rows are covered without an explicit refresh() here.
             }
         }.execute();
     }
