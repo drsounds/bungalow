@@ -14,6 +14,9 @@ import se.spacify.navigation.ViewStack;
 import se.spacify.service.media.PlayRequest;
 
 import javax.swing.*;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -93,17 +96,20 @@ public class PlaylistView extends AbstractMusicListView {
         ToolBar bar = new ToolBar();
         ToolButton rename = new ToolButton("Rename");
         ToolButton delete = new ToolButton("Delete");
+        ToolButton add    = new ToolButton("Add…");
         ToolButton remove = new ToolButton("Remove");
         ToolButton up     = new ToolButton("Up");
         ToolButton down   = new ToolButton("Down");
         rename.getComponent().addActionListener(e -> renamePlaylist());
         delete.getComponent().addActionListener(e -> deletePlaylist());
+        add.getComponent().addActionListener(e -> addManual());
         remove.getComponent().addActionListener(e -> removeSelected());
         up.getComponent().addActionListener(e -> move(-1));
         down.getComponent().addActionListener(e -> move(+1));
         bar.add(rename);
         bar.add(delete);
         bar.getComponent().addSeparator();
+        bar.add(add);
         bar.add(remove);
         bar.add(up);
         bar.add(down);
@@ -193,6 +199,66 @@ public class PlaylistView extends AbstractMusicListView {
             currentId = null;
             getViewStack().navigate("spacify:library");
         } catch (Exception e) { showError(e); }
+    }
+
+    /**
+     * Manually add an entry to the current playlist via a small form (Title +
+     * Play URI required; Artist and Duration optional). Appends the item; the
+     * {@link PlaylistService} persists it and fires {@link PlaylistEvents}, which
+     * refreshes this view.
+     */
+    private void addManual() {
+        PlaylistService svc = ownerOf(currentId);
+        if (currentId == null || svc == null || !svc.isEditable()) {
+            showError(new Exception("This playlist can't be edited."));
+            return;
+        }
+        JTextField title    = new JTextField(24);
+        JTextField artist   = new JTextField(24);
+        JTextField uri      = new JTextField(24);
+        JTextField duration = new JTextField(24);
+        uri.putClientProperty("JTextField.placeholderText", "musik:… or spacify:…");
+        duration.putClientProperty("JTextField.placeholderText", "m:ss");
+        if (!form("Add to Playlist",
+                new String[]{ "Title", "Artist", "Play URI", "Duration (m:ss)" },
+                new JComponent[]{ title, artist, uri, duration })) {
+            return;
+        }
+        String t = title.getText().trim();
+        String u = uri.getText().trim();
+        // A play URI is required: PlaylistRow.contentUri is NOT NULL, and it's what
+        // makes the entry resolvable/playable.
+        if (t.isEmpty() || u.isEmpty()) {
+            showError(new Exception("A title and a play URI are required."));
+            return;
+        }
+        PlaylistItem item = new PlaylistItem(u, t, blankToNull(artist.getText()),
+                parseDuration(duration.getText()));
+        try {
+            svc.addToPlaylist(currentId, item);
+        } catch (Exception e) {
+            showError(e);
+        }
+    }
+
+    /** Lay out labelled fields in an OK/Cancel modal; true if OK was pressed. */
+    private boolean form(String title, String[] labels, JComponent[] fields) {
+        JPanel panel = new JPanel(new GridBagLayout());
+        GridBagConstraints c = new GridBagConstraints();
+        c.insets = new Insets(4, 4, 4, 4);
+        c.anchor = GridBagConstraints.WEST;
+        for (int i = 0; i < labels.length; i++) {
+            c.gridx = 0; c.gridy = i; c.weightx = 0; c.fill = GridBagConstraints.NONE;
+            panel.add(new JLabel(labels[i]), c);
+            c.gridx = 1; c.weightx = 1; c.fill = GridBagConstraints.HORIZONTAL;
+            panel.add(fields[i], c);
+        }
+        return JOptionPane.showConfirmDialog(getComponent(), panel, title,
+                JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE) == JOptionPane.OK_OPTION;
+    }
+
+    private static String blankToNull(String s) {
+        return (s == null || s.isBlank()) ? null : s.trim();
     }
 
     private void removeSelected() {

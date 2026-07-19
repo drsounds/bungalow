@@ -7,6 +7,8 @@ import se.spacify.library.LibraryEvents;
 import se.spacify.navigation.NavigationListener;
 import se.spacify.navigation.ViewStack;
 import se.spacify.app.library.views.LibraryScanAction;
+import se.spacify.app.media.service.MediaService;
+import se.spacify.app.media.service.MediaServicePlayerComponent;
 import se.spacify.app.music.controls.MusicTable;
 import se.spacify.app.music.model.Playable;
 import se.spacify.app.music.model.PlayableRef;
@@ -41,6 +43,8 @@ public class LeftLibraryMenu extends Panel implements NavigationListener {
 	@SuppressWarnings("unused")
 	private JPopupMenu addToLibraryMenu;
     private ViewStack viewStack;
+	private final JPanel playerHost = new JPanel(new BorderLayout());
+	private MediaServicePlayerComponent currentPlayer;
 
 	public ViewStack getViewStack() {
         return viewStack;
@@ -59,6 +63,24 @@ public class LeftLibraryMenu extends Panel implements NavigationListener {
 
 	public void onAdd() {
 	}
+
+    private void setActivePlayer(MediaService Service) {
+        MediaServicePlayerComponent next = Service != null ? Service.getPlayerComponent() : null;
+        if (next == currentPlayer) return;
+
+        if (currentPlayer != null) {
+            currentPlayer.onDeactivated();
+            playerHost.remove(currentPlayer.getComponent());
+        }
+        currentPlayer = next;
+        if (currentPlayer != null) {
+            playerHost.add(currentPlayer.getComponent(), BorderLayout.CENTER);
+            currentPlayer.onActivated();
+        }
+        playerHost.setVisible(currentPlayer != null);
+        playerHost.revalidate();
+        playerHost.repaint();
+    }
 
     public LeftLibraryMenu(ViewStack viewStack) {
         this.viewStack = viewStack;
@@ -140,7 +162,20 @@ public class LeftLibraryMenu extends Panel implements NavigationListener {
         bottomToolbar = new ToolBar();
         // Cross-app download activity spinner (listens on the broadcast bus).
         bottomToolbar.getComponent().add(new DownloadActivityIndicator());
-        add(bottomToolbar, BorderLayout.SOUTH);
+        
+
+        // The active media Service's player surface sits below the queue and above
+        // the toolbar; it's part of this sticky panel, so navigation never hides it.
+        playerHost.setOpaque(false);
+        playerHost.setVisible(true);
+
+        JPanel south = new JPanel();
+        south.setOpaque(false);
+        south.setLayout(new BoxLayout(south, BoxLayout.PAGE_AXIS));
+        south.add(playerHost);
+        south.add(bottomToolbar.getComponent());
+        getComponent().add(south, BorderLayout.SOUTH);
+ 
 
         addToLibraryMenuButton = new MenuToolButton();
         addToLibraryMenuButton.getComponent().setText("Add to Library");

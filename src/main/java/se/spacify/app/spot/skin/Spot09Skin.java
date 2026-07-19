@@ -59,6 +59,9 @@ public class Spot09Skin extends SpotSkin {
         int w = control.getComponent().getWidth(), h = control.getComponent().getHeight();
         Taste taste = control.getTaste();
         Color tintColor = taste.getTintColor();
+        if (control.getTaste().isDarkMode()) {
+        	tintColor = ColorUtils.darken(tintColor, 0.6f);
+        }
         g2.setBackground(tintColor);
         g2.setPaint(tintColor);
         g2.fillRect(0, 0, w, h); 
@@ -70,7 +73,8 @@ public class Spot09Skin extends SpotSkin {
         int w = control.getComponent().getWidth(), h = control.getComponent().getHeight();
         Taste taste = control.getTaste();
         Color tintColor = taste.getTintColor();
-        g2.setBackground(tintColor);
+    	g2.setBackground(tintColor);
+        
         g2.fillRect(0, 0, w, h);
 	}
 
