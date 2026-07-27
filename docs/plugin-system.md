@@ -1,3 +1,9 @@
+---
+layout: default
+title: The Plugin System
+nav_order: 3
+---
+
 # The plugin system
 
 A **plugin** is the unit of distribution. It contributes any mix of Services,
@@ -5,7 +11,7 @@ Concepts, Features, Views, sidebar nodes, and look-and-feel pieces (Chrome /
 Skin / Design / Theme) — and everything it contributes can be cleanly removed
 again when it is disabled or uninstalled.
 
-Key types live in [`se.spacify.plugin`](../src/main/java/se/spacify/plugin):
+Key types live in [`se.spacify.plugin`](https://github.com/drsounds/bungalow/tree/main/src/main/java/se/spacify/plugin):
 `Plugin`, `PluginManager`, `PluginLoader`, `PluginContext`, `PluginDescriptor`,
 `PluginManifest`, `PluginPaths`, `PluginSettings`, `BuiltinPluginRegistry`.
 
@@ -38,7 +44,7 @@ public class MyPlugin extends Plugin {
 
 ## Discovery: three sources
 
-[`PluginLoader.discover()`](../src/main/java/se/spacify/plugin/PluginLoader.java)
+[`PluginLoader.discover()`](https://github.com/drsounds/bungalow/blob/main/src/main/java/se/spacify/plugin/PluginLoader.java)
 returns descriptors from three places, built-ins first:
 
 | Source | Location | Class loader | Removable? |
@@ -49,7 +55,7 @@ returns descriptors from three places, built-ins first:
 
 Jar plugins declare their identity + main class in `META-INF/MANIFEST.MF`
 (parsed by `PluginManifest`); built-ins declare it in
-[`BuiltinPluginRegistry`](../src/main/java/se/spacify/plugin/BuiltinPluginRegistry.java).
+[`BuiltinPluginRegistry`](https://github.com/drsounds/bungalow/blob/main/src/main/java/se/spacify/plugin/BuiltinPluginRegistry.java).
 Each jar gets its **own** `URLClassLoader` (parent = the app loader) so plugins
 are isolated from one another.
 
@@ -76,7 +82,7 @@ loads after `musicbrainz` so the catalogue Services exist when it builds the
 Enable/disable state persists to `~/.spacify/plugins/state.properties`; a plugin
 defaults to enabled.
 
-Activation hands the plugin a [`PluginContext`](../src/main/java/se/spacify/plugin/PluginContext.java).
+Activation hands the plugin a [`PluginContext`](https://github.com/drsounds/bungalow/blob/main/src/main/java/se/spacify/plugin/PluginContext.java).
 The concrete implementation is `PluginManager.Recorder`, which **records every
 contribution** as it is made:
 
@@ -119,4 +125,4 @@ from the schema. The values are reachable at runtime via `ctx.settings()`.
 `registerConcept(c)` also calls `c.onActivate(ConceptContext)` (the recorder
 implements `ConceptContext`), so a Concept-based plugin's contributions are wired
 and recorded for clean teardown just like a Feature's. See
-[Status & roadmap](status-and-roadmap.md) for the migration state.
+[Status & roadmap](status-and-roadmap.html) for the migration state.

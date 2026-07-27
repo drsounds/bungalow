@@ -1,3 +1,9 @@
+---
+layout: default
+title: Architecture Overview
+nav_order: 2
+---
+
 # Architecture overview
 
 ## The layers
@@ -30,7 +36,7 @@ they only know **aspects** (capability interfaces).
 
 ### Why one `AspectManager` per kind
 
-Every pluggable thing implements [`Aspect`](../src/main/java/se/spacify/aspect/Aspect.java):
+Every pluggable thing implements [`Aspect`](https://github.com/drsounds/bungalow/blob/main/src/main/java/se/spacify/aspect/Aspect.java):
 
 ```java
 public interface Aspect {
@@ -40,7 +46,7 @@ public interface Aspect {
 }
 ```
 
-A [`BaseAspectManager<T>`](../src/main/java/se/spacify/aspect/BaseAspectManager.java)
+A [`BaseAspectManager<T>`](https://github.com/drsounds/bungalow/blob/main/src/main/java/se/spacify/aspect/BaseAspectManager.java)
 is just an insertion-ordered `id → T` registry with `register / unregister /
 get / all`. Each concrete manager (`ServiceManager`, `SkinManager`, …) extends it
 and adds typed lookups — most importantly **selection by capability**:
@@ -51,17 +57,17 @@ serviceManager.getServices(MediaService.class);           // every Service that 
 ```
 
 This is the core of the un-bundling: a caller asks for *a capability*, not *a
-vendor*. See [Aspects & Services](aspects-and-services.md).
+vendor*. See [Aspects & Services](aspects-and-services.html).
 
 ## Boot sequence
 
-`SpacifyApp.main` ([app/SpacifyApp.java](../src/main/java/se/spacify/app/SpacifyApp.java))
+`SpacifyApp.main` ([app/SpacifyApp.java](https://github.com/drsounds/bungalow/blob/main/src/main/java/se/spacify/app/SpacifyApp.java))
 sets the Nimbus look-and-feel, calls `DatabaseManager.getInstance().init()`,
 installs a shutdown hook (dispose JCEF, close the DB), then on the EDT does
 `new MainWindow()` and shows it.
 
 The whole system comes up inside the `MainWindow` constructor
-([ui/MainWindow.java](../src/main/java/se/spacify/ui/MainWindow.java)), in a
+([ui/MainWindow.java](https://github.com/drsounds/bungalow/blob/main/src/main/java/se/spacify/ui/MainWindow.java)), in a
 deliberate order — the ordering is load-bearing, because plugins register *into*
 the managers, so the managers (and the shared sidebar) must exist first:
 
@@ -103,9 +109,9 @@ View (e.g. TracksLibraryView)
 No layer names a vendor. The view produces a vendor-neutral `PlayRequest`; the
 coordinator resolves it across whatever `MusicService`s happen to be installed;
 the chosen back-end becomes active and the transport UI follows it. Content itself
-is named vendor-neutrally too, by a [`musik:` URI](musik-uri-scheme.md) (e.g.
+is named vendor-neutrally too, by a [`musik:` URI](musik-uri-scheme.html) (e.g.
 `musik:isrc:<ISRC>`) — the portable identifier stored in playlists and carried in
-drag payloads. Full detail in [Playback & resolution](playback-and-resolution.md).
+drag payloads. Full detail in [Playback & resolution](playback-and-resolution.html).
 
 ## Where state lives
 
@@ -114,13 +120,13 @@ drag payloads. Full detail in [Playback & resolution](playback-and-resolution.md
   package and registers their tables on activation via
   `ConceptContext.registerEntity(Class)` (e.g. the `music` concept owns the shared
   content model — `Artist`/`Recording`/`MusicRelease`/`Track`/… in
-  [`app/music/model`](../src/main/java/se/spacify/app/music/model/) — while
+  [`app/music/model`](https://github.com/drsounds/bungalow/tree/main/src/main/java/se/spacify/app/music/model/) — while
   `playlist`, `downloads`, `web`, `media` and `localmusic` each own their own
-  tables). [`DatabaseManager`](../src/main/java/se/spacify/db/DatabaseManager.java)
+  tables). [`DatabaseManager`](https://github.com/drsounds/bungalow/blob/main/src/main/java/se/spacify/db/DatabaseManager.java)
   knows about no concrete entity; it just owns the connection and hands out cached,
   table-creating DAOs via `dao(Class)`. See
-  [`db/PLANS.md`](../src/main/java/se/spacify/db/PLANS.md).
+  [`db/PLANS.md`](https://github.com/drsounds/bungalow/blob/main/src/main/java/se/spacify/db/PLANS.md).
 - **Plugin enable/disable** — `~/.spacify/plugins/state.properties`.
 - **Per-plugin settings** — `~/.spacify/plugins/<id>.properties` via `PluginSettings`.
 - **Theme / tint / accent / selected design** — `~/.spacify/settings.properties`
-  via [`ConfigManager`](../src/main/java/se/spacify/config/ConfigManager.java).
+  via [`ConfigManager`](https://github.com/drsounds/bungalow/blob/main/src/main/java/se/spacify/config/ConfigManager.java).
