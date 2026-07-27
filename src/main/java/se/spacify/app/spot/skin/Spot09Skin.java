@@ -9,6 +9,7 @@ import javax.swing.JComponent;
 import javax.swing.JPanel;
 
 import se.spacify.controls.Button;
+import se.spacify.controls.Panel;
 import se.spacify.controls.SplitPane.SplitPaneDivider;
 import se.spacify.controls.Table;
 import se.spacify.controls.TextField;
@@ -31,7 +32,7 @@ public class Spot09Skin extends SpotSkin {
     }
 
     @Override
-    public void paintHeader(JPanel header, Graphics2D g2) {
+    public void paintHeader(Panel header, Graphics2D g2) {
         // TODO Auto-generated method stub
         Taste taste = se.spacify.ui.MainWindow.getInstance().getTaste();
         Color tintColor = taste.getTintColor();
@@ -116,7 +117,7 @@ public class Spot09Skin extends SpotSkin {
     }
 
     @Override
-    public void paintFooter(JPanel footer, Graphics2D g2) {
+    public void paintFooter(Panel footer, Graphics2D g2) {
         // TODO Auto-generated method stub
         Taste taste = se.spacify.ui.MainWindow.getInstance().getTaste();
         Color tintColor = taste.getTintColor();

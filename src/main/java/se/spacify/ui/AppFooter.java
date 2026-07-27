@@ -193,7 +193,7 @@ public class AppFooter extends Panel {
         Graphics2D g2 = (Graphics2D) g.create();
         int w = getComponent().getWidth(), h = getComponent().getHeight();
 
-        getSkin().paintFooter(getComponent(), g2);
+        getSkin().paintFooter(this, g2);
 
         g2.setColor(HIGHLIGHT);
         g2.drawLine(0, h - 1, w, h - 1);

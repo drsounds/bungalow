@@ -41,8 +41,10 @@ public class ThemedTableCellRenderer extends DefaultTableCellRenderer {
      */
     public static Color rowBackground(JTable table, int row) {
         Skin skin = MainWindow.getInstance().getTaste().getSkin();
+        // This renderer holds only the raw JTable, not its Control; the skin's
+        // colour lookup keys off the taste, not the control, so null is fine here.
         return row % 2 == 0
-            ? skin.getColorValue(table, "table.alternateBackground", new Color(0, 0, 0, 11))
+            ? skin.getColorValue(null, "table.alternateBackground", new Color(0, 0, 0, 11))
             : table.getBackground();
     }
 }

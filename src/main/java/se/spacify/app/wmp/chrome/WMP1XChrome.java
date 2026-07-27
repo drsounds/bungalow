@@ -48,10 +48,10 @@ public class WMP1XChrome extends Chrome {
                 topSpacing.getComponent().setOpaque(false);
                 appPanel.add(topSpacing);
                 topBar = new TopBar();
-                topBar.add(new JButton());
-                appPanel.getComponent().add(topBar);
-                topBar.setMaximumSize(new Dimension(Short.MAX_VALUE, 18));
-                topBar.setMinimumSize(new Dimension(0, 18));
+                topBar.getComponent().add(new JButton());
+                appPanel.add(topBar);
+                topBar.getComponent().setMaximumSize(new Dimension(Short.MAX_VALUE, 18));
+                topBar.getComponent().setMinimumSize(new Dimension(0, 18));
                 // The WMP header carries the nav buttons, the tab strip
                 // (Now Playing / Library / Media Guide) and the Stores dropdown.
                 appHeader = new WMP1XAppHeader(viewStack);

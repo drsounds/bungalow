@@ -16,6 +16,7 @@ import javax.swing.JPanel;
 import se.spacify.aspect.Aspect;
 import se.spacify.aspect.AspectManager;
 import se.spacify.controls.GlassPanel;
+import se.spacify.controls.Panel;
 import se.spacify.controls.GlossyButton;
 import se.spacify.controls.SplitPane.SplitPaneDivider;
 import se.spacify.controls.TabButton;
@@ -32,14 +33,14 @@ public class WMP10Skin extends WMPSkin {
 	private static final int ARC = 12;
 
 	@Override
-	public void paintTopBar(JPanel control, Graphics2D g2) {
+	public void paintTopBar(Panel control, Graphics2D g2) {
 		int w = control.getWidth(), h = control.getHeight();
 		g2.setPaint(new GradientPaint(0, 0, ThemeManager.getTintColor(), 0, h, Color.WHITE));
 		g2.fillRect(0, 0, w, h);
 	}
 
 	@Override
-	public void paintHeader(JPanel control, Graphics2D g2) {
+	public void paintHeader(Panel control, Graphics2D g2) {
 		int w = control.getWidth(), h = control.getHeight();
 		g2.setPaint(new GradientPaint(0, 0, Color.WHITE, 0, h * 1, ThemeManager.getTintColor()));
 		g2.fillRect(0, 0, w, h);
@@ -48,7 +49,7 @@ public class WMP10Skin extends WMPSkin {
 	}
 
 	@Override
-	public void paintFooter(JPanel control, Graphics2D g2) {
+	public void paintFooter(Panel control, Graphics2D g2) {
 		int w = control.getWidth(), h = control.getHeight();
 
 		g2.setPaint(new GradientPaint(0, 0, Color.WHITE, 0, (int)(h * 1.5f), ThemeManager.getTintColor()));
@@ -252,7 +253,7 @@ public class WMP10Skin extends WMPSkin {
 	}
 	
 	@Override
-	public void paintPlaylist(JPanel control, Graphics2D g2) {
+	public void paintPlaylist(Panel control, Graphics2D g2) {
 		// TODO Auto-generated method stub
 		int w = control.getWidth(), h = control.getHeight();
         Color tintColor = ThemeManager.getTintColor();

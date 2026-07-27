@@ -47,10 +47,10 @@ public class WMP9Chrome extends Chrome {
                 topSpacing.getComponent().setOpaque(false);
                 appPanel.add(topSpacing);
                 topBar = new TopBar();
-                topBar.add(new JButton());
-                appPanel.getComponent().add(topBar);
-                topBar.setMaximumSize(new Dimension(Short.MAX_VALUE, 18));
-                topBar.setMinimumSize(new Dimension(0, 18));
+                topBar.getComponent().add(new JButton());
+                appPanel.add(topBar);
+                topBar.getComponent().setMaximumSize(new Dimension(Short.MAX_VALUE, 18));
+                topBar.getComponent().setMinimumSize(new Dimension(0, 18));
                 appHeader = new AppHeader(viewStack);
                 appHeader.getComponent().setMaximumSize(new Dimension(Short.MAX_VALUE, 28));
                 appHeader.getComponent().setMinimumSize(new Dimension(0, 28));

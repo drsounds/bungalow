@@ -56,7 +56,7 @@ public class AppHeader extends Panel implements NavigationListener {
 		Graphics2D g2 = (Graphics2D) g.create();
 		int w = getComponent().getWidth(), h = getComponent().getHeight();
 
-		getSkin().paintHeader(getComponent(), g2);
+		getSkin().paintHeader(this, g2);
 		// 1 px white sheen along the very bottom edge
 		g2.setColor(HIGHLIGHT);
 		g2.drawLine(0, h - 1, w, h - 1);

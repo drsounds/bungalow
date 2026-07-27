@@ -1,7 +1,10 @@
 package se.spacify.controls;
 
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -53,6 +56,20 @@ public abstract class Control<T extends Component> {
 	private Skin skin;
 	private Taste taste;
 	private String name;
+	
+	public int getWidth() {
+		return getComponent().getWidth();
+	}
+	public int getHeight() {
+		return getComponent().getHeight();
+	}
+	public Color getBackground() {
+		return getComponent().getBackground();
+	}
+
+	public Color getForeground() {
+		return getComponent().getForeground();
+	}
 
 	private final Map<String, Object> attributes = new LinkedHashMap<>();
 
@@ -120,6 +137,10 @@ public abstract class Control<T extends Component> {
 
 	// ── Lifecycle conveniences ───────────────────────────────────────────────────
 
+	public void paint(Graphics g2) {
+		
+	}
+	
 	public void repaint() {
 		if (component != null)
 			component.repaint();

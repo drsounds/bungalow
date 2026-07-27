@@ -9,6 +9,7 @@ import javax.swing.JPanel;
 
 import se.spacify.aspect.Aspect;
 import se.spacify.aspect.AspectManager;
+import se.spacify.controls.Panel;
 import se.spacify.controls.SplitPane.SplitPaneDivider;
 import se.spacify.controls.Table;
 import se.spacify.controls.ToolBar;
@@ -19,7 +20,7 @@ import se.spacify.ui.theme.ThemeManager;
 
 public class WMP11BetaSkin extends WMPSkin {
 	@Override
-	public void paintHeader(JPanel control, Graphics2D g2) {
+	public void paintHeader(Panel control, Graphics2D g2) {
         int w = control.getWidth(), h = control.getHeight();
 		g2.setPaint(ThemeManager.getAccentForegroundColor());
 		g2.fillRect(0, 0, w, h);
@@ -32,7 +33,7 @@ public class WMP11BetaSkin extends WMPSkin {
 	}
 
 	@Override
-	public void paintPlaylist(JPanel control, Graphics2D g2) {
+	public void paintPlaylist(Panel control, Graphics2D g2) {
 		// TODO Auto-generated method stub
 		int w = control.getWidth(), h = control.getHeight();
         Color tintColor = ThemeManager.getTintColor();
