@@ -1,3 +1,9 @@
+---
+layout: default
+title: Introduction & Background
+nav_order: 1
+---
+
 # Introduction & Background
 
 > *Why build a desktop music player in the 2020s, as a plugin operating system,
@@ -13,7 +19,7 @@ for the medium itself (worse discovery). Bungalow is an existence proof that the
 heading toward in the mid-2000s — can still be built.
 
 This page is the **background and motivation**. The rest of the
-[docs](README.md) describe how the architecture delivers on it.
+[docs](./) describe how the architecture delivers on it.
 
 ---
 
@@ -37,8 +43,8 @@ cannot browse one service and buy from another. The bundle is the lock-in.
 Bungalow **unbundles every one of these into a separate, swappable contribution**
 — a plugin or a capability *aspect* — so the same library row can be discovered
 in one place, resolved to whichever back-end can play it, and purchased from a
-third. See [Aspects & Services](aspects-and-services.md) and
-[Playback & resolution](playback-and-resolution.md).
+third. See [Aspects & Services](aspects-and-services.html) and
+[Playback & resolution](playback-and-resolution.html).
 
 ---
 
@@ -109,7 +115,7 @@ Bungalow keeps the things that should be *yours* — your library, your playlist
 and **your resolution choices** ("play this track from here") — in a local store
 you own, expressed in vendor-neutral terms (ISRC, title/artist, URIs). Back-ends
 are interchangeable under that. See
-[Playback & resolution](playback-and-resolution.md): a track is resolved to a
+[Playback & resolution](playback-and-resolution.html): a track is resolved to a
 Service *at play time*, and you can pin or change that choice.
 
 ---
@@ -204,4 +210,4 @@ the structural point that **bundling discovery, catalogue, payment, and playback
 into one account concentrates power in ways that are bad for listeners and
 independent artists alike.**
 
-See next: [Architecture overview](architecture.md).
+See next: [Architecture overview](architecture.html).

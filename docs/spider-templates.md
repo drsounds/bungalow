@@ -1,22 +1,28 @@
+---
+layout: default
+title: Spider Templates
+nav_order: 6
+---
+
 # Spider templates
 
 **Spider** is a server-style template engine for building view content. Instead of
 assembling a control tree by hand in Java, a plugin writes ASP/JSP-style markup —
 XUL-like XML with Lua interpolation — and Spider turns it into a live tree of
-[`Control`](../src/main/java/se/spacify/controls/Control.java)s. A button click
+[`Control`](https://github.com/drsounds/bungalow/blob/main/src/main/java/se/spacify/controls/Control.java)s. A button click
 **posts back**, re-runs the template, and re-renders, with widget state preserved.
 
 It is the same idea as a web framework (request → controller → template → markup →
 page), pointed at a Swing control tree instead of a browser.
 
-Types: [`Spider`](../src/main/java/se/spacify/app/spider/Spider.java),
-[`Controller`](../src/main/java/se/spacify/app/spider/controller/Controller.java),
-[`Request`](../src/main/java/se/spacify/app/spider/Request.java) /
-[`Response`](../src/main/java/se/spacify/app/spider/Response.java),
-[`TemplateEngine`](../src/main/java/se/spacify/app/spider/template/TemplateEngine.java),
-[`LuaPreprocessor`](../src/main/java/se/spacify/app/spider/template/LuaPreprocessor.java),
-[`Postbacks`](../src/main/java/se/spacify/app/spider/Postbacks.java),
-[`SpiderView`](../src/main/java/se/spacify/app/spider/views/SpiderView.java).
+Types: [`Spider`](https://github.com/drsounds/bungalow/blob/main/src/main/java/se/spacify/app/spider/Spider.java),
+[`Controller`](https://github.com/drsounds/bungalow/blob/main/src/main/java/se/spacify/app/spider/controller/Controller.java),
+[`Request`](https://github.com/drsounds/bungalow/blob/main/src/main/java/se/spacify/app/spider/Request.java) /
+[`Response`](https://github.com/drsounds/bungalow/blob/main/src/main/java/se/spacify/app/spider/Response.java),
+[`TemplateEngine`](https://github.com/drsounds/bungalow/blob/main/src/main/java/se/spacify/app/spider/template/TemplateEngine.java),
+[`LuaPreprocessor`](https://github.com/drsounds/bungalow/blob/main/src/main/java/se/spacify/app/spider/template/LuaPreprocessor.java),
+[`Postbacks`](https://github.com/drsounds/bungalow/blob/main/src/main/java/se/spacify/app/spider/Postbacks.java),
+[`SpiderView`](https://github.com/drsounds/bungalow/blob/main/src/main/java/se/spacify/app/spider/views/SpiderView.java).
 
 ## The pipeline
 
@@ -32,11 +38,11 @@ Types: [`Spider`](../src/main/java/se/spacify/app/spider/Spider.java),
                                              (parsed markup)      TabBarView
 ```
 
-1. A [`Controller`](../src/main/java/se/spacify/app/spider/controller/Controller.java)
+1. A [`Controller`](https://github.com/drsounds/bungalow/blob/main/src/main/java/se/spacify/app/spider/controller/Controller.java)
    supplies a **template** (a string, often loaded from a resource file).
-2. [`LuaPreprocessor`](../src/main/java/se/spacify/app/spider/template/LuaPreprocessor.java)
+2. [`LuaPreprocessor`](https://github.com/drsounds/bungalow/blob/main/src/main/java/se/spacify/app/spider/template/LuaPreprocessor.java)
    compiles the template into a **Lua chunk** that emits markup.
-3. [`TemplateEngine`](../src/main/java/se/spacify/app/spider/template/TemplateEngine.java)
+3. [`TemplateEngine`](https://github.com/drsounds/bungalow/blob/main/src/main/java/se/spacify/app/spider/template/TemplateEngine.java)
    runs the chunk on an embedded **Lua interpreter** ([LuaJ](#dependency)) with the
    request bound in, then parses the emitted XML into a `org.w3c.dom.Element`.
 4. The view renders the element into a control tree via
@@ -77,7 +83,7 @@ emitted as escaped Lua string literals, so quotes and brackets in your XML are s
 ### Request bindings
 
 The running chunk sees these globals, derived from the
-[`Request`](../src/main/java/se/spacify/app/spider/Request.java), so a single
+[`Request`](https://github.com/drsounds/bungalow/blob/main/src/main/java/se/spacify/app/spider/Request.java), so a single
 template can branch on what was asked:
 
 | Global   | Value |
@@ -89,7 +95,7 @@ template can branch on what was asked:
 
 ## Controllers and routing
 
-A [`Controller`](../src/main/java/se/spacify/app/spider/controller/Controller.java)
+A [`Controller`](https://github.com/drsounds/bungalow/blob/main/src/main/java/se/spacify/app/spider/controller/Controller.java)
 handles the URIs it accepts and supplies the template:
 
 ```java
@@ -100,10 +106,10 @@ public abstract class Controller {
 }
 ```
 
-[`Spider`](../src/main/java/se/spacify/app/spider/Spider.java) is the registry +
+[`Spider`](https://github.com/drsounds/bungalow/blob/main/src/main/java/se/spacify/app/spider/Spider.java) is the registry +
 router. `process(request)` parses the URI and dispatches to the **first registered
 controller** that accepts it — the same "first match wins" rule the
-[`ViewStack`](navigation-and-views.md) uses for views:
+[`ViewStack`](navigation-and-views.html) uses for views:
 
 ```java
 public Element process(Request request) {
@@ -117,26 +123,26 @@ public Element process(Request request) {
 ## Rendering: `Control.setInnerXul`
 
 Markup becomes widgets through
-[`Control.setInnerXul(Element)`](../src/main/java/se/spacify/controls/Control.java)
+[`Control.setInnerXul(Element)`](https://github.com/drsounds/bungalow/blob/main/src/main/java/se/spacify/controls/Control.java)
 (string overload also provided). Each tag maps to a control:
 
 | Tag | Control | Notes |
 |-----|---------|-------|
-| `<button>` | [`Button`](../src/main/java/se/spacify/controls/Button.java) | text from the element body; `onclick` → [postback](#postbacks) |
-| `<text>` / `<label>` / `<img>` | [`Label`](../src/main/java/se/spacify/controls/Label.java) | body text becomes the label |
-| `<input>` | [`TextField`](../src/main/java/se/spacify/controls/TextField.java) | a named field is collected on postback |
-| `<hbox>` / `<vbox>` | [`HBox`](../src/main/java/se/spacify/controls/HBox.java) / [`VBox`](../src/main/java/se/spacify/controls/VBox.java) | row / column layout |
-| `<view>` | [`TabbedPane`](../src/main/java/se/spacify/controls/TabbedPane.java) | children become tabs |
-| `<page>` | [`Panel`](../src/main/java/se/spacify/controls/Panel.java) | a tab; its `title`/`label` is the tab caption |
+| `<button>` | [`Button`](https://github.com/drsounds/bungalow/blob/main/src/main/java/se/spacify/controls/Button.java) | text from the element body; `onclick` → [postback](#postbacks) |
+| `<text>` / `<label>` / `<img>` | [`Label`](https://github.com/drsounds/bungalow/blob/main/src/main/java/se/spacify/controls/Label.java) | body text becomes the label |
+| `<input>` | [`TextField`](https://github.com/drsounds/bungalow/blob/main/src/main/java/se/spacify/controls/TextField.java) | a named field is collected on postback |
+| `<hbox>` / `<vbox>` | [`HBox`](https://github.com/drsounds/bungalow/blob/main/src/main/java/se/spacify/controls/HBox.java) / [`VBox`](https://github.com/drsounds/bungalow/blob/main/src/main/java/se/spacify/controls/VBox.java) | row / column layout |
+| `<view>` | [`TabbedPane`](https://github.com/drsounds/bungalow/blob/main/src/main/java/se/spacify/controls/TabbedPane.java) | children become tabs |
+| `<page>` | [`Panel`](https://github.com/drsounds/bungalow/blob/main/src/main/java/se/spacify/controls/Panel.java) | a tab; its `title`/`label` is the tab caption |
 | `<element>` / anything else | `Panel` | a plain container |
 | `<a.b.C>` (dotted) | the class `a.b.C` | inflated by reflection — see below |
 
 **Fully-qualified tags (Android-style).** A tag containing a `.` is treated as a
 class name and instantiated by reflection, exactly like a custom-view tag in
 Android layout XML. The class needs a public no-arg constructor and may be either a
-[`Control`](../src/main/java/se/spacify/controls/Control.java) (used directly) or a
+[`Control`](https://github.com/drsounds/bungalow/blob/main/src/main/java/se/spacify/controls/Control.java) (used directly) or a
 raw Swing/AWT `Component` (wrapped in a
-[`ComponentControl`](../src/main/java/se/spacify/controls/ComponentControl.java)):
+[`ComponentControl`](https://github.com/drsounds/bungalow/blob/main/src/main/java/se/spacify/controls/ComponentControl.java)):
 
 ```xml
 <se.spacify.controls.GlossyButton>Buy</se.spacify.controls.GlossyButton>
@@ -165,7 +171,7 @@ widgets are the same instances.
 ## Postbacks
 
 A `<button onclick="refresh">` is wired to **post back** by
-[`Postbacks.bind`](../src/main/java/se/spacify/app/spider/Postbacks.java): clicking
+[`Postbacks.bind`](https://github.com/drsounds/bungalow/blob/main/src/main/java/se/spacify/app/spider/Postbacks.java): clicking
 it re-issues the request as a `POST` whose `action` is the `onclick` value, carrying
 the current input fields (collected by `Postbacks.collectInput` from named
 `<input>` controls) as the request `data`. The controller re-runs its template —
@@ -179,15 +185,15 @@ back its latest action.
 
 ## Views: `SpiderView` and `TabBarView`
 
-Spider content is mounted by a [navigation `View`](navigation-and-views.md) so the
+Spider content is mounted by a [navigation `View`](navigation-and-views.html) so the
 `ViewStack` can route a `spacify:` URI to it. Two render shapes exist:
 
-- **[`SpiderView`](../src/main/java/se/spacify/app/spider/views/SpiderView.java)** —
+- **[`SpiderView`](https://github.com/drsounds/bungalow/blob/main/src/main/java/se/spacify/app/spider/views/SpiderView.java)** —
   the general-purpose surface. It wraps the rendered root so the root element
   *itself* becomes its single reconciled child (a `<view>` root becomes an inner
   `TabbedPane`), then binds postbacks. Use it to drop arbitrary Spider markup into
   a screen.
-- **[`TabBarView`](../src/main/java/se/spacify/navigation/TabBarView.java)** — a view
+- **[`TabBarView`](https://github.com/drsounds/bungalow/blob/main/src/main/java/se/spacify/navigation/TabBarView.java)** — a view
   that *is* a tab bar. Rendering a `<view>`'s `<page>` children straight into its
   `TabbedPane` makes each page a tab. `TabBarView.navigate` also reads a URI
   **`#fragment`** and selects the tab whose id matches it, so
@@ -198,27 +204,27 @@ Spider content is mounted by a [navigation `View`](navigation-and-views.md) so t
 
 ## Worked example: the Test App
 
-[`se.spacify.app.testapp`](../src/main/java/se/spacify/app/testapp) is a hello-world
+[`se.spacify.app.testapp`](https://github.com/drsounds/bungalow/tree/main/src/main/java/se/spacify/app/testapp) is a hello-world
 plugin wiring all of the above to `spacify:testapp`:
 
 - **Template** —
-  [`views/test.xml`](../src/main/java/se/spacify/app/testapp/views/test.xml), the
+  [`views/test.xml`](https://github.com/drsounds/bungalow/blob/main/src/main/java/se/spacify/app/testapp/views/test.xml), the
   markup shown [above](#template-syntax). It ships next to the code under
   `src/main/java`; the build copies `**/*.xml` onto the classpath (see the
-  `<resources>` block in [`pom.xml`](../pom.xml)) so it can be loaded as a resource.
+  `<resources>` block in [`pom.xml`](https://github.com/drsounds/bungalow/blob/main/pom.xml)) so it can be loaded as a resource.
 - **Controller** —
-  [`TestController`](../src/main/java/se/spacify/app/testapp/controller/TestController.java)
+  [`TestController`](https://github.com/drsounds/bungalow/blob/main/src/main/java/se/spacify/app/testapp/controller/TestController.java)
   accepts `spacify:testapp` (and `…#fragment`) and returns `test.xml` as its
   template.
 - **View** —
-  [`TestAppView`](../src/main/java/se/spacify/app/testapp/views/TestAppView.java)
+  [`TestAppView`](https://github.com/drsounds/bungalow/blob/main/src/main/java/se/spacify/app/testapp/views/TestAppView.java)
   extends `TabBarView`; on `navigate` it asks its `Spider` to process the request
   and renders the pages as tabs, binding the refresh button to a postback.
 - **Plugin** —
-  [`TestApplication`](../src/main/java/se/spacify/app/testapp/TestApplication.java)
+  [`TestApplication`](https://github.com/drsounds/bungalow/blob/main/src/main/java/se/spacify/app/testapp/TestApplication.java)
   registers the view and a "Test App" sidebar node pointing at `spacify:testapp`,
   and is listed in
-  [`BuiltinApplicationRegistry`](../src/main/java/se/spacify/app/BuiltinApplicationRegistry.java).
+  [`BuiltinApplicationRegistry`](https://github.com/drsounds/bungalow/blob/main/src/main/java/se/spacify/app/BuiltinApplicationRegistry.java).
 
 Click "Test App" in the sidebar → the view renders the date, the `1..10` loop and
 the button; click **Refresh** → it posts back and re-renders in place.
@@ -227,7 +233,7 @@ the button; click **Refresh** → it posts back and re-renders in place.
 
 Spider runs Lua on **[LuaJ](https://github.com/luaj/luaj)** (`org.luaj:luaj-jse`, a
 pure-Java Lua 5.2 interpreter — no native code), declared in
-[`pom.xml`](../pom.xml). The engine builds a fresh
+[`pom.xml`](https://github.com/drsounds/bungalow/blob/main/pom.xml). The engine builds a fresh
 `JsePlatform.standardGlobals()` sandbox per render, so the standard Lua library
 (`os`, `string`, `table`, `math`, …) is available inside `${…}` expressions and
 `%` lines.

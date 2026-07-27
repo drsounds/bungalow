@@ -1,3 +1,9 @@
+---
+layout: default
+title: Look & Feel
+nav_order: 7
+---
+
 # Look & feel: Design = Chrome + Skin
 
 The entire appearance is pluggable too. A **Design** is a premix of a **Chrome**
@@ -6,12 +12,12 @@ painted). Designs are contributed by plugins and selected at runtime in Settings
 so the same content can be shown as a Windows-Media-Player shell or a Spotify-like
 shell without touching any view.
 
-Types: [`Design`](../src/main/java/se/spacify/design/Design.java),
-[`Chrome`](../src/main/java/se/spacify/ui/chrome/Chrome.java),
-[`Skin`](../src/main/java/se/spacify/skinning/Skin.java),
-[`Theme`](../src/main/java/se/spacify/ui/theme/Theme.java),
-[`Taste`](../src/main/java/se/spacify/ui/theme/Taste.java),
-[`ThemeManager`](../src/main/java/se/spacify/ui/theme/ThemeManager.java).
+Types: [`Design`](https://github.com/drsounds/bungalow/blob/main/src/main/java/se/spacify/design/Design.java),
+[`Chrome`](https://github.com/drsounds/bungalow/blob/main/src/main/java/se/spacify/ui/chrome/Chrome.java),
+[`Skin`](https://github.com/drsounds/bungalow/blob/main/src/main/java/se/spacify/skinning/Skin.java),
+[`Theme`](https://github.com/drsounds/bungalow/blob/main/src/main/java/se/spacify/ui/theme/Theme.java),
+[`Taste`](https://github.com/drsounds/bungalow/blob/main/src/main/java/se/spacify/ui/theme/Taste.java),
+[`ThemeManager`](https://github.com/drsounds/bungalow/blob/main/src/main/java/se/spacify/ui/theme/ThemeManager.java).
 
 ## The pieces
 
@@ -22,31 +28,31 @@ Design  ── getChrome() ─▶  Chrome   the window shell: header, sidebar sp
                                      (top bar, header, footer, buttons, tables…)
 ```
 
-- **[`Design`](../src/main/java/se/spacify/design/Design.java)** — an `Aspect`
+- **[`Design`](https://github.com/drsounds/bungalow/blob/main/src/main/java/se/spacify/design/Design.java)** — an `Aspect`
   with `getChrome()` + `getSkin()`. e.g.
-  [`WMP1XDesign`](../src/main/java/se/spacify/plugin/wmp/design/WMP1XDesign.java)
+  [`WMP1XDesign`](https://github.com/drsounds/bungalow/blob/main/src/main/java/se/spacify/plugin/wmp/design/WMP1XDesign.java)
   = WMP1X Chrome + WMP9 Skin; `SpotDesign` = Spot Chrome + Spot Skin.
-- **[`Chrome`](../src/main/java/se/spacify/ui/chrome/Chrome.java)** — a `Panel`
+- **[`Chrome`](https://github.com/drsounds/bungalow/blob/main/src/main/java/se/spacify/ui/chrome/Chrome.java)** — a `Panel`
   that, in `build()`, assembles the shell: `appHeader`, the left split holding the
   sidebar + a `centerPanel` wrapping the shared `ViewStack`, the main split with
   the Now Playing panel, and the `appFooter`. Different chromes lay these out
   differently (WMP's tabbed header vs Spot's slim header).
-- **[`Skin`](../src/main/java/se/spacify/skinning/Skin.java)** — abstract painter:
+- **[`Skin`](https://github.com/drsounds/bungalow/blob/main/src/main/java/se/spacify/skinning/Skin.java)** — abstract painter:
   `paintHeader`, `paintFooter`, `paintTopBar`, `paintGlossyButton`,
   `paintTableHeader`, `paintGlassPanel`, … Controls call into the active Skin in
   their `paintComponent`, so a skin restyles every control at once.
-- **[`Theme`](../src/main/java/se/spacify/ui/theme/Theme.java)** — may also carry
+- **[`Theme`](https://github.com/drsounds/bungalow/blob/main/src/main/java/se/spacify/ui/theme/Theme.java)** — may also carry
   a design/skin/chrome, letting a theme override the look wholesale.
 
 ## Taste vs ThemeManager (the colour model)
 
 There are two colour holders, and the split is worth understanding:
 
-- **[`Taste`](../src/main/java/se/spacify/ui/theme/Taste.java)** — the *per-window
+- **[`Taste`](https://github.com/drsounds/bungalow/blob/main/src/main/java/se/spacify/ui/theme/Taste.java)** — the *per-window
   model* the UI writes to: tint HSL (hue/saturation/lightness), dark mode, accent
   colour, display toggles, and the active theme/design/skin/chrome. The Settings
   sliders and `ConfigManager` read/write the `Taste`.
-- **[`ThemeManager`](../src/main/java/se/spacify/ui/theme/ThemeManager.java)** —
+- **[`ThemeManager`](https://github.com/drsounds/bungalow/blob/main/src/main/java/se/spacify/ui/theme/ThemeManager.java)** —
   the *live global palette* everything renders from: `getBackground()`,
   `getTintColor()`, `getForeground()`, the Nimbus `UIDefaults`, and a list of
   change listeners (~10 components repaint on change).

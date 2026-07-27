@@ -1,3 +1,9 @@
+---
+layout: default
+title: Navigation & Views
+nav_order: 5
+---
+
 # Navigation & Views
 
 Every screen in Bungalow is a **View** bound to a **`spacify:` URI**. Navigation
@@ -6,14 +12,14 @@ accepts it is shown. This keeps screens decoupled — a plugin contributes a vie
 and a URI, and anything (sidebar, header, another view, a deep link) can navigate
 to it without a direct reference.
 
-Types: [`View`](../src/main/java/se/spacify/navigation/View.java),
-[`ViewStack`](../src/main/java/se/spacify/navigation/ViewStack.java),
-[`SidebarNode`](../src/main/java/se/spacify/navigation/SidebarNode.java),
+Types: [`View`](https://github.com/drsounds/bungalow/blob/main/src/main/java/se/spacify/navigation/View.java),
+[`ViewStack`](https://github.com/drsounds/bungalow/blob/main/src/main/java/se/spacify/navigation/ViewStack.java),
+[`SidebarNode`](https://github.com/drsounds/bungalow/blob/main/src/main/java/se/spacify/navigation/SidebarNode.java),
 `NavigationListener`, `PlayerView`.
 
 ## The `View` contract
 
-A View **is** a [`Panel`](../src/main/java/se/spacify/controls/Panel.java) (a Swing
+A View **is** a [`Panel`](https://github.com/drsounds/bungalow/blob/main/src/main/java/se/spacify/controls/Panel.java) (a Swing
 component), so the stack mounts and shows/hides the View itself — no manual
 component swapping:
 
@@ -41,7 +47,7 @@ of URIs (e.g. `ReleaseDetailView` accepts `spacify:library:release:<id>`).
 
 ## The `ViewStack` router
 
-[`ViewStack`](../src/main/java/se/spacify/navigation/ViewStack.java) is a `Panel`
+[`ViewStack`](https://github.com/drsounds/bungalow/blob/main/src/main/java/se/spacify/navigation/ViewStack.java) is a `Panel`
 using a **`CardLayout`**: each view is mounted once as a card, and the layout
 shows exactly one and hides the rest — so show/hide is automatic. It also keeps
 the current view, the registered views, and back/forward history.
@@ -93,18 +99,18 @@ parses them in `navigate`.
 ## Rendering view content with Spider
 
 A view's `navigate` has to produce the actual widgets. It can build them in Java,
-or it can delegate to **[Spider](spider-templates.md)** — an ASP/JSP-style template
+or it can delegate to **[Spider](spider-templates.html)** — an ASP/JSP-style template
 engine that turns Lua-preprocessed XUL markup into a control tree and re-renders on
 postback. A controller yields markup for the URI; the view mounts it via
 `Control.setInnerXul`, which reconciles against the previous render so widget state
-survives. [`TabBarView`](../src/main/java/se/spacify/navigation/TabBarView.java)
+survives. [`TabBarView`](https://github.com/drsounds/bungalow/blob/main/src/main/java/se/spacify/navigation/TabBarView.java)
 pairs naturally with it: a `<view>`'s `<page>`s become its tabs, and a URI
 **`#fragment`** selects the tab whose id matches (e.g. `spacify:testapp#overview`).
-The [Test App](spider-templates.md#worked-example-the-test-app) is a full example.
+The [Test App](spider-templates.html#worked-example-the-test-app) is a full example.
 
 ## The sidebar
 
-[`SidebarNode`](../src/main/java/se/spacify/navigation/SidebarNode.java) is a
+[`SidebarNode`](https://github.com/drsounds/bungalow/blob/main/src/main/java/se/spacify/navigation/SidebarNode.java) is a
 plain tree of `{ label, uri, children, icon }`. A leaf with a URI navigates on
 click; a branch groups children. Plugins contribute subtrees via
 `ctx.addSidebarNode(node)`, which returns a `SidebarHandle` for **post-activation
@@ -113,4 +119,4 @@ edits** — adding/removing children as state changes, and `expand()`.
 The sidebar itself (`LeftLibraryMenu`) is **owned by `MainWindow`**, created
 before plugins activate, and then embedded by the active Chrome. That ownership
 split is deliberate: the Chrome can change at runtime (switch Design) without
-losing the plugin-contributed nodes. See [Look & feel](look-and-feel.md).
+losing the plugin-contributed nodes. See [Look & feel](look-and-feel.html).

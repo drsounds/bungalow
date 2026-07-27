@@ -1,3 +1,9 @@
+---
+layout: default
+title: Status & Roadmap
+nav_order: 10
+---
+
 # Status & roadmap
 
 These docs describe the architecture as designed. The codebase is mid-way
@@ -15,7 +21,7 @@ This page is the honest map of what's wired, what isn't, and where it's going.
 - **Spider templates** — the Lua-preprocessed XUL template engine renders view
   content into a control tree, reconciles re-renders (React-style), and posts back
   on interaction; demoed by the `spacify:testapp` plugin. See
-  [Spider templates](spider-templates.md).
+  [Spider templates](spider-templates.html).
 - **Playback & "Play with…" resolution** — queue, cross-service resolver,
   persisted picks, active-service switching.
 - **Runtime look-and-feel** — Designs (Chrome + Skin) selectable in Settings and

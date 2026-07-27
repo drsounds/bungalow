@@ -1,3 +1,9 @@
+---
+layout: default
+title: Playback & Resolution
+nav_order: 8
+---
+
 # Playback & resolution
 
 Listening is deliberately separated from *which vendor plays the bytes*. The
@@ -6,9 +12,9 @@ time**, and the user can pin a choice. This is the anti-lock-in heart of the app
 the same library row can play from local files today and a streaming service
 tomorrow, with no change to the library.
 
-Types: [`PlaybackCoordinator`](../src/main/java/se/spacify/service/media/PlaybackCoordinator.java),
+Types: [`PlaybackCoordinator`](https://github.com/drsounds/bungalow/blob/main/src/main/java/se/spacify/service/media/PlaybackCoordinator.java),
 `PlayQueue`, `PlayQueueItem`, `PlayRequest`, `ServiceMatch`, `ResolutionStore`,
-[`ServiceMatchDialog`](../src/main/java/se/spacify/ui/ServiceMatchDialog.java),
+[`ServiceMatchDialog`](https://github.com/drsounds/bungalow/blob/main/src/main/java/se/spacify/ui/ServiceMatchDialog.java),
 and the `MusicServiceTrack` entity.
 
 ## PlayRequest — a vendor-neutral play intent
@@ -18,7 +24,7 @@ whatever identity it has — `isrc`, `title`, `artist`, an optional `fallbackUri
 `durationMs`, and (if it came from the local DB) the `Track`. Library views
 override `playRequestAt(row)` to build one.
 
-That identity is expressed portably as a [`musik:` URI](musik-uri-scheme.md): a
+That identity is expressed portably as a [`musik:` URI](musik-uri-scheme.html): a
 recording's play URI is `musik:isrc:<ISRC>`, and `MusikUri.toPlayRequest` /
 `MusikUri.isrcOf` turn such a URI back into a `PlayRequest` (extracting the ISRC or
 title/artist coordinates), so a stored playlist row or a dropped drag payload

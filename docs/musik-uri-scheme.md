@@ -1,3 +1,9 @@
+---
+layout: default
+title: "The musik: URI Scheme"
+nav_order: 9
+---
+
 # The `musik:` URI scheme
 
 `musik:` is Bungalow's **portable, service-agnostic content identifier** — the way
@@ -8,7 +14,7 @@ It is the atom that playlists, library rows, drag-and-drop payloads and the play
 queue are built from.
 
 The wire format is specified formally in
-[RFC-0002](../src/main/java/se/spacify/app/music/spec/RFC-0002-musik-uri-scheme.md).
+[RFC-0002](https://github.com/drsounds/bungalow/blob/main/src/main/java/se/spacify/app/music/spec/RFC-0002-musik-uri-scheme.md).
 This page is the practical overview: the forms, and how the app resolves them.
 
 ## The forms
@@ -47,29 +53,29 @@ musik:track?name=<name>&artist_name=<artist>&release_name=<release>&number=<0-99
 ## How the app resolves it
 
 The parser/builder/resolver is
-[`MusikUri`](../src/main/java/se/spacify/app/music/net/MusikUri.java) — the
-music-app analogue of [`SiteUri`](../src/main/java/se/spacify/web/SiteUri.java):
+[`MusikUri`](https://github.com/drsounds/bungalow/blob/main/src/main/java/se/spacify/app/music/net/MusikUri.java) — the
+music-app analogue of [`SiteUri`](https://github.com/drsounds/bungalow/blob/main/src/main/java/se/spacify/web/SiteUri.java):
 
 - **`MusikUri.parse(uri)`** → a typed value (`kind` + coordinates), or `null`.
 - **`new MusikUri(...)` factories + `toString()`** → build & round-trip a URI.
 - **`MusikUri.toPlayRequest(uri)`** → a vendor-neutral
-  [`PlayRequest`](../src/main/java/se/spacify/service/media/PlayRequest.java) for the
+  [`PlayRequest`](https://github.com/drsounds/bungalow/blob/main/src/main/java/se/spacify/service/media/PlayRequest.java) for the
   *playable* forms (an `isrc` recording, or a name/query-form recording), so
   playback flows through the normal
-  [`PlaybackCoordinator`](../src/main/java/se/spacify/service/media/PlaybackCoordinator.java)
+  [`PlaybackCoordinator`](https://github.com/drsounds/bungalow/blob/main/src/main/java/se/spacify/service/media/PlaybackCoordinator.java)
   path — by ISRC first, then by title/artist metadata (see
-  [Playback & resolution](playback-and-resolution.md)).
+  [Playback & resolution](playback-and-resolution.html)).
 - **`MusikUri.isrcOf(uri)`** → the ISRC of a recording URI, or `null`.
 
 Where it plugs in:
 
-- [`Recording.getPlayUri()`](../src/main/java/se/spacify/app/music/model/Recording.java)
+- [`Recording.getPlayUri()`](https://github.com/drsounds/bungalow/blob/main/src/main/java/se/spacify/app/music/model/Recording.java)
   now emits `musik:isrc:<ISRC>` — the canonical content URI stored in playlist
   rows and carried in drag-and-drop payloads.
-- [`PlayableKind.fromUri`](../src/main/java/se/spacify/app/music/model/PlayableKind.java)
+- [`PlayableKind.fromUri`](https://github.com/drsounds/bungalow/blob/main/src/main/java/se/spacify/app/music/model/PlayableKind.java)
   recognises `musik:` schemes (`musik:upc:` → a release, otherwise a track), so a
   dragged row lands in a playlist tagged with the right kind.
-- [`PlaybackCoordinator.playUri`](../src/main/java/se/spacify/service/media/PlaybackCoordinator.java)
+- [`PlaybackCoordinator.playUri`](https://github.com/drsounds/bungalow/blob/main/src/main/java/se/spacify/service/media/PlaybackCoordinator.java)
   and the playlist view resolve `musik:` identity through `MusikUri`.
 
 Only the **playable** forms are wired into playback today. `iswc`, `upc`, `isni`,
