@@ -1,6 +1,8 @@
 name: Release
 
-# Build native installers with jpackage and publish them to a GitHub Release.
+# Build native installers and publish them to a GitHub Release.
+#   - Linux/macOS: jpackage (deb / dmg)
+#   - Windows:     a classic NSIS setup wizard wrapping a jpackage app-image
 #
 # Push a semantic-version tag to trigger a release, e.g.:
 #   git tag v1.0.0 && git push origin v1.0.0
@@ -30,8 +32,6 @@ jobs:
         include:
           - os: ubuntu-latest
             type: deb
-          - os: windows-latest
-            type: msi
           - os: macos-latest
             type: dmg
     runs-on: ${{ matrix.os }}
@@ -90,3 +90,71 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           files: dist/*
+
+  # ── Windows: classic NSIS setup wizard ────────────────────────────────────────
+  # jpackage's Windows "msi"/"exe" types both shell out to the WiX Toolset.
+  # Ship a real NSIS installer instead: build a jpackage app-image, then wrap it
+  # with makensis using packaging/windows/installer.nsi.
+  windows-installer:
+    runs-on: windows-latest
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 25 (provides jpackage)
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '25'
+          cache: maven
+
+      - name: Build self-contained app directory (target/app)
+        run: mvn -B -DskipTests clean package
+
+      - name: Determine app version
+        id: version
+        shell: bash
+        run: |
+          if [ "${GITHUB_REF_TYPE}" = "tag" ]; then
+            VERSION="${GITHUB_REF_NAME#v}"
+          else
+            VERSION="${{ github.event.inputs.version }}"
+          fi
+          echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
+          echo "Building Bungalow ${VERSION} NSIS installer"
+
+      - name: jpackage app-image (contains Bungalow.exe)
+        shell: bash
+        run: |
+          jpackage \
+            --type app-image \
+            --name Bungalow \
+            --app-version "${{ steps.version.outputs.version }}" \
+            --input target/app \
+            --main-jar spacify.jar \
+            --main-class se.spacify.app.SpacifyApp \
+            --dest jpkg \
+            --vendor "Bungalow" \
+            --copyright "Copyright (c) Bungalow" \
+            --description "Bungalow music player"
+
+      - name: Build NSIS installer (classic setup wizard)
+        shell: bash
+        run: |
+          makensis \
+            "/DAPP_VERSION=${{ steps.version.outputs.version }}" \
+            "/DAPP_IMAGE_DIR=jpkg/Bungalow" \
+            "/DOUT_FILE=Bungalow-${{ steps.version.outputs.version }}-Setup.exe" \
+            packaging/windows/installer.nsi
+
+      - name: Upload installer as workflow artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: bungalow-windows-installer
+          path: Bungalow-*-Setup.exe
+
+      - name: Attach installer to the GitHub Release
+        if: github.ref_type == 'tag'
+        uses: softprops/action-gh-release@v2
+        with:
+          files: Bungalow-*-Setup.exe

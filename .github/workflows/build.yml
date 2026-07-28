@@ -3,7 +3,8 @@ name: Build
 # Package Bungalow (codename "spacify") into three distributable forms:
 #   - jar      : the runnable application jar + its dependency libs
 #   - AppImage : a self-contained Linux .AppImage
-#   - exe      : a portable Windows app image containing Bungalow.exe
+#   - exe      : a portable Windows app image (zip) plus a classic NSIS
+#                installer wizard (Bungalow-<version>-Setup.exe)
 #
 # The build jobs run on pushes/PRs to main and on version tags. The release job
 # then publishes a GitHub Release with all three artifacts:
@@ -135,7 +136,7 @@ jobs:
           name: bungalow-appimage
           path: Bungalow-*-x86_64.AppImage
 
-  # ── Windows exe (portable app image) ─────────────────────────────────────────
+  # ── Windows exe (portable app image + NSIS installer) ────────────────────────
   exe:
     runs-on: windows-latest
     steps:
@@ -181,6 +182,21 @@ jobs:
         with:
           name: bungalow-windows-exe
           path: Bungalow-*-windows-x64.zip
+
+      - name: Build NSIS installer (classic setup wizard)
+        shell: bash
+        run: |
+          makensis \
+            "/DAPP_VERSION=${{ steps.v.outputs.version }}" \
+            "/DAPP_IMAGE_DIR=jpkg/Bungalow" \
+            "/DOUT_FILE=Bungalow-${{ steps.v.outputs.version }}-Setup.exe" \
+            packaging/windows/installer.nsi
+
+      - name: Upload installer artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: bungalow-windows-installer
+          path: Bungalow-*-Setup.exe
 
   # ── Publish a GitHub Release with all three artifacts ────────────────────────
   release:
