@@ -4,7 +4,7 @@ How it should work:
 
 1. User enter a prompt in spacify:create view, which is POST backed to CreateView's CreateController.
 
-2.CreateController's handle is capturing the posted 'prompt' text.
+2. CreateController's handle is capturing the posted 'prompt' text.
 
 3. With prompt text, it calls CreateService startCreatr which tells the the server side agent service to create a new ClaudeAgentSession, which gets the prompt and give directions to read the docs about app creation docs/plugins.md and spawns a new instance of this app, it ewyer apropriate Java code compiles it as an jar and load it ans test it, then pings back the AgentService through web sock once the JAR is completed.
 
