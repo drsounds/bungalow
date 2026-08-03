@@ -8,7 +8,35 @@ public class Request {
     public Object getText() {
         return text;
     }
-    
+     
+    @SuppressWarnings("unchecked")
+    public Map<String, Object> getPost() {
+        if (data instanceof Map) {
+            return (Map<String, Object>)data;
+        }
+        return null;
+    }
+    public Object getPost(String key, Object defaultValue) {
+        if (data instanceof Map) {
+            Map<String, Object> map = getPost();
+            if (map.containsKey(key)) {
+                return map.get(key);
+            } else {
+                return defaultValue;
+            }
+        }
+        return null;
+    }
+    public Object getPost(String key) {
+        return getPost(key, null);    
+    }
+    public boolean hasPost(String key) {
+        if (data instanceof Map) {
+            Map<String, Object> map = getPost();
+            return map.containsKey(key);
+        }
+        return false;
+    }
     private Object data;
     public Object getData() {
         return data;

@@ -69,6 +69,18 @@ public abstract class Controller {
     }
     public abstract boolean acceptsUri(Uri uri);
 
+    public String loadTemplateFromResource(String resourcePath) {
+        try {
+            String templateContent = getResourceFileAsString(resourcePath);
+            if (templateContent == null) {
+                throw new IllegalArgumentException("Resource not found: " + resourcePath);
+            }
+            return templateContent;
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to load template from resource: " + resourcePath, e);
+        }
+    }
+
     /**
      * The Lua-preprocessor template for this request — loaded from a file, classpath
      * resource or built inline. See the class javadoc for the directive syntax.

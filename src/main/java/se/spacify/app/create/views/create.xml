@@ -1,0 +1,8 @@
+<view>
+    <page id="overview" title="Overview" icon="overview">
+        <vbox>
+            <textarea id="prompt" name="prompt" label="Prompt" placeholder="Enter your prompt here..." />
+            <button type="submit" id="generate" name="generate" label="Generate" />
+        </vbox>
+    </page>
+</view>

@@ -1,0 +1,2 @@
+/feature-dev:feature-dev Create an app 'se.spacify.app.create' with concept CreateConcept,and CreateFeature, and a spacify:create:app route, which leads to a page with an input where user can prompt a new app. Using a built in distributable javac, it should be able to vibe code an app on the fly, based on the se.spacify.* Java API, which can extend the app with new concept, skin, views, etc.
+ 
