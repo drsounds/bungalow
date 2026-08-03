@@ -6,7 +6,6 @@ import java.awt.LinearGradientPaint;
 import java.awt.Point;
 
 import javax.swing.JComponent;
-import javax.swing.JPanel;
 
 import se.spacify.controls.Button;
 import se.spacify.controls.Panel;

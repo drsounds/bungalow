@@ -7,8 +7,7 @@ import se.spacify.library.LibraryEvents;
 import se.spacify.navigation.NavigationListener;
 import se.spacify.navigation.ViewStack;
 import se.spacify.app.library.views.LibraryScanAction;
-import se.spacify.app.media.service.MediaService;
-import se.spacify.app.media.service.MediaServicePlayerComponent;
+
 import se.spacify.app.music.controls.MusicTable;
 import se.spacify.app.music.model.Playable;
 import se.spacify.app.music.model.PlayableRef;
@@ -44,7 +43,6 @@ public class LeftLibraryMenu extends Panel implements NavigationListener {
 	private JPopupMenu addToLibraryMenu;
     private ViewStack viewStack;
 	private final JPanel playerHost = new JPanel(new BorderLayout());
-	private MediaServicePlayerComponent currentPlayer;
 
 	public ViewStack getViewStack() {
         return viewStack;
@@ -63,24 +61,6 @@ public class LeftLibraryMenu extends Panel implements NavigationListener {
 
 	public void onAdd() {
 	}
-
-    private void setActivePlayer(MediaService Service) {
-        MediaServicePlayerComponent next = Service != null ? Service.getPlayerComponent() : null;
-        if (next == currentPlayer) return;
-
-        if (currentPlayer != null) {
-            currentPlayer.onDeactivated();
-            playerHost.remove(currentPlayer.getComponent());
-        }
-        currentPlayer = next;
-        if (currentPlayer != null) {
-            playerHost.add(currentPlayer.getComponent(), BorderLayout.CENTER);
-            currentPlayer.onActivated();
-        }
-        playerHost.setVisible(currentPlayer != null);
-        playerHost.revalidate();
-        playerHost.repaint();
-    }
 
     public LeftLibraryMenu(ViewStack viewStack) {
         this.viewStack = viewStack;

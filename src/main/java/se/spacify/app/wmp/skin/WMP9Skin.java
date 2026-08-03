@@ -11,8 +11,6 @@ import java.awt.geom.Path2D;
 
 import javax.swing.ButtonModel;
 
-import javax.swing.JPanel;
-
 import se.spacify.aspect.Aspect;
 import se.spacify.aspect.AspectManager;
 import se.spacify.controls.GlassPanel;

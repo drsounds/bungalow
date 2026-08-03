@@ -12,7 +12,6 @@ import java.awt.geom.Point2D;
 
 import javax.swing.ButtonModel;
 import javax.swing.JComponent;
-import javax.swing.JPanel;
 
 import se.spacify.aspect.Aspect;
 import se.spacify.aspect.AspectManager;

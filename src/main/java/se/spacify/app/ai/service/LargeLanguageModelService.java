@@ -1,10 +1,10 @@
-package se.spacify.llm.service;
+package se.spacify.app.ai.service;
 
 import se.spacify.aspect.Aspect;
 import se.spacify.aspect.AspectManager;
 import se.spacify.service.Service;
 
-public class LLMService implements Service {
+public class LargeLanguageModelService implements Service {
 
     /**
      * TODO Implement the logic which instructs an LLM to create a new app based on the prompt based on the docs/plugin-system

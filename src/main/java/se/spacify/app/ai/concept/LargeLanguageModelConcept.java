@@ -8,7 +8,7 @@ import se.spacify.aspect.AspectManager;
 import se.spacify.concept.Concept;
 import se.spacify.concept.ConceptContext;
 
-public class LLMConcept implements Concept {
+public class LargeLanguageModelConcept implements Concept {
 
     @Override
     public String getId() {

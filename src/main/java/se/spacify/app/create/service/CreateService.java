@@ -12,6 +12,13 @@ public class CreateService implements Service {
         throw new UnsupportedOperationException("Unimplemented method 'onRegister'");
     }
 
+    public void createApp(String prompt) {
+        /*
+        TODO Implement the logic which instructs an LLM create a new app based on the prompt based on the docs/plugin-system
+        
+        */
+    }
+
     @Override
     public String getId() {
         // TODO Auto-generated method stub
