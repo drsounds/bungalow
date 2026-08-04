@@ -112,7 +112,7 @@ public class WMP10Skin extends WMPSkin {
 			glowColor = ThemeManager.tintLight(2.2f);
 		}
 		
-		int width = control.getComponent().getWidth(), height = control.getComponent().getHeight();
+		int width = control.getSwingComponent().getWidth(), height = control.getSwingComponent().getHeight();
 		// Darker outer rim, slightly insets face sits on top of it.
 		//Ellipse2D outer = new Ellipse2D.Float(x, y, d, d);
 		
@@ -163,7 +163,7 @@ public class WMP10Skin extends WMPSkin {
 		int hlH = Math.round(fd * 0.5f);
 		Ellipse2D sheen = new Ellipse2D.Float(fx + hlInsetX, 25, hlW, hlH);
 		int sheenAlpha = control.getPressed() ? 110 : 220;
-		g2.setPaint(new RadialGradientPaint(control.getComponent().getWidth() / 2, control.getComponent().getHeight(), 15, new float[] { 0, 1 }, new Color[] { new Color(255, 255, 255, sheenAlpha), new Color(255, 255, 255, 0) }));
+		g2.setPaint(new RadialGradientPaint(control.getSwingComponent().getWidth() / 2, control.getSwingComponent().getHeight(), 15, new float[] { 0, 1 }, new Color[] { new Color(255, 255, 255, sheenAlpha), new Color(255, 255, 255, 0) }));
 		g2.fill(sheen);
 		
 		Ellipse2D sheen2 = new Ellipse2D.Float(0, 0, width, height / 2);
@@ -180,7 +180,7 @@ public class WMP10Skin extends WMPSkin {
 	
 	@Override
 	public void paintGlassPanel(GlassPanel control, Graphics2D g2) {
-		int w = control.getComponent().getWidth(), h = control.getComponent().getHeight();
+		int w = control.getSwingComponent().getWidth(), h = control.getSwingComponent().getHeight();
 		Path2D shape = control.shape(w, h);
 
 		// Base accent gradient, antialiased to the rounded/diagonal outline.
@@ -204,9 +204,9 @@ public class WMP10Skin extends WMPSkin {
 
 	@Override
 	public void paintToolButton(ToolButton control, Graphics2D g2) {
-		int w = control.getComponent().getWidth(), h = control.getComponent().getHeight();
+		int w = control.getSwingComponent().getWidth(), h = control.getSwingComponent().getHeight();
 		Color background = ThemeManager.getTintColor();
-        ButtonModel model = control.getComponent().getModel();
+        ButtonModel model = control.getSwingComponent().getModel();
 		g2.setPaint(background);
 		g2.fillRect(0, 0, w, h);
 		if (model.isPressed()) {
@@ -265,7 +265,7 @@ public class WMP10Skin extends WMPSkin {
 	public void paintVerticalPanel(VerticalPanel control, Graphics2D g2) {
 		// TODO Auto-generated method stub
 
-		int w = control.getComponent().getWidth(), h = control.getComponent().getHeight();
+		int w = control.getSwingComponent().getWidth(), h = control.getSwingComponent().getHeight();
 		g2.setPaint(new GradientPaint(0, 0, Color.WHITE, w, 0, ThemeManager.getTintColor()));
 		g2.fillRect(0, 0, w, h);
 		g2.setPaint(new GradientPaint(0, 0, new Color(255, 255, 255, 127), w, 0, new Color(255, 255, 255, 0)));

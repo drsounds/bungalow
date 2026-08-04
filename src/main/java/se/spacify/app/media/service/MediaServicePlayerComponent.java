@@ -19,7 +19,7 @@ import se.spacify.service.media.PlaybackCoordinator;
 public abstract class MediaServicePlayerComponent extends Panel {
 
     protected MediaServicePlayerComponent() {
-        getComponent().setOpaque(false);
+        getSwingComponent().setOpaque(false);
     }
 
     /** Called when this component becomes the active (visible) playback surface. */

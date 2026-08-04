@@ -76,10 +76,10 @@ public class DownloadsView extends AbstractMusicListView {
     protected JComponent toolbarAccessory() {
         JPanel bar = new JPanel(new FlowLayout(FlowLayout.RIGHT, 4, 0));
         bar.setOpaque(false);
-        bar.add(button("Cancel",  this::cancelSelected).getComponent());
-        bar.add(button("Retry",   this::retrySelected).getComponent());
-        bar.add(button("Reveal",  this::revealSelected).getComponent());
-        bar.add(button("Play",    this::playSelected).getComponent());
+        bar.add(button("Cancel",  this::cancelSelected).getSwingComponent());
+        bar.add(button("Retry",   this::retrySelected).getSwingComponent());
+        bar.add(button("Reveal",  this::revealSelected).getSwingComponent());
+        bar.add(button("Play",    this::playSelected).getSwingComponent());
         return bar;
     }
 
@@ -137,8 +137,8 @@ public class DownloadsView extends AbstractMusicListView {
 
     private static Button button(String text, Runnable action) {
         Button b = new Button(text);
-        b.getComponent().setFocusPainted(false);
-        b.getComponent().addActionListener(e -> action.run());
+        b.getSwingComponent().setFocusPainted(false);
+        b.getSwingComponent().addActionListener(e -> action.run());
         return b;
     }
 

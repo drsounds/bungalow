@@ -72,9 +72,8 @@ public class SpacifyApp {
         }));
 
         // ── UI ────────────────────────────────────────────────────────────────
-        SwingUtilities.invokeLater(() -> {
-            MainWindow window = new MainWindow();
-            window.setVisible(true);
-        });
+        // MainWindow's constructor starts the active rendering backend (Swing by
+        // default) itself, including showing its top-level window.
+        SwingUtilities.invokeLater(MainWindow::new);
     }
 }

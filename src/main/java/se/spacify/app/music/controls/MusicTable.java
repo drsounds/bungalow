@@ -483,7 +483,7 @@ public class MusicTable extends JPanel {
 			if (currentGrouping == null && !groupings().isEmpty())
 				currentGrouping = groupings().get(0);
 			rebuildGroups();
-			scroll.setViewportView(groupedPanel.getComponent());
+			scroll.setViewportView(groupedPanel.getSwingComponent());
 		} else {
 			scroll.setViewportView(jtable);
 		}
@@ -628,7 +628,7 @@ public class MusicTable extends JPanel {
 		private final JPanel          host = new JPanel(new BorderLayout());
 		BuyStreamRenderer() {
 			host.setBorder(BorderFactory.createEmptyBorder(3, 6, 3, 6));
-			button.getComponent().setOpaque(false);
+			button.getSwingComponent().setOpaque(false);
 		}
 		@Override
 		public Component getTableCellRendererComponent(JTable t, Object value, boolean sel,
@@ -641,9 +641,9 @@ public class MusicTable extends JPanel {
 			if (req == null) return host;   // empty cell — just the zebra
 			TrackAvailability a = AvailabilityResolver.get().availabilityFor(req, jtable::repaint);
 			if (a.local()) return host;   // already local — nothing to buy/stream, empty cell
-			button.getComponent().setFont(t.getFont());
-			button.getComponent().setText(!a.resolved() ? "…" : (a.hasStream() ? "Stream ▾" : "Buy ▾"));
-			host.add(button.getComponent(), BorderLayout.CENTER);
+			button.getSwingComponent().setFont(t.getFont());
+			button.getSwingComponent().setText(!a.resolved() ? "…" : (a.hasStream() ? "Stream ▾" : "Buy ▾"));
+			host.add(button.getSwingComponent(), BorderLayout.CENTER);
 			return host;
 		}
 	}
@@ -653,8 +653,8 @@ public class MusicTable extends JPanel {
 	private static final class BuyStreamButton extends se.spacify.controls.Button {
 		BuyStreamButton() {
 			super();
-			component.setFocusable(false);
-			component.setMargin(new java.awt.Insets(0, 0, 0, 0));
+			getSwingComponent().setFocusable(false);
+			getSwingComponent().setMargin(new java.awt.Insets(0, 0, 0, 0));
 		}
 	}
 

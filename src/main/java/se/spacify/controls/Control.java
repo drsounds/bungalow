@@ -2,9 +2,7 @@ package se.spacify.controls;
 
 import java.awt.Color;
 import java.awt.Component;
-import java.awt.Container;
 import java.awt.Graphics;
-import java.awt.Graphics2D;
 import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -12,7 +10,6 @@ import java.util.List;
 import java.util.Map;
 
 import javax.swing.JComponent;
-import javax.swing.SwingUtilities;
 import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.w3c.dom.Document;
@@ -25,27 +22,35 @@ import org.xml.sax.InputSource;
 import se.spacify.design.Design;
 import se.spacify.skinning.Skin;
 import se.spacify.ui.MainWindow;
+import se.spacify.ui.render.Reconciler;
+import se.spacify.ui.render.UserInterface;
+import se.spacify.ui.render.UserInterfaceManager;
 import se.spacify.ui.theme.Taste;
 import se.spacify.ui.theme.Theme;
 
 /**
- * Intermediate base for every Spacify control. Controls do not inherit a Swing
- * widget; each one <em>wraps</em> one as its {@link #component} ({@code T}) and is
- * a clean abstraction over it. The only bridge into Swing's component model is
- * {@link #getComponent()} — and the {@link #add(Control) child-adding} methods,
- * which mount {@code child.getComponent()} into this control's component. All
- * widget configuration (layout, borders, geometry, text, …) is done through
- * {@code getComponent()} so the two models stay cleanly separated; only the
- * lifecycle conveniences {@link #repaint()}, {@link #revalidate()} and
- * {@link #setVisible(boolean)} are offered directly.
+ * Intermediate base for every Spacify control. A control is not tied to any UI
+ * toolkit: {@code T} is whatever native peer the active
+ * {@link se.spacify.ui.render.UserInterface} backend produces for it (a Swing
+ * {@link Component} for the Swing backend, a Jexer widget for the Jexer
+ * backend, …). Controls that predate this abstraction still build their own
+ * (Swing) native peer directly in their constructor and keep working
+ * unchanged; controls ported to be backend-neutral instead call
+ * {@link #initNative()}, which asks the active {@link UserInterface} to create
+ * and bind the peer. Either way, tree mutations ({@link #add(Control)},
+ * {@link #remove(Control)}) are reported to the {@link Reconciler}, which is
+ * the single place that knows how to mount/unmount a native peer for the
+ * active backend.
  *
  * <p>{@link Skin}/{@link Theme}/{@link Design}/{@link Taste} resolution walks up
  * the control tree (this → parent → … → {@link MainWindow}); set an explicit value
  * on a control to override it for that subtree.
  *
- * @param <T> the Swing component this control wraps
+ * @param <T> this control's native peer type, when one meaningful concrete type
+ *            exists (unported, toolkit-specific controls); {@code Object} for
+ *            controls that work across backends.
  */
-public abstract class Control<T extends Component> {
+public abstract class Control<T> {
 
 	protected T component;
 	protected Control<?> parent;
@@ -56,19 +61,19 @@ public abstract class Control<T extends Component> {
 	private Skin skin;
 	private Taste taste;
 	private String name;
-	
+
 	public int getWidth() {
-		return getComponent().getWidth();
+		return component instanceof Component c ? c.getWidth() : 0;
 	}
 	public int getHeight() {
-		return getComponent().getHeight();
+		return component instanceof Component c ? c.getHeight() : 0;
 	}
 	public Color getBackground() {
-		return getComponent().getBackground();
+		return component instanceof Component c ? c.getBackground() : null;
 	}
 
 	public Color getForeground() {
-		return getComponent().getForeground();
+		return component instanceof Component c ? c.getForeground() : null;
 	}
 
 	private final Map<String, Object> attributes = new LinkedHashMap<>();
@@ -80,15 +85,72 @@ public abstract class Control<T extends Component> {
 		this.parent = parent;
 	}
 
-	// ── The Swing bridge ─────────────────────────────────────────────────────────
+	// ── The native peer ──────────────────────────────────────────────────────────
 
-	/** The wrapped Swing component — the single bridge into the Swing tree. */
+	/** This control's native peer, or {@code null} if none has been created yet. */
 	public T getComponent() {
 		return component;
 	}
 
 	protected void setComponent(T component) {
 		this.component = component;
+	}
+
+	/**
+	 * For controls ported to be backend-neutral: ask the active
+	 * {@link UserInterface} to create and {@link UserInterface#bind bind} this
+	 * control's native peer. Called once, from the constructor, after any
+	 * constructor-argument fields (e.g. initial text) have been assigned, so the
+	 * backend can seed the peer's initial state from them.
+	 *
+	 * <p>Some backends (e.g. Jexer, whose widgets are constructed already
+	 * attached to a parent) cannot create a peer before this control has a
+	 * parent, and {@link UserInterface#createNative} legitimately returns
+	 * {@code null} here; the {@link Reconciler} retries once this control is
+	 * added to a mounted parent, via {@link #adoptNative}.
+	 */
+	@SuppressWarnings("unchecked")
+	protected final void initNative() {
+		UserInterface ui = activeUserInterface();
+		if (ui == null) return;
+		Object native_ = ui.createNative(this);
+		if (native_ != null) {
+			this.component = (T) native_;
+			ui.bind(this, native_);
+		}
+	}
+
+	/**
+	 * The backend to delegate to: the live app's active backend, or — for a
+	 * control built with no {@link MainWindow} running (e.g. a unit test) —
+	 * {@link UserInterfaceManager#standalone()}, so controls stay constructible
+	 * in isolation.
+	 */
+	private UserInterface activeUserInterface() {
+		MainWindow mw = MainWindow.getInstance();
+		return mw != null ? mw.getUserInterfaceManager().getActive() : UserInterfaceManager.standalone();
+	}
+
+	/**
+	 * Set by a {@link UserInterface}/{@link Reconciler} once this control's
+	 * native peer is created — including "created late", after this control
+	 * already has a parent. Not for general use.
+	 */
+	@SuppressWarnings("unchecked")
+	public final void adoptNative(Object native_) {
+		this.component = (T) native_;
+	}
+
+	/**
+	 * For controls ported to be backend-neutral: push a single property change to
+	 * the active backend's {@link UserInterface#applyProperty}, if this control's
+	 * native peer has been created.
+	 */
+	protected final void applyProperty(String key, Object value) {
+		UserInterface ui = activeUserInterface();
+		if (ui != null && component != null) {
+			ui.applyProperty(this, key, value);
+		}
 	}
 
 	// ── Tree wiring ──────────────────────────────────────────────────────────────
@@ -106,15 +168,13 @@ public abstract class Control<T extends Component> {
 	}
 
 	/**
-	 * Add a child control: records it in the control tree and mounts its
-	 * {@link #getComponent() component} into this control's component.
+	 * Add a child control: records it in the control tree and, via the
+	 * {@link Reconciler}, mounts its native peer into this control's.
 	 */
 	public Control<T> add(Control<?> child) {
 		children.add(child);
 		child.setParent(this);
-		if (component instanceof Container c && child.getComponent() != null) {
-			c.add(child.getComponent());
-		}
+		Reconciler.get().onChildAdded(this, child, children.size() - 1, null);
 		return this;
 	}
 
@@ -122,42 +182,35 @@ public abstract class Control<T extends Component> {
 	public Control<T> add(Control<?> child, Object constraints) {
 		children.add(child);
 		child.setParent(this);
-		if (component instanceof Container c && child.getComponent() != null) {
-			c.add(child.getComponent(), constraints);
-		}
+		Reconciler.get().onChildAdded(this, child, children.size() - 1, constraints);
 		return this;
 	}
 
 	public void remove(Control<?> child) {
 		children.remove(child);
-		if (component instanceof Container c && child.getComponent() != null) {
-			c.remove(child.getComponent());
-		}
+		Reconciler.get().onChildRemoved(this, child);
 	}
 
 	// ── Lifecycle conveniences ───────────────────────────────────────────────────
 
 	public void paint(Graphics g2) {
-		
+
 	}
-	
+
 	public void repaint() {
-		if (component != null)
-			component.repaint();
+		if (component instanceof Component c) c.repaint();
 	}
 
 	public void revalidate() {
-		if (component instanceof JComponent j)
-			j.revalidate();
+		if (component instanceof JComponent j) j.revalidate();
 	}
 
 	public void setVisible(boolean visible) {
-		if (component != null)
-			component.setVisible(visible);
+		if (component instanceof Component c) c.setVisible(visible);
 	}
 
 	public boolean isVisible() {
-		return component != null && component.isVisible();
+		return component instanceof Component c && c.isVisible();
 	}
 
 	// ── Skin / Theme / Design / Taste resolution ─────────────────────────────────
@@ -372,9 +425,9 @@ public abstract class Control<T extends Component> {
 
 	/** Push text into the controls that carry text; a no-op for the rest. */
 	private static void setControlText(Control<?> control, String text) {
-		if (control instanceof Label l)          l.getComponent().setText(text);
-		else if (control instanceof TextField t) t.getComponent().setText(text);
-		else if (control instanceof Button b)    b.getComponent().setText(text);
+		if (control instanceof Label l)          l.setText(text);
+		else if (control instanceof TextField t) t.setText(text);
+		else if (control instanceof Button b)    b.setText(text);
 	}
 
 	/** Mount a freshly created XUL child; a {@link TabbedPane} hosts it as a titled tab. */
@@ -390,22 +443,13 @@ public abstract class Control<T extends Component> {
 		}
 	}
 
-	/** Replace {@code oldChild} with {@code newChild} in both the control tree and the Swing container, in place. */
+	/** Replace {@code oldChild} with {@code newChild} in both the control tree and the native tree, in place. */
 	private void replaceChild(Control<?> oldChild, Control<?> newChild) {
 		int controlIndex = children.indexOf(oldChild);
 		newChild.setParent(this);
-		if (component instanceof Container c) {
-			int z = oldChild.getComponent() != null ? c.getComponentZOrder(oldChild.getComponent()) : -1;
-			if (oldChild.getComponent() != null) {
-				c.remove(oldChild.getComponent());
-			}
-			if (newChild.getComponent() != null) {
-				if (z >= 0) c.add(newChild.getComponent(), z);
-				else        c.add(newChild.getComponent());
-			}
-		}
 		if (controlIndex >= 0) children.set(controlIndex, newChild);
 		else                   children.add(newChild);
+		Reconciler.get().onChildReplaced(this, oldChild, newChild, children.indexOf(newChild));
 	}
 
 	/** The direct element children of {@code element}, skipping text and comment nodes. */
@@ -438,14 +482,11 @@ public abstract class Control<T extends Component> {
 	}
 
 	/**
-	 * The owning window. While a control is still being constructed its component
-	 * has no window ancestor yet, so we fall back to the live {@link MainWindow} so
-	 * skin/theme/design/taste stay resolvable.
+	 * The owning window. Spacify is single-window, so this is always the
+	 * {@link MainWindow} singleton — resolvable even while a control is still
+	 * being constructed and not yet attached to anything.
 	 */
 	public MainWindow getMainWindow() {
-		java.awt.Window w = component != null ? SwingUtilities.getWindowAncestor(component) : null;
-		if (w instanceof MainWindow mw)
-			return mw;
 		return MainWindow.getInstance();
 	}
 

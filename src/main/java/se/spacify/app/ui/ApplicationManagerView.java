@@ -33,9 +33,9 @@ public class ApplicationManagerView extends View {
     @SuppressWarnings("static-access")
     public ApplicationManagerView(ViewStack viewStack) {
         super(viewStack);
-        getComponent().setLayout(new BorderLayout(0, 8));
-        getComponent().setOpaque(true);
-        getComponent().setBorder(BorderFactory.createEmptyBorder(16, 16, 16, 16));
+        getSwingComponent().setLayout(new BorderLayout(0, 8));
+        getSwingComponent().setOpaque(true);
+        getSwingComponent().setBorder(BorderFactory.createEmptyBorder(16, 16, 16, 16));
 
         // ── Header + toolbar ─────────────────────────────────────────────────
         JLabel title = new JLabel("Apps");
@@ -55,7 +55,7 @@ public class ApplicationManagerView extends View {
         header.setOpaque(false);
         header.add(title, BorderLayout.WEST);
         header.add(buttons, BorderLayout.EAST);
-        getComponent().add(header, BorderLayout.NORTH);
+        getSwingComponent().add(header, BorderLayout.NORTH);
 
         // ── Application table ─────────────────────────────────────────────────────
         model = new DefaultTableModel(new String[]{"On", "Name", "Version", "Source"}, 0) {
@@ -85,7 +85,7 @@ public class ApplicationManagerView extends View {
         split.setDividerLocation(360);
         split.setBorder(BorderFactory.createEmptyBorder());
         split.setOpaque(false);
-        getComponent().add(split, BorderLayout.CENTER);
+        getSwingComponent().add(split, BorderLayout.CENTER);
 
         refresh();
         applyTheme();
@@ -98,11 +98,11 @@ public class ApplicationManagerView extends View {
     private void onAdd() {
         JFileChooser chooser = new JFileChooser();
         chooser.setFileFilter(new javax.swing.filechooser.FileNameExtensionFilter("Application jar (*.jar)", "jar"));
-        if (chooser.showOpenDialog(getComponent()) != JFileChooser.APPROVE_OPTION) return;
+        if (chooser.showOpenDialog(getSwingComponent()) != JFileChooser.APPROVE_OPTION) return;
         File jar = chooser.getSelectedFile();
         boolean ok = getViewStack().getMainWindow().getApplicationManager().install(jar);
         if (!ok) {
-            JOptionPane.showMessageDialog(getComponent(),
+            JOptionPane.showMessageDialog(getSwingComponent(),
                 "Not a valid Spacify plugin jar (missing Spacify-App-Id / -Class manifest headers).",
                 "Install failed", JOptionPane.ERROR_MESSAGE);
         }
@@ -112,12 +112,12 @@ public class ApplicationManagerView extends View {
         ManagedApplication m = selected();
         if (m == null) return;
         if (!m.getDescriptor().isRemovable()) {
-            JOptionPane.showMessageDialog(getComponent(),
+            JOptionPane.showMessageDialog(getSwingComponent(),
                 "Built-in plugins can't be removed — disable it with the checkbox instead.",
                 "Remove", JOptionPane.INFORMATION_MESSAGE);
             return;
         }
-        int ans = JOptionPane.showConfirmDialog(getComponent(),
+        int ans = JOptionPane.showConfirmDialog(getSwingComponent(),
             "Remove plugin \"" + m.getDescriptor().getName() + "\"?",
             "Remove plugin", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
         if (ans == JOptionPane.YES_OPTION) {
@@ -187,7 +187,7 @@ public class ApplicationManagerView extends View {
     private void applyTheme() {
         Color bg = ThemeManager.getBackground();
         Color fg = ThemeManager.getForeground();
-        getComponent().setBackground(bg);
+        getSwingComponent().setBackground(bg);
         table.setBackground(bg);
         table.setForeground(fg);
         table.setGridColor(ThemeManager.getGridColor());

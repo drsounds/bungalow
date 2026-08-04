@@ -39,8 +39,8 @@ public class XUL extends Panel {
 	public XUL() {
 		// Containers stack their children vertically by default; leaves override
 		// this in setContent().
-		getComponent().setLayout(new BoxLayout(getComponent(), BoxLayout.PAGE_AXIS));
-		getComponent().setOpaque(false);
+		getSwingComponent().setLayout(new BoxLayout(getSwingComponent(), BoxLayout.PAGE_AXIS));
+		getSwingComponent().setOpaque(false);
 	}
 
 	public String getTagName()            { return tagName; }
@@ -51,10 +51,10 @@ public class XUL extends Panel {
 
 	/** Push text content into the hosted widget. */
 	public void setInnerText(String text) {
-		if (content instanceof Label l)            l.getComponent().setText(text);
-		else if (content instanceof TextField t)   t.getComponent().setText(text);
-		else if (content instanceof GlossyButton g) g.getComponent().setText(text);
-		else if (content instanceof Button b)      b.getComponent().setText(text);
+		if (content instanceof Label l)            l.getSwingComponent().setText(text);
+		else if (content instanceof TextField t)   t.getSwingComponent().setText(text);
+		else if (content instanceof GlossyButton g) g.getSwingComponent().setText(text);
+		else if (content instanceof Button b)      b.getSwingComponent().setText(text);
 	}
 
 	/**
@@ -64,8 +64,8 @@ public class XUL extends Panel {
 	public void addEventListener(String type, Consumer<XUL> handler) {
 		listeners.put(type, handler);
 		if ("click".equals(type)) {
-			if (content instanceof GlossyButton g) g.getComponent().addActionListener(e -> handler.accept(this));
-			else if (content instanceof Button b)  b.getComponent().addActionListener(e -> handler.accept(this));
+			if (content instanceof GlossyButton g) g.getSwingComponent().addActionListener(e -> handler.accept(this));
+			else if (content instanceof Button b)  b.getSwingComponent().addActionListener(e -> handler.accept(this));
 		}
 	}
 
@@ -148,8 +148,8 @@ public class XUL extends Panel {
 			case "input"       -> elm.setContent(new TextField());   // ~ SPInputElement
 			case "view"        -> elm.setContent(new TabbedPane());  // ~ SPTabBarViewElement
 			case "splitter"    -> { /* container, handled by SplitPane usage */ }
-			case "vbox"        -> elm.getComponent().setLayout(new BoxLayout(elm.getComponent(), BoxLayout.PAGE_AXIS));
-			case "hbox"        -> elm.getComponent().setLayout(new BoxLayout(elm.getComponent(), BoxLayout.LINE_AXIS));
+			case "vbox"        -> elm.getSwingComponent().setLayout(new BoxLayout(elm.getSwingComponent(), BoxLayout.PAGE_AXIS));
+			case "hbox"        -> elm.getSwingComponent().setLayout(new BoxLayout(elm.getSwingComponent(), BoxLayout.LINE_AXIS));
 			default            -> { /* plain element */ }
 		}
 		return elm;
@@ -158,10 +158,10 @@ public class XUL extends Panel {
 	/** Host a single widget as this element's content (leaf tags). */
 	private void setContent(Control<?> widget) {
 		this.content = widget;
-		getComponent().removeAll();
-		getComponent().setLayout(new java.awt.BorderLayout());
+		getSwingComponent().removeAll();
+		getSwingComponent().setLayout(new java.awt.BorderLayout());
 		if (widget.getComponent() != null) {
-			getComponent().add(widget.getComponent(), java.awt.BorderLayout.CENTER);
+			getSwingComponent().add((java.awt.Component) widget.getComponent(), java.awt.BorderLayout.CENTER);
 		}
 	}
 

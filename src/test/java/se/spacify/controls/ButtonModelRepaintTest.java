@@ -21,7 +21,7 @@ public class ButtonModelRepaintTest {
             }
         };
 
-        JButton component = button.getComponent();
+        JButton component = button.getSwingComponent();
         component.getModel().setPressed(true);
         component.getModel().setPressed(false);
         component.getModel().setRollover(true);

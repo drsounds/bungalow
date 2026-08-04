@@ -30,33 +30,33 @@ public class WMP1XChrome extends Chrome {
                 // are contributed by built-in plugins during ApplicationManager.start().
         
                 leftMenuPanel = new LeftMenuPanel();
-                leftMenuPanel.getComponent().setMinimumSize(new Dimension(100, 0));
-                leftMenuPanel.getComponent().setMaximumSize(new Dimension(100, Short.MAX_VALUE));
-                leftMenuPanel.getComponent().setPreferredSize(new Dimension(100, Short.MAX_VALUE));
-                leftMenuPanel.getComponent().setOpaque(false);
+                leftMenuPanel.getSwingComponent().setMinimumSize(new Dimension(100, 0));
+                leftMenuPanel.getSwingComponent().setMaximumSize(new Dimension(100, Short.MAX_VALUE));
+                leftMenuPanel.getSwingComponent().setPreferredSize(new Dimension(100, Short.MAX_VALUE));
+                leftMenuPanel.getSwingComponent().setOpaque(false);
                 appPanel = new Panel();
                 
                 leftMenuPanel.setVisible(false);
                 add(appPanel);
-                appPanel.getComponent().setOpaque(false);
-                leftMenuPanel.getComponent().setLayout(new BoxLayout(leftMenuPanel.getComponent(), BoxLayout.PAGE_AXIS));
-                appPanel.getComponent().setLayout(new BoxLayout(appPanel.getComponent(), BoxLayout.PAGE_AXIS));
+                appPanel.getSwingComponent().setOpaque(false);
+                leftMenuPanel.getSwingComponent().setLayout(new BoxLayout(leftMenuPanel.getSwingComponent(), BoxLayout.PAGE_AXIS));
+                appPanel.getSwingComponent().setLayout(new BoxLayout(appPanel.getSwingComponent(), BoxLayout.PAGE_AXIS));
                 
                 topSpacing = new Panel();
-                topSpacing.getComponent().setMinimumSize(new Dimension(0, 1660));
-                topSpacing.getComponent().setMaximumSize(new Dimension(Integer.MAX_VALUE, 1660));
-                topSpacing.getComponent().setOpaque(false);
+                topSpacing.getSwingComponent().setMinimumSize(new Dimension(0, 1660));
+                topSpacing.getSwingComponent().setMaximumSize(new Dimension(Integer.MAX_VALUE, 1660));
+                topSpacing.getSwingComponent().setOpaque(false);
                 appPanel.add(topSpacing);
                 topBar = new TopBar();
-                topBar.getComponent().add(new JButton());
+                topBar.getSwingComponent().add(new JButton());
                 appPanel.add(topBar);
-                topBar.getComponent().setMaximumSize(new Dimension(Short.MAX_VALUE, 18));
-                topBar.getComponent().setMinimumSize(new Dimension(0, 18));
+                topBar.getSwingComponent().setMaximumSize(new Dimension(Short.MAX_VALUE, 18));
+                topBar.getSwingComponent().setMinimumSize(new Dimension(0, 18));
                 // The WMP header carries the nav buttons, the tab strip
                 // (Now Playing / Library / Media Guide) and the Stores dropdown.
                 appHeader = new WMP1XAppHeader(viewStack);
-                appHeader.getComponent().setMaximumSize(new Dimension(Short.MAX_VALUE, 64));
-                appHeader.getComponent().setMinimumSize(new Dimension(0, 56));
+                appHeader.getSwingComponent().setMaximumSize(new Dimension(Short.MAX_VALUE, 64));
+                appHeader.getSwingComponent().setMinimumSize(new Dimension(0, 56));
                 appPanel.add(appHeader);
 
                 // Reuse the shared sidebar (owned by MainWindow, populated by plugins) if set.
@@ -88,8 +88,8 @@ public class WMP1XChrome extends Chrome {
 
                 appFooter = new AppFooter();
                 appPanel.add(appFooter);
-                appFooter.getComponent().setMaximumSize(new Dimension(Short.MAX_VALUE, 18));
-                appFooter.getComponent().setMinimumSize(new Dimension(0, 18));
+                appFooter.getSwingComponent().setMaximumSize(new Dimension(Short.MAX_VALUE, 18));
+                appFooter.getSwingComponent().setMinimumSize(new Dimension(0, 18));
 	}
 
         @Override

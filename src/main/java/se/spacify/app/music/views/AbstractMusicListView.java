@@ -54,8 +54,8 @@ public abstract class AbstractMusicListView extends View {
 
 	protected AbstractMusicListView(ViewStack viewStack) {
 		super(viewStack);
-		getComponent().setLayout(new BorderLayout(0, 0));
-		getComponent().setOpaque(false);
+		getSwingComponent().setLayout(new BorderLayout(0, 0));
+		getSwingComponent().setOpaque(false);
 
 		headerLabel = new JLabel();
 		headerLabel.setFont(headerLabel.getFont().deriveFont(Font.BOLD, 18f));
@@ -73,7 +73,7 @@ public abstract class AbstractMusicListView extends View {
 		toolbar = new ToolBar();
 
 		refreshBtn = new ToolButton("Refresh");
-		refreshBtn.getComponent().addActionListener(e -> reloadAndRegroup());
+		refreshBtn.getSwingComponent().addActionListener(e -> reloadAndRegroup());
 
 		if (isEditable()) {
 			ToolButton addBtn = new ToolButton("Add");
@@ -81,16 +81,16 @@ public abstract class AbstractMusicListView extends View {
 			ToolButton deleteBtn = new ToolButton("Delete");
 			ToolButton scanBtn = new ToolButton("Scan…");
 
-			scanBtn.getComponent().addActionListener(e -> LibraryScanAction.run(getComponent(), () -> {
+			scanBtn.getSwingComponent().addActionListener(e -> LibraryScanAction.run(getSwingComponent(), () -> {
 				reloadAndRegroup();
 				LibraryEvents.fireChanged();
 			}));
-			addBtn.getComponent().addActionListener(e -> {
+			addBtn.getSwingComponent().addActionListener(e -> {
 				onAdd();
 				reloadAndRegroup();
 				LibraryEvents.fireChanged();
 			});
-			editBtn.getComponent().addActionListener(e -> {
+			editBtn.getSwingComponent().addActionListener(e -> {
 				int row = table.getSelectedRow();
 				if (row >= 0) {
 					onEdit(row);
@@ -98,7 +98,7 @@ public abstract class AbstractMusicListView extends View {
 					LibraryEvents.fireChanged();
 				}
 			});
-			deleteBtn.getComponent().addActionListener(e -> {
+			deleteBtn.getSwingComponent().addActionListener(e -> {
 				int row = table.getSelectedRow();
 				if (row >= 0) {
 					onDelete(row);
@@ -157,8 +157,8 @@ public abstract class AbstractMusicListView extends View {
 		north.add(toolbar.getComponent(), BorderLayout.CENTER);
 		//add(headerLabel, BorderLayout.NORTH);
 
-		getComponent().add(north, BorderLayout.NORTH);
-		getComponent().add(musicTable, BorderLayout.CENTER);
+		getSwingComponent().add(north, BorderLayout.NORTH);
+		getSwingComponent().add(musicTable, BorderLayout.CENTER);
 
 		bottomToolbar = new ToolBar();
 		bottomToolbar.getComponent().add(new JButton("Test"));
@@ -350,11 +350,11 @@ public abstract class AbstractMusicListView extends View {
 	}
 
 	protected void showError(Exception e) {
-		JOptionPane.showMessageDialog(getComponent(), e.getMessage(), "Library error", JOptionPane.ERROR_MESSAGE);
+		JOptionPane.showMessageDialog(getSwingComponent(), e.getMessage(), "Library error", JOptionPane.ERROR_MESSAGE);
 	}
 
 	protected boolean confirmDelete(String what) {
-		return JOptionPane.showConfirmDialog(getComponent(), "Delete " + what + "?", "Confirm delete", JOptionPane.YES_NO_OPTION,
+		return JOptionPane.showConfirmDialog(getSwingComponent(), "Delete " + what + "?", "Confirm delete", JOptionPane.YES_NO_OPTION,
 				JOptionPane.WARNING_MESSAGE) == JOptionPane.YES_OPTION;
 	}
 

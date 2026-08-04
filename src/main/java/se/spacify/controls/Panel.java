@@ -3,18 +3,50 @@ package se.spacify.controls;
 import java.awt.Graphics;
 import java.awt.LayoutManager;
 
+import javax.swing.BoxLayout;
 import javax.swing.JPanel;
 
 /**
- * The base container control: a clean {@link Control} over a {@link JPanel}.
- * Children are added with {@link #add(Control)}; all other configuration (layout,
- * borders, opacity, geometry, …) is done through {@link #getComponent()}.
+ * The base container control. Independent of any UI toolkit: the active
+ * {@link se.spacify.ui.render.UserInterface} creates this control's native
+ * peer (a {@link JPanel} for Swing, see {@link #createSwingPeer()}). Swing-only
+ * code that needs the concrete widget (layout tweaks, borders, …) can use
+ * {@link #getSwingComponent()}.
  *
- * <p>Custom painting is done by overriding {@link #paintSurface(Graphics)} rather
- * than a Swing {@code paintComponent}; the wrapped {@link Surface} routes painting
- * back here so subclasses never touch Swing directly.
+ * <p>Custom painting is done by overriding {@link #paintSurface(Graphics)}
+ * rather than a Swing {@code paintComponent}; the wrapped {@link Surface}
+ * (Swing backend only) routes painting back here so subclasses never need to
+ * touch Swing directly.
  */
-public class Panel extends Control<JPanel> {
+public class Panel extends Control<Object> {
+
+	/** How {@link HBox}/{@link VBox} want their Swing peer's {@link BoxLayout} oriented. */
+	public enum Axis { NONE, HORIZONTAL, VERTICAL }
+
+	private Axis axis = Axis.NONE;
+	private LayoutManager swingLayout;
+
+	public Panel() {
+		initNative();
+	}
+
+	/** @param layout a Swing layout manager; ignored by backends other than Swing. */
+	public Panel(LayoutManager layout) {
+		this.swingLayout = layout;
+		initNative();
+	}
+
+	/** For {@link HBox}/{@link VBox}: request a box layout along {@code axis} once the native peer is created. */
+	protected Panel(Axis axis) {
+		this.axis = axis;
+		initNative();
+	}
+
+	public Axis getAxis() {
+		return axis;
+	}
+
+	// ── Swing peer (used only by se.spacify.ui.render.swing.SwingUserInterface) ───
 
 	/** The wrapped JPanel; routes painting back to {@link Panel#paintSurface}. */
 	protected class Surface extends JPanel {
@@ -31,12 +63,16 @@ public class Panel extends Control<JPanel> {
 		}
 	}
 
-	public Panel() {
-		this.component = new Surface();
+	/** Builds this panel's Swing peer. Called only by {@code SwingUserInterface}. */
+	public JPanel createSwingPeer() {
+		Surface s = swingLayout != null ? new Surface(swingLayout) : new Surface();
+		if (axis == Axis.HORIZONTAL) s.setLayout(new BoxLayout(s, BoxLayout.LINE_AXIS));
+		else if (axis == Axis.VERTICAL) s.setLayout(new BoxLayout(s, BoxLayout.PAGE_AXIS));
+		return s;
 	}
 
-	public Panel(LayoutManager layout) {
-		this.component = new Surface(layout);
+	public JPanel getSwingComponent() {
+		return getComponent() instanceof JPanel p ? p : null;
 	}
 
 	/**
@@ -44,6 +80,6 @@ public class Panel extends Control<JPanel> {
 	 * to draw a skinned background (call {@code super.paintSurface(g)} to keep it).
 	 */
 	protected void paintSurface(Graphics g) {
-		((Surface) component).superPaint(g);
+		if (getComponent() instanceof Surface s) s.superPaint(g);
 	}
 }

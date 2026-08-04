@@ -42,9 +42,9 @@ public class NowPlayingPanel extends Panel {
 	private MediaServicePlayerComponent currentPlayer;
 
     public NowPlayingPanel(ViewStack viewStack) {
-        getComponent().setLayout(new BorderLayout(0, 0));
-        getComponent().setPreferredSize(new Dimension(220, 0));
-        getComponent().setOpaque(false);   // we paint our own gradient in paintSurface
+        getSwingComponent().setLayout(new BorderLayout(0, 0));
+        getSwingComponent().setPreferredSize(new Dimension(220, 0));
+        getSwingComponent().setOpaque(false);   // we paint our own gradient in paintSurface
 
         topToolbar = new ToolBar();
         topToolbar.getComponent().setFloatable(false);
@@ -87,17 +87,17 @@ public class NowPlayingPanel extends Panel {
         scroll = new ScrollPane(table);
         // Non-UIResource empty border so the Nimbus reinstall on theme change
         // doesn't re-install a default scroll-pane border.
-        scroll.getComponent().setBorder(BorderFactory.createEmptyBorder());
+        scroll.getSwingComponent().setBorder(BorderFactory.createEmptyBorder());
         // Transparent viewport/scroll-pane so the gradient shows behind the rows.
-        scroll.getComponent().setOpaque(false);
-        scroll.getComponent().getViewport().setOpaque(false);
+        scroll.getSwingComponent().setOpaque(false);
+        scroll.getSwingComponent().getViewport().setOpaque(false);
         // Repaint the whole viewport on scroll so the gradient doesn't smear.
-        scroll.getComponent().getViewport().setScrollMode(JViewport.SIMPLE_SCROLL_MODE);
+        scroll.getSwingComponent().getViewport().setScrollMode(JViewport.SIMPLE_SCROLL_MODE);
 
         emptyLabel = new Label("Nothing playing");
-        emptyLabel.getComponent().setForeground(Color.WHITE);
-        emptyLabel.getComponent().setFont(emptyLabel.getComponent().getFont().deriveFont(12f));
-        emptyLabel.getComponent().setHorizontalAlignment(SwingConstants.CENTER);
+        emptyLabel.getSwingComponent().setForeground(Color.WHITE);
+        emptyLabel.getSwingComponent().setFont(emptyLabel.getSwingComponent().getFont().deriveFont(12f));
+        emptyLabel.getSwingComponent().setHorizontalAlignment(SwingConstants.CENTER);
 
         add(topToolbar,  BorderLayout.NORTH);
         add(scroll, BorderLayout.CENTER);
@@ -110,12 +110,12 @@ public class NowPlayingPanel extends Panel {
 
         // The active media Service's player surface sits below the queue and above
         // the toolbar; it's part of this sticky panel, so navigation never hides it.
-        playerHost.getComponent().setOpaque(false);
+        playerHost.getSwingComponent().setOpaque(false);
         playerHost.setVisible(false);
 
         Panel south = new Panel();
-        south.getComponent().setOpaque(false);
-        south.getComponent().setLayout(new BoxLayout(south.getComponent(), BoxLayout.PAGE_AXIS));
+        south.getSwingComponent().setOpaque(false);
+        south.getSwingComponent().setLayout(new BoxLayout(south.getSwingComponent(), BoxLayout.PAGE_AXIS));
         south.add(playerHost);
         south.add(bottomToolbar);
         add(south, BorderLayout.SOUTH);
@@ -162,11 +162,11 @@ public class NowPlayingPanel extends Panel {
 
         if (currentPlayer != null) {
         	currentPlayer.onDeactivated();
-            playerHost.getComponent().remove(currentPlayer.getComponent());
+            playerHost.getSwingComponent().remove(currentPlayer.getSwingComponent());
         }
         currentPlayer = next;
         if (currentPlayer != null) {
-            playerHost.getComponent().add(currentPlayer.getComponent(), BorderLayout.CENTER);
+            playerHost.getSwingComponent().add(currentPlayer.getSwingComponent(), BorderLayout.CENTER);
             currentPlayer.onActivated();
         }
         playerHost.setVisible(currentPlayer != null);

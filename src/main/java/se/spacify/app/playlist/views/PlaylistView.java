@@ -100,12 +100,12 @@ public class PlaylistView extends AbstractMusicListView {
         ToolButton remove = new ToolButton("Remove");
         ToolButton up     = new ToolButton("Up");
         ToolButton down   = new ToolButton("Down");
-        rename.getComponent().addActionListener(e -> renamePlaylist());
-        delete.getComponent().addActionListener(e -> deletePlaylist());
-        add.getComponent().addActionListener(e -> addManual());
-        remove.getComponent().addActionListener(e -> removeSelected());
-        up.getComponent().addActionListener(e -> move(-1));
-        down.getComponent().addActionListener(e -> move(+1));
+        rename.getSwingComponent().addActionListener(e -> renamePlaylist());
+        delete.getSwingComponent().addActionListener(e -> deletePlaylist());
+        add.getSwingComponent().addActionListener(e -> addManual());
+        remove.getSwingComponent().addActionListener(e -> removeSelected());
+        up.getSwingComponent().addActionListener(e -> move(-1));
+        down.getSwingComponent().addActionListener(e -> move(+1));
         bar.add(rename);
         bar.add(delete);
         bar.getComponent().addSeparator();
@@ -170,7 +170,7 @@ public class PlaylistView extends AbstractMusicListView {
     private void createPlaylist() {
         PlaylistService svc = editableService();
         if (svc == null) { showError(new Exception("No editable playlist service available")); return; }
-        String name = JOptionPane.showInputDialog(getComponent(), "Playlist name:", "New Playlist",
+        String name = JOptionPane.showInputDialog(getSwingComponent(), "Playlist name:", "New Playlist",
                 JOptionPane.PLAIN_MESSAGE);
         if (name == null || name.isBlank()) return;
         try {
@@ -184,7 +184,7 @@ public class PlaylistView extends AbstractMusicListView {
         if (svc == null || !svc.isEditable()) return;
         Playlist pl = svc.getPlaylist(currentId);
         String current = pl != null ? pl.getName() : "";
-        Object input = JOptionPane.showInputDialog(getComponent(), "Playlist name:", "Rename Playlist",
+        Object input = JOptionPane.showInputDialog(getSwingComponent(), "Playlist name:", "Rename Playlist",
                 JOptionPane.PLAIN_MESSAGE, null, null, current);
         if (!(input instanceof String name) || name.isBlank()) return;
         try { svc.renamePlaylist(currentId, name.trim()); } catch (Exception e) { showError(e); }
@@ -253,7 +253,7 @@ public class PlaylistView extends AbstractMusicListView {
             c.gridx = 1; c.weightx = 1; c.fill = GridBagConstraints.HORIZONTAL;
             panel.add(fields[i], c);
         }
-        return JOptionPane.showConfirmDialog(getComponent(), panel, title,
+        return JOptionPane.showConfirmDialog(getSwingComponent(), panel, title,
                 JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE) == JOptionPane.OK_OPTION;
     }
 

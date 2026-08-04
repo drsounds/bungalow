@@ -3,6 +3,7 @@ package se.spacify.ui;
 import se.spacify.design.Design;
 import se.spacify.skinning.Skin;
 import se.spacify.controls.Panel;
+import se.spacify.ui.render.UserInterface;
 
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
@@ -15,12 +16,12 @@ public class SettingsPanel extends Panel {
     private Skin[] skins;
 
     public SettingsPanel() {
-        getComponent().setLayout(new BorderLayout(12, 0));
-        getComponent().setBorder(BorderFactory.createCompoundBorder(
+        getSwingComponent().setLayout(new BorderLayout(12, 0));
+        getSwingComponent().setBorder(BorderFactory.createCompoundBorder(
             BorderFactory.createMatteBorder(1, 0, 0, 0, new Color(50, 50, 50)),
             BorderFactory.createEmptyBorder(8, 16, 8, 16)
         ));
-        getComponent().setPreferredSize(new Dimension(0, 150));
+        getSwingComponent().setPreferredSize(new Dimension(0, 150));
 
         // ── Background tint sliders ──────────────────────────────────────────
         JPanel tintSection = new JPanel(new GridBagLayout()) {
@@ -100,6 +101,38 @@ public class SettingsPanel extends Panel {
         skinSection.add(skinCombo);
         skinSection.add(Box.createVerticalGlue());
 
+        // ── Rendering backend selector ───────────────────────────────────────
+        // Which UserInterface (Swing, Jexer, …) renders the app; selectable at
+        // runtime — switching tears down the current backend's window and starts
+        // the new one fresh.
+        JPanel uiSection = new JPanel() {
+            @Override public void updateUI() { super.updateUI(); setOpaque(false); }
+        };
+        uiSection.setLayout(new BoxLayout(uiSection, BoxLayout.Y_AXIS));
+        uiSection.setOpaque(false);
+        uiSection.setBorder(titledBorder("Rendering"));
+
+        UserInterface[] backends = getMainWindow().getUserInterfaceManager().all().toArray(new UserInterface[0]);
+        JComboBox<UserInterface> uiCombo = new JComboBox<>(backends);
+        uiCombo.setMaximumSize(new Dimension(200, 24));
+        uiCombo.setAlignmentX(Component.LEFT_ALIGNMENT);
+        uiCombo.setRenderer(new DefaultListCellRenderer() {
+            @Override public Component getListCellRendererComponent(JList<?> list, Object value,
+                    int index, boolean sel, boolean focus) {
+                super.getListCellRendererComponent(list, value, index, sel, focus);
+                if (value instanceof UserInterface ui) setText(ui.getName());
+                return this;
+            }
+        });
+        uiCombo.setSelectedItem(getMainWindow().getUserInterfaceManager().getActive());
+        uiCombo.addActionListener(e -> {
+            UserInterface sel = (UserInterface) uiCombo.getSelectedItem();
+            if (sel != null) getMainWindow().setUserInterface(sel.getId());
+        });
+        uiSection.add(Box.createVerticalGlue());
+        uiSection.add(uiCombo);
+        uiSection.add(Box.createVerticalGlue());
+
         // ── Display options (toggles) ─────────────────────────────────────────
         JPanel optionsSection = new JPanel() {
             @Override public void updateUI() { super.updateUI(); setOpaque(false); }
@@ -165,7 +198,7 @@ public class SettingsPanel extends Panel {
         accentBtn.setToolTipText("Click to choose accent color");
         accentBtn.addActionListener(e -> {
             Color chosen = JColorChooser.showDialog(
-                SwingUtilities.getWindowAncestor(getComponent()), "Accent Color",
+                SwingUtilities.getWindowAncestor(getSwingComponent()), "Accent Color",
                 getTaste().getAccentBackgroundColor());
             if (chosen != null) {
                 getTaste().setAccentBackgroundColor(chosen);
@@ -192,20 +225,22 @@ public class SettingsPanel extends Panel {
         right.add(Box.createHorizontalStrut(8));
         right.add(skinSection);
         right.add(Box.createHorizontalStrut(8));
+        right.add(uiSection);
+        right.add(Box.createHorizontalStrut(8));
         right.add(optionsSection);
         right.add(Box.createHorizontalStrut(8));
         right.add(modeSection);
         right.add(Box.createHorizontalStrut(8));
         right.add(accentSection);
 
-        getComponent().add(tintSection, BorderLayout.CENTER);
-        getComponent().add(right, BorderLayout.EAST);
+        getSwingComponent().add(tintSection, BorderLayout.CENTER);
+        getSwingComponent().add(right, BorderLayout.EAST);
     }
 
     @Override
     protected void paintSurface(Graphics g) {
         g.setColor(BG);
-        g.fillRect(0, 0, getComponent().getWidth(), getComponent().getHeight());
+        g.fillRect(0, 0, getSwingComponent().getWidth(), getSwingComponent().getHeight());
     }
 
     // ── Helpers ──────────────────────────────────────────────────────────────

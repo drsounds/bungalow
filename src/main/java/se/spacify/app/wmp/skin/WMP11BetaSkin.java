@@ -49,9 +49,9 @@ public class WMP11BetaSkin extends WMPSkin {
 
 	@Override
 	public void paintToolButton(ToolButton control, Graphics2D g2) {
-		int w = control.getComponent().getWidth(), h = control.getComponent().getHeight();
+		int w = control.getSwingComponent().getWidth(), h = control.getSwingComponent().getHeight();
 		Color background = ThemeManager.getTintColor();
-        ButtonModel model = control.getComponent().getModel();
+        ButtonModel model = control.getSwingComponent().getModel();
 		g2.setPaint(background);
 		g2.fillRect(0, 0, w, h);
 		if (model.isPressed()) {

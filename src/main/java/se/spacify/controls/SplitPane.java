@@ -64,7 +64,7 @@ public class SplitPane extends Control<JSplitPane> {
 	}
 
 	private static Component comp(Object o) {
-		return o instanceof Control<?> c ? c.getComponent() : (Component) o;
+		return o instanceof Control<?> c ? (Component) c.getComponent() : (Component) o;
 	}
 
 	public BasicSplitPaneDivider getDivider() {

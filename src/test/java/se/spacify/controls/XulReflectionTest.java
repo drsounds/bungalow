@@ -24,7 +24,7 @@ public class XulReflectionTest {
         List<Control<?>> children = host.getChildren();
         assertEquals(1, children.size());
         assertTrue("expected a Label", children.get(0) instanceof Label);
-        assertEquals("Hi", ((Label) children.get(0)).getComponent().getText());
+        assertEquals("Hi", ((Label) children.get(0)).getText());
     }
 
     @Test

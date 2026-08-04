@@ -73,8 +73,8 @@ public class GroupedListPanel extends Panel {
     private final List<ItemRow> rowComponents = new ArrayList<>();
 
     public GroupedListPanel() {
-        getComponent().setLayout(new BoxLayout(getComponent(), BoxLayout.Y_AXIS));
-        getComponent().setOpaque(true);
+        getSwingComponent().setLayout(new BoxLayout(getSwingComponent(), BoxLayout.Y_AXIS));
+        getSwingComponent().setOpaque(true);
         ThemeManager.addChangeListener(this::applyColors);
         // Follow the active track so the now-playing highlight moves with playback.
         PlayQueue.getInstance().addChangeListener(this::repaintRows);
@@ -82,19 +82,19 @@ public class GroupedListPanel extends Panel {
 
     /** Replace the rendered content with {@code groups}. */
     public void setGroups(List<Group> groups) {
-        getComponent().removeAll();
+        getSwingComponent().removeAll();
         rowComponents.clear();
         for (Group group : groups) {
-            getComponent().add(buildHeader(group));
+            getSwingComponent().add(buildHeader(group));
             // Stripe rows within the section, restarting each group so every
             // section opens on the same base shade under its header.
             int index = 0;
             for (Item item : group.items) {
                 ItemRow row = new ItemRow(item, index++);
                 rowComponents.add(row);
-                getComponent().add(row);
+                getSwingComponent().add(row);
             }
-            getComponent().add(Box.createVerticalStrut(18));
+            getSwingComponent().add(Box.createVerticalStrut(18));
         }
         applyColors();
         revalidate();
@@ -147,8 +147,8 @@ public class GroupedListPanel extends Panel {
     }
 
     private void applyColors() {
-        getComponent().setBackground(ThemeManager.getBackground());
-        for (Component c : getComponent().getComponents()) {
+        getSwingComponent().setBackground(ThemeManager.getBackground());
+        for (Component c : getSwingComponent().getComponents()) {
             if (c instanceof JComponent jc) jc.setForeground(ThemeManager.getForeground());
         }
         for (ItemRow row : rowComponents) row.refreshColors();

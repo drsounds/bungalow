@@ -50,7 +50,7 @@ public class Spot09Skin extends SpotSkin {
 	public void paintLeftLibraryMenu(LeftLibraryMenu control, Graphics2D g2) {
         Taste taste = control.getTaste();
         Color tintColor = taste.getTintColor();
-        int w = control.getComponent().getWidth(), h = control.getComponent().getHeight();
+        int w = control.getSwingComponent().getWidth(), h = control.getSwingComponent().getHeight();
         g2.setBackground(tintColor);
         g2.fillRect(0, 0, w, h);
 	}
@@ -71,7 +71,7 @@ public class Spot09Skin extends SpotSkin {
 
 	@Override
 	public void paintLeftMenuPanel(LeftMenuPanel control, Graphics2D g2) {
-        int w = control.getComponent().getWidth(), h = control.getComponent().getHeight();
+        int w = control.getSwingComponent().getWidth(), h = control.getSwingComponent().getHeight();
         Taste taste = control.getTaste();
         Color tintColor = taste.getTintColor();
     	g2.setBackground(tintColor);
@@ -82,7 +82,7 @@ public class Spot09Skin extends SpotSkin {
 	@Override
 	public void paintViewStack(ViewStack control, Graphics2D g2) {
         if (control.getTaste().isDarkMode()) {
-            control.getComponent().setBackground(control.getComponent().getBackground().brighter());
+            control.getSwingComponent().setBackground(control.getSwingComponent().getBackground().brighter());
         }
 	}
 
@@ -101,11 +101,11 @@ public class Spot09Skin extends SpotSkin {
     public void paintButton(Button control, Graphics2D g2, boolean hover, boolean pressed) {
         Taste taste = control.getTaste();
         Color tintColor = taste.getTintColor();
-        int w = control.getComponent().getWidth(), h = control.getComponent().getHeight();
-        System.out.println(control.getComponent().isOpaque());
+        int w = control.getSwingComponent().getWidth(), h = control.getSwingComponent().getHeight();
+        System.out.println(control.getSwingComponent().isOpaque());
 
         if (control.getVariant() == "default") {
-            if (control.getComponent().isContentAreaFilled()) {
+            if (control.getSwingComponent().isContentAreaFilled()) {
                 g2.setPaint(new LinearGradientPaint(new Point(0, 0), new Point(0, h), new float[] {0, 1}, new Color[] { ColorUtils.darken(tintColor, 1.8f), ColorUtils.darken(tintColor, 1f) }));
 
                 if (pressed) {
@@ -151,9 +151,9 @@ public class Spot09Skin extends SpotSkin {
 
     @Override
     public void paintTextField(TextField control, Graphics2D g2) {
-        int w = control.getComponent().getWidth(), h = control.getComponent().getHeight();
+        int w = control.getSwingComponent().getWidth(), h = control.getSwingComponent().getHeight();
  
-        g2.setPaint(new LinearGradientPaint(new Point(0, 0), new Point(0, h), new float[] {0, 1}, new Color[] { ColorUtils.darken(control.getComponent().getBackground(),0.3f), ColorUtils.darken(control.getComponent().getBackground(), 0.5f) }));
+        g2.setPaint(new LinearGradientPaint(new Point(0, 0), new Point(0, h), new float[] {0, 1}, new Color[] { ColorUtils.darken(control.getSwingComponent().getBackground(),0.3f), ColorUtils.darken(control.getSwingComponent().getBackground(), 0.5f) }));
         g2.fillRect(0, 0, w, h);
     }
 

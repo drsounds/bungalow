@@ -34,29 +34,29 @@ public class Spot09Chrome extends Chrome {
         @Override
         public void build() {
                 super.build();
-                getComponent().setLayout(new BoxLayout(getComponent(), BoxLayout.PAGE_AXIS));
+                getSwingComponent().setLayout(new BoxLayout(getSwingComponent(), BoxLayout.PAGE_AXIS));
                 
                 appHeader = new Spot09AppHeader(viewStack);
-                appHeader.getComponent().setMaximumSize(new Dimension(Short.MAX_VALUE, 28));
-                appHeader.getComponent().setMinimumSize(new Dimension(0, 28));
+                appHeader.getSwingComponent().setMaximumSize(new Dimension(Short.MAX_VALUE, 28));
+                appHeader.getSwingComponent().setMinimumSize(new Dimension(0, 28));
                 add(appHeader);
                 leftMenuPanel = new LeftMenuPanel();
-                leftMenuPanel.getComponent().setMinimumSize(new Dimension(100, 0));
-                leftMenuPanel.getComponent().setMaximumSize(new Dimension(100, Short.MAX_VALUE));
-                leftMenuPanel.getComponent().setPreferredSize(new Dimension(100, Short.MAX_VALUE));
-                leftMenuPanel.getComponent().setOpaque(false);
+                leftMenuPanel.getSwingComponent().setMinimumSize(new Dimension(100, 0));
+                leftMenuPanel.getSwingComponent().setMaximumSize(new Dimension(100, Short.MAX_VALUE));
+                leftMenuPanel.getSwingComponent().setPreferredSize(new Dimension(100, Short.MAX_VALUE));
+                leftMenuPanel.getSwingComponent().setOpaque(false);
                 appPanel = new Panel();
 
                 add(leftMenuPanel);
                 leftMenuPanel.setVisible(false);
                 add(appPanel);
-                appPanel.getComponent().setOpaque(false);
-                leftMenuPanel.getComponent().setLayout(new BoxLayout(leftMenuPanel.getComponent(), BoxLayout.PAGE_AXIS));
-                appPanel.getComponent().setLayout(new BoxLayout(appPanel.getComponent(), BoxLayout.PAGE_AXIS));
+                appPanel.getSwingComponent().setOpaque(false);
+                leftMenuPanel.getSwingComponent().setLayout(new BoxLayout(leftMenuPanel.getSwingComponent(), BoxLayout.PAGE_AXIS));
+                appPanel.getSwingComponent().setLayout(new BoxLayout(appPanel.getSwingComponent(), BoxLayout.PAGE_AXIS));
 
                 // Reuse the shared sidebar (owned by MainWindow, populated by plugins) if set.
                 if (leftLibraryMenu == null) leftLibraryMenu = new LeftLibraryMenu(viewStack);
-                leftLibraryMenu.getComponent().setOpaque(false);
+                leftLibraryMenu.getSwingComponent().setOpaque(false);
                 centerPanel = new Panel(new BorderLayout());
                 add(viewStack);
 
@@ -83,8 +83,8 @@ public class Spot09Chrome extends Chrome {
 
                 appFooter = new Spot09AppFooter();
                 appPanel.add(appFooter);
-                appFooter.getComponent().setMaximumSize(new Dimension(Short.MAX_VALUE, 18));
-                appFooter.getComponent().setMinimumSize(new Dimension(0, 18));
+                appFooter.getSwingComponent().setMaximumSize(new Dimension(Short.MAX_VALUE, 18));
+                appFooter.getSwingComponent().setMinimumSize(new Dimension(0, 18));
 
         }
 }

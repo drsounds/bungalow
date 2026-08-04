@@ -25,31 +25,31 @@ public class Spot09AppHeader extends AppHeader {
     private Panel center;
     public Spot09AppHeader(ViewStack viewStack) {
         super(viewStack);
-        getComponent().setLayout(new BoxLayout(getComponent(), BoxLayout.LINE_AXIS));
-        getComponent().setBorder(BorderFactory.createEmptyBorder(8, 16, 8, 16));
+        getSwingComponent().setLayout(new BoxLayout(getSwingComponent(), BoxLayout.LINE_AXIS));
+        getSwingComponent().setBorder(BorderFactory.createEmptyBorder(8, 16, 8, 16));
 
 		backBtn = makeNavButton("◄");
 		backBtn.setDiameter(48);
 		backBtn.setPrimary(true);
-		backBtn.getComponent().setEnabled(false);
+		backBtn.getSwingComponent().setEnabled(false);
 		add(backBtn);
 		forwardBtn = makeNavButton("►");
 		forwardBtn.setDiameter(36);
-		forwardBtn.getComponent().setEnabled(false);
+		forwardBtn.getSwingComponent().setEnabled(false);
 		add(forwardBtn);
 
-		backBtn.getComponent().addActionListener((ActionEvent e) -> viewStack.back());
-		forwardBtn.getComponent().addActionListener((ActionEvent e) -> viewStack.forward());
+		backBtn.getSwingComponent().addActionListener((ActionEvent e) -> viewStack.back());
+		forwardBtn.getSwingComponent().addActionListener((ActionEvent e) -> viewStack.forward());
 		uriField = new TextField("spacify:home");
-		uriField.getComponent().setFont(uriField.getComponent().getFont().deriveFont(12f));
-		uriField.getComponent().setPreferredSize(new Dimension(260, 28));
-		uriField.getComponent().addActionListener(e -> viewStack.navigate(uriField.getComponent().getText().trim()));
+		uriField.getSwingComponent().setFont(uriField.getSwingComponent().getFont().deriveFont(12f));
+		uriField.getSwingComponent().setPreferredSize(new Dimension(260, 28));
+		uriField.getSwingComponent().addActionListener(e -> viewStack.navigate(uriField.getSwingComponent().getText().trim()));
 
 		searchField = new TextField();
-		searchField.getComponent().putClientProperty("JTextField.placeholderText", "Search...");
-		searchField.getComponent().setPreferredSize(new Dimension(180, 28));
-		searchField.getComponent().addActionListener(e -> {
-			String q = searchField.getComponent().getText().trim();
+		searchField.getSwingComponent().putClientProperty("JTextField.placeholderText", "Search...");
+		searchField.getSwingComponent().setPreferredSize(new Dimension(180, 28));
+		searchField.getSwingComponent().addActionListener(e -> {
+			String q = searchField.getSwingComponent().getText().trim();
 			if (!q.isEmpty()) {
 				String encoded = URLEncoder.encode(q, StandardCharsets.UTF_8);
 				viewStack.navigate("spacify:search?q=" + encoded);
@@ -58,7 +58,7 @@ public class Spot09AppHeader extends AppHeader {
         add(searchField);
 
 		center = new Panel(new BorderLayout());
-		center.getComponent().setOpaque(false);
+		center.getSwingComponent().setOpaque(false);
 		add(center);
 
 		uriField.setVisible(false);
@@ -66,10 +66,10 @@ public class Spot09AppHeader extends AppHeader {
     }
 	@Override
 	public void onNavigate(String uri, boolean canGoBack, boolean canGoForward) {
-		backBtn.getComponent().setEnabled(canGoBack);
-		forwardBtn.getComponent().setEnabled(canGoForward);
+		backBtn.getSwingComponent().setEnabled(canGoBack);
+		forwardBtn.getSwingComponent().setEnabled(canGoForward);
 		if (uri != null)
-			uriField.getComponent().setText(uri);
+			uriField.getSwingComponent().setText(uri);
 	}
     
 }

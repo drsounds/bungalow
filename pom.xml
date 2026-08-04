@@ -61,6 +61,15 @@
       <version>4.13.2</version>
       <scope>test</scope>
     </dependency>
+
+    <!-- Jexer TUI toolkit: backs the Jexer UserInterface implementation
+         (se.spacify.ui.render.jexer), the alternate terminal-based rendering
+         backend for se.spacify.controls. -->
+    <dependency>
+      <groupId>io.gitlab.autumnmeowmeow</groupId>
+      <artifactId>jexer</artifactId>
+      <version>2.0.0</version>
+    </dependency>
   </dependencies>
 
   <build>

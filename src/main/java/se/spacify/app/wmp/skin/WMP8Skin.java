@@ -51,7 +51,7 @@ public class WMP8Skin extends WMPSkin {
 	}
 	@Override
 	public void paintGlassPanel(GlassPanel control, Graphics2D g2) {
-		int w = control.getComponent().getWidth(), h = control.getComponent().getHeight();
+		int w = control.getSwingComponent().getWidth(), h = control.getSwingComponent().getHeight();
 		Path2D shape = control.shape(w, h);
 
 		// Base accent gradient, antialiased to the rounded/diagonal outline.
@@ -116,9 +116,9 @@ public class WMP8Skin extends WMPSkin {
 
 	@Override
 	public void paintToolButton(ToolButton control, Graphics2D g2) {
-		int w = control.getComponent().getWidth(), h = control.getComponent().getHeight();
+		int w = control.getSwingComponent().getWidth(), h = control.getSwingComponent().getHeight();
 		Color background = ThemeManager.getTintColor();
-        ButtonModel model = control.getComponent().getModel();
+        ButtonModel model = control.getSwingComponent().getModel();
 		g2.setPaint(background);
 		g2.fillRect(0, 0, w, h);
 		if (model.isPressed()) {
@@ -170,7 +170,7 @@ public class WMP8Skin extends WMPSkin {
 	public void paintVerticalPanel(VerticalPanel control, Graphics2D g2) {
 		// TODO Auto-generated method stub
 
-		int w = control.getComponent().getWidth();
+		int w = control.getSwingComponent().getWidth();
 		Color tintColor = ThemeManager.getTintColor();
 		g2.setPaint(new GradientPaint(0, 0, ThemeManager.accentLight(2f), w, 0, tintColor));
 	}

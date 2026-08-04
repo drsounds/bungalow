@@ -23,9 +23,9 @@ public class NowPlayingView extends View {
 
     public NowPlayingView(ViewStack viewStack) {
         super(viewStack);
-        getComponent().setLayout(new BorderLayout());
-        getComponent().setOpaque(true);
-        getComponent().setBackground(Color.BLACK);
+        getSwingComponent().setLayout(new BorderLayout());
+        getSwingComponent().setOpaque(true);
+        getSwingComponent().setBackground(Color.BLACK);
 
         topToolbar = new ToolBar();
         topToolbar.getComponent().setFloatable(false);
@@ -60,8 +60,8 @@ public class NowPlayingView extends View {
         // ── Settings strip ───────────────────────────────────────────────────
         SettingsPanel settings = new SettingsPanel();
 
-        getComponent().add(playerWrapper, BorderLayout.CENTER);
-        getComponent().add(settings.getComponent(), BorderLayout.SOUTH);
+        getSwingComponent().add(playerWrapper, BorderLayout.CENTER);
+        getSwingComponent().add(settings.getSwingComponent(), BorderLayout.SOUTH);
 
         // Default view
         addPlayerView(new DefaultPlayerView());

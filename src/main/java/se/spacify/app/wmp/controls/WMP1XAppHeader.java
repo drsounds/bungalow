@@ -85,11 +85,11 @@ public class WMP1XAppHeader extends AppHeader {
 			String host = SiteUri.host(uri, SiteUri.STORE_PREFIX);
 			StoreCatalog.Store store = StoreCatalog.STORES.stream().filter(s -> s.host().equals(host)).findFirst()
 					.orElse(null);
-			storesBtn.getComponent().setText((store != null ? store.name() : host) + " ▾");
-			storesBtn.getComponent().setIcon(host != null ? faviconCache.get(host) : null);
+			storesBtn.getSwingComponent().setText((store != null ? store.name() : host) + " ▾");
+			storesBtn.getSwingComponent().setIcon(host != null ? faviconCache.get(host) : null);
 		} else {
-			storesBtn.getComponent().setText("Stores ▾");
-			storesBtn.getComponent().setIcon(null);
+			storesBtn.getSwingComponent().setText("Stores ▾");
+			storesBtn.getSwingComponent().setIcon(null);
 		}
 	}
 
@@ -98,14 +98,14 @@ public class WMP1XAppHeader extends AppHeader {
 
 		// Centre region carries the WMP tab strip along its bottom edge.
 		center = new Panel(new BorderLayout());
-		center.getComponent().setOpaque(false);
+		center.getSwingComponent().setOpaque(false);
 
 		navButtons = new Panel(new FlowLayout(FlowLayout.LEFT, 4, 0));
-		navButtons.getComponent().setOpaque(false);
+		navButtons.getSwingComponent().setOpaque(false);
 		// navButtons.add(sidebarToggle);
 		navButtons.add(backBtn);
 		navButtons.add(forwardBtn);
-		navButtons.getComponent().setBorder(BorderFactory.createEmptyBorder(8, 12, 8, 12));
+		navButtons.getSwingComponent().setBorder(BorderFactory.createEmptyBorder(8, 12, 8, 12));
 
 		// WMP-style tab strip, flush with the bottom edge of the nav bar.
 		nowPlayingTab = new TabButton("Now Playing");
@@ -137,33 +137,33 @@ public class WMP1XAppHeader extends AppHeader {
 		tabBar.add(nowPlayingTab.getComponent());
 		tabBar.add(libraryTab.getComponent());
 		tabBar.add(mediaGuideTab.getComponent());
-		center.getComponent().add(tabBar, BorderLayout.SOUTH);
+		center.getSwingComponent().add(tabBar, BorderLayout.SOUTH);
 		JPanel right = new JPanel(new FlowLayout(FlowLayout.RIGHT, 5, 5));
 		right.setOpaque(false);
 
 		// right.add(searchField);
 		GlassPanel storePanel = new GlassPanel();
-		storePanel.getComponent().setPreferredSize(new Dimension(300, 46));
-		storePanel.getComponent().setLayout(new FlowLayout(FlowLayout.CENTER, 0, 0));
+		storePanel.getSwingComponent().setPreferredSize(new Dimension(300, 46));
+		storePanel.getSwingComponent().setLayout(new FlowLayout(FlowLayout.CENTER, 0, 0));
 		storePanel.setLeadingDiagonal(true); // sharp left edge, bottom longer than top
 		storePanel.setDiagonalInset(65);
 		storesBtn = makeNavButton("Stores ▾");
-		storesBtn.getComponent().setPreferredSize(new Dimension(160, 32));
-		storesBtn.getComponent().setToolTipText("Open a music Service");
+		storesBtn.getSwingComponent().setPreferredSize(new Dimension(160, 32));
+		storesBtn.getSwingComponent().setToolTipText("Open a music Service");
 		// Transparent & borderless so it floats on the glass field.
-		storesBtn.getComponent().setOpaque(false);
-		storesBtn.getComponent().setContentAreaFilled(false);
-		storesBtn.getComponent().setBorderPainted(false);
-		storesBtn.getComponent().setBorder(BorderFactory.createEmptyBorder(4, 8, 4, 8));
-		storesBtn.getComponent().setHorizontalAlignment(SwingConstants.LEFT);
-		storesBtn.getComponent().addActionListener(e -> buildStoresMenu().show(storesBtn.getComponent(), 0, storesBtn.getComponent().getHeight()));
+		storesBtn.getSwingComponent().setOpaque(false);
+		storesBtn.getSwingComponent().setContentAreaFilled(false);
+		storesBtn.getSwingComponent().setBorderPainted(false);
+		storesBtn.getSwingComponent().setBorder(BorderFactory.createEmptyBorder(4, 8, 4, 8));
+		storesBtn.getSwingComponent().setHorizontalAlignment(SwingConstants.LEFT);
+		storesBtn.getSwingComponent().addActionListener(e -> buildStoresMenu().show(storesBtn.getSwingComponent(), 0, storesBtn.getSwingComponent().getHeight()));
 		storePanel.add(storesBtn);
 
 		add(navButtons, BorderLayout.WEST);
 		add(center, BorderLayout.CENTER);
-		getComponent().add(right, BorderLayout.EAST);
+		getSwingComponent().add(right, BorderLayout.EAST);
 
-		right.add(storePanel.getComponent(), BorderLayout.CENTER);
+		right.add(storePanel.getSwingComponent(), BorderLayout.CENTER);
 
 		loadFavicons();
 

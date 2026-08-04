@@ -98,7 +98,7 @@ public class WMP11Skin extends WMPSkin {
 	@Override
 	public void paintGlossyButton(GlossyButton control, Graphics2D g2, int x, int y, int d) {
 		// TODO Auto-generated method stub
-		paintGlossy(g2, true, x, y, control.getComponent().getWidth(), control.getComponent().getHeight(), control.getHovered(), control.getPrimary(), control.getPressed());
+		paintGlossy(g2, true, x, y, control.getSwingComponent().getWidth(), control.getSwingComponent().getHeight(), control.getHovered(), control.getPrimary(), control.getPressed());
 	}
 	
 	private void paintGlossy(Graphics2D g2, boolean round, int x, int y, int width, int height, boolean hovered, boolean primary, boolean pressed) {
@@ -199,7 +199,7 @@ public class WMP11Skin extends WMPSkin {
 
 	@Override
 	public void paintGlassPanel(GlassPanel control, Graphics2D g2) {
-		int w = control.getComponent().getWidth(), h = control.getComponent().getHeight();
+		int w = control.getSwingComponent().getWidth(), h = control.getSwingComponent().getHeight();
 		Path2D shape = control.shape(w, h);
 
 		// Glossy white overlays, confined to the shape.
@@ -252,9 +252,9 @@ public class WMP11Skin extends WMPSkin {
 
 	@Override
 	public void paintToolButton(ToolButton control, Graphics2D g2) {
-		int w = control.getComponent().getWidth(), h = control.getComponent().getHeight();
+		int w = control.getSwingComponent().getWidth(), h = control.getSwingComponent().getHeight();
 		Color background = ThemeManager.getBackground();
-        ButtonModel model = control.getComponent().getModel();
+        ButtonModel model = control.getSwingComponent().getModel();
 		g2.setPaint(background);
 		g2.fillRect(0, 0, w, h);
 		if (model.isPressed()) {
@@ -295,7 +295,7 @@ public class WMP11Skin extends WMPSkin {
 	@Override
 	public void paintVerticalPanel(VerticalPanel control, Graphics2D g2) {
 		// TODO Auto-generated method stub
-		int w = control.getComponent().getWidth(), h = control.getComponent().getHeight();
+		int w = control.getSwingComponent().getWidth(), h = control.getSwingComponent().getHeight();
 
 		g2.setPaint(Color.BLACK);
 		g2.fillRect(0, 0, w, h);

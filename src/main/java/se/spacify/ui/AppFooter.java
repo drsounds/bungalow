@@ -33,18 +33,18 @@ public class AppFooter extends Panel {
 	protected GlossyButton forwardButton;
 
     public AppFooter() {
-        getComponent().setBorder(BorderFactory.createEmptyBorder(8, 16, 8, 16));
-        getComponent().setOpaque(true);
+        getSwingComponent().setBorder(BorderFactory.createEmptyBorder(8, 16, 8, 16));
+        getSwingComponent().setOpaque(true);
         this.build();
     }
     public void build() {
-        getComponent().setLayout(new BoxLayout(getComponent(), BoxLayout.PAGE_AXIS));
-        getComponent().setPreferredSize(new Dimension(0, 90));
+        getSwingComponent().setLayout(new BoxLayout(getSwingComponent(), BoxLayout.PAGE_AXIS));
+        getSwingComponent().setPreferredSize(new Dimension(0, 90));
 
         progressPanel = new Panel(new BorderLayout());
-        progressPanel.getComponent().setMinimumSize(new Dimension(0, 18));
-        progressPanel.getComponent().setMaximumSize(new Dimension(Short.MAX_VALUE, 18));
-        progressPanel.getComponent().setOpaque(false);
+        progressPanel.getSwingComponent().setMinimumSize(new Dimension(0, 18));
+        progressPanel.getSwingComponent().setMaximumSize(new Dimension(Short.MAX_VALUE, 18));
+        progressPanel.getSwingComponent().setOpaque(false);
         add(progressPanel);
 
         backwardButton = makeControlButton("⏪");
@@ -55,51 +55,51 @@ public class AppFooter extends Panel {
         forwardButton = makeControlButton("⏩");
         progressPanel.add(forwardButton, BorderLayout.EAST);
         mainBar = new Panel();
-        mainBar.getComponent().setLayout(new BoxLayout(mainBar.getComponent(), BoxLayout.LINE_AXIS));
-        mainBar.getComponent().setPreferredSize(new Dimension(0, 28));
-        mainBar.getComponent().setOpaque(false);
+        mainBar.getSwingComponent().setLayout(new BoxLayout(mainBar.getSwingComponent(), BoxLayout.LINE_AXIS));
+        mainBar.getSwingComponent().setPreferredSize(new Dimension(0, 28));
+        mainBar.getSwingComponent().setOpaque(false);
         add(mainBar);
 
         // Left: track info
         leftPanel = new GlassPanel();
-		leftPanel.getComponent().setLayout(new GridLayout(2, 1, 0, 2));
-		leftPanel.getComponent().setOpaque(false);
-		leftPanel.getComponent().setPreferredSize(new Dimension(200, 0));
+		leftPanel.getSwingComponent().setLayout(new GridLayout(2, 1, 0, 2));
+		leftPanel.getSwingComponent().setOpaque(false);
+		leftPanel.getSwingComponent().setPreferredSize(new Dimension(200, 0));
 		leftPanel.setTrailingDiagonal(true);   // sharp left edge, bottom longer than top
         leftPanel.setDiagonalInset(65);
-        leftPanel.getComponent().setPreferredSize(new Dimension(160, 0));
+        leftPanel.getSwingComponent().setPreferredSize(new Dimension(160, 0));
         trackNameLabel = new JLabel("No track playing");
         trackNameLabel.setForeground(Color.WHITE);
         trackNameLabel.setFont(trackNameLabel.getFont().deriveFont(Font.BOLD, 13f));
         artistLabel = new JLabel("");
         artistLabel.setForeground(new Color(180, 180, 180));
         artistLabel.setFont(artistLabel.getFont().deriveFont(11f));
-        leftPanel.getComponent().add(trackNameLabel);
-        leftPanel.getComponent().add(artistLabel);
+        leftPanel.getSwingComponent().add(trackNameLabel);
+        leftPanel.getSwingComponent().add(artistLabel);
 
         // Center: playback controls + progress
         controls = new Panel();
-        controls.getComponent().setLayout(new BoxLayout(controls.getComponent(), BoxLayout.Y_AXIS));
-        controls.getComponent().setOpaque(false);
+        controls.getSwingComponent().setLayout(new BoxLayout(controls.getSwingComponent(), BoxLayout.Y_AXIS));
+        controls.getSwingComponent().setOpaque(false);
 
         buttons = new Panel(new FlowLayout(FlowLayout.CENTER, 6, 0));
-        buttons.getComponent().setOpaque(false);
+        buttons.getSwingComponent().setOpaque(false);
         GlossyButton prevBtn = makeControlButton("⏮");
-        prevBtn.getComponent().addActionListener(e -> PlayQueue.getInstance().previous());
+        prevBtn.getSwingComponent().addActionListener(e -> PlayQueue.getInstance().previous());
         buttons.add(prevBtn);
         playPauseBtn = makeControlButton("▶");
-        playPauseBtn.getComponent().setFont(playPauseBtn.getComponent().getFont().deriveFont(16f));
+        playPauseBtn.getSwingComponent().setFont(playPauseBtn.getSwingComponent().getFont().deriveFont(16f));
         playPauseBtn.setPrimary(true);
         playPauseBtn.setDiameter(48);
         buttons.add(playPauseBtn);
         GlossyButton nextBtn = makeControlButton("⏭");
-        nextBtn.getComponent().addActionListener(e -> PlayQueue.getInstance().next());
+        nextBtn.getSwingComponent().addActionListener(e -> PlayQueue.getInstance().next());
         buttons.add(nextBtn);
 
         // Transport acts on whichever Service is currently active, regardless of
         // which one is playing. Wired once here; per-Service event observation is
         // added separately via setMediaService.
-        playPauseBtn.getComponent().addActionListener(e -> {
+        playPauseBtn.getSwingComponent().addActionListener(e -> {
             MediaService active = PlaybackCoordinator.getActiveService();
             if (active == null) return;
             if (active.getPlaybackState() == PlaybackState.PLAYING) active.pause();
@@ -107,12 +107,12 @@ public class AppFooter extends Panel {
         });
 
         controls.add(buttons);
-        controls.getComponent().add(Box.createVerticalStrut(4));
+        controls.getSwingComponent().add(Box.createVerticalStrut(4));
 
         // Right: volume
         rightPanel = new GlassPanel();
-        rightPanel.getComponent().setPreferredSize(new Dimension(300, 16));
-        rightPanel.getComponent().setLayout(new FlowLayout(FlowLayout.CENTER, 0, 0));
+        rightPanel.getSwingComponent().setPreferredSize(new Dimension(300, 16));
+        rightPanel.getSwingComponent().setLayout(new FlowLayout(FlowLayout.CENTER, 0, 0));
         rightPanel.setLeadingDiagonal(true);   // sharp left edge, bottom longer than top
         rightPanel.setDiagonalInset(65);
         JLabel volIcon = new JLabel("🔊");
@@ -120,8 +120,8 @@ public class AppFooter extends Panel {
         JSlider volume = new JSlider(0, 100, 70);
         volume.setPreferredSize(new Dimension(100, 20));
         volume.setOpaque(false);
-        controls.getComponent().add(volIcon);
-        controls.getComponent().add(volume);
+        controls.getSwingComponent().add(volIcon);
+        controls.getSwingComponent().add(volume);
 
         mainBar.add(leftPanel);
         mainBar.add(controls);
@@ -161,7 +161,7 @@ public class AppFooter extends Panel {
             public void onStateChanged(PlaybackState state) {
                 if (!active()) return;
                 SwingUtilities.invokeLater(() ->
-                    playPauseBtn.getComponent().setText(state == PlaybackState.PLAYING ? "⏸" : "▶"));
+                    playPauseBtn.getSwingComponent().setText(state == PlaybackState.PLAYING ? "⏸" : "▶"));
             }
 
             @Override
@@ -191,7 +191,7 @@ public class AppFooter extends Panel {
     @Override
     protected void paintSurface(Graphics g) {
         Graphics2D g2 = (Graphics2D) g.create();
-        int w = getComponent().getWidth(), h = getComponent().getHeight();
+        int w = getSwingComponent().getWidth(), h = getSwingComponent().getHeight();
 
         getSkin().paintFooter(this, g2);
 
@@ -202,9 +202,9 @@ public class AppFooter extends Panel {
 
     protected GlossyButton makeControlButton(String text) {
         GlossyButton btn = new GlossyButton(text);
-        btn.getComponent().setFocusPainted(false);
+        btn.getSwingComponent().setFocusPainted(false);
         btn.setDiameter(36);
-        btn.getComponent().setFont(btn.getComponent().getFont().deriveFont(14f));
+        btn.getSwingComponent().setFont(btn.getSwingComponent().getFont().deriveFont(14f));
         return btn;
     }
 }

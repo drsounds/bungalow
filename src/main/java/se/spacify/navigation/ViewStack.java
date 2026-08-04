@@ -29,7 +29,7 @@ public class ViewStack extends Panel {
     private View currentView = null;
 
     public ViewStack() {
-        getComponent().setLayout(cards);
+        getSwingComponent().setLayout(cards);
     }
 
     public void registerView(View view) {
@@ -105,7 +105,7 @@ public class ViewStack extends Panel {
         currentView.onShow();
 
         // CardLayout reveals this view and hides whichever was showing.
-        cards.show(getComponent(), cardKeys.get(currentView));
+        cards.show(getSwingComponent(), cardKeys.get(currentView));
         revalidate();
         repaint();
 

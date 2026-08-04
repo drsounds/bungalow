@@ -7,6 +7,8 @@ import java.awt.Graphics2D;
 import java.awt.Insets;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.AbstractButton;
 import javax.swing.Icon;
@@ -16,18 +18,21 @@ import javax.swing.SwingUtilities;
 import javax.swing.plaf.basic.BasicButtonUI;
 
 /**
- * The standard push-button control wrapping a {@link JButton}, painted by the
- * active {@link se.spacify.skinning.Skin} via {@link se.spacify.skinning.Skin#paintButton}
- * (installed as {@link SpaceButtonUI} on the wrapped button). Subclasses
- * ({@link ToolButton}, {@link GlossyButton}) extend the painting through the
- * {@link #paintSurface} / {@link #preferredSize} hooks; reach the widget through
- * {@link #getComponent()}.
+ * The standard push-button control. Independent of any UI toolkit: the active
+ * {@link se.spacify.ui.render.UserInterface} creates and binds this control's
+ * native peer (a {@link JButton} for Swing, see {@link #createSwingPeer()}).
+ * Swing-only code that needs the concrete widget can use
+ * {@link #getSwingComponent()}.
  */
-public class Button extends Control<JButton> {
+public class Button extends Control<Object> {
 
 	private boolean primary = false;
-
 	private String variant = "default";
+
+	private String text;
+	private Icon icon;
+	private boolean enabled = true;
+	private final List<Runnable> clickListeners = new ArrayList<>();
 
 	public String getVariant() {
 		return variant;
@@ -37,6 +42,67 @@ public class Button extends Control<JButton> {
 	}
 	public boolean getPrimary() { return primary; }
 	public void setPrimary(boolean value) { primary = value; }
+
+	public Button() {
+		initNative();
+	}
+
+	public Button(String text) {
+		this.text = text;
+		initNative();
+	}
+
+	public Button(Icon icon) {
+		this.icon = icon;
+		initNative();
+	}
+
+	public Button(Icon icon, String text) {
+		this.icon = icon;
+		this.text = text;
+		initNative();
+	}
+
+	// ── Backend-neutral property API ─────────────────────────────────────────────
+
+	public String getText() {
+		return text;
+	}
+
+	public void setText(String text) {
+		this.text = text;
+		applyProperty("text", text);
+	}
+
+	public Icon getIcon() {
+		return icon;
+	}
+
+	public void setIcon(Icon icon) {
+		this.icon = icon;
+		applyProperty("icon", icon);
+	}
+
+	public boolean isEnabled() {
+		return enabled;
+	}
+
+	public void setEnabled(boolean enabled) {
+		this.enabled = enabled;
+		applyProperty("enabled", enabled);
+	}
+
+	/** Register a click handler; fired from {@link #fireClicked()} regardless of backend. */
+	public void addActionListener(Runnable listener) {
+		clickListeners.add(listener);
+	}
+
+	/** Called by the active {@link se.spacify.ui.render.UserInterface} when the native peer is clicked. */
+	public void fireClicked() {
+		for (Runnable r : clickListeners) r.run();
+	}
+
+	// ── Swing peer (used only by se.spacify.ui.render.swing.SwingUserInterface) ───
 
 	/** The wrapped JButton; routes painting and metrics back to the control. */
 	protected class Surface extends JButton {
@@ -105,36 +171,13 @@ public class Button extends Control<JButton> {
 		}
 	}
 
-	public Button() {
-		this.component = new Surface();
-		init();
-	}
-
-	private void installModelListener() {
-		component.getModel().addChangeListener(e -> repaint());
-	}
-
-	public Button(String text) {
-		this.component = new Surface();
-		component.setText(text);
-		init();
-	}
-
-	public Button(Icon icon) {
-		this.component = new Surface();
-		component.setIcon(icon);
-		init();
-	}
-
-	public Button(Icon icon, String text) {
-		this.component = new Surface();
-		component.setIcon(icon);
-		component.setText(text);
-		init();
-	}
-
-	private void init() {
-		installModelListener();
+	/** Builds and fully configures this button's Swing peer. Called only by {@code SwingUserInterface}. */
+	public JButton createSwingPeer() {
+		Surface s = new Surface();
+		if (text != null) s.setText(text);
+		if (icon != null) s.setIcon(icon);
+		s.setEnabled(enabled);
+		s.getModel().addChangeListener(e -> repaint());
 		java.awt.event.MouseAdapter mouse = new java.awt.event.MouseAdapter() {
 			@Override public void mouseEntered(java.awt.event.MouseEvent e) { repaint(); }
 			@Override public void mouseExited(java.awt.event.MouseEvent e)  { repaint(); }
@@ -143,15 +186,20 @@ public class Button extends Control<JButton> {
 			}
 			@Override public void mouseReleased(java.awt.event.MouseEvent e) { repaint(); }
 		};
-		component.setOpaque(false);
-		component.addMouseListener(mouse);
-		component.setRolloverEnabled(true);
-		component.setUI(new SpaceButtonUI());
+		s.setOpaque(false);
+		s.addMouseListener(mouse);
+		s.setRolloverEnabled(true);
+		s.setUI(new SpaceButtonUI());
+		return s;
+	}
+
+	public JButton getSwingComponent() {
+		return getComponent() instanceof JButton b ? b : null;
 	}
 
 	/** Override to extend painting; default runs the installed {@link SpaceButtonUI}. */
 	protected void paintSurface(Graphics g) {
-		((Surface) component).superPaint(g);
+		if (getComponent() instanceof Surface s) s.superPaint(g);
 	}
 
 	/** Override to adjust the preferred size (default delegates to the UI). */

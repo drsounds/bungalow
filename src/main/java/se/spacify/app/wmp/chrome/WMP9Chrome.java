@@ -26,34 +26,34 @@ public class WMP9Chrome extends Chrome {
         @Override
         public void build() {
                 super.build();
-                getComponent().setLayout(new BoxLayout(getComponent(), BoxLayout.LINE_AXIS));
+                getSwingComponent().setLayout(new BoxLayout(getSwingComponent(), BoxLayout.LINE_AXIS));
         
-                leftMenuPanel.getComponent().setMinimumSize(new Dimension(100, 0));
-                leftMenuPanel.getComponent().setMaximumSize(new Dimension(100, Short.MAX_VALUE));
-                leftMenuPanel.getComponent().setPreferredSize(new Dimension(100, Short.MAX_VALUE));
-                leftMenuPanel.getComponent().setOpaque(false);
+                leftMenuPanel.getSwingComponent().setMinimumSize(new Dimension(100, 0));
+                leftMenuPanel.getSwingComponent().setMaximumSize(new Dimension(100, Short.MAX_VALUE));
+                leftMenuPanel.getSwingComponent().setPreferredSize(new Dimension(100, Short.MAX_VALUE));
+                leftMenuPanel.getSwingComponent().setOpaque(false);
                 appPanel = new Panel();
                 
                 add(leftMenuPanel);
                 leftMenuPanel.setVisible(false);
                 add(appPanel);
-                appPanel.getComponent().setOpaque(false);
-                leftMenuPanel.getComponent().setLayout(new BoxLayout(leftMenuPanel.getComponent(), BoxLayout.PAGE_AXIS));
-                appPanel.getComponent().setLayout(new BoxLayout(appPanel.getComponent(), BoxLayout.PAGE_AXIS));
+                appPanel.getSwingComponent().setOpaque(false);
+                leftMenuPanel.getSwingComponent().setLayout(new BoxLayout(leftMenuPanel.getSwingComponent(), BoxLayout.PAGE_AXIS));
+                appPanel.getSwingComponent().setLayout(new BoxLayout(appPanel.getSwingComponent(), BoxLayout.PAGE_AXIS));
                 
                 topSpacing = new Panel();
-                topSpacing.getComponent().setMinimumSize(new Dimension(0, 1660));
-                topSpacing.getComponent().setMaximumSize(new Dimension(Integer.MAX_VALUE, 1660));
-                topSpacing.getComponent().setOpaque(false);
+                topSpacing.getSwingComponent().setMinimumSize(new Dimension(0, 1660));
+                topSpacing.getSwingComponent().setMaximumSize(new Dimension(Integer.MAX_VALUE, 1660));
+                topSpacing.getSwingComponent().setOpaque(false);
                 appPanel.add(topSpacing);
                 topBar = new TopBar();
-                topBar.getComponent().add(new JButton());
+                topBar.getSwingComponent().add(new JButton());
                 appPanel.add(topBar);
-                topBar.getComponent().setMaximumSize(new Dimension(Short.MAX_VALUE, 18));
-                topBar.getComponent().setMinimumSize(new Dimension(0, 18));
+                topBar.getSwingComponent().setMaximumSize(new Dimension(Short.MAX_VALUE, 18));
+                topBar.getSwingComponent().setMinimumSize(new Dimension(0, 18));
                 appHeader = new AppHeader(viewStack);
-                appHeader.getComponent().setMaximumSize(new Dimension(Short.MAX_VALUE, 28));
-                appHeader.getComponent().setMinimumSize(new Dimension(0, 28));
+                appHeader.getSwingComponent().setMaximumSize(new Dimension(Short.MAX_VALUE, 28));
+                appHeader.getSwingComponent().setMinimumSize(new Dimension(0, 28));
 
                 // Reuse the shared sidebar (owned by MainWindow, populated by plugins) if set.
                 if (leftLibraryMenu == null) leftLibraryMenu = new LeftLibraryMenu(viewStack);
@@ -84,8 +84,8 @@ public class WMP9Chrome extends Chrome {
 
                 appFooter = new AppFooter();
                 appPanel.add(appFooter);
-                appFooter.getComponent().setMaximumSize(new Dimension(Short.MAX_VALUE, 18));
-                appFooter.getComponent().setMinimumSize(new Dimension(0, 18));
+                appFooter.getSwingComponent().setMaximumSize(new Dimension(Short.MAX_VALUE, 18));
+                appFooter.getSwingComponent().setMinimumSize(new Dimension(0, 18));
                 
 	}
 

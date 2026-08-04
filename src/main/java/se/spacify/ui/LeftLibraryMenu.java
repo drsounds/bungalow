@@ -70,11 +70,11 @@ public class LeftLibraryMenu extends Panel implements NavigationListener {
 
         if (currentPlayer != null) {
             currentPlayer.onDeactivated();
-            playerHost.remove(currentPlayer.getComponent());
+            playerHost.remove(currentPlayer.getSwingComponent());
         }
         currentPlayer = next;
         if (currentPlayer != null) {
-            playerHost.add(currentPlayer.getComponent(), BorderLayout.CENTER);
+            playerHost.add(currentPlayer.getSwingComponent(), BorderLayout.CENTER);
             currentPlayer.onActivated();
         }
         playerHost.setVisible(currentPlayer != null);
@@ -84,9 +84,9 @@ public class LeftLibraryMenu extends Panel implements NavigationListener {
 
     public LeftLibraryMenu(ViewStack viewStack) {
         this.viewStack = viewStack;
-        getComponent().setLayout(new BorderLayout());
-        getComponent().setPreferredSize(new Dimension(220, 0));
-        getComponent().setOpaque(true);
+        getSwingComponent().setLayout(new BorderLayout());
+        getSwingComponent().setPreferredSize(new Dimension(220, 0));
+        getSwingComponent().setOpaque(true);
 
         // Core shell nodes only; content subtrees (Your Library, Sites) are
         // contributed by built-in apps via addSidebarNode() at activation.
@@ -157,7 +157,7 @@ public class LeftLibraryMenu extends Panel implements NavigationListener {
         // colours are kept in sync by updateColors() below.
         scroll.setOpaque(true);
         scroll.getViewport().setOpaque(true);
-        getComponent().add(scroll, BorderLayout.CENTER);
+        getSwingComponent().add(scroll, BorderLayout.CENTER);
 
         bottomToolbar = new ToolBar();
         // Cross-app download activity spinner (listens on the broadcast bus).
@@ -174,16 +174,16 @@ public class LeftLibraryMenu extends Panel implements NavigationListener {
         south.setLayout(new BoxLayout(south, BoxLayout.PAGE_AXIS));
         south.add(playerHost);
         south.add(bottomToolbar.getComponent());
-        getComponent().add(south, BorderLayout.SOUTH);
+        getSwingComponent().add(south, BorderLayout.SOUTH);
  
 
         addToLibraryMenuButton = new MenuToolButton();
-        addToLibraryMenuButton.getComponent().setText("Add to Library");
+        addToLibraryMenuButton.getSwingComponent().setText("Add to Library");
         addToLibraryMenu = addToLibraryMenuButton.getPopup();
         ToolMenuItem addBtn    = new ToolMenuItem("Add");
         ToolMenuItem scanBtn   = new ToolMenuItem("Scan…");
 
-        scanBtn.getComponent().addActionListener(e -> LibraryScanAction.run(getComponent(),
+        scanBtn.getComponent().addActionListener(e -> LibraryScanAction.run(getSwingComponent(),
             () -> { /*reload();*/ LibraryEvents.fireChanged(); }));
         addBtn.getComponent().addActionListener(e -> { onAdd(); reload(); LibraryEvents.fireChanged(); });
         addToLibraryMenuButton.add(addBtn);
@@ -201,7 +201,7 @@ public class LeftLibraryMenu extends Panel implements NavigationListener {
 
     private void updateColors() {
         Color bg = ThemeManager.getBackground();
-        getComponent().setBackground(bg);
+        getSwingComponent().setBackground(bg);
         tree.getComponent().setBackground(bg);
         scroll.setBackground(bg);
         scroll.getViewport().setBackground(bg);

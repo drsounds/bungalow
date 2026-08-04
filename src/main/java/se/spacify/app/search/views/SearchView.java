@@ -36,14 +36,14 @@ public class SearchView extends View {
 
     public SearchView(ViewStack viewStack) {
         super(viewStack);
-        getComponent().setLayout(new BorderLayout(0, 12));
-        getComponent().setOpaque(false);
-        getComponent().setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+        getSwingComponent().setLayout(new BorderLayout(0, 12));
+        getSwingComponent().setOpaque(false);
+        getSwingComponent().setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 
         queryLabel = new JLabel("Search");
         queryLabel.setFont(queryLabel.getFont().deriveFont(Font.BOLD, 20f));
         queryLabel.setForeground(Color.WHITE);
-        getComponent().add(queryLabel, BorderLayout.NORTH);
+        getSwingComponent().add(queryLabel, BorderLayout.NORTH);
 
         resultsPanel = new JPanel();
         resultsPanel.setLayout(new BoxLayout(resultsPanel, BoxLayout.Y_AXIS));
@@ -53,7 +53,7 @@ public class SearchView extends View {
         scroll.setOpaque(false);
         scroll.getViewport().setOpaque(false);
         scroll.setBorder(BorderFactory.createEmptyBorder());
-        getComponent().add(scroll, BorderLayout.CENTER);
+        getSwingComponent().add(scroll, BorderLayout.CENTER);
     }
 
     @Override

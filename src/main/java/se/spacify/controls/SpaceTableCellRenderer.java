@@ -85,8 +85,8 @@ public class SpaceTableCellRenderer extends Label implements TableCellRenderer {
 	@Override
 	public Component getTableCellRendererComponent(JTable table, Object value,
 			boolean isSelected, boolean hasFocus, int row, int column) {
-		getComponent().setText(value == null ? "" : value.toString());
-		getComponent().setUI(new SpaceTableCellLabelUI());
-		return getComponent();
+		getSwingComponent().setText(value == null ? "" : value.toString());
+		getSwingComponent().setUI(new SpaceTableCellLabelUI());
+		return getSwingComponent();
 	}
 }

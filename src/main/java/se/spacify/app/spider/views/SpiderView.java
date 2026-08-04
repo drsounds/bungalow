@@ -39,7 +39,7 @@ public class SpiderView extends XUL {
     public SpiderView() {
         super();
         // A view fills its slot; one rendered root control sits at the centre.
-        getComponent().setLayout(new BorderLayout());
+        getSwingComponent().setLayout(new BorderLayout());
     }
 
     /** Load a URI fresh (a {@code GET}); the controller renders the initial tree. */

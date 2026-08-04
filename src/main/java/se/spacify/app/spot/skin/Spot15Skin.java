@@ -22,7 +22,7 @@ public class Spot15Skin extends SpotSkin {
 	@Override
 	public void paintViewStack(ViewStack control, Graphics2D g2) {
         if (control.getTaste().isDarkMode()) {
-            control.getComponent().setBackground(control.getComponent().getBackground().brighter());
+            control.getSwingComponent().setBackground(control.getSwingComponent().getBackground().brighter());
         }
 	}
 
@@ -46,8 +46,8 @@ public class Spot15Skin extends SpotSkin {
             fgColor = new Color(0, 0, 0, 255);
         }
  
-        control.getComponent().setForeground(fgColor);
-        control.getComponent().setBackground(bgColor);
+        control.getSwingComponent().setForeground(fgColor);
+        control.getSwingComponent().setBackground(bgColor);
     }
 
     @Override

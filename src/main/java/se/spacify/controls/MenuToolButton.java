@@ -22,7 +22,7 @@ public class MenuToolButton extends ToolButton
 	public MenuToolButton() {
 		super();
 		popMenu = new JPopupMenu();
-		component.addMouseListener(this);
+		getSwingComponent().addMouseListener(this);
 		popMenu.addPopupMenuListener(this);
 	}
 
@@ -31,7 +31,7 @@ public class MenuToolButton extends ToolButton
 	@Override
 	public void mousePressed(MouseEvent e) {
 		if (!popMenu.isShowing()) {
-			popMenu.show(component, 0, component.getBounds().height);
+			popMenu.show(getSwingComponent(), 0, getSwingComponent().getBounds().height);
 		}
 	}
 

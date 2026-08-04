@@ -1,5 +1,6 @@
 package se.spacify.ui;
 
+import se.spacify.controls.Control;
 import se.spacify.controls.SplitPane;
 import se.spacify.design.Design;
 import se.spacify.design.DesignManager;
@@ -18,6 +19,10 @@ import se.spacify.skinning.Skin;
 import se.spacify.skinning.SkinManager;
 import se.spacify.ui.chrome.Chrome;
 import se.spacify.ui.chrome.ChromeManager;
+import se.spacify.ui.render.UserInterfaceManager;
+import se.spacify.ui.render.jexer.JexerHomeView;
+import se.spacify.ui.render.jexer.JexerUserInterface;
+import se.spacify.ui.render.swing.SwingUserInterface;
 import se.spacify.ui.theme.Taste;
 import se.spacify.ui.theme.Theme;
 import se.spacify.ui.theme.ThemeManager;
@@ -25,21 +30,28 @@ import se.spacify.ui.theme.ThemeManager;
 import javax.swing.*;
 import java.awt.*;
 
-public class MainWindow extends JFrame {
-    private static final long serialVersionUID = 2144395787232553079L;
+/**
+ * The application's single window. No longer a {@link JFrame} itself — the
+ * actual top-level native window (a {@link JFrame} for Swing, a Jexer
+ * {@code TApplication} for the Jexer backend) is created and owned by
+ * whichever {@link se.spacify.ui.render.UserInterface} backend is active; see
+ * {@link #getUserInterfaceManager()}. This is what lets the rendering backend
+ * be selected at runtime instead of being hard-wired to Swing.
+ */
+public class MainWindow {
 
     /** The live window, so panels can resolve theme/skin/taste before they are attached. */
     private static MainWindow instance;
     public static MainWindow getInstance() { return instance; }
 
     private Taste taste;
-    
+
     private LeftLibraryMenu leftLibraryMenu;
     public void setLeftLibraryMenu(LeftLibraryMenu leftLibraryMenu) {
         this.leftLibraryMenu = leftLibraryMenu;
     }
 
-    private Chrome chrome; 
+    private Chrome chrome;
 
     private ViewStack viewStack;
     public ViewStack getViewStack() { return viewStack; }
@@ -101,24 +113,34 @@ public class MainWindow extends JFrame {
         this.skinManager = skinManager;
     }
 
+    private UserInterfaceManager userInterfaceManager;
+    public UserInterfaceManager getUserInterfaceManager() {
+        return userInterfaceManager;
+    }
+
     public Taste getTaste() {
         return taste;
     }
 
     public void setTaste(Taste taste) {
-        if (getChrome() != null) {
-            remove(getChrome().getComponent());
-        }
-        this.taste = taste;
-        if (getChrome() != null) {
-            add(getChrome().getComponent(), BorderLayout.CENTER);
+        Object rootNative = chrome != null ? chrome.getComponent() : null;
+        if (rootNative instanceof Component c
+                && userInterfaceManager.getActive() instanceof SwingUserInterface swingUi
+                && swingUi.getFrame() != null) {
+            // Window already up (rare: only if a Taste swap ever happens post-boot) —
+            // detach and reattach the live Chrome so it reflects the new Taste.
+            swingUi.getFrame().remove(c);
+            this.taste = taste;
+            swingUi.getFrame().add(c, BorderLayout.CENTER);
+        } else {
+            this.taste = taste;
         }
     }
 
     public Theme getTheme() {
         return getTaste().getTheme();
     }
-    
+
     public Design getDesign() {
         return getTaste().getDesign();
     }
@@ -134,14 +156,27 @@ public class MainWindow extends JFrame {
         installChrome(next);
     }
 
-    /** Build the Chrome's UI tree and swap it into the window's CENTER. */
+    /**
+     * Build the Chrome's UI tree and swap it in. Before the top-level native
+     * window exists yet (boot time), this just builds the Chrome — it is
+     * attached once, below, when the active backend's {@code start()} runs.
+     * After boot (a Design change at runtime), it swaps the live window's
+     * content immediately.
+     */
     private void installChrome(Chrome next) {
-        if (chrome != null) remove(chrome.getComponent());
+        Chrome previous = chrome;
         chrome = next;
         chrome.build();
-        add(chrome.getComponent(), BorderLayout.CENTER);
-        revalidate();
-        repaint();
+        if (userInterfaceManager.getActive() instanceof SwingUserInterface swingUi && swingUi.getFrame() != null) {
+            if (previous != null && previous.getComponent() instanceof Component pc) {
+                swingUi.getFrame().remove(pc);
+            }
+            if (chrome.getComponent() instanceof Component cc) {
+                swingUi.getFrame().add(cc, BorderLayout.CENTER);
+            }
+            swingUi.getFrame().revalidate();
+            swingUi.getFrame().repaint();
+        }
     }
     public Skin getSkin() {
         return getTaste().getSkin();
@@ -159,7 +194,7 @@ public class MainWindow extends JFrame {
     }
 	public Panel getAppPanel() {
 		return getChrome().getAppPanel();
-	} 
+	}
 
 	public LeftMenuPanel getLeftMenuPanel() {
 		return getChrome().getLeftMenuPanel();
@@ -168,10 +203,10 @@ public class MainWindow extends JFrame {
 	public Panel getCenterPanel() {
 		return getChrome().getCenterPanel();
 	}
- 
+
 	public TopBar getTopBar() {
 		return getChrome().getTopBar();
-	} 
+	}
 	public SplitPane getLeftSplit() {
 		return getChrome().getLeftSplit();
 	}
@@ -180,16 +215,22 @@ public class MainWindow extends JFrame {
 	}
 	public AppHeader getAppHeader() {
 		return getChrome().getAppHeader();
-	} 
-    public void setTheme(Theme theme) { 
+	}
+    public void setTheme(Theme theme) {
         getTaste().setTheme(theme);
         rebuildTheme();
     }
     public MainWindow() {
-        super("Spacify");
         // Expose this window before anything else so panels constructed during
         // start-up (and not yet attached) can still resolve theme/skin/taste.
         instance = this;
+
+        // 0. Register the available rendering backends before any Control is
+        //    constructed, so their eager native-peer creation has something to
+        //    delegate to (defaults to whichever is registered first: Swing).
+        userInterfaceManager = new UserInterfaceManager(this);
+        userInterfaceManager.register(new SwingUserInterface());
+        userInterfaceManager.register(new JexerUserInterface());
 
         // 1. Core services that plugins register *into* must exist BEFORE any plugin
         //    activates — otherwise a plugin's onActivate would register into nulls,
@@ -215,7 +256,8 @@ public class MainWindow extends JFrame {
         pluginManager.init(getViewStack(), getLeftLibraryMenu());
         pluginManager.start();
 
-        // 4. Apply persisted taste (theme/accent), now that themes are registered.
+        // 4. Apply persisted taste (theme/accent) and rendering backend choice, now
+        //    that themes are registered.
         config = new ConfigManager(this);
         config.load();
 
@@ -225,22 +267,14 @@ public class MainWindow extends JFrame {
         // entry points (used by double-click and "Play with…") can reach Services.
         PlaybackCoordinator.init(this);
 
-        // 5. Establish the active Design — this builds and installs the Chrome
-        //    (footer, splits, the shared sidebar), so getChrome() is valid afterwards.
+        // 5. Establish the active Design — this builds the Chrome (footer, splits,
+        //    the shared sidebar); it is attached to the real window below.
         nowPlayingView = new NowPlayingView(viewStack);
         // The now-playing view is owned here (not by a plugin), so register it with
         // the stack ourselves — otherwise navigate("spacify:now-playing") matches
         // nothing and the main view stays blank.
         viewStack.registerView(nowPlayingView);
         setDesign(pickInitialDesign());
-
-        setUndecorated(true);  // remove native title bar + border on all platforms
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setSize(1100, 700);
-        setMinimumSize(new Dimension(800, 500));
-        setLocationRelativeTo(null);
-        // 1px border so the window edge is visible against the desktop
-        getRootPane().setBorder(BorderFactory.createLineBorder(new Color(40, 40, 40), 1));
 
         // ── Theme ─────────────────────────────────────────────────────────────
         getTaste().addChangeListener(config::save);
@@ -251,7 +285,7 @@ public class MainWindow extends JFrame {
 
         // Swap the active Service when the selected design style changes.
         getTaste().addChangeListener(() -> {
-            
+
         });
 
         featureManager.activateFeatures(getViewStack(), getLeftLibraryMenu().getRootNode());
@@ -264,8 +298,6 @@ public class MainWindow extends JFrame {
         }
 
         if (getChrome() != null) applySidebar(userWantsSidebar);
-        // Glass-pane resize handler — intercepts edge events, redispatches others
-        WindowResizer.install(this);
 
         // Store pages browse full-width with the side panels collapsed.
         if (getChrome() != null) {
@@ -273,6 +305,20 @@ public class MainWindow extends JFrame {
                 applyImmersive(uri != null && uri.startsWith("spacify:store:")));
         }
         navigate("spacify:now-playing");
+
+        // 6. Show the app: pick the root control for the persisted rendering
+        //    backend and start it. The production Chrome (built above) is
+        //    Swing-only — SplitPane/Table/Tree/ToolBar haven't been ported —
+        //    so a Jexer session gets a small dedicated demo view instead.
+        String backendId = config.getUiFramework();
+        Control<?> root;
+        if (!SwingUserInterface.ID.equals(backendId) && userInterfaceManager.get(backendId) != null) {
+            userInterfaceManager.setActiveId(backendId);
+            root = backendId.equals(JexerUserInterface.ID) ? new JexerHomeView() : chrome;
+        } else {
+            root = chrome;
+        }
+        userInterfaceManager.getActive().start(root);
     }
 
     /**
@@ -327,7 +373,24 @@ public class MainWindow extends JFrame {
     	getViewStack().navigate(uri);
     }
 
+    /**
+     * Switch the active rendering backend at runtime (e.g. from Settings):
+     * tears down the current backend's top-level window and starts
+     * {@code id}'s. Persists the choice via {@link ConfigManager} so it's
+     * restored on next launch.
+     */
+    public void setUserInterface(String id) {
+        if (userInterfaceManager.get(id) == null) return;
+        Control<?> root = JexerUserInterface.ID.equals(id) ? new JexerHomeView() : chrome;
+        userInterfaceManager.switchTo(id, root);
+        config.setUiFramework(id);
+        config.save();
+    }
+
     private void rebuildTheme() {
+        if (!(userInterfaceManager.getActive() instanceof SwingUserInterface swingUi) || swingUi.getFrame() == null) {
+            return;
+        }
         // 1. Reinstall Nimbus to clear its SynthStyleFactory painter cache
         try {
             for (UIManager.LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
@@ -340,7 +403,7 @@ public class MainWindow extends JFrame {
         // 2. Re-apply our colour overrides to the freshly-installed L&F defaults
         ThemeManager.applyToDefaults();
         // 3. Propagate to all components
-        SwingUtilities.updateComponentTreeUI(this);
+        SwingUtilities.updateComponentTreeUI(swingUi.getFrame());
     }
 
     /** Connects a MediaService to AppFooter and NowPlayingView. */

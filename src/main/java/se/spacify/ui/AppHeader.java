@@ -23,13 +23,13 @@ public class AppHeader extends Panel implements NavigationListener {
 
 	public void build() {
 
-		getComponent().setLayout(new BorderLayout(8, 0));
-		getComponent().setPreferredSize(new Dimension(0, 56));
-		getComponent().setOpaque(true);
+		getSwingComponent().setLayout(new BorderLayout(8, 0));
+		getSwingComponent().setPreferredSize(new Dimension(0, 56));
+		getSwingComponent().setOpaque(true);
 
 		sidebarToggle = makeNavButton("☰");
-		sidebarToggle.getComponent().setToolTipText("Show/hide the sidebar");
-		sidebarToggle.getComponent().addActionListener(e -> {
+		sidebarToggle.getSwingComponent().setToolTipText("Show/hide the sidebar");
+		sidebarToggle.getSwingComponent().addActionListener(e -> {
 			if (viewStack.getMainWindow() != null)
 				viewStack.getMainWindow().toggleSidebar();
 		});
@@ -39,11 +39,11 @@ public class AppHeader extends Panel implements NavigationListener {
 		backBtn.setPrimary(true);
 		forwardBtn = makeNavButton("►");
 		forwardBtn.setDiameter(36);
-		backBtn.getComponent().setEnabled(false);
-		forwardBtn.getComponent().setEnabled(false);
+		backBtn.getSwingComponent().setEnabled(false);
+		forwardBtn.getSwingComponent().setEnabled(false);
 
-		backBtn.getComponent().addActionListener((ActionEvent e) -> viewStack.back());
-		forwardBtn.getComponent().addActionListener((ActionEvent e) -> viewStack.forward());
+		backBtn.getSwingComponent().addActionListener((ActionEvent e) -> viewStack.back());
+		forwardBtn.getSwingComponent().addActionListener((ActionEvent e) -> viewStack.forward());
 	}
 
 	public AppHeader(ViewStack viewStack) {
@@ -54,7 +54,7 @@ public class AppHeader extends Panel implements NavigationListener {
 	@Override
 	protected void paintSurface(Graphics g) {
 		Graphics2D g2 = (Graphics2D) g.create();
-		int w = getComponent().getWidth(), h = getComponent().getHeight();
+		int w = getSwingComponent().getWidth(), h = getSwingComponent().getHeight();
 
 		getSkin().paintHeader(this, g2);
 		// 1 px white sheen along the very bottom edge
@@ -66,15 +66,15 @@ public class AppHeader extends Panel implements NavigationListener {
 
 	protected GlossyButton makeNavButton(String text) {
 		GlossyButton btn = new GlossyButton(text);
-		btn.getComponent().setFocusPainted(false);
-		btn.getComponent().setPreferredSize(new Dimension(32, 32));
-		btn.getComponent().setFont(btn.getComponent().getFont().deriveFont(11f));
+		btn.getSwingComponent().setFocusPainted(false);
+		btn.getSwingComponent().setPreferredSize(new Dimension(32, 32));
+		btn.getSwingComponent().setFont(btn.getSwingComponent().getFont().deriveFont(11f));
 		return btn;
 	}
 
 	@Override
 	public void onNavigate(String uri, boolean canGoBack, boolean canGoForward) {
-		backBtn.getComponent().setEnabled(canGoBack);
-		forwardBtn.getComponent().setEnabled(canGoForward);
+		backBtn.getSwingComponent().setEnabled(canGoBack);
+		forwardBtn.getSwingComponent().setEnabled(canGoForward);
 	}
 }

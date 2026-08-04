@@ -33,7 +33,7 @@ public final class Postbacks {
     public static void bind(Control<?> root, Consumer<String> onAction) {
         for (Control<?> child : root.getChildren()) {
             if (child instanceof Button button && child.getAttribute("onclick", null) != null) {
-                JButton widget = button.getComponent();
+                JButton widget = button.getSwingComponent();
                 if (widget.getClientProperty(BOUND) == null) {
                     widget.putClientProperty(BOUND, Boolean.TRUE);
                     widget.addActionListener(e -> onAction.accept(child.getAttribute("onclick", "").toString()));
@@ -55,7 +55,7 @@ public final class Postbacks {
             if (child instanceof TextField field) {
                 String name = inputName(child);
                 if (name != null) {
-                    input.put(name, field.getComponent().getText());
+                    input.put(name, field.getSwingComponent().getText());
                 }
             }
             collectInto(child, input);

@@ -26,6 +26,11 @@ public class ConfigManager {
         this.mainWindow = mainWindow;
     }
 
+    /** The rendering backend id ({@code "swing"}, {@code "jexer"}, …) to start with; persisted here. */
+    private String uiFramework = "swing";
+    public String getUiFramework() { return uiFramework; }
+    public void setUiFramework(String uiFramework) { this.uiFramework = uiFramework; }
+
     private static final Path CONFIG_FILE =
         Path.of(System.getProperty("user.home"), ".spacify", "settings.properties");
 
@@ -38,6 +43,7 @@ public class ConfigManager {
         } catch (IOException e) {
             return;
         }
+        uiFramework = p.getProperty("ui.framework", "swing");
         try {
             String themeId = p.getProperty("theme.id", "wmp10");
              Theme theme = mainWindow.getThemeManager().get(themeId);
@@ -82,6 +88,7 @@ public class ConfigManager {
 
     public void save() {
         Properties p = new Properties();
+        p.setProperty("ui.framework", uiFramework);
         p.setProperty("theme.hue",         String.valueOf(getTaste().getHue()));
         p.setProperty("theme.saturation",  String.valueOf(getTaste().getSaturation()));
         p.setProperty("theme.lightness",   String.valueOf(getTaste().getLightness()));

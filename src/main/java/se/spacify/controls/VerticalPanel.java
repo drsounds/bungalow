@@ -18,8 +18,8 @@ public class VerticalPanel extends Panel {
 	private final TabButton mediaGuideTab;
 
 	public VerticalPanel() {
-		getComponent().setOpaque(false);
-		getComponent().setBorder(BorderFactory.createEmptyBorder(0, 80, 0, 0));
+		getSwingComponent().setOpaque(false);
+		getSwingComponent().setBorder(BorderFactory.createEmptyBorder(0, 80, 0, 0));
 		// WMP-style tab strip, flush with the bottom edge of the nav bar.
 		nowPlayingTab = new TabButton("Now Playing");
 		nowPlayingTab.getComponent().addActionListener(e -> {

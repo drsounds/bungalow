@@ -34,14 +34,14 @@ public class GlossyButton extends Button {
 
 	public GlossyButton(String text) {
 		super(text);
-		component.setContentAreaFilled(false);
-		component.setBorderPainted(false);
-		component.setFocusPainted(false);
-		component.setOpaque(false);
-		component.setRolloverEnabled(true);
-		component.setHorizontalAlignment(SwingConstants.CENTER);
-		component.setForeground(Color.WHITE);
-		component.setBorder(BorderFactory.createEmptyBorder());
+		getSwingComponent().setContentAreaFilled(false);
+		getSwingComponent().setBorderPainted(false);
+		getSwingComponent().setFocusPainted(false);
+		getSwingComponent().setOpaque(false);
+		getSwingComponent().setRolloverEnabled(true);
+		getSwingComponent().setHorizontalAlignment(SwingConstants.CENTER);
+		getSwingComponent().setForeground(Color.WHITE);
+		getSwingComponent().setBorder(BorderFactory.createEmptyBorder());
 
 		java.awt.event.MouseAdapter mouse = new java.awt.event.MouseAdapter() {
 			@Override public void mouseEntered(java.awt.event.MouseEvent e) { hovered = true; repaint(); }
@@ -51,7 +51,7 @@ public class GlossyButton extends Button {
 			}
 			@Override public void mouseReleased(java.awt.event.MouseEvent e) { pressed = false; repaint(); }
 		};
-		component.addMouseListener(mouse);
+		getSwingComponent().addMouseListener(mouse);
 		ThemeManager.addChangeListener(this::repaint);
 	}
 
@@ -77,10 +77,10 @@ public class GlossyButton extends Button {
 		g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 		// Largest centred circle that fits, leaving 1px so the antialiased edge
 		// isn't clipped.
-		int d = Math.min(getComponent().getWidth(), getComponent().getHeight()) - 2;
+		int d = Math.min(getSwingComponent().getWidth(), getSwingComponent().getHeight()) - 2;
 		if (d > 0) {
-			int x = (getComponent().getWidth() - d) / 2;
-			int y = (getComponent().getHeight() - d) / 2;
+			int x = (getSwingComponent().getWidth() - d) / 2;
+			int y = (getSwingComponent().getHeight() - d) / 2;
 			getSkin().paintGlossyButton(this, g2, x, y, d);
 		}
 		g2.dispose();
