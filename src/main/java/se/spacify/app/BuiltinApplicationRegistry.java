@@ -49,6 +49,10 @@ final class BuiltinApplicationRegistry {
         // Hello-world demo of the Spider template system (spacify:testapp).
         list.add(builtin("se.spacify.app.testapp", "Test App", "1.0.0",
             "se.spacify.app.testapp.TestApplication", cl));
+        // User-defined custom tables (spacify:table:<slug>), CRUD over an
+        // unlimited set of typed fields, backed by an event-sourced audit log.
+        list.add(builtin("se.spacify.app.data", "Custom Tables", "1.0.0",
+            "se.spacify.app.data.DataApplication", cl));
         return list;
     }
 

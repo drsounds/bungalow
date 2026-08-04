@@ -96,8 +96,19 @@ public final class TemplateEngine {
             case Number n          -> LuaValue.valueOf(n.doubleValue());
             case Boolean b         -> LuaValue.valueOf(b);
             case Map<?, ?> nested  -> toTable(nested);
+            case java.util.List<?> list -> toArrayTable(list);
             default                -> LuaValue.valueOf(value.toString());
         };
+    }
+
+    /** Coerce a {@code List} into a 1-based Lua array table (so {@code ipairs}/{@code #} work). */
+    private static LuaTable toArrayTable(java.util.List<?> list) {
+        LuaTable table = new LuaTable();
+        int i = 1;
+        for (Object item : list) {
+            table.set(i++, toLua(item));
+        }
+        return table;
     }
 
     private static String str(String value) {

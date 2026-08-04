@@ -168,4 +168,16 @@ public class DatabaseManager {
     public <T> Dao<T, Integer> registerEntity(Class<T> entity) {
         return dao(entity);
     }
+
+    /**
+     * Variant of {@link #dao(Class)} for entities whose {@code @DatabaseField(id = true)}
+     * primary key is not an {@code Integer} (e.g. a UUID4 {@code String}, as used by
+     * {@code se.spacify.app.data}). {@code idType} is only used to fix the generic
+     * signature at the call site; the DAO is looked up/created exactly as {@link #dao(Class)}
+     * does (same cache, same table-creation/reconcile behaviour).
+     */
+    @SuppressWarnings("unchecked")
+    public <T, ID> Dao<T, ID> dao(Class<T> entity, Class<ID> idType) {
+        return (Dao<T, ID>) (Dao<?, ?>) dao(entity);
+    }
 }

@@ -46,6 +46,14 @@ public final class LuaPreprocessor {
     private static final Pattern COUNT_FOR =
         Pattern.compile("^\\s*for\\s+([A-Za-z_]\\w*)\\s*,\\s*(.+?)\\s+do\\s*$");
 
+    /**
+     * Lua's real generic-for ({@code for k, v in ipairs(t) do}) also matches
+     * {@link #COUNT_FOR}'s shape (a single comma before {@code do}), so it must be
+     * excluded from the count-form rewrite — a bare {@code in} keyword is never valid
+     * inside a count expression, so its presence means "generic for, leave it alone".
+     */
+    private static final Pattern HAS_IN_KEYWORD = Pattern.compile("(^|\\s)in(\\s|$)");
+
     private LuaPreprocessor() {
     }
 
@@ -73,7 +81,7 @@ public final class LuaPreprocessor {
     /** A {@code %} line: rewrite the count-form {@code for} shorthand, otherwise pass the Lua through. */
     private static String compileCodeLine(String code) {
         Matcher m = COUNT_FOR.matcher(code);
-        if (m.matches()) {
+        if (m.matches() && !HAS_IN_KEYWORD.matcher(m.group(2)).find()) {
             return "for " + m.group(1) + "=1," + m.group(2).trim() + " do";
         }
         return code.strip();
