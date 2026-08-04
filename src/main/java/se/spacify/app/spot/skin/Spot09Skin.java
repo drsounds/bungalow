@@ -57,7 +57,7 @@ public class Spot09Skin extends SpotSkin {
 
 	@Override
 	public void paintTree(Tree control, Graphics2D g2) {
-        int w = control.getComponent().getWidth(), h = control.getComponent().getHeight();
+        int w = control.getSwingComponent().getWidth(), h = control.getSwingComponent().getHeight();
         Taste taste = control.getTaste();
         Color tintColor = taste.getTintColor();
         if (control.getTaste().isDarkMode()) {
@@ -133,12 +133,12 @@ public class Spot09Skin extends SpotSkin {
 
     @Override
     public void paintToolBar(ToolBar control, Graphics2D g2) {
-        int w = control.getComponent().getWidth(), h = control.getComponent().getHeight();
+        int w = control.getSwingComponent().getWidth(), h = control.getSwingComponent().getHeight();
         g2.setPaint(new LinearGradientPaint(new Point(0, 0), new Point(0, h), new float[] {0, 1}, new Color[] { ColorUtils.darken(control.getTaste().getTintColor(),1f), ColorUtils.darken(control.getTaste().getTintColor(), 0.9f) }));
         g2.fillRect(0, 0, w, h);
-        g2.setColor(ColorUtils.darken(control.getComponent().getBackground(), 1.1f));
+        g2.setColor(ColorUtils.darken(control.getSwingComponent().getBackground(), 1.1f));
         g2.drawLine(0, h - 1, w, h - 1);
-        g2.setColor(ColorUtils.lighten(control.getComponent().getBackground(), 7.1f));
+        g2.setColor(ColorUtils.lighten(control.getSwingComponent().getBackground(), 7.1f));
         g2.drawLine(0, h - 2, w, h - 2);
     }
 

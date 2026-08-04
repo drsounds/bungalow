@@ -25,8 +25,12 @@ import se.spacify.controls.Control;
 import se.spacify.controls.Label;
 import se.spacify.controls.Panel;
 import se.spacify.controls.ScrollPane;
+import se.spacify.controls.SplitPane;
 import se.spacify.controls.TabbedPane;
+import se.spacify.controls.Table;
 import se.spacify.controls.TextField;
+import se.spacify.controls.ToolBar;
+import se.spacify.controls.Tree;
 import se.spacify.ui.WindowResizer;
 import se.spacify.ui.render.UserInterface;
 
@@ -105,6 +109,10 @@ public class SwingUserInterface extends UserInterface {
 			: control instanceof TextField t   ? t.createSwingPeer()
 			: control instanceof TabbedPane tp ? tp.createSwingPeer()
 			: control instanceof ScrollPane sp ? sp.createSwingPeer()
+			: control instanceof SplitPane sp  ? sp.createSwingPeer()
+			: control instanceof ToolBar tb    ? tb.createSwingPeer()
+			: control instanceof Table t       ? t.createSwingPeer()
+			: control instanceof Tree t        ? t.createSwingPeer()
 			: control instanceof Panel p       ? p.createSwingPeer()
 			: null;
 		if (native_ != null) registerNative(control, native_);

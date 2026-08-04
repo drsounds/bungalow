@@ -47,9 +47,9 @@ public class NowPlayingPanel extends Panel {
         getSwingComponent().setOpaque(false);   // we paint our own gradient in paintSurface
 
         topToolbar = new ToolBar();
-        topToolbar.getComponent().setFloatable(false);
-        topToolbar.getComponent().setOpaque(true);
-        topToolbar.getComponent().setBackground(ThemeManager.getTintColor());
+        topToolbar.getSwingComponent().setFloatable(false);
+        topToolbar.getSwingComponent().setOpaque(true);
+        topToolbar.getSwingComponent().setBackground(ThemeManager.getTintColor());
         add(topToolbar);
 
         JButton title = new JButton(UIManager.getIcon("FileView.fileIcon"));
@@ -60,22 +60,22 @@ public class NowPlayingPanel extends Panel {
             @Override public boolean isCellEditable(int r, int c) { return false; }
         };
         table = new Table(model);
-        table.getComponent().setFillsViewportHeight(true);
-        table.getComponent().setShowGrid(false);
-        table.getComponent().setIntercellSpacing(new Dimension(0, 0));
-        table.getComponent().setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        table.getComponent().getColumnModel().getColumn(1).setMaxWidth(64);
+        table.getSwingComponent().setFillsViewportHeight(true);
+        table.getSwingComponent().setShowGrid(false);
+        table.getSwingComponent().setIntercellSpacing(new Dimension(0, 0));
+        table.getSwingComponent().setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        table.getSwingComponent().getColumnModel().getColumn(1).setMaxWidth(64);
         // Transparent so the panel's gradient shows through behind the rows.
-        table.getComponent().setOpaque(false);
+        table.getSwingComponent().setOpaque(false);
 
         QueueCellRenderer renderer = new QueueCellRenderer();
-        for (int i = 0; i < table.getComponent().getColumnCount(); i++) {
-            table.getComponent().getColumnModel().getColumn(i).setCellRenderer(renderer);
+        for (int i = 0; i < table.getSwingComponent().getColumnCount(); i++) {
+            table.getSwingComponent().getColumnModel().getColumn(i).setCellRenderer(renderer);
         }
-        table.getComponent().addMouseListener(new MouseAdapter() {
+        table.getSwingComponent().addMouseListener(new MouseAdapter() {
             @Override public void mouseClicked(MouseEvent e) {
                 if (e.getClickCount() == 2) {
-                    int row = table.getComponent().rowAtPoint(e.getPoint());
+                    int row = table.getSwingComponent().rowAtPoint(e.getPoint());
                     if (row >= 0) PlayQueue.getInstance().playAt(row);
                 }
             }
@@ -103,10 +103,10 @@ public class NowPlayingPanel extends Panel {
         add(scroll, BorderLayout.CENTER);
 
         bottomToolbar = new ToolBar();
-        bottomToolbar.getComponent().setFloatable(false);
-        bottomToolbar.getComponent().setOpaque(true);
-        bottomToolbar.getComponent().setBackground(ThemeManager.getTintColor());
-        bottomToolbar.getComponent().add(new JButton("Sync"));
+        bottomToolbar.getSwingComponent().setFloatable(false);
+        bottomToolbar.getSwingComponent().setOpaque(true);
+        bottomToolbar.getSwingComponent().setBackground(ThemeManager.getTintColor());
+        bottomToolbar.getSwingComponent().add(new JButton("Sync"));
 
         // The active media Service's player surface sits below the queue and above
         // the toolbar; it's part of this sticky panel, so navigation never hides it.
@@ -120,7 +120,7 @@ public class NowPlayingPanel extends Panel {
         south.add(bottomToolbar);
         add(south, BorderLayout.SOUTH);
 
-        topToolbar.getComponent().add(title);
+        topToolbar.getSwingComponent().add(title);
 
         updateColors();
         refresh();
@@ -142,9 +142,9 @@ public class NowPlayingPanel extends Panel {
     /** Right-click a queue entry to re-pick which Service plays it ("Play with…"). */
     private void maybeShowQueueMenu(MouseEvent e) {
         if (!e.isPopupTrigger()) return;
-        int row = table.getComponent().rowAtPoint(e.getPoint());
+        int row = table.getSwingComponent().rowAtPoint(e.getPoint());
         if (row < 0) return;
-        table.getComponent().setRowSelectionInterval(row, row);
+        table.getSwingComponent().setRowSelectionInterval(row, row);
         List<PlayQueueItem> items = PlayQueue.getInstance().getItems();
         if (row >= items.size()) return;
         PlayRequest req = items.get(row).getSource();
@@ -185,9 +185,9 @@ public class NowPlayingPanel extends Panel {
         }
         int current = PlayQueue.getInstance().getCurrentIndex();
         if (current >= 0 && current < model.getRowCount()) {
-            table.getComponent().setRowSelectionInterval(current, current);
+            table.getSwingComponent().setRowSelectionInterval(current, current);
         } else {
-            table.getComponent().clearSelection();
+            table.getSwingComponent().clearSelection();
         }
 
         boolean empty = items.isEmpty();
@@ -207,8 +207,8 @@ public class NowPlayingPanel extends Panel {
         // This sticky panel always renders white text on its accent gradient,
         // regardless of the light/dark theme setting.
         Color grid = ThemeManager.getGridColor();
-        table.getComponent().setForeground(Color.WHITE);
-        table.getComponent().setGridColor(grid);
+        table.getSwingComponent().setForeground(Color.WHITE);
+        table.getSwingComponent().setGridColor(grid);
         table.repaint();
     }
 

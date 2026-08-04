@@ -62,7 +62,7 @@ public class ApplicationManagerView extends View {
             @Override public boolean isCellEditable(int r, int c) { return c == 0; }
             @Override public Class<?> getColumnClass(int c) { return c == 0 ? Boolean.class : String.class; }
         };
-        table = new Table(model).getComponent();
+        table = new Table(model).getSwingComponent();
         table.setShowGrid(false);
         table.getColumnModel().getColumn(0).setMaxWidth(32);
         table.getSelectionModel().addListSelectionListener(e -> { if (!e.getValueIsAdjusting()) showSelected(); });

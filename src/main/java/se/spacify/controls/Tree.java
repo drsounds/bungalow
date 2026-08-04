@@ -10,11 +10,29 @@ import javax.swing.tree.TreeNode;
 import se.spacify.ui.theme.ThemeManager;
 
 /**
- * A tree control wrapping a {@link JTree}, painted by the active skin via
- * {@link se.spacify.skinning.Skin#paintTree}. Reach the widget through
- * {@link #getComponent()}.
+ * A tree control. Independent of any UI toolkit at the type level: the active
+ * {@link se.spacify.ui.render.UserInterface} creates this control's native
+ * peer — currently only implemented for Swing (a {@link JTree}, painted by
+ * the active skin via {@link se.spacify.skinning.Skin#paintTree}, see
+ * {@link #createSwingPeer()}). Bridging {@link TreeNode}-based data to a
+ * fundamentally different Jexer tree widget is a larger follow-up; the Jexer
+ * backend simply doesn't support {@code Tree} yet. Swing-only code that needs
+ * the concrete widget can use {@link #getSwingComponent()}.
  */
-public class Tree extends Control<JTree> {
+public class Tree extends Control<Object> {
+
+	private TreeNode root;
+
+	public Tree() {
+		initNative();
+	}
+
+	public Tree(TreeNode root) {
+		this.root = root;
+		initNative();
+	}
+
+	// ── Swing peer (used only by se.spacify.ui.render.swing.SwingUserInterface) ───
 
 	protected class Surface extends JTree {
 		private static final long serialVersionUID = 1L;
@@ -25,14 +43,6 @@ public class Tree extends Control<JTree> {
 			Tree.this.paintSurface(g, this);
 		}
 		void superPaint(Graphics g) { super.paintComponent(g); }
-	}
-
-	public Tree() {
-		this.component = new Surface();
-	}
-
-	public Tree(TreeNode root) {
-		this.component = new Surface(root);
 	}
 
 	protected void paintSurface(Graphics g, JTree tree) {
@@ -49,6 +59,15 @@ public class Tree extends Control<JTree> {
 				if (b != null) g.fillRect(0, b.y, tree.getWidth(), b.height);
 			}
 		}
-		((Surface) component).superPaint(g);
+		if (getComponent() instanceof Surface s) s.superPaint(g);
+	}
+
+	/** Builds this tree's Swing peer. Called only by {@code SwingUserInterface}. */
+	public JTree createSwingPeer() {
+		return root != null ? new Surface(root) : new Surface();
+	}
+
+	public JTree getSwingComponent() {
+		return getComponent() instanceof JTree t ? t : null;
 	}
 }

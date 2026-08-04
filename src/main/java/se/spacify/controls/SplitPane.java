@@ -11,14 +11,57 @@ import javax.swing.plaf.basic.BasicSplitPaneDivider;
 import javax.swing.plaf.basic.BasicSplitPaneUI;
 
 /**
- * A split-pane container control wrapping a {@link JSplitPane}, with a skinned
- * divider painted via {@link se.spacify.skinning.Skin#paintSplitPaneDivider}.
- * Reach the widget through {@link #getComponent()}.
+ * A split-pane container control. Independent of any UI toolkit: the active
+ * {@link se.spacify.ui.render.UserInterface} creates this control's native
+ * peer (a {@link JSplitPane} for Swing, see {@link #createSwingPeer()}, with a
+ * skinned divider painted via {@link se.spacify.skinning.Skin#paintSplitPaneDivider};
+ * a Jexer {@code TSplitPane} for the Jexer backend). Swing-only code that
+ * needs the concrete widget can use {@link #getSwingComponent()}.
  */
-public class SplitPane extends Control<JSplitPane> {
+public class SplitPane extends Control<Object> {
 
 	public static final int HORIZONTAL_SPLIT = JSplitPane.HORIZONTAL_SPLIT;
 	public static final int VERTICAL_SPLIT   = JSplitPane.VERTICAL_SPLIT;
+
+	private int orientation = HORIZONTAL_SPLIT;
+	/** Only the {@link #SplitPane(int, Object, Object)} constructor installs the skinned divider. */
+	private boolean skinnedDivider = false;
+
+	public SplitPane() {
+		initNative();
+	}
+
+	/**
+	 * @param orientation {@link #HORIZONTAL_SPLIT} (left/right) or {@link #VERTICAL_SPLIT} (top/bottom)
+	 * @param left  a {@link Control} or a raw {@link Component} (Swing only)
+	 * @param right a {@link Control} or a raw {@link Component} (Swing only)
+	 */
+	public SplitPane(int orientation, Object left, Object right) {
+		this.orientation = orientation;
+		this.skinnedDivider = true;
+		initNative();
+		mountSide(left);
+		mountSide(right);
+	}
+
+	public int getOrientation() {
+		return orientation;
+	}
+
+	/** {@code left} then {@code right} become this split's first and second child, respectively. */
+	private void mountSide(Object side) {
+		if (side instanceof Control<?> c) {
+			add(c);
+		} else if (side instanceof Component comp && getComponent() instanceof JSplitPane sp) {
+			// Raw AWT component escape hatch (Swing only); never exercised by the
+			// app today (every call site passes a Control), kept for API parity
+			// with the original class.
+			if (sp.getLeftComponent() == null) sp.setLeftComponent(comp);
+			else                               sp.setRightComponent(comp);
+		}
+	}
+
+	// ── Swing peer (used only by se.spacify.ui.render.swing.SwingUserInterface) ───
 
 	/** The skinned divider; painted by the active skin. */
 	public class SplitPaneDivider extends BasicSplitPaneDivider {
@@ -43,34 +86,28 @@ public class SplitPane extends Control<JSplitPane> {
 		}
 	}
 
-	public SplitPane() {
-		this.component = new JSplitPane();
-		component.setOpaque(false);
-		BasicSplitPaneDivider d = getDivider();
+	/** Builds this split pane's Swing peer. Called only by {@code SwingUserInterface}. */
+	public JSplitPane createSwingPeer() {
+		JSplitPane sp = new JSplitPane(orientation);
+		if (skinnedDivider) {
+			sp.setUI(new SplitPaneDividerUI());
+		} else {
+			sp.setOpaque(false);
+		}
+		BasicSplitPaneDivider d = dividerOf(sp);
 		if (d != null) d.setBorder(new EmptyBorder(0, 0, 0, 0));
+		return sp;
 	}
 
-	/**
-	 * @param left  a {@link Control} or a raw {@link Component}
-	 * @param right a {@link Control} or a raw {@link Component}
-	 */
-	public SplitPane(int orientation, Object left, Object right) {
-		this.component = new JSplitPane(orientation, comp(left), comp(right));
-		component.setUI(new SplitPaneDividerUI());
-		BasicSplitPaneDivider d = getDivider();
-		if (d != null) d.setBorder(new EmptyBorder(0, 0, 0, 0));
-		if (left instanceof Control<?> l)  { children.add(l); l.setParent(this); }
-		if (right instanceof Control<?> r) { children.add(r); r.setParent(this); }
-	}
-
-	private static Component comp(Object o) {
-		return o instanceof Control<?> c ? (Component) c.getComponent() : (Component) o;
+	public JSplitPane getSwingComponent() {
+		return getComponent() instanceof JSplitPane sp ? sp : null;
 	}
 
 	public BasicSplitPaneDivider getDivider() {
-		if (component.getUI() instanceof BasicSplitPaneUI ui) {
-			return ui.getDivider();
-		}
-		return null;
+		return getSwingComponent() != null ? dividerOf(getSwingComponent()) : null;
+	}
+
+	private static BasicSplitPaneDivider dividerOf(JSplitPane sp) {
+		return sp.getUI() instanceof BasicSplitPaneUI ui ? ui.getDivider() : null;
 	}
 }

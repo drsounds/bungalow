@@ -9,35 +9,40 @@ import se.spacify.ui.theme.ThemeManager;
 import se.spacify.ui.theme.ThemedTableCellRenderer;
 
 /**
- * A table control wrapping a {@link JTable} with Spacify's row height and the
- * skinned header/cell renderers installed. Reach the widget through
- * {@link #getComponent()}.
+ * A table control. Independent of any UI toolkit at the type level: the
+ * active {@link se.spacify.ui.render.UserInterface} creates this control's
+ * native peer — currently only implemented for Swing (a {@link JTable} with
+ * Spacify's row height and skinned header/cell renderers, see
+ * {@link #createSwingPeer()}). Bridging {@link TableModel}-based data to a
+ * fundamentally different Jexer table widget is a larger follow-up; the
+ * Jexer backend simply doesn't support {@code Table} yet. Swing-only code
+ * that needs the concrete widget can use {@link #getSwingComponent()}.
  */
-public class Table extends Control<JTable> {
+public class Table extends Control<Object> {
 
 	/** Row height in pixels, matching the Windows ListView default. */
 	public static final int ROW_HEIGHT = 24;
 
+	private Object[][] data;
+	private String[] columns;
+	private TableModel model;
+
 	public Table() {
-		this.component = new ZebraTable();
-		init();
+		initNative();
 	}
 
 	public Table(Object[][] data, String[] columns) {
-		this.component = new ZebraTable(data, columns);
-		init();
+		this.data = data;
+		this.columns = columns;
+		initNative();
 	}
 
 	public Table(TableModel model) {
-		this.component = new ZebraTable(model);
-		init();
+		this.model = model;
+		initNative();
 	}
 
-	private void init() {
-		component.setRowHeight(ROW_HEIGHT);
-		component.getTableHeader().setDefaultRenderer(new TableHeaderRenderer(this));
-		component.setDefaultRenderer(Table.class, new SpaceTableCellRenderer(this));
-	}
+	// ── Swing peer (used only by se.spacify.ui.render.swing.SwingUserInterface) ───
 
 	/**
 	 * A {@link JTable} that, when {@link ThemeManager#isFillEmptyRows()} is on,
@@ -67,5 +72,20 @@ public class Table extends Control<JTable> {
 				g.fillRect(0, y, w, rowH);
 			}
 		}
+	}
+
+	/** Builds this table's Swing peer. Called only by {@code SwingUserInterface}. */
+	public JTable createSwingPeer() {
+		ZebraTable t = model != null ? new ZebraTable(model)
+			: columns != null ? new ZebraTable(data, columns)
+			: new ZebraTable();
+		t.setRowHeight(ROW_HEIGHT);
+		t.getTableHeader().setDefaultRenderer(new TableHeaderRenderer(this));
+		t.setDefaultRenderer(Table.class, new SpaceTableCellRenderer(this));
+		return t;
+	}
+
+	public JTable getSwingComponent() {
+		return getComponent() instanceof JTable t ? t : null;
 	}
 }

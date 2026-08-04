@@ -108,12 +108,12 @@ public class PlaylistView extends AbstractMusicListView {
         down.getSwingComponent().addActionListener(e -> move(+1));
         bar.add(rename);
         bar.add(delete);
-        bar.getComponent().addSeparator();
+        bar.getSwingComponent().addSeparator();
         bar.add(add);
         bar.add(remove);
         bar.add(up);
         bar.add(down);
-        return bar.getComponent();
+        return bar.getSwingComponent();
     }
 
     // ── Navigation ──────────────────────────────────────────────────────────────

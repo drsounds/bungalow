@@ -68,7 +68,7 @@ public class WMP8Skin extends WMPSkin {
 
 	@Override
 	public void paintToolBar(ToolBar control, Graphics2D g2) {
-		int w = control.getComponent().getWidth(), h = control.getComponent().getHeight();
+		int w = control.getSwingComponent().getWidth(), h = control.getSwingComponent().getHeight();
 		g2.setPaint(ThemeManager.getTintColor());
 		g2.fillRect(0, 0, w, h);
 	}

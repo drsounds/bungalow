@@ -283,7 +283,7 @@ public class MusicTable extends JPanel {
 			}
 		};
 		table = new Table(model);
-		jtable = table.getComponent();
+		jtable = table.getSwingComponent();
 		jtable.setFillsViewportHeight(true);
 		jtable.setShowGrid(false);
 		jtable.setIntercellSpacing(new Dimension(0, 0));

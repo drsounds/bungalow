@@ -66,23 +66,23 @@ public class WMP1XChrome extends Chrome {
                 centerPanel.add(viewStack);
 
                 leftSplit = new SplitPane(SplitPane.HORIZONTAL_SPLIT, leftLibraryMenu, centerPanel);
-                leftSplit.getComponent().setDividerLocation(220);
-                leftSplit.getComponent().setDividerSize(1);
+                leftSplit.getSwingComponent().setDividerLocation(220);
+                leftSplit.getSwingComponent().setDividerSize(1);
                 // Keep the leftLibraryMenu at its width and let the centre view absorb resizes.
-                leftSplit.getComponent().setResizeWeight(0.0);
+                leftSplit.getSwingComponent().setResizeWeight(0.0);
                 // Empty (non-UIResource) border survives the Nimbus reinstall in
                 // rebuildTheme(); a null border would get a default border re-installed.
-                leftSplit.getComponent().setBorder(BorderFactory.createEmptyBorder());
-                leftSplit.getComponent().setContinuousLayout(true);
+                leftSplit.getSwingComponent().setBorder(BorderFactory.createEmptyBorder());
+                leftSplit.getSwingComponent().setContinuousLayout(true);
 
                 mainSplit = new SplitPane(SplitPane.HORIZONTAL_SPLIT, leftSplit, new NowPlayingPanel(viewStack));
-                mainSplit.getComponent().setDividerLocation(880);
-                mainSplit.getComponent().setDividerSize(1);
+                mainSplit.getSwingComponent().setDividerLocation(880);
+                mainSplit.getSwingComponent().setDividerSize(1);
                 // Give all extra width to the left (leftLibraryMenu + centre); the right
                 // Now Playing / queue panel keeps its width as the window resizes.
-                mainSplit.getComponent().setResizeWeight(1.0);
-                mainSplit.getComponent().setBorder(BorderFactory.createEmptyBorder());
-                mainSplit.getComponent().setContinuousLayout(true);
+                mainSplit.getSwingComponent().setResizeWeight(1.0);
+                mainSplit.getSwingComponent().setBorder(BorderFactory.createEmptyBorder());
+                mainSplit.getSwingComponent().setContinuousLayout(true);
 
                 appPanel.add(mainSplit, BorderLayout.CENTER);
 

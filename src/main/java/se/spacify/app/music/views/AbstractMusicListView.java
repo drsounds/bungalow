@@ -67,7 +67,7 @@ public abstract class AbstractMusicListView extends View {
 		// be constant; the SourceAdapter forwards the per-row hooks to this view.
 		musicTable = new MusicTable(viewStack, getColumns(), showsLibraryToggle(), new SourceAdapter());
 		model = musicTable.getModel();
-		table = musicTable.getTable().getComponent();
+		table = musicTable.getTable().getSwingComponent();
 
 		// ── CRUD toolbar ───────────────────────────────────────────────────────
 		toolbar = new ToolBar();
@@ -110,7 +110,7 @@ public abstract class AbstractMusicListView extends View {
 			toolbar.add(addBtn);
 			toolbar.add(editBtn);
 			toolbar.add(deleteBtn);
-			toolbar.getComponent().addSeparator();
+			toolbar.getSwingComponent().addSeparator();
 			toolbar.add(scanBtn);
 		}
 		toolbar.add(refreshBtn);
@@ -139,29 +139,29 @@ public abstract class AbstractMusicListView extends View {
 			groupToggle = new ToggleButton("Grouped");
 			groupToggle.getComponent().addActionListener(e -> setGrouped(groupToggle.getComponent().isSelected()));
 
-			toolbar.getComponent().addSeparator();
+			toolbar.getSwingComponent().addSeparator();
 			toolbar.add(groupToggle);
-			toolbar.getComponent().add(groupingChooser);
+			toolbar.getSwingComponent().add(groupingChooser);
 		}
 
 		// Subclass-contributed toolbar control (e.g. a catalogue search field).
 		JComponent accessory = toolbarAccessory();
 		if (accessory != null) {
-			toolbar.getComponent().addSeparator();
-			toolbar.getComponent().add(accessory);
+			toolbar.getSwingComponent().addSeparator();
+			toolbar.getSwingComponent().add(accessory);
 		}
 
 		JPanel north = new JPanel();
 		north.setLayout(new BoxLayout(north, BoxLayout.PAGE_AXIS));
 		north.setOpaque(false);
-		north.add(toolbar.getComponent(), BorderLayout.CENTER);
+		north.add(toolbar.getSwingComponent(), BorderLayout.CENTER);
 		//add(headerLabel, BorderLayout.NORTH);
 
 		getSwingComponent().add(north, BorderLayout.NORTH);
 		getSwingComponent().add(musicTable, BorderLayout.CENTER);
 
 		bottomToolbar = new ToolBar();
-		bottomToolbar.getComponent().add(new JButton("Test"));
+		bottomToolbar.getSwingComponent().add(new JButton("Test"));
 		add(bottomToolbar, BorderLayout.SOUTH);
 
 		updateColors();

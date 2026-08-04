@@ -349,7 +349,7 @@ public class MainWindow {
 
     private void applySidebar(boolean visible) {
         getLeftLibraryMenu().setVisible(visible);
-        getLeftSplit().getComponent().setDividerLocation(visible ? 220 : 0);
+        getLeftSplit().getSwingComponent().setDividerLocation(visible ? 220 : 0);
         getLeftSplit().revalidate();
         getLeftSplit().repaint();
     }
@@ -360,10 +360,10 @@ public class MainWindow {
         immersive = on;
         if (on) {
             applySidebar(false);
-            getMainSplit().getComponent().setDividerLocation(1.0);   // collapse the right Now Playing panel
+            getMainSplit().getSwingComponent().setDividerLocation(1.0);   // collapse the right Now Playing panel
         } else {
             applySidebar(userWantsSidebar);
-            getMainSplit().getComponent().setDividerLocation(880);
+            getMainSplit().getSwingComponent().setDividerLocation(880);
         }
         getMainSplit().revalidate();
         getMainSplit().repaint();

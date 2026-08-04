@@ -28,11 +28,11 @@ public class NowPlayingView extends View {
         getSwingComponent().setBackground(Color.BLACK);
 
         topToolbar = new ToolBar();
-        topToolbar.getComponent().setFloatable(false);
-        topToolbar.getComponent().setOpaque(true);
-        topToolbar.getComponent().setBackground(ThemeManager.getTintColor());
+        topToolbar.getSwingComponent().setFloatable(false);
+        topToolbar.getSwingComponent().setOpaque(true);
+        topToolbar.getSwingComponent().setBackground(ThemeManager.getTintColor());
         add(topToolbar, BorderLayout.NORTH);
-        topToolbar.getComponent().add(new JButton("<"));
+        topToolbar.getSwingComponent().add(new JButton("<"));
         // ── Player area ──────────────────────────────────────────────────────
         playerContainer = new JPanel(new BorderLayout());
         playerContainer.setOpaque(false);

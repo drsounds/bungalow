@@ -26,16 +26,16 @@ public class LibraryView extends View {
         };
 
         table = new Table(data, columns);
-        table.getComponent().setFillsViewportHeight(true);
-        table.getComponent().setOpaque(true);
-        table.getComponent().setShowGrid(false);
-        table.getComponent().setIntercellSpacing(new Dimension(0, 0));
+        table.getSwingComponent().setFillsViewportHeight(true);
+        table.getSwingComponent().setOpaque(true);
+        table.getSwingComponent().setShowGrid(false);
+        table.getSwingComponent().setIntercellSpacing(new Dimension(0, 0));
 
         ThemedTableCellRenderer renderer = new ThemedTableCellRenderer();
-        for (int i = 0; i < table.getComponent().getColumnCount(); i++)
-            table.getComponent().getColumnModel().getColumn(i).setCellRenderer(renderer);
+        for (int i = 0; i < table.getSwingComponent().getColumnCount(); i++)
+            table.getSwingComponent().getColumnModel().getColumn(i).setCellRenderer(renderer);
 
-        scroll = new JScrollPane(table.getComponent());
+        scroll = new JScrollPane(table.getSwingComponent());
         scroll.setBorder(BorderFactory.createEmptyBorder());
         scroll.setOpaque(true);
         scroll.getViewport().setOpaque(true);
@@ -51,9 +51,9 @@ public class LibraryView extends View {
         Color fg   = ThemeManager.getForeground();
         Color grid = ThemeManager.getGridColor();
 
-        table.getComponent().setBackground(bg);
-        table.getComponent().setForeground(fg);
-        table.getComponent().setGridColor(grid);
+        table.getSwingComponent().setBackground(bg);
+        table.getSwingComponent().setForeground(fg);
+        table.getSwingComponent().setGridColor(grid);
         scroll.setBackground(bg);
         scroll.getViewport().setBackground(bg);
         table.repaint();
