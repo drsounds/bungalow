@@ -79,12 +79,7 @@ public abstract class AbstractMusicListView extends View {
 			ToolButton addBtn = new ToolButton("Add");
 			ToolButton editBtn = new ToolButton("Edit");
 			ToolButton deleteBtn = new ToolButton("Delete");
-			ToolButton scanBtn = new ToolButton("Scan…");
 
-			scanBtn.getComponent().addActionListener(e -> LibraryScanAction.run(getComponent(), () -> {
-				reloadAndRegroup();
-				LibraryEvents.fireChanged();
-			}));
 			addBtn.getComponent().addActionListener(e -> {
 				onAdd();
 				reloadAndRegroup();
@@ -110,8 +105,16 @@ public abstract class AbstractMusicListView extends View {
 			toolbar.add(addBtn);
 			toolbar.add(editBtn);
 			toolbar.add(deleteBtn);
-			toolbar.getComponent().addSeparator();
-			toolbar.add(scanBtn);
+
+			if (showsScan()) {
+				ToolButton scanBtn = new ToolButton("Scan…");
+				scanBtn.getComponent().addActionListener(e -> LibraryScanAction.run(getComponent(), () -> {
+					reloadAndRegroup();
+					LibraryEvents.fireChanged();
+				}));
+				toolbar.getComponent().addSeparator();
+				toolbar.add(scanBtn);
+			}
 		}
 		toolbar.add(refreshBtn);
 
@@ -191,6 +194,15 @@ public abstract class AbstractMusicListView extends View {
 	 * Whether this view shows Add/Edit/Delete/Scan; read-only views return false.
 	 */
 	protected boolean isEditable() {
+		return true;
+	}
+
+	/**
+	 * Whether the toolbar offers "Scan…" (a local-file library rescan). Editable,
+	 * non-music CRUD lists (e.g. custom tables) override this to hide it; constant —
+	 * queried during construction.
+	 */
+	protected boolean showsScan() {
 		return true;
 	}
 

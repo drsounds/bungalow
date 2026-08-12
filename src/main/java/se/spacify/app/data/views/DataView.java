@@ -3,6 +3,7 @@ package se.spacify.app.data.views;
 import java.awt.Desktop;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 import org.w3c.dom.Element;
 
@@ -15,10 +16,17 @@ import se.spacify.navigation.TabBarView;
 import se.spacify.navigation.ViewStack;
 
 /**
- * The {@code spacify:table...} screen (index of custom tables, a table's row list,
- * a single row, or a row's related-rows view — see {@link DataController}). A
- * {@link TabBarView} rendering the controller's single {@code <page>} as its one tab,
- * exactly like {@code se.spacify.app.testapp.views.TestAppView}.
+ * The {@code spacify:table:<slug>:<row_id>[:<related slug>]} screen: a single row,
+ * or a row's related-rows view — see {@link DataController}. A {@link TabBarView}
+ * rendering the controller's single {@code <page>} as its one tab, exactly like
+ * {@code se.spacify.app.testapp.views.TestAppView}.
+ *
+ * <p>The table-of-tables index ({@code spacify:table}) and a table's row list
+ * ({@code spacify:table:<slug>}) are handled instead by
+ * {@link DataTablesListView}/{@link DataTableRowsView}, which render through the
+ * same {@link se.spacify.controls.Table} grid Library's own list views use;
+ * {@link #URI} only matches once a row id is present so those two screens are never
+ * routed here.
  *
  * <p>One postback convention is handled here rather than by the controller: a button
  * {@code onclick="nav:<target>"} is pure navigation, not a data mutation, so it never
@@ -28,10 +36,12 @@ import se.spacify.navigation.ViewStack;
  */
 public class DataView extends TabBarView {
 
+    private static final Pattern URI = Pattern.compile("spacify:table:[^:]+:[^:]+(:[^:]+)?");
+
     private final Spider spider = new Spider();
 
     /** The URI last navigated to, replayed by postbacks that aren't a {@code nav:} action. */
-    private String currentUri = "spacify:table";
+    private String currentUri;
 
     public DataView(ViewStack viewStack, DataRepository repo) {
         super(viewStack);
@@ -40,7 +50,7 @@ public class DataView extends TabBarView {
 
     @Override
     public boolean acceptsUri(String uri) {
-        return uri != null && uri.startsWith("spacify:table");
+        return uri != null && URI.matcher(uri).matches();
     }
 
     @Override

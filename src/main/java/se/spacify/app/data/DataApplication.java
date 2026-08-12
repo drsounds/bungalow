@@ -7,6 +7,8 @@ import se.spacify.app.Application;
 import se.spacify.app.ApplicationContext;
 import se.spacify.app.SidebarHandle;
 import se.spacify.app.data.model.DataTable;
+import se.spacify.app.data.views.DataTableRowsView;
+import se.spacify.app.data.views.DataTablesListView;
 import se.spacify.app.data.views.DataView;
 import se.spacify.aspect.Aspect;
 import se.spacify.aspect.AspectManager;
@@ -15,10 +17,14 @@ import se.spacify.navigation.SidebarNode;
 /**
  * Built-in plugin letting users CRUD their own custom tables — arbitrary named
  * tables with an unlimited, user-defined set of typed fields (text, link, number,
- * float, timestamp) — without touching code. Registers the {@code spacify:table...}
- * {@link DataView} (see it and {@link se.spacify.app.data.controller.DataController}
- * for the four screens it renders) and a "Custom Tables" sidebar node whose children
- * track the live table list.
+ * float, timestamp) — without touching code. Registers three {@code spacify:table...}
+ * views, mirroring how {@code se.spacify.app.library.concept.LibraryConcept} registers
+ * one view per Library screen: {@link DataTablesListView} (the table-of-tables index)
+ * and {@link DataTableRowsView} (one table's row list) render through the same
+ * {@link se.spacify.controls.Table} grid Library's own list views use, while
+ * {@link DataView} (see it and {@link se.spacify.app.data.controller.DataController})
+ * still renders the row-detail/related-rows screens. Also adds a "Custom Tables"
+ * sidebar node whose children track the live table list.
  */
 public class DataApplication extends Application {
 
@@ -42,6 +48,8 @@ public class DataApplication extends Application {
 
     @Override
     public void onActivate(ApplicationContext ctx) {
+        ctx.registerView(new DataTablesListView(ctx.viewStack(), repo));
+        ctx.registerView(new DataTableRowsView(ctx.viewStack(), repo));
         ctx.registerView(new DataView(ctx.viewStack(), repo));
 
         sidebar = ctx.addSidebarNode(new SidebarNode("Custom Tables", "spacify:table"));

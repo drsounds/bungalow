@@ -96,6 +96,18 @@ public final class DataRepository {
         return t;
     }
 
+    public DataTable renameTable(DataTable t, String name) throws SQLException {
+        if (name == null || name.isBlank()) {
+            throw new IllegalArgumentException("table name is required");
+        }
+        t.setName(name.trim());
+        t.setUpdatedAt(System.currentTimeMillis());
+        tables().update(t);
+        appendEvent(tableUri(t.getSlug()), "table.renamed", null, null, name.trim());
+        notifyTablesChanged();
+        return t;
+    }
+
     public void deleteTable(DataTable t) throws SQLException {
         t.setDeletedAt(System.currentTimeMillis());
         tables().update(t);

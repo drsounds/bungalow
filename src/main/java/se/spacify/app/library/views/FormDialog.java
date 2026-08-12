@@ -4,12 +4,12 @@ import javax.swing.*;
 import java.awt.*;
 
 /** Tiny helper that lays out labelled fields and shows them in an OK/Cancel modal. */
-final class FormDialog {
+public final class FormDialog {
 
     private FormDialog() {}
 
     /** @return true if the user pressed OK. */
-    static boolean show(Component parent, String title, String[] labels, JComponent[] fields) {
+    public static boolean show(Component parent, String title, String[] labels, JComponent[] fields) {
         JPanel form = new JPanel(new GridBagLayout());
         GridBagConstraints c = new GridBagConstraints();
         c.insets = new Insets(4, 4, 4, 4);
