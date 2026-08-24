@@ -58,7 +58,7 @@ public class Spot09Chrome extends Chrome {
                 if (leftLibraryMenu == null) leftLibraryMenu = new LeftLibraryMenu(viewStack);
                 leftLibraryMenu.getComponent().setOpaque(false);
                 centerPanel = new Panel(new BorderLayout());
-                add(viewStack);
+                centerPanel.add(viewStack);
 
                 leftSplit = new SplitPane(SplitPane.HORIZONTAL_SPLIT, leftLibraryMenu, centerPanel);
                 leftSplit.getComponent().setDividerLocation(220);
