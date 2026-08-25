@@ -18,10 +18,13 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import com.j256.ormlite.dao.Dao;
 
 import se.spacify.app.playlist.upsl.Base62;
+import se.spacify.app.data.model.AggregateKind;
+import se.spacify.app.data.model.DataAggregate;
 import se.spacify.app.data.model.DataField;
 import se.spacify.app.data.model.DataRelation;
 import se.spacify.app.data.model.DataRow;
@@ -60,17 +63,22 @@ public final class DataRepository {
     private Dao<DataField, String>    fields()   { return db().dao(DataField.class, String.class); }
     private Dao<DataRow, String>      rows()     { return db().dao(DataRow.class, String.class); }
     private Dao<DataValue, String>    values()   { return db().dao(DataValue.class, String.class); }
-    private Dao<DataRelation, String> relations() { return db().dao(DataRelation.class, String.class); }
-    private Dao<SpacifyEvent, String> events()   { return db().dao(SpacifyEvent.class, String.class); }
-    private Dao<EventsHead, Integer>  head()     { return db().dao(EventsHead.class, Integer.class); }
+    private Dao<DataRelation, String>  relations()  { return db().dao(DataRelation.class, String.class); }
+    private Dao<DataAggregate, String> aggregates() { return db().dao(DataAggregate.class, String.class); }
+    private Dao<SpacifyEvent, String>  events()    { return db().dao(SpacifyEvent.class, String.class); }
+    private Dao<EventsHead, Integer>   head()      { return db().dao(EventsHead.class, Integer.class); }
 
     /** One relation-derived tab to render on a row's detail page: rows of {@link #listedTable()}
      *  whose {@link #pointerField()} equals the base row's URI. Both relation kinds resolve to
      *  this same shape — for MANY_TO_MANY, {@code listedTable} is the junction table and
      *  {@code pointerField} is whichever of its two FK fields points back at the base table, so
      *  the junction rows themselves (including any "special fields" they carry) are what's
-     *  listed, with their other FK field rendering as an ordinary LINK cell/button. */
-    public record RelationTab(String label, DataTable listedTable, DataField pointerField) {}
+     *  listed, with their other FK field rendering as an ordinary LINK cell/button. Carries the
+     *  owning {@link #relation()} so callers can resolve its configured columns/aggregates. */
+    public record RelationTab(String label, DataTable listedTable, DataField pointerField, DataRelation relation) {}
+
+    /** One computed sum/avg over a {@link RelationTab}'s current rows, pre-formatted for display. */
+    public record AggregateResult(String label, String formattedValue) {}
 
     /** A row-list filter for the Swing grid: an optional row-name substring plus zero or more
      *  belongsTo-field-equals constraints (one per selected filter dropdown). */
@@ -509,7 +517,7 @@ public final class DataRepository {
             return null;
         }
         String label = r.getName() != null && !r.getName().isBlank() ? r.getName() : listedTable.getName();
-        return new RelationTab(label, listedTable, pointerField);
+        return new RelationTab(label, listedTable, pointerField, r);
     }
 
     /** Rows whose {@code pointerField} holds {@code targetRowUri} — the resolution behind every
@@ -537,6 +545,101 @@ public final class DataRepository {
         return relations().queryBuilder().where()
             .eq("source_table_id", table.getId()).and().eq("kind", RelationKind.BELONGS_TO)
             .and().isNull("deleted_at").query();
+    }
+
+    // ── Relation columns/aggregates (Phase 2) ───────────────────────────────────
+
+    /** The fields of {@code tab}'s listed table to show as columns — every field when the
+     *  relation's column selection is unset (the default, matching pre-Phase-2 behavior for
+     *  every existing relation), an explicit subset in the configured order when set, or none
+     *  at all when explicitly configured to an empty selection. */
+    public List<DataField> columnFieldsFor(RelationTab tab) throws SQLException {
+        String csv = tab.relation().getColumnFieldIds();
+        if (csv == null) {
+            return listFields(tab.listedTable());
+        }
+        if (csv.isBlank()) {
+            return List.of();
+        }
+        List<DataField> out = new ArrayList<>();
+        for (String id : csv.split(",")) {
+            DataField f = findField(id.trim());
+            if (f != null && f.getDeletedAt() == null && tab.listedTable().getId().equals(f.getTableId())) {
+                out.add(f);
+            }
+        }
+        return out;
+    }
+
+    /** Set {@code relation}'s visible columns to exactly {@code fields} (in the given order), or
+     *  to "every field" (the default) when {@code fields} is {@code null}. */
+    public void setRelationColumns(DataRelation relation, List<DataField> fields) throws SQLException {
+        String csv = fields == null ? null
+            : fields.stream().map(DataField::getId).collect(Collectors.joining(","));
+        relation.setColumnFieldIds(csv);
+        relations().update(relation);
+        appendEvent(tableUri(relation.getSourceTableSlug()), "relation.columns.updated", null,
+            relation.getId(), csv);
+    }
+
+    /** Attach a sum/avg rollup, over {@code field} (must be NUMBER or FLOAT), to {@code relation}'s tab. */
+    public DataAggregate defineAggregate(DataRelation relation, DataField field, AggregateKind kind, String label)
+            throws SQLException {
+        if (field.getType() != FieldType.NUMBER && field.getType() != FieldType.FLOAT) {
+            throw new IllegalArgumentException("aggregate field must be number or float");
+        }
+        DataAggregate a = new DataAggregate();
+        a.setRelationId(relation.getId());
+        a.setFieldId(field.getId());
+        a.setKind(kind);
+        a.setLabel(label);
+        a.setCreatedAt(System.currentTimeMillis());
+        aggregates().create(a);
+        appendEvent(tableUri(relation.getSourceTableSlug()), "aggregate.created", null, a.getId(),
+            kind.name() + ":" + field.getSlug());
+        return a;
+    }
+
+    /** The non-deleted aggregates attached to {@code relation}, in creation order. */
+    public List<DataAggregate> aggregatesFor(DataRelation relation) throws SQLException {
+        return aggregates().queryBuilder().orderBy("created_at", true).where()
+            .eq("relation_id", relation.getId()).and().isNull("deleted_at").query();
+    }
+
+    /** Compute every aggregate attached to {@code tab}'s relation over {@code rows} (the same
+     *  rows already resolved for that tab, so this doesn't re-query them) — skips an aggregate
+     *  whose field was since deleted, and a row with no value for the field simply doesn't count
+     *  toward the sum/average rather than being treated as zero. */
+    public List<AggregateResult> computeAggregates(RelationTab tab, List<DataRow> rows) throws SQLException {
+        List<AggregateResult> out = new ArrayList<>();
+        for (DataAggregate a : aggregatesFor(tab.relation())) {
+            DataField field = findField(a.getFieldId());
+            if (field == null || field.getDeletedAt() != null) {
+                continue;
+            }
+            double sum = 0;
+            int count = 0;
+            for (DataRow r : rows) {
+                List<DataValue> values = valuesFor(r.getId(), field.getId());
+                if (values.isEmpty()) {
+                    continue;
+                }
+                try {
+                    sum += Double.parseDouble(values.get(0).getValue());
+                    count++;
+                } catch (NumberFormatException ignored) {
+                    // A malformed stored value just doesn't count toward the rollup.
+                }
+            }
+            boolean isAvg = a.getKind() == AggregateKind.AVG;
+            double value = isAvg ? (count > 0 ? sum / count : 0) : sum;
+            String formatted = (!isAvg && field.getType() == FieldType.NUMBER)
+                ? Format.number((long) value) : Format.decimal(value);
+            String label = a.getLabel() != null && !a.getLabel().isBlank() ? a.getLabel()
+                : (isAvg ? "Average " : "Total ") + field.getName();
+            out.add(new AggregateResult(label, formatted));
+        }
+        return out;
     }
 
     /**

@@ -62,6 +62,18 @@ public class DataRelation {
     @DatabaseField(columnName = "junction_target_field_id")
     private String junctionTargetFieldId;
 
+    // No index=true: unlike the columns above (indexed since this table's original creation),
+    // this one was added later via DatabaseManager's ALTER-TABLE reconciliation, which runs
+    // after ORMLite's own createTableIfNotExists — an index=true here would make
+    // createTableIfNotExists try to build the index before the column exists on an
+    // already-populated table (see the identical note on DataRow.slug).
+    /** Comma-separated {@link DataField} ids of the listed table's columns to show on this
+     *  relation's tab, in order; {@code null} (the default for every relation predating this
+     *  column) means "show every field", matching the original, unconfigurable behavior. An
+     *  explicit empty string means "show none". */
+    @DatabaseField(columnName = "column_field_ids")
+    private String columnFieldIds;
+
     @DatabaseField(canBeNull = false, columnName = "created_at")
     private long createdAt;
 
@@ -93,6 +105,8 @@ public class DataRelation {
     public void         setJunctionSourceFieldId(String v) { this.junctionSourceFieldId = v; }
     public String       getJunctionTargetFieldId()      { return junctionTargetFieldId; }
     public void         setJunctionTargetFieldId(String v) { this.junctionTargetFieldId = v; }
+    public String       getColumnFieldIds()             { return columnFieldIds; }
+    public void         setColumnFieldIds(String v)      { this.columnFieldIds = v; }
     public long          getCreatedAt()                  { return createdAt; }
     public void          setCreatedAt(long v)             { this.createdAt = v; }
     public Long           getDeletedAt()                  { return deletedAt; }

@@ -245,14 +245,18 @@ public class DataController extends Controller {
         return out;
     }
 
-    /** One model per {@link DataRepository.RelationTab}, each becoming a sibling {@code <page>}. */
+    /** One model per {@link DataRepository.RelationTab}, each becoming a sibling {@code <page>}.
+     *  Columns are the relation's configured subset ({@link DataRepository#columnFieldsFor}) —
+     *  every field by default — and aggregates are computed over the same rows already resolved
+     *  for the tab, not a separate query. */
     private List<Map<String, Object>> relationTabModels(DataTable table, DataRow row) throws SQLException {
         List<Map<String, Object>> out = new ArrayList<>();
         String rowUri = repo.rowUri(table.getSlug(), row.getId());
         for (DataRepository.RelationTab tab : repo.relationTabsFor(table)) {
-            List<DataField> listedFields = repo.listFields(tab.listedTable());
+            List<DataField> listedFields = repo.columnFieldsFor(tab);
+            List<DataRow> tabRows = repo.rowsPointingAt(tab.pointerField(), rowUri);
             List<Map<String, Object>> rowModels = new ArrayList<>();
-            for (DataRow rr : repo.rowsPointingAt(tab.pointerField(), rowUri)) {
+            for (DataRow rr : tabRows) {
                 rowModels.add(rowModel(rr, listedFields));
             }
             Map<String, Object> m = new LinkedHashMap<>();
@@ -260,6 +264,19 @@ public class DataController extends Controller {
             m.put("tableSlug", tab.listedTable().getSlug());
             m.put("fields", fieldModels(listedFields));
             m.put("rows", rowModels);
+            m.put("aggregates", aggregateModels(tab, tabRows));
+            out.add(m);
+        }
+        return out;
+    }
+
+    private List<Map<String, Object>> aggregateModels(DataRepository.RelationTab tab, List<DataRow> tabRows)
+            throws SQLException {
+        List<Map<String, Object>> out = new ArrayList<>();
+        for (DataRepository.AggregateResult ar : repo.computeAggregates(tab, tabRows)) {
+            Map<String, Object> m = new LinkedHashMap<>();
+            m.put("label", Format.xml(ar.label()));
+            m.put("value", Format.xml(ar.formattedValue()));
             out.add(m);
         }
         return out;
@@ -411,6 +428,13 @@ public class DataController extends Controller {
             <page title="${tab.label}">
                 <vbox>
                     <text>${tab.label} (${#tab.rows})</text>
+                    % if #tab.aggregates > 0 then
+                    <hbox>
+                        % for ai,agg in ipairs(tab.aggregates) do
+                        <text>${agg.label}: ${agg.value}</text>
+                        % end
+                    </hbox>
+                    % end
                     <hbox>
                         % for fi,rf in ipairs(tab.fields) do
                         <text>${rf.name}</text>

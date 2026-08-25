@@ -16,6 +16,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import se.spacify.app.data.controller.DataController;
+import se.spacify.app.data.model.AggregateKind;
 import se.spacify.app.data.model.DataField;
 import se.spacify.app.data.model.DataRelation;
 import se.spacify.app.data.model.DataRow;
@@ -228,6 +229,99 @@ public class DataAppTest {
         } finally {
             repo.deleteTable(junction);
             repo.deleteTable(venues);
+            repo.deleteTable(artists);
+        }
+    }
+
+    @Test
+    public void relationColumnsRestrictWhichFieldsAreShown() throws Exception {
+        DataTable artists = repo.createTable("Artists " + UUID.randomUUID());
+        DataTable albums = repo.createTable("Albums " + UUID.randomUUID());
+        try {
+            repo.addField(artists, "Name", "text");
+            DataField title = repo.addField(albums, "Title", "text");
+            DataField year = repo.addField(albums, "Year", "number");
+            DataRelation relation = repo.defineBelongsTo(albums, "Artist", artists, false, null);
+            DataField artistLink = repo.findField(relation.getFieldId());
+
+            DataRepository.RelationTab tab = repo.relationTabsFor(artists).get(0);
+            // Default (unconfigured): every field of the listed table.
+            assertEquals(3, repo.columnFieldsFor(tab).size());
+
+            repo.setRelationColumns(relation, List.of(title));
+            List<DataField> configured = repo.columnFieldsFor(repo.relationTabsFor(artists).get(0));
+            assertEquals(1, configured.size());
+            assertEquals(title.getId(), configured.get(0).getId());
+
+            DataRow artistRow = repo.createRow(artists, repo.listFields(artists), Map.of("f_name", "Test Artist"));
+            String artistUri = repo.rowUri(artists.getSlug(), artistRow.getId());
+            repo.createRow(albums, repo.listFields(albums), Map.of(
+                "f_title", "Restricted Album", "f_year", "1999", "f_" + artistLink.getSlug(), artistUri));
+
+            Element detail = get(artistUri);
+            String rendered = textOf(detail);
+            assertTrue("expected the configured column's header", rendered.contains("Title"));
+            assertTrue("expected the row's value for the configured column", rendered.contains("Restricted Album"));
+            assertTrue("did not expect the unconfigured column's header", !rendered.contains("Year"));
+
+            // Explicitly empty selection: no columns at all.
+            repo.setRelationColumns(relation, List.of());
+            assertTrue(repo.columnFieldsFor(repo.relationTabsFor(artists).get(0)).isEmpty());
+        } finally {
+            repo.deleteTable(albums);
+            repo.deleteTable(artists);
+        }
+    }
+
+    @Test
+    public void relationAggregatesComputeSumAndAvg() throws Exception {
+        DataTable artists = repo.createTable("Artists " + UUID.randomUUID());
+        DataTable albums = repo.createTable("Albums " + UUID.randomUUID());
+        try {
+            repo.addField(artists, "Name", "text");
+            repo.addField(albums, "Title", "text");
+            DataField sales = repo.addField(albums, "Sales", "number");
+            DataRelation relation = repo.defineBelongsTo(albums, "Artist", artists, false, null);
+            DataField artistLink = repo.findField(relation.getFieldId());
+
+            repo.defineAggregate(relation, sales, AggregateKind.SUM, null);
+            repo.defineAggregate(relation, sales, AggregateKind.AVG, "Average sales");
+
+            DataRow artistRow = repo.createRow(artists, repo.listFields(artists), Map.of("f_name", "Test Artist"));
+            String artistUri = repo.rowUri(artists.getSlug(), artistRow.getId());
+            repo.createRow(albums, repo.listFields(albums),
+                Map.of("f_title", "One", "f_sales", "100", "f_" + artistLink.getSlug(), artistUri));
+            repo.createRow(albums, repo.listFields(albums),
+                Map.of("f_title", "Two", "f_sales", "300", "f_" + artistLink.getSlug(), artistUri));
+
+            DataRepository.RelationTab tab = repo.relationTabsFor(artists).get(0);
+            List<DataRow> tabRows = repo.rowsPointingAt(tab.pointerField(), artistUri);
+            assertEquals(2, tabRows.size());
+            List<DataRepository.AggregateResult> results = repo.computeAggregates(tab, tabRows);
+            assertEquals(2, results.size());
+            // Don't assume definition order survives a possible same-millisecond tie between
+            // the two defineAggregate calls above — match by label instead.
+            DataRepository.AggregateResult avg = results.stream()
+                .filter(r -> "Average sales".equals(r.label())).findFirst().orElseThrow();
+            DataRepository.AggregateResult sum = results.stream()
+                .filter(r -> r != avg).findFirst().orElseThrow();
+            assertEquals("400", sum.formattedValue());
+            assertEquals("200.00", avg.formattedValue());
+
+            Element detail = get(artistUri);
+            String rendered = textOf(detail);
+            assertTrue("expected the sum in the rendered tab", rendered.contains("400"));
+            assertTrue("expected the average in the rendered tab", rendered.contains("200.00"));
+
+            // A field that fails validation (non-numeric type) is rejected outright.
+            try {
+                repo.defineAggregate(relation, repo.findField(artistLink.getId()), AggregateKind.SUM, null);
+                org.junit.Assert.fail("expected defineAggregate to reject a non-numeric field");
+            } catch (IllegalArgumentException expected) {
+                // expected
+            }
+        } finally {
+            repo.deleteTable(albums);
             repo.deleteTable(artists);
         }
     }

@@ -13,6 +13,7 @@ import java.awt.event.MouseEvent;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -30,6 +31,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
+import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
@@ -38,6 +40,7 @@ import javax.swing.table.DefaultTableModel;
 
 import se.spacify.app.data.DataRepository;
 import se.spacify.app.data.Format;
+import se.spacify.app.data.model.AggregateKind;
 import se.spacify.app.data.model.DataField;
 import se.spacify.app.data.model.DataRelation;
 import se.spacify.app.data.model.DataRow;
@@ -132,6 +135,8 @@ public class DataTableRowsView extends View {
         ToolButton addFieldBtn  = new ToolButton("Add field…");
         ToolButton deleteFieldBtn = new ToolButton("Delete field…");
         ToolButton addRelationBtn = new ToolButton("Add relation (M:N)…");
+        ToolButton configureColumnsBtn = new ToolButton("Configure relation columns…");
+        ToolButton addAggregateBtn = new ToolButton("Add relation aggregate…");
         ToolButton refreshBtn   = new ToolButton("Refresh");
 
         backBtn.getComponent().addActionListener(e -> getViewStack().navigate("spacify:table"));
@@ -144,6 +149,8 @@ public class DataTableRowsView extends View {
         addFieldBtn.getComponent().addActionListener(e -> { onAddField(); reload(); });
         deleteFieldBtn.getComponent().addActionListener(e -> { onDeleteField(); reload(); });
         addRelationBtn.getComponent().addActionListener(e -> { onAddRelation(); reload(); });
+        configureColumnsBtn.getComponent().addActionListener(e -> { onConfigureRelationColumns(); reload(); });
+        addAggregateBtn.getComponent().addActionListener(e -> { onAddRelationAggregate(); reload(); });
         refreshBtn.getComponent().addActionListener(e -> reload());
 
         toolbar.add(backBtn);
@@ -155,6 +162,8 @@ public class DataTableRowsView extends View {
         toolbar.add(addFieldBtn);
         toolbar.add(deleteFieldBtn);
         toolbar.add(addRelationBtn);
+        toolbar.add(configureColumnsBtn);
+        toolbar.add(addAggregateBtn);
         toolbar.getComponent().addSeparator();
         toolbar.add(refreshBtn);
 
@@ -577,6 +586,152 @@ public class DataTableRowsView extends View {
         if (other == null || junctionName.getText().isBlank()) return;
         try {
             repo.defineManyToMany(dataTable, other, junctionName.getText().trim());
+        } catch (Exception e) {
+            showError(e);
+        }
+    }
+
+    /** The relations visible as tabs from {@code dataTable} — the set both "configure columns"
+     *  and "add aggregate" let the user pick from, since that's exactly what their choice affects. */
+    private List<DataRepository.RelationTab> relationTabsOnThisTable() {
+        if (dataTable == null) return List.of();
+        try {
+            return repo.relationTabsFor(dataTable);
+        } catch (SQLException e) {
+            showError(e);
+            return List.of();
+        }
+    }
+
+    private JComboBox<DataRepository.RelationTab> relationTabCombo(List<DataRepository.RelationTab> tabs) {
+        JComboBox<DataRepository.RelationTab> combo = new JComboBox<>(tabs.toArray(new DataRepository.RelationTab[0]));
+        combo.setRenderer(new DefaultListCellRenderer() {
+            private static final long serialVersionUID = 1L;
+            @Override
+            public Component getListCellRendererComponent(JList<?> list, Object value, int index,
+                    boolean isSelected, boolean hasFocus) {
+                super.getListCellRendererComponent(list, value, index, isSelected, hasFocus);
+                if (value instanceof DataRepository.RelationTab t) setText(t.label());
+                return this;
+            }
+        });
+        return combo;
+    }
+
+    private void onConfigureRelationColumns() {
+        List<DataRepository.RelationTab> tabs = relationTabsOnThisTable();
+        if (tabs.isEmpty()) {
+            JOptionPane.showMessageDialog(getComponent(), "No relations on this table yet.",
+                "Configure relation columns", JOptionPane.INFORMATION_MESSAGE);
+            return;
+        }
+        JComboBox<DataRepository.RelationTab> relationCombo = relationTabCombo(tabs);
+
+        // Left unchecked, the checklist below is ignored entirely and the relation reverts to
+        // (or stays on) the dynamic "every field, including ones added later" default — without
+        // this, simply opening the dialog and clicking OK with every box left checked would
+        // silently pin the relation to today's field set forever, since the checklist alone has
+        // no way to express "unconfigured."
+        JCheckBox autoAllFields = new JCheckBox("Automatically include every field (including future ones)");
+        JPanel checklist = new JPanel();
+        checklist.setLayout(new BoxLayout(checklist, BoxLayout.PAGE_AXIS));
+        Map<JCheckBox, DataField> checkboxFields = new LinkedHashMap<>();
+        Runnable refreshChecklist = () -> {
+            checklist.removeAll();
+            checkboxFields.clear();
+            DataRepository.RelationTab tab = (DataRepository.RelationTab) relationCombo.getSelectedItem();
+            if (tab != null) {
+                try {
+                    autoAllFields.setSelected(tab.relation().getColumnFieldIds() == null);
+                    List<String> currentIds = repo.columnFieldsFor(tab).stream().map(DataField::getId).toList();
+                    for (DataField f : repo.listFields(tab.listedTable())) {
+                        JCheckBox cb = new JCheckBox(f.getName(), currentIds.contains(f.getId()));
+                        checkboxFields.put(cb, f);
+                        checklist.add(cb);
+                    }
+                } catch (SQLException e) {
+                    showError(e);
+                }
+            }
+            checklist.revalidate();
+            checklist.repaint();
+        };
+        relationCombo.addActionListener(e -> refreshChecklist.run());
+        refreshChecklist.run();
+        JScrollPane checklistScroll = new JScrollPane(checklist);
+        checklistScroll.setPreferredSize(new Dimension(260, 140));
+        JPanel columnsPanel = new JPanel();
+        columnsPanel.setLayout(new BoxLayout(columnsPanel, BoxLayout.PAGE_AXIS));
+        columnsPanel.add(autoAllFields);
+        columnsPanel.add(checklistScroll);
+
+        if (!FormDialog.show(getComponent(), "Configure relation columns",
+                new String[]{"Relation", "Columns"}, new JComponent[]{relationCombo, columnsPanel})) return;
+        DataRepository.RelationTab tab = (DataRepository.RelationTab) relationCombo.getSelectedItem();
+        if (tab == null) return;
+        try {
+            if (autoAllFields.isSelected()) {
+                repo.setRelationColumns(tab.relation(), null);
+            } else {
+                List<DataField> selected = new ArrayList<>();
+                for (Map.Entry<JCheckBox, DataField> e : checkboxFields.entrySet()) {
+                    if (e.getKey().isSelected()) selected.add(e.getValue());
+                }
+                repo.setRelationColumns(tab.relation(), selected);
+            }
+        } catch (SQLException e) {
+            showError(e);
+        }
+    }
+
+    private void onAddRelationAggregate() {
+        List<DataRepository.RelationTab> tabs = relationTabsOnThisTable();
+        if (tabs.isEmpty()) {
+            JOptionPane.showMessageDialog(getComponent(), "No relations on this table yet.",
+                "Add relation aggregate", JOptionPane.INFORMATION_MESSAGE);
+            return;
+        }
+        JComboBox<DataRepository.RelationTab> relationCombo = relationTabCombo(tabs);
+
+        JComboBox<DataField> fieldCombo = new JComboBox<>();
+        fieldCombo.setRenderer(new DefaultListCellRenderer() {
+            private static final long serialVersionUID = 1L;
+            @Override
+            public Component getListCellRendererComponent(JList<?> list, Object value, int index,
+                    boolean isSelected, boolean hasFocus) {
+                super.getListCellRendererComponent(list, value, index, isSelected, hasFocus);
+                if (value instanceof DataField f) setText(f.getName());
+                return this;
+            }
+        });
+        Runnable refreshFields = () -> {
+            fieldCombo.removeAllItems();
+            DataRepository.RelationTab tab = (DataRepository.RelationTab) relationCombo.getSelectedItem();
+            if (tab == null) return;
+            try {
+                for (DataField f : repo.listFields(tab.listedTable())) {
+                    if (f.getType() == FieldType.NUMBER || f.getType() == FieldType.FLOAT) {
+                        fieldCombo.addItem(f);
+                    }
+                }
+            } catch (SQLException e) {
+                showError(e);
+            }
+        };
+        relationCombo.addActionListener(e -> refreshFields.run());
+        refreshFields.run();
+
+        JComboBox<AggregateKind> kindCombo = new JComboBox<>(AggregateKind.values());
+        JTextField label = new JTextField();
+        if (!FormDialog.show(getComponent(), "Add relation aggregate",
+                new String[]{"Relation", "Field (number/float only)", "Kind", "Label (optional)"},
+                new JComponent[]{relationCombo, fieldCombo, kindCombo, label})) return;
+        DataRepository.RelationTab tab = (DataRepository.RelationTab) relationCombo.getSelectedItem();
+        DataField field = (DataField) fieldCombo.getSelectedItem();
+        if (tab == null || field == null) return;
+        try {
+            repo.defineAggregate(tab.relation(), field, (AggregateKind) kindCombo.getSelectedItem(),
+                label.getText().isBlank() ? null : label.getText().trim());
         } catch (Exception e) {
             showError(e);
         }
