@@ -181,7 +181,11 @@ public class WMP9Skin extends WMPSkin {
 		// TODO Auto-generated method stub
 		g2.setPaint(new Color(235, 234, 219));
 		g2.fillRect(0, 0, width, height);
-		
+		// Reset to a legible color before the header label is drawn — TableHeaderRenderer
+		// calls paintText() on this same Graphics2D right after, and the base Skin.paintText
+		// just draws with whatever color/paint is currently set, which would otherwise still
+		// be this light fill color.
+		g2.setColor(Color.BLACK);
 	}
 	@Override
 	public void paintPlaylist(Panel control, Graphics2D g2) {

@@ -249,7 +249,12 @@ public class WMP10Skin extends WMPSkin {
 	@Override
 	public void paintTableHeader(Table table, int width, int height, Graphics2D g2) {
 		g2.setPaint(new LinearGradientPaint(new Point(0, height - height / 4), new Point(0, height), new float[] { 0, 1 }, new Color[] { new Color(235, 234, 219), new Color (203, 199, 184) }));
-		g2.fillRect(0, 0, width, height);		
+		g2.fillRect(0, 0, width, height);
+		// Reset to a legible color before the header label is drawn — TableHeaderRenderer
+		// calls paintText() on this same Graphics2D right after, and the base Skin.paintText
+		// just draws with whatever color/paint is currently set, which would otherwise still
+		// be this gradient's fill color.
+		g2.setColor(Color.BLACK);
 	}
 	
 	@Override
