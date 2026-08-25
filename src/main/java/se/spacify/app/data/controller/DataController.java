@@ -99,16 +99,24 @@ public class DataController extends Controller {
     // ── Request parsing ──────────────────────────────────────────────────────────
 
     /**
-     * The {@code spacify:table:<slug>:<row_id>[:<related_slug>]} URI's path. {@code slug}
-     * and {@code rowId} are always present here — {@link se.spacify.app.data.views.DataView#acceptsUri}
-     * requires both before this controller is ever reached.
+     * The {@code spacify:table:<slug>[:<row_id>[:<related_slug>]]} URI's path. In the
+     * live app {@code slug} and {@code rowId} are always both present —
+     * {@link se.spacify.app.data.views.DataView#acceptsUri} requires both before this
+     * controller is ever reached — but callers that hit this controller directly
+     * (e.g. tests exercising {@code spacify:table} or {@code spacify:table:<slug>}
+     * alone) can post a shorter URI, so missing segments parse to {@code null} rather
+     * than throwing; {@link #data} already renders {@code notFoundModel} for a
+     * {@code null} slug/rowId via {@link DataRepository#findTable}/{@link DataRepository#findRow}.
      */
     private record Path(String slug, String rowId, String relatedSlug) {
         static Path parse(String uri) {
-            String rest = uri.substring("spacify:table:".length());
-            String[] parts = rest.split(":", -1);
+            String prefix = "spacify:table:";
+            String rest = uri.length() > prefix.length() ? uri.substring(prefix.length()) : "";
+            String[] parts = rest.isEmpty() ? new String[0] : rest.split(":", -1);
+            String slug = parts.length > 0 && !parts[0].isEmpty() ? parts[0] : null;
+            String rowId = parts.length > 1 && !parts[1].isEmpty() ? parts[1] : null;
             String relatedSlug = parts.length > 2 && !parts[2].isEmpty() ? parts[2] : null;
-            return new Path(parts[0], parts[1], relatedSlug);
+            return new Path(slug, rowId, relatedSlug);
         }
     }
 
@@ -172,6 +180,7 @@ public class DataController extends Controller {
         }
         Map<String, Object> rowModel = new LinkedHashMap<>();
         rowModel.put("id", row.getId());
+        rowModel.put("name", Format.xml(row.getName() != null ? row.getName() : ""));
         rowModel.put("createdAgo", Format.timestamp(row.getCreatedAt()));
         rowModel.put("updatedAgo", Format.timestamp(row.getUpdatedAt()));
 
@@ -325,6 +334,10 @@ public class DataController extends Controller {
                         <button onclick="nav:spacify:table:${model.table.slug}">Back to ${model.table.name}</button>
                     </hbox>
                     <text>Created ${model.row.createdAgo} — updated ${model.row.updatedAgo}</text>
+                    <hbox>
+                        <text>Name</text>
+                        <input name="name">${model.row.name}</input>
+                    </hbox>
                     % for fi,field in ipairs(model.fields) do
                     <hbox>
                         <text>${field.name}</text>

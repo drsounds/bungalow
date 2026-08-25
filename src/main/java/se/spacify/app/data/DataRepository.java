@@ -1,5 +1,6 @@
 package se.spacify.app.data;
 
+import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -12,9 +13,11 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 
 import com.j256.ormlite.dao.Dao;
 
+import se.spacify.app.playlist.upsl.Base62;
 import se.spacify.app.data.model.DataField;
 import se.spacify.app.data.model.DataRow;
 import se.spacify.app.data.model.DataTable;
@@ -204,18 +207,14 @@ public final class DataRepository {
 
     /**
      * Create a row and set its cells from {@code posted} (keyed {@code "f_" + field.slug},
-     * as the edit-form inputs are named). Values are validated for every field before
+     * as the edit-form inputs are named, plus the plain {@code "name"}/{@code "slug"} keys
+     * for the row's own standard fields). Values are validated for every field before
      * anything is written, so a bad input never leaves a half-written row.
      */
     public DataRow createRow(DataTable t, List<DataField> tableFields, Map<String, Object> posted) throws SQLException {
         Map<DataField, List<String>> canonical = canonicalizeAll(tableFields, posted);
 
-        DataRow r = new DataRow();
-        r.setTableSlug(t.getSlug());
-        long now = System.currentTimeMillis();
-        r.setCreatedAt(now);
-        r.setUpdatedAt(now);
-        rows().create(r);
+        DataRow r = persistNewRow(t, textOrNull(posted, "name"), textOrNull(posted, "slug"));
         appendEvent(rowUri(t.getSlug(), r.getId()), "row.created", null, null, null);
 
         for (Map.Entry<DataField, List<String>> e : canonical.entrySet()) {
@@ -224,9 +223,49 @@ public final class DataRepository {
         return r;
     }
 
+    /**
+     * Build and persist a new row's standard fields: {@code id}/{@code created}/{@code updated}
+     * are already handled by {@link DataRow}'s own defaults; here we fill {@code name} (as
+     * posted), {@code slug} (as posted, or base62 of the row's UUID {@code id} if left blank),
+     * and the shared {@code number}/{@code id_no} auto-increment counter (starting at 1 per
+     * table). Synchronized so two concurrent inserts for the same table can't compute the same
+     * counter value — the same pattern {@link #appendEvent} uses for its hash chain.
+     */
+    private synchronized DataRow persistNewRow(DataTable t, String name, String slugInput) throws SQLException {
+        DataRow r = new DataRow();
+        r.setTableSlug(t.getSlug());
+        long now = System.currentTimeMillis();
+        r.setCreatedAt(now);
+        r.setUpdatedAt(now);
+        r.setName(name);
+        r.setSlug(slugInput != null ? slugInput : base62Of(r.getId()));
+        long seq = rows().queryBuilder().where().eq("table_slug", t.getSlug()).countOf() + 1;
+        r.setNumber(seq);
+        r.setIdNo(seq);
+        rows().create(r);
+        return r;
+    }
+
+    /** Base62 of a UUID's 128 bits, big-endian. */
+    private static String base62Of(String uuid) {
+        UUID u = UUID.fromString(uuid);
+        ByteBuffer bb = ByteBuffer.allocate(16);
+        bb.putLong(u.getMostSignificantBits());
+        bb.putLong(u.getLeastSignificantBits());
+        return Base62.encode(bb.array());
+    }
+
+    /** A posted value trimmed, or {@code null} if absent/blank. */
+    private static String textOrNull(Map<String, Object> posted, String key) {
+        Object raw = posted != null ? posted.get(key) : null;
+        String s = raw != null ? raw.toString().trim() : "";
+        return s.isEmpty() ? null : s;
+    }
+
     public void updateRow(DataTable t, DataRow r, List<DataField> tableFields, Map<String, Object> posted) throws SQLException {
         Map<DataField, List<String>> canonical = canonicalizeAll(tableFields, posted);
 
+        r.setName(textOrNull(posted, "name"));
         r.setUpdatedAt(System.currentTimeMillis());
         rows().update(r);
         for (Map.Entry<DataField, List<String>> e : canonical.entrySet()) {

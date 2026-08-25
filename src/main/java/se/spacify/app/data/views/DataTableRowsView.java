@@ -176,9 +176,10 @@ public class DataTableRowsView extends View {
 
     /** Rebuild the model's columns from the table's current fields (they vary per table). */
     private void setColumns(List<DataField> fields) {
-        String[] names = new String[fields.size()];
+        String[] names = new String[fields.size() + 1];
+        names[0] = "Name";
         for (int i = 0; i < fields.size(); i++) {
-            names[i] = fields.get(i).getName();
+            names[i + 1] = fields.get(i).getName();
         }
         DefaultTableModel model = new DefaultTableModel(names, 0) {
             private static final long serialVersionUID = 1L;
@@ -192,10 +193,11 @@ public class DataTableRowsView extends View {
     }
 
     private void addRowToTable(DataRow r) throws SQLException {
-        Object[] cells = new Object[fields.size()];
+        Object[] cells = new Object[fields.size() + 1];
+        cells[0] = r.getName() == null ? "" : r.getName();
         for (int i = 0; i < fields.size(); i++) {
             DataField f = fields.get(i);
-            cells[i] = formatCell(f, repo.valuesFor(r.getId(), f.getId()));
+            cells[i + 1] = formatCell(f, repo.valuesFor(r.getId(), f.getId()));
         }
         ((DefaultTableModel) jtable.getModel()).addRow(cells);
     }
@@ -227,19 +229,23 @@ public class DataTableRowsView extends View {
 
     private void onAdd() {
         if (dataTable == null) return;
-        String[] labels = new String[fields.size()];
-        JComponent[] comps = new JComponent[fields.size()];
-        JTextField[] inputs = new JTextField[fields.size()];
+        String[] labels = new String[fields.size() + 1];
+        JComponent[] comps = new JComponent[fields.size() + 1];
+        JTextField[] inputs = new JTextField[fields.size() + 1];
+        labels[0] = "Name";
+        inputs[0] = new JTextField();
+        comps[0] = inputs[0];
         for (int i = 0; i < fields.size(); i++) {
             DataField f = fields.get(i);
-            labels[i] = f.getName() + " (" + f.getType().name().toLowerCase() + ")";
-            inputs[i] = new JTextField();
-            comps[i] = inputs[i];
+            labels[i + 1] = f.getName() + " (" + f.getType().name().toLowerCase() + ")";
+            inputs[i + 1] = new JTextField();
+            comps[i + 1] = inputs[i + 1];
         }
         if (!FormDialog.show(getComponent(), "New Row", labels, comps)) return;
         Map<String, Object> posted = new HashMap<>();
+        posted.put("name", inputs[0].getText());
         for (int i = 0; i < fields.size(); i++) {
-            posted.put("f_" + fields.get(i).getSlug(), inputs[i].getText());
+            posted.put("f_" + fields.get(i).getSlug(), inputs[i + 1].getText());
         }
         try {
             repo.createRow(dataTable, fields, posted);

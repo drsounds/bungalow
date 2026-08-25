@@ -75,74 +75,118 @@ public class DataAppTest {
     @Test
     public void rowLifecycleAndFieldTypeFormatting() throws Exception {
         DataTable table = repo.createTable("Widgets " + UUID.randomUUID());
-        repo.addField(table, "Title", "text");
-        repo.addField(table, "Count", "number");
-        repo.addField(table, "Price", "float");
-        repo.addField(table, "Released", "timestamp");
+        try {
+            repo.addField(table, "Title", "text");
+            repo.addField(table, "Count", "number");
+            repo.addField(table, "Price", "float");
+            repo.addField(table, "Released", "timestamp");
 
-        get("spacify:table:" + table.getSlug());
+            get("spacify:table:" + table.getSlug());
 
-        Map<String, Object> posted = new HashMap<>();
-        posted.put("f_title", "First & <Widget>");
-        posted.put("f_count", "1234567");
-        posted.put("f_price", "19.5");
-        posted.put("f_released", "2020-01-01");
-        post("spacify:table:" + table.getSlug(), "createrow", posted);
+            Map<String, Object> posted = new HashMap<>();
+            posted.put("f_title", "First & <Widget>");
+            posted.put("f_count", "1234567");
+            posted.put("f_price", "19.5");
+            posted.put("f_released", "2020-01-01");
+            post("spacify:table:" + table.getSlug(), "createrow", posted);
 
-        java.util.List<DataRow> rows = repo.listRows(table);
-        assertEquals(1, rows.size());
-        DataRow row = rows.get(0);
+            java.util.List<DataRow> rows = repo.listRows(table);
+            assertEquals(1, rows.size());
+            DataRow row = rows.get(0);
 
-        Element listView = get("spacify:table:" + table.getSlug());
-        String rendered = textOf(listView);
-        assertTrue("expected XML-escaped free text, got: " + rendered, rendered.contains("First & <Widget>"));
-        assertTrue("expected grouped number", rendered.contains("1,234,567"));
-        assertTrue("expected grouped decimal", rendered.contains("19.50"));
+            Element listView = get("spacify:table:" + table.getSlug());
+            String rendered = textOf(listView);
+            assertTrue("expected XML-escaped free text, got: " + rendered, rendered.contains("First & <Widget>"));
+            assertTrue("expected grouped number", rendered.contains("1,234,567"));
+            assertTrue("expected grouped decimal", rendered.contains("19.50"));
 
-        String rowUri = "spacify:table:" + table.getSlug() + ":" + row.getId();
-        get(rowUri);
+            String rowUri = "spacify:table:" + table.getSlug() + ":" + row.getId();
+            get(rowUri);
 
-        Map<String, Object> edit = new HashMap<>();
-        edit.put("f_title", "Renamed");
-        edit.put("f_count", "42");
-        edit.put("f_price", "1.00");
-        edit.put("f_released", "2020-01-01");
-        post(rowUri, "save", edit);
-        assertEquals("Renamed", repo.valuesFor(row.getId(), fieldBySlug(table, "title").getId()).get(0).getValue());
+            Map<String, Object> edit = new HashMap<>();
+            edit.put("f_title", "Renamed");
+            edit.put("f_count", "42");
+            edit.put("f_price", "1.00");
+            edit.put("f_released", "2020-01-01");
+            post(rowUri, "save", edit);
+            assertEquals("Renamed", repo.valuesFor(row.getId(), fieldBySlug(table, "title").getId()).get(0).getValue());
 
-        post(rowUri, "deleterow", Map.of());
-        assertEquals(null, repo.findRow(table, row.getId()));
+            post(rowUri, "deleterow", Map.of());
+            assertEquals(null, repo.findRow(table, row.getId()));
+        } finally {
+            repo.deleteTable(table);
+        }
+    }
+
+    @Test
+    public void rowsGetStandardFieldsOnCreation() throws Exception {
+        DataTable table = repo.createTable("Gadgets " + UUID.randomUUID());
+        try {
+            repo.addField(table, "Title", "text");
+
+            Map<String, Object> first = new HashMap<>();
+            first.put("name", "First row");
+            first.put("f_title", "One");
+            DataRow row1 = repo.createRow(table, repo.listFields(table), first);
+
+            assertEquals("First row", row1.getName());
+            assertNotNull(row1.getSlug());
+            assertTrue("expected a non-blank auto slug", !row1.getSlug().isBlank());
+            assertEquals(1L, row1.getNumber());
+            assertEquals(1L, row1.getIdNo());
+
+            Map<String, Object> second = new HashMap<>();
+            second.put("f_title", "Two");
+            DataRow row2 = repo.createRow(table, repo.listFields(table), second);
+
+            assertEquals(null, row2.getName());
+            assertEquals(2L, row2.getNumber());
+            assertEquals(2L, row2.getIdNo());
+
+            Map<String, Object> renamed = new HashMap<>();
+            renamed.put("name", "Renamed row");
+            renamed.put("f_title", "One");
+            repo.updateRow(table, row1, repo.listFields(table), renamed);
+            assertEquals("Renamed row", row1.getName());
+        } finally {
+            repo.deleteTable(table);
+        }
     }
 
     @Test
     public void relatedRowsResolveByUriSuffixField() throws Exception {
         DataTable artists = repo.createTable("Artists " + UUID.randomUUID());
-        repo.addField(artists, "Name", "text");
-
         DataTable albums = repo.createTable("Albums " + UUID.randomUUID());
-        repo.addField(albums, "Title", "text");
-        // A LINK field must be named "<pointed-to-table-slug>_uri" to be discovered
-        // as a pointer back at that table (see DataRepository.relatedTablesFor).
-        DataField artistLink = repo.addField(albums, artists.getSlug() + " uri", "link");
-        assertEquals(artists.getSlug() + "_uri", artistLink.getSlug());
+        try {
+            repo.addField(artists, "Name", "text");
 
-        Map<String, Object> artistPosted = new HashMap<>();
-        artistPosted.put("f_name", "Test Artist");
-        DataRow artistRow = repo.createRow(artists, repo.listFields(artists), artistPosted);
-        String artistUri = repo.rowUri(artists.getSlug(), artistRow.getId());
+            repo.addField(albums, "Title", "text");
+            // A LINK field must be named "<pointed-to-table-slug>_uri" to be discovered
+            // as a pointer back at that table (see DataRepository.relatedTablesFor).
+            DataField artistLink = repo.addField(albums, artists.getSlug() + " uri", "link");
+            assertEquals(artists.getSlug() + "_uri", artistLink.getSlug());
 
-        Map<String, Object> albumPosted = new HashMap<>();
-        albumPosted.put("f_title", "Test Album");
-        albumPosted.put("f_" + artistLink.getSlug(), artistUri);
-        repo.createRow(albums, repo.listFields(albums), albumPosted);
+            Map<String, Object> artistPosted = new HashMap<>();
+            artistPosted.put("f_name", "Test Artist");
+            DataRow artistRow = repo.createRow(artists, repo.listFields(artists), artistPosted);
+            String artistUri = repo.rowUri(artists.getSlug(), artistRow.getId());
 
-        Element detail = get(artistUri);
-        assertTrue("expected a link to the related albums table",
-            textOf(detail).contains(albums.getName()));
+            Map<String, Object> albumPosted = new HashMap<>();
+            albumPosted.put("f_title", "Test Album");
+            albumPosted.put("f_" + artistLink.getSlug(), artistUri);
+            repo.createRow(albums, repo.listFields(albums), albumPosted);
 
-        String relatedUri = artistUri + ":" + albums.getSlug();
-        Element related = get(relatedUri);
-        assertTrue("expected the related album row's title", textOf(related).contains("Test Album"));
+            Element detail = get(artistUri);
+            assertTrue("expected a link to the related albums table",
+                textOf(detail).contains(albums.getName()));
+
+            String relatedUri = artistUri + ":" + albums.getSlug();
+            Element related = get(relatedUri);
+            assertTrue("expected the related album row's title", textOf(related).contains("Test Album"));
+        } finally {
+            repo.deleteTable(albums);
+            repo.deleteTable(artists);
+        }
     }
 
     @Test

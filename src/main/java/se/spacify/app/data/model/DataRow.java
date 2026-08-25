@@ -29,6 +29,23 @@ public class DataRow {
     @DatabaseField(columnName = "deleted_at")
     private Long deletedAt;
 
+    @DatabaseField(columnName = "name")
+    private String name;
+
+    // No index=true here: unlike table_slug (indexed since the table's original
+    // creation), this column is added to an existing table via DatabaseManager's
+    // ALTER-TABLE reconciliation, which runs after ORMLite's own createTableIfNotExists
+    // — and createTableIfNotExists tries to build any @DatabaseField(index=true)'s index
+    // immediately, before the column exists, which throws "no such column: slug".
+    @DatabaseField(columnName = "slug")
+    private String slug;
+
+    @DatabaseField(canBeNull = false, columnName = "number")
+    private long number;
+
+    @DatabaseField(canBeNull = false, columnName = "id_no")
+    private long idNo;
+
     public DataRow() {}
 
     public String getId()               { return id; }
@@ -40,4 +57,12 @@ public class DataRow {
     public void   setUpdatedAt(long v)  { this.updatedAt = v; }
     public Long   getDeletedAt()        { return deletedAt; }
     public void   setDeletedAt(Long v)  { this.deletedAt = v; }
+    public String getName()             { return name; }
+    public void   setName(String v)     { this.name = v; }
+    public String getSlug()             { return slug; }
+    public void   setSlug(String v)     { this.slug = v; }
+    public long   getNumber()           { return number; }
+    public void   setNumber(long v)     { this.number = v; }
+    public long   getIdNo()             { return idNo; }
+    public void   setIdNo(long v)       { this.idNo = v; }
 }
