@@ -8,9 +8,13 @@ import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.HashSet;
 import java.util.HexFormat;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
@@ -19,20 +23,22 @@ import com.j256.ormlite.dao.Dao;
 
 import se.spacify.app.playlist.upsl.Base62;
 import se.spacify.app.data.model.DataField;
+import se.spacify.app.data.model.DataRelation;
 import se.spacify.app.data.model.DataRow;
 import se.spacify.app.data.model.DataTable;
 import se.spacify.app.data.model.DataValue;
 import se.spacify.app.data.model.EventsHead;
 import se.spacify.app.data.model.FieldType;
+import se.spacify.app.data.model.RelationKind;
 import se.spacify.app.data.model.SpacifyEvent;
 import se.spacify.db.DatabaseManager;
 
 /**
  * Persistence and business logic for {@code se.spacify.app.data}: CRUD for custom
  * tables/fields/rows (EAV-backed {@link DataValue} cells, since fields are unlimited
- * and user-defined), soft deletion, related-row resolution via the
- * {@code <slug>_uri}/{@code <slug>_uris} naming convention, and an append-only,
- * hash-chained {@code spacify_events} audit log of every change.
+ * and user-defined), soft deletion, formal {@link DataRelation belongsTo/many-to-many
+ * relation} resolution, and an append-only, hash-chained {@code spacify_events} audit
+ * log of every change.
  *
  * <p>Stateless and cheap to construct — {@link DatabaseManager} owns the actual
  * connection/DAO cache — except for {@link #setOnTablesChanged(Runnable)}, a single
@@ -50,12 +56,28 @@ public final class DataRepository {
 
     private static DatabaseManager db() { return DatabaseManager.getInstance(); }
 
-    private Dao<DataTable, String>    tables() { return db().dao(DataTable.class, String.class); }
-    private Dao<DataField, String>    fields() { return db().dao(DataField.class, String.class); }
-    private Dao<DataRow, String>      rows()   { return db().dao(DataRow.class, String.class); }
-    private Dao<DataValue, String>    values() { return db().dao(DataValue.class, String.class); }
-    private Dao<SpacifyEvent, String> events() { return db().dao(SpacifyEvent.class, String.class); }
-    private Dao<EventsHead, Integer>  head()   { return db().dao(EventsHead.class, Integer.class); }
+    private Dao<DataTable, String>    tables()   { return db().dao(DataTable.class, String.class); }
+    private Dao<DataField, String>    fields()   { return db().dao(DataField.class, String.class); }
+    private Dao<DataRow, String>      rows()     { return db().dao(DataRow.class, String.class); }
+    private Dao<DataValue, String>    values()   { return db().dao(DataValue.class, String.class); }
+    private Dao<DataRelation, String> relations() { return db().dao(DataRelation.class, String.class); }
+    private Dao<SpacifyEvent, String> events()   { return db().dao(SpacifyEvent.class, String.class); }
+    private Dao<EventsHead, Integer>  head()     { return db().dao(EventsHead.class, Integer.class); }
+
+    /** One relation-derived tab to render on a row's detail page: rows of {@link #listedTable()}
+     *  whose {@link #pointerField()} equals the base row's URI. Both relation kinds resolve to
+     *  this same shape — for MANY_TO_MANY, {@code listedTable} is the junction table and
+     *  {@code pointerField} is whichever of its two FK fields points back at the base table, so
+     *  the junction rows themselves (including any "special fields" they carry) are what's
+     *  listed, with their other FK field rendering as an ordinary LINK cell/button. */
+    public record RelationTab(String label, DataTable listedTable, DataField pointerField) {}
+
+    /** A row-list filter for the Swing grid: an optional row-name substring plus zero or more
+     *  belongsTo-field-equals constraints (one per selected filter dropdown). */
+    public record RowFilter(String nameContains, List<FieldEquals> fieldEquals) {
+        public record FieldEquals(DataField field, String value) {}
+        public static final RowFilter NONE = new RowFilter(null, List.of());
+    }
 
     // ── URIs ─────────────────────────────────────────────────────────────────────
 
@@ -155,7 +177,12 @@ public final class DataRepository {
             slug = slug + "_uri";
         }
         slug = uniqueFieldSlug(t, slug);
+        return persistField(t, slug, name, type);
+    }
 
+    /** Persist a new field with an already-computed unique slug — shared by {@link #addField}
+     *  and {@link #createLinkField}, which differ only in how the slug is derived. */
+    private DataField persistField(DataTable t, String slug, String name, FieldType type) throws SQLException {
         DataField f = new DataField();
         f.setTableId(t.getId());
         f.setTableSlug(t.getSlug());
@@ -356,47 +383,143 @@ public final class DataRepository {
             .eq("row_id", rowId).and().eq("field_id", fieldId).query();
     }
 
-    // ── Related rows ─────────────────────────────────────────────────────────────
+    // ── Relations ────────────────────────────────────────────────────────────────
+
+    public DataTable findTableById(String id) throws SQLException {
+        if (id == null) return null;
+        DataTable t = tables().queryForId(id);
+        return (t != null && t.getDeletedAt() == null) ? t : null;
+    }
 
     /**
-     * Tables with a LINK field named {@code <base.slug>_uri} or {@code _uris} — i.e.
-     * tables whose rows can point back at a row of {@code base} — for the "Related"
-     * links on the row detail view.
+     * Create a LINK field with an explicit single/multi-value slug suffix, sidestepping
+     * {@link #addField}'s implicit convention (which infers cardinality from whatever the
+     * typed name happens to already end with). Used by {@link #defineBelongsTo} and
+     * {@link #defineManyToMany}; neither creates the {@link DataRelation} itself here —
+     * callers do that afterward, once the field exists and has an id to reference.
      */
-    public List<DataTable> relatedTablesFor(DataTable base) throws SQLException {
-        List<DataField> pointers = fields().queryBuilder().where().isNull("deleted_at")
-            .and().in("slug", base.getSlug() + "_uri", base.getSlug() + "_uris").query();
-        LinkedHashSet<String> tableSlugs = new LinkedHashSet<>();
-        for (DataField f : pointers) {
-            if (!f.getTableSlug().equals(base.getSlug())) {
-                tableSlugs.add(f.getTableSlug());
-            }
+    private DataField createLinkField(DataTable t, String name, boolean multi) throws SQLException {
+        if (name == null || name.isBlank()) {
+            throw new IllegalArgumentException("field name is required");
         }
-        List<DataTable> out = new ArrayList<>();
-        for (String slug : tableSlugs) {
-            DataTable t = findTable(slug);
-            if (t != null) {
-                out.add(t);
+        String base = Slug.of(name, "field");
+        if (base.endsWith("_uris")) {
+            base = base.substring(0, base.length() - "_uris".length());
+        } else if (base.endsWith("_uri")) {
+            base = base.substring(0, base.length() - "_uri".length());
+        }
+        String slug = uniqueFieldSlug(t, base + (multi ? "_uris" : "_uri"));
+        return persistField(t, slug, name, FieldType.LINK);
+    }
+
+    /** Define a belongsTo relation: {@code source} gets a new LINK field (named {@code fieldName},
+     *  single- or multi-valued per {@code multi}) pointing at rows of {@code target}. */
+    public DataRelation defineBelongsTo(DataTable source, String fieldName, DataTable target,
+                                         boolean multi, String relationName) throws SQLException {
+        DataField field = createLinkField(source, fieldName, multi);
+        return persistBelongsTo(source, target, field, relationName);
+    }
+
+    /** Persist a BELONGS_TO relation for an already-existing pointer field — shared by
+     *  {@link #defineBelongsTo} (a freshly created field) and {@link #migrateLegacyLinkRelations}
+     *  (an existing field formalized after the fact); both log the same {@code relation.created}
+     *  event, since either way a first-class {@link DataRelation} row now exists. */
+    private DataRelation persistBelongsTo(DataTable source, DataTable target, DataField field, String name)
+            throws SQLException {
+        DataRelation r = new DataRelation();
+        r.setKind(RelationKind.BELONGS_TO);
+        r.setName(name);
+        r.setSourceTableId(source.getId());
+        r.setSourceTableSlug(source.getSlug());
+        r.setTargetTableId(target.getId());
+        r.setTargetTableSlug(target.getSlug());
+        r.setFieldId(field.getId());
+        r.setCreatedAt(System.currentTimeMillis());
+        relations().create(r);
+        appendEvent(tableUri(source.getSlug()), "relation.created", null, r.getId(),
+            "belongsTo:" + target.getSlug());
+        return r;
+    }
+
+    /** Define a many-to-many relation between {@code left} and {@code right}: creates a new
+     *  ordinary table named {@code junctionName} with one LINK field per side. Extra "special"
+     *  fields on the junction are just ordinary fields added to it afterward via {@link #addField}. */
+    public DataRelation defineManyToMany(DataTable left, DataTable right, String junctionName) throws SQLException {
+        DataTable junction = createTable(junctionName);
+        DataField sourceField = createLinkField(junction, left.getName(), false);
+        DataField targetField = createLinkField(junction, right.getName(), false);
+        DataRelation r = new DataRelation();
+        r.setKind(RelationKind.MANY_TO_MANY);
+        r.setSourceTableId(left.getId());
+        r.setSourceTableSlug(left.getSlug());
+        r.setTargetTableId(right.getId());
+        r.setTargetTableSlug(right.getSlug());
+        r.setJunctionTableId(junction.getId());
+        r.setJunctionTableSlug(junction.getSlug());
+        r.setJunctionSourceFieldId(sourceField.getId());
+        r.setJunctionTargetFieldId(targetField.getId());
+        r.setCreatedAt(System.currentTimeMillis());
+        relations().create(r);
+        appendEvent(tableUri(junction.getSlug()), "relation.created", null, r.getId(),
+            "manyToMany:" + left.getSlug() + "<->" + right.getSlug());
+        return r;
+    }
+
+    /** Every non-deleted relation touching {@code table}, in creation order: BELONGS_TO relations
+     *  where {@code table} is the target (a tab renders there; the source side just edits the
+     *  field itself), plus MANY_TO_MANY relations where {@code table} is either side. */
+    private List<DataRelation> relationsInvolving(DataTable table) throws SQLException {
+        List<DataRelation> asTarget = relations().queryBuilder().where()
+            .eq("target_table_id", table.getId()).and().isNull("deleted_at").query();
+        List<DataRelation> asSource = relations().queryBuilder().where()
+            .eq("source_table_id", table.getId()).and().eq("kind", RelationKind.MANY_TO_MANY)
+            .and().isNull("deleted_at").query();
+        Map<String, DataRelation> byId = new LinkedHashMap<>();
+        for (DataRelation r : asTarget) byId.put(r.getId(), r);
+        for (DataRelation r : asSource) byId.put(r.getId(), r);
+        List<DataRelation> out = new ArrayList<>(byId.values());
+        out.sort(Comparator.comparingLong(DataRelation::getCreatedAt));
+        return out;
+    }
+
+    /** The relation tabs to render on {@code base}'s row-detail page. */
+    public List<RelationTab> relationTabsFor(DataTable base) throws SQLException {
+        List<RelationTab> out = new ArrayList<>();
+        for (DataRelation r : relationsInvolving(base)) {
+            RelationTab tab = toRelationTab(r, base);
+            if (tab != null) {
+                out.add(tab);
             }
         }
         return out;
     }
 
-    /** Rows of {@code relatedTable} whose {@code <baseSlug>_uri[s]} field holds {@code rowUri}. */
-    public List<DataRow> findRelatedRows(DataTable relatedTable, String baseSlug, String rowUri) throws SQLException {
-        List<DataField> pointerFields = fields().queryBuilder().where()
-            .eq("table_id", relatedTable.getId()).and().isNull("deleted_at")
-            .and().in("slug", baseSlug + "_uri", baseSlug + "_uris").query();
-        if (pointerFields.isEmpty()) {
-            return List.of();
+    private RelationTab toRelationTab(DataRelation r, DataTable base) throws SQLException {
+        DataTable listedTable;
+        DataField pointerField;
+        if (r.getKind() == RelationKind.BELONGS_TO) {
+            listedTable = findTableById(r.getSourceTableId());
+            pointerField = findField(r.getFieldId());
+        } else {
+            boolean baseIsSource = base.getId().equals(r.getSourceTableId());
+            listedTable = findTableById(r.getJunctionTableId());
+            pointerField = findField(baseIsSource ? r.getJunctionSourceFieldId() : r.getJunctionTargetFieldId());
         }
-        Set<String> rowIds = new LinkedHashSet<>();
-        for (DataField pf : pointerFields) {
-            List<DataValue> matches = values().queryBuilder().where()
-                .eq("field_id", pf.getId()).and().eq("value", rowUri).query();
-            for (DataValue v : matches) {
-                rowIds.add(v.getRowId());
-            }
+        if (listedTable == null || pointerField == null || pointerField.getDeletedAt() != null) {
+            return null;
+        }
+        String label = r.getName() != null && !r.getName().isBlank() ? r.getName() : listedTable.getName();
+        return new RelationTab(label, listedTable, pointerField);
+    }
+
+    /** Rows whose {@code pointerField} holds {@code targetRowUri} — the resolution behind every
+     *  {@link RelationTab}, keyed by field id rather than the old slug-suffix convention. */
+    public List<DataRow> rowsPointingAt(DataField pointerField, String targetRowUri) throws SQLException {
+        List<DataValue> matches = values().queryBuilder().where()
+            .eq("field_id", pointerField.getId()).and().eq("value", targetRowUri).query();
+        LinkedHashSet<String> rowIds = new LinkedHashSet<>();
+        for (DataValue v : matches) {
+            rowIds.add(v.getRowId());
         }
         List<DataRow> out = new ArrayList<>();
         for (String id : rowIds) {
@@ -406,6 +529,88 @@ public final class DataRepository {
             }
         }
         return out;
+    }
+
+    /** The BELONGS_TO relations owned by {@code table} (i.e. where it holds the pointer field) —
+     *  used to render a picker for each such field and to build the Swing grid's filter dropdowns. */
+    public List<DataRelation> belongsToRelationsOn(DataTable table) throws SQLException {
+        return relations().queryBuilder().where()
+            .eq("source_table_id", table.getId()).and().eq("kind", RelationKind.BELONGS_TO)
+            .and().isNull("deleted_at").query();
+    }
+
+    /**
+     * Best-effort, idempotent backfill: for every non-multi LINK field whose slug still follows
+     * the old {@code <targetSlug>_uri} convention and has no {@link DataRelation} yet, formalize
+     * it into one. Metadata-only — {@link DataValue} cell data is never touched, so this is safe
+     * to run on every startup. A field that doesn't cleanly match the convention (multi-value, or
+     * its target slug no longer resolves to a real table) is left exactly as it behaves today: a
+     * plain, unmanaged LINK field with free-text input and no relation tab.
+     */
+    public void migrateLegacyLinkRelations() throws SQLException {
+        // Every field id already spoken for by an existing relation — as a BELONGS_TO pointer
+        // or as either side of a MANY_TO_MANY junction — must be skipped: a many-to-many
+        // junction's own FK fields are ordinary "<targetSlug>_uri"-looking LINK fields too
+        // (createLinkField names them after the table they point at), so without this check
+        // every M:N relation would grow a spurious duplicate BELONGS_TO relation (and a
+        // duplicate tab) for each of its two junction fields on every activation.
+        Set<String> referencedFieldIds = new HashSet<>();
+        for (DataRelation r : relations().queryBuilder().query()) {
+            if (r.getFieldId() != null) referencedFieldIds.add(r.getFieldId());
+            if (r.getJunctionSourceFieldId() != null) referencedFieldIds.add(r.getJunctionSourceFieldId());
+            if (r.getJunctionTargetFieldId() != null) referencedFieldIds.add(r.getJunctionTargetFieldId());
+        }
+        for (DataField f : fields().queryBuilder().where()
+                .eq("type", FieldType.LINK).and().isNull("deleted_at").query()) {
+            if (f.isMultiValueLink() || !f.getSlug().endsWith("_uri") || referencedFieldIds.contains(f.getId())) {
+                continue;
+            }
+            String targetSlug = f.getSlug().substring(0, f.getSlug().length() - "_uri".length());
+            DataTable target = findTable(targetSlug);
+            DataTable source = findTable(f.getTableSlug());
+            if (target == null || source == null) {
+                continue;
+            }
+            persistBelongsTo(source, target, f, null);
+        }
+    }
+
+    // ── Row search / filtering ──────────────────────────────────────────────────
+
+    /** Rows of {@code table} matching {@code filter}'s name substring and field-equals constraints. */
+    public List<DataRow> searchRows(DataTable table, RowFilter filter) throws SQLException {
+        List<DataRow> out = new ArrayList<>();
+        for (DataRow r : listRows(table)) {
+            if (filter.nameContains() != null && !nameContains(r, filter.nameContains())) {
+                continue;
+            }
+            if (!fieldEqualsAllMatch(r, filter.fieldEquals())) {
+                continue;
+            }
+            out.add(r);
+        }
+        return out;
+    }
+
+    private static boolean nameContains(DataRow r, String needle) {
+        String name = r.getName();
+        return name != null && name.toLowerCase(Locale.ROOT).contains(needle.toLowerCase(Locale.ROOT));
+    }
+
+    private boolean fieldEqualsAllMatch(DataRow r, List<RowFilter.FieldEquals> constraints) throws SQLException {
+        for (RowFilter.FieldEquals c : constraints) {
+            boolean matched = false;
+            for (DataValue v : valuesFor(r.getId(), c.field().getId())) {
+                if (c.value().equals(v.getValue())) {
+                    matched = true;
+                    break;
+                }
+            }
+            if (!matched) {
+                return false;
+            }
+        }
+        return true;
     }
 
     // ── Event log (hash chain) ──────────────────────────────────────────────────

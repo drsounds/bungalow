@@ -48,6 +48,12 @@ public class DataApplication extends Application {
 
     @Override
     public void onActivate(ApplicationContext ctx) {
+        try {
+            repo.migrateLegacyLinkRelations();
+        } catch (Exception ignored) {
+            // Best-effort backfill: a hiccup here shouldn't block activation.
+        }
+
         ctx.registerView(new DataTablesListView(ctx.viewStack(), repo));
         ctx.registerView(new DataTableRowsView(ctx.viewStack(), repo));
         ctx.registerView(new DataView(ctx.viewStack(), repo));

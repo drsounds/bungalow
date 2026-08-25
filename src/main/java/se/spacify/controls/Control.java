@@ -328,6 +328,7 @@ public abstract class Control<T extends Component> {
 			case "view"                 -> new TabbedPane();
 			case "text", "label", "img" -> new Label();
 			case "input"                -> new TextField();
+			case "select"               -> new SelectField();
 			default                     -> new Panel();
 		};
 	}

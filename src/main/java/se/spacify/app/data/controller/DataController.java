@@ -9,6 +9,7 @@ import java.util.Map;
 import se.spacify.app.data.DataRepository;
 import se.spacify.app.data.Format;
 import se.spacify.app.data.model.DataField;
+import se.spacify.app.data.model.DataRelation;
 import se.spacify.app.data.model.DataRow;
 import se.spacify.app.data.model.DataTable;
 import se.spacify.app.data.model.DataValue;
@@ -18,17 +19,11 @@ import se.spacify.app.spider.controller.Controller;
 import se.spacify.net.Uri;
 
 /**
- * The {@code spacify:table:<slug>:<row_id>[:<related slug>]} Spider controller: a
- * single template ({@link #TEMPLATE}) whose top-level {@code model.mode} branch
- * selects one of two screens —
- *
- * <ul>
- *   <li>{@code spacify:table:<slug>:<row_id>} — one row: edit/save/delete its
- *       fields, with links into related tables.</li>
- *   <li>{@code spacify:table:<slug>:<row_id>:<related slug>} — the row again,
- *       read-only, alongside the related table's rows (those whose
- *       {@code <slug>_uri}/{@code _uris} field points at this row).</li>
- * </ul>
+ * The {@code spacify:table:<slug>:<row_id>} Spider controller: one row, editable —
+ * a single template ({@link #TEMPLATE}) with one {@code <page>} for the row's own
+ * fields (a belongsTo field renders as a picker, via {@link DataRepository#belongsToRelationsOn})
+ * plus one sibling {@code <page>} per {@link DataRepository#relationTabsFor configured
+ * relation} — each a tab listing the related/junction rows pointing at this one.
  *
  * <p>The table-of-tables index and a table's row list are native, Library-style
  * views ({@code se.spacify.app.data.views.DataTablesListView}/{@code DataTableRowsView})
@@ -83,14 +78,7 @@ public class DataController extends Controller {
             if (row == null) {
                 return notFoundModel(message);
             }
-            if (path.relatedSlug == null) {
-                return detailModel(table, row, message);
-            }
-            DataTable relatedTable = repo.findTable(path.relatedSlug);
-            if (relatedTable == null) {
-                return notFoundModel(message);
-            }
-            return relatedModel(table, row, relatedTable, message);
+            return detailModel(table, row, message);
         } catch (SQLException e) {
             return notFoundModel("Database error: " + e.getMessage());
         }
@@ -99,24 +87,25 @@ public class DataController extends Controller {
     // ── Request parsing ──────────────────────────────────────────────────────────
 
     /**
-     * The {@code spacify:table:<slug>[:<row_id>[:<related_slug>]]} URI's path. In the
-     * live app {@code slug} and {@code rowId} are always both present —
+     * The {@code spacify:table:<slug>[:<row_id>]} URI's path. In the live app
+     * {@code slug} and {@code rowId} are always both present —
      * {@link se.spacify.app.data.views.DataView#acceptsUri} requires both before this
      * controller is ever reached — but callers that hit this controller directly
      * (e.g. tests exercising {@code spacify:table} or {@code spacify:table:<slug>}
      * alone) can post a shorter URI, so missing segments parse to {@code null} rather
      * than throwing; {@link #data} already renders {@code notFoundModel} for a
      * {@code null} slug/rowId via {@link DataRepository#findTable}/{@link DataRepository#findRow}.
+     * A trailing third segment (an old {@code :<related slug>} bookmark from before
+     * relations became tabs) is simply ignored rather than rejected.
      */
-    private record Path(String slug, String rowId, String relatedSlug) {
+    private record Path(String slug, String rowId) {
         static Path parse(String uri) {
             String prefix = "spacify:table:";
             String rest = uri.length() > prefix.length() ? uri.substring(prefix.length()) : "";
             String[] parts = rest.isEmpty() ? new String[0] : rest.split(":", -1);
             String slug = parts.length > 0 && !parts[0].isEmpty() ? parts[0] : null;
             String rowId = parts.length > 1 && !parts[1].isEmpty() ? parts[1] : null;
-            String relatedSlug = parts.length > 2 && !parts[2].isEmpty() ? parts[2] : null;
-            return new Path(slug, rowId, relatedSlug);
+            return new Path(slug, rowId);
         }
     }
 
@@ -165,6 +154,7 @@ public class DataController extends Controller {
         model.put("mode", "notfound");
         model.put("title", "Not found");
         model.put("message", Format.xml(message));
+        model.put("relationTabs", List.of());
         return model;
     }
 
@@ -174,10 +164,6 @@ public class DataController extends Controller {
         for (DataField f : tableFields) {
             editValues.put(f.getSlug(), Format.xml(editValue(f, repo.valuesFor(row.getId(), f.getId()))));
         }
-        List<Map<String, Object>> relatedTables = new ArrayList<>();
-        for (DataTable rt : repo.relatedTablesFor(table)) {
-            relatedTables.add(tableModel(rt));
-        }
         Map<String, Object> rowModel = new LinkedHashMap<>();
         rowModel.put("id", row.getId());
         rowModel.put("name", Format.xml(row.getName() != null ? row.getName() : ""));
@@ -186,38 +172,97 @@ public class DataController extends Controller {
 
         Map<String, Object> model = new LinkedHashMap<>();
         model.put("mode", "detail");
-        model.put("title", table.getName() + " row");
+        model.put("title", Format.xml(table.getName()) + " row");
         model.put("message", Format.xml(message));
         model.put("table", tableModel(table));
         model.put("row", rowModel);
-        model.put("fields", fieldModels(tableFields));
+        model.put("fields", editableFieldModels(table, tableFields, row));
         model.put("values", editValues);
-        model.put("relatedTables", relatedTables);
+        model.put("relationTabs", relationTabModels(table, row));
         return model;
     }
 
-    private Map<String, Object> relatedModel(DataTable table, DataRow row, DataTable relatedTable, String message)
+    /** Each of {@code fields} for the edit form: a belongsTo-backed field gets {@code options}
+     *  for a {@code <select>} picker; every other field renders its plain {@code <input>} as before. */
+    private List<Map<String, Object>> editableFieldModels(DataTable table, List<DataField> fields, DataRow row)
             throws SQLException {
-        List<DataField> tableFields = repo.listFields(table);
-        List<DataField> relatedFieldsList = repo.listFields(relatedTable);
-
-        String rowUri = repo.rowUri(table.getSlug(), row.getId());
-        List<Map<String, Object>> relatedRows = new ArrayList<>();
-        for (DataRow rr : repo.findRelatedRows(relatedTable, table.getSlug(), rowUri)) {
-            relatedRows.add(rowModel(rr, relatedFieldsList));
+        Map<String, DataRelation> belongsToByField = new LinkedHashMap<>();
+        for (DataRelation r : repo.belongsToRelationsOn(table)) {
+            belongsToByField.put(r.getFieldId(), r);
         }
+        List<Map<String, Object>> out = new ArrayList<>();
+        for (DataField f : fields) {
+            Map<String, Object> m = new LinkedHashMap<>();
+            m.put("slug", f.getSlug());
+            m.put("name", Format.xml(f.getName()));
+            DataRelation rel = belongsToByField.get(f.getId());
+            if (rel != null && !f.isMultiValueLink()) {
+                List<DataValue> current = repo.valuesFor(row.getId(), f.getId());
+                String currentUri = current.isEmpty() ? null : current.get(0).getValue();
+                m.put("belongsTo", true);
+                m.put("options", pickerOptions(rel, currentUri));
+            } else {
+                m.put("belongsTo", false);
+            }
+            out.add(m);
+        }
+        return out;
+    }
 
-        Map<String, Object> model = new LinkedHashMap<>();
-        model.put("mode", "related");
-        model.put("title", table.getName() + " → " + relatedTable.getName());
-        model.put("message", Format.xml(message));
-        model.put("table", tableModel(table));
-        model.put("row", rowModel(row, tableFields));
-        model.put("fields", fieldModels(tableFields));
-        model.put("relatedTable", tableModel(relatedTable));
-        model.put("relatedFields", fieldModels(relatedFieldsList));
-        model.put("relatedRows", relatedRows);
-        return model;
+    /** {@code <option>} models for a belongsTo picker: a blank "—" plus one per row of the
+     *  relation's target table, the current value (if any) marked {@code selected}. If the
+     *  currently stored pointer no longer matches any live row (its target was soft-deleted
+     *  since), it's kept as one extra option — still selected — rather than silently falling
+     *  back to the blank option, which would clear the pointer on the next unrelated Save. */
+    private List<Map<String, Object>> pickerOptions(DataRelation rel, String currentUri) throws SQLException {
+        List<Map<String, Object>> out = new ArrayList<>();
+        Map<String, Object> blank = new LinkedHashMap<>();
+        blank.put("value", "");
+        blank.put("label", "—");
+        blank.put("selected", currentUri == null);
+        out.add(blank);
+        DataTable target = repo.findTableById(rel.getTargetTableId());
+        boolean foundCurrent = false;
+        if (target != null) {
+            for (DataRow r : repo.listRows(target)) {
+                String uri = repo.rowUri(target.getSlug(), r.getId());
+                boolean selected = uri.equals(currentUri);
+                foundCurrent |= selected;
+                Map<String, Object> opt = new LinkedHashMap<>();
+                opt.put("value", Format.xml(uri));
+                opt.put("label", Format.xml(r.getName() != null ? r.getName() : uri));
+                opt.put("selected", selected);
+                out.add(opt);
+            }
+        }
+        if (currentUri != null && !foundCurrent) {
+            Map<String, Object> missing = new LinkedHashMap<>();
+            missing.put("value", Format.xml(currentUri));
+            missing.put("label", "(missing row)");
+            missing.put("selected", true);
+            out.add(missing);
+        }
+        return out;
+    }
+
+    /** One model per {@link DataRepository.RelationTab}, each becoming a sibling {@code <page>}. */
+    private List<Map<String, Object>> relationTabModels(DataTable table, DataRow row) throws SQLException {
+        List<Map<String, Object>> out = new ArrayList<>();
+        String rowUri = repo.rowUri(table.getSlug(), row.getId());
+        for (DataRepository.RelationTab tab : repo.relationTabsFor(table)) {
+            List<DataField> listedFields = repo.listFields(tab.listedTable());
+            List<Map<String, Object>> rowModels = new ArrayList<>();
+            for (DataRow rr : repo.rowsPointingAt(tab.pointerField(), rowUri)) {
+                rowModels.add(rowModel(rr, listedFields));
+            }
+            Map<String, Object> m = new LinkedHashMap<>();
+            m.put("label", Format.xml(tab.label()));
+            m.put("tableSlug", tab.listedTable().getSlug());
+            m.put("fields", fieldModels(listedFields));
+            m.put("rows", rowModels);
+            out.add(m);
+        }
+        return out;
     }
 
     // ── Model fragments ──────────────────────────────────────────────────────────
@@ -341,44 +386,39 @@ public class DataController extends Controller {
                     % for fi,field in ipairs(model.fields) do
                     <hbox>
                         <text>${field.name}</text>
+                        % if field.belongsTo then
+                        <select name="f_${field.slug}">
+                            % for oi,opt in ipairs(field.options) do
+                            <option value="${opt.value}" selected="${opt.selected}">${opt.label}</option>
+                            % end
+                        </select>
+                        % else
                         <input name="f_${field.slug}">${model.values[field.slug]}</input>
+                        % end
                     </hbox>
                     % end
                     <hbox>
                         <button onclick="save">Save</button>
                         <button onclick="deleterow">Delete row</button>
                     </hbox>
-                    % if #model.relatedTables > 0 then
-                    <text>Related</text>
-                    % for ri,rt in ipairs(model.relatedTables) do
-                    <button onclick="nav:spacify:table:${model.table.slug}:${model.row.id}:${rt.slug}">${rt.name}</button>
+                    % else
+                    <text>Not found.</text>
+                    <button onclick="nav:spacify:table">Back to tables</button>
                     % end
-                    % end
-                    % elseif model.mode == "related" then
+                </vbox>
+            </page>
+            % for ti,tab in ipairs(model.relationTabs) do
+            <page title="${tab.label}">
+                <vbox>
+                    <text>${tab.label} (${#tab.rows})</text>
                     <hbox>
-                        <button onclick="nav:spacify:table:${model.table.slug}:${model.row.id}">Back to row</button>
-                    </hbox>
-                    <text>${model.table.name} row — related ${model.relatedTable.name}</text>
-                    % for fi,field in ipairs(model.fields) do
-                    <hbox>
-                        <text>${field.name}:</text>
-                        % if field.type == "LINK" then
-                        % for li,lnk in ipairs(model.row.links[field.slug]) do
-                        <button onclick="nav:${lnk.uri}">${lnk.label}</button>
-                        % end
-                        % else
-                        <text>${model.row.cells[field.slug]}</text>
-                        % end
-                    </hbox>
-                    % end
-                    <hbox>
-                        % for fi,rf in ipairs(model.relatedFields) do
+                        % for fi,rf in ipairs(tab.fields) do
                         <text>${rf.name}</text>
                         % end
                     </hbox>
-                    % for ri,rr in ipairs(model.relatedRows) do
+                    % for ri,rr in ipairs(tab.rows) do
                     <hbox>
-                        % for fi,rf in ipairs(model.relatedFields) do
+                        % for fi,rf in ipairs(tab.fields) do
                         % if rf.type == "LINK" then
                         % for li,lnk in ipairs(rr.links[rf.slug]) do
                         <button onclick="nav:${lnk.uri}">${lnk.label}</button>
@@ -387,14 +427,11 @@ public class DataController extends Controller {
                         <text>${rr.cells[rf.slug]}</text>
                         % end
                         % end
-                        <button onclick="nav:spacify:table:${model.relatedTable.slug}:${rr.id}">View</button>
+                        <button onclick="nav:spacify:table:${tab.tableSlug}:${rr.id}">View</button>
                     </hbox>
-                    % end
-                    % else
-                    <text>Not found.</text>
-                    <button onclick="nav:spacify:table">Back to tables</button>
                     % end
                 </vbox>
             </page>
+            % end
         </view>""";
 }

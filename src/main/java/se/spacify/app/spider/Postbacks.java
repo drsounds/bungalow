@@ -8,6 +8,7 @@ import javax.swing.JButton;
 
 import se.spacify.controls.Button;
 import se.spacify.controls.Control;
+import se.spacify.controls.SelectField;
 import se.spacify.controls.TextField;
 
 /**
@@ -56,6 +57,11 @@ public final class Postbacks {
                 String name = inputName(child);
                 if (name != null) {
                     input.put(name, field.getComponent().getText());
+                }
+            } else if (child instanceof SelectField select) {
+                String name = inputName(child);
+                if (name != null) {
+                    input.put(name, select.getSelectedValue());
                 }
             }
             collectInto(child, input);

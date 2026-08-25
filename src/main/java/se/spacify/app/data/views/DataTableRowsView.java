@@ -3,6 +3,7 @@ package se.spacify.app.data.views;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
@@ -20,6 +21,7 @@ import java.util.regex.Pattern;
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.DefaultListCellRenderer;
+import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
@@ -37,6 +39,7 @@ import javax.swing.table.DefaultTableModel;
 import se.spacify.app.data.DataRepository;
 import se.spacify.app.data.Format;
 import se.spacify.app.data.model.DataField;
+import se.spacify.app.data.model.DataRelation;
 import se.spacify.app.data.model.DataRow;
 import se.spacify.app.data.model.DataTable;
 import se.spacify.app.data.model.DataValue;
@@ -73,14 +76,20 @@ public class DataTableRowsView extends View {
 
     private static final Pattern URI = Pattern.compile("spacify:table:([^:]+)");
 
+    private static final RowOption ANY = new RowOption(null, "(All)");
+
     private final DataRepository repo;
     private final JLabel headerLabel;
     private final Table table;
     private final JTable jtable;
+    private final JTextField searchField;
+    private final JPanel filterBar;
+    private final List<JComboBox<RowOption>> relationCombos = new ArrayList<>();
 
     private String tableSlug;
     private DataTable dataTable;
     private List<DataField> fields = List.of();
+    private List<DataRelation> belongsToRelations = List.of();
     private final List<DataRow> rows = new ArrayList<>();
 
     public DataTableRowsView(ViewStack viewStack, DataRepository repo) {
@@ -122,6 +131,7 @@ public class DataTableRowsView extends View {
         ToolButton deleteBtn    = new ToolButton("Delete");
         ToolButton addFieldBtn  = new ToolButton("Add field…");
         ToolButton deleteFieldBtn = new ToolButton("Delete field…");
+        ToolButton addRelationBtn = new ToolButton("Add relation (M:N)…");
         ToolButton refreshBtn   = new ToolButton("Refresh");
 
         backBtn.getComponent().addActionListener(e -> getViewStack().navigate("spacify:table"));
@@ -133,6 +143,7 @@ public class DataTableRowsView extends View {
         deleteBtn.getComponent().addActionListener(e -> deleteSelected());
         addFieldBtn.getComponent().addActionListener(e -> { onAddField(); reload(); });
         deleteFieldBtn.getComponent().addActionListener(e -> { onDeleteField(); reload(); });
+        addRelationBtn.getComponent().addActionListener(e -> { onAddRelation(); reload(); });
         refreshBtn.getComponent().addActionListener(e -> reload());
 
         toolbar.add(backBtn);
@@ -143,14 +154,24 @@ public class DataTableRowsView extends View {
         toolbar.getComponent().addSeparator();
         toolbar.add(addFieldBtn);
         toolbar.add(deleteFieldBtn);
+        toolbar.add(addRelationBtn);
         toolbar.getComponent().addSeparator();
         toolbar.add(refreshBtn);
+
+        searchField = new JTextField(14);
+        searchField.putClientProperty("JTextField.placeholderText", "Search…");
+        searchField.addActionListener(e -> reload());
+        filterBar = new JPanel(new FlowLayout(FlowLayout.LEFT, 6, 2));
+        filterBar.setOpaque(false);
+        filterBar.add(new JLabel("Filter:"));
+        filterBar.add(searchField);
 
         JPanel north = new JPanel();
         north.setLayout(new BoxLayout(north, BoxLayout.PAGE_AXIS));
         north.setOpaque(false);
         north.add(headerLabel);
         north.add(toolbar.getComponent());
+        north.add(filterBar);
 
         ScrollPane scroll = new ScrollPane(table);
         scroll.getComponent().setBorder(BorderFactory.createEmptyBorder());
@@ -167,23 +188,97 @@ public class DataTableRowsView extends View {
     private void reload() {
         rows.clear();
         try {
+            DataRepository.RowFilter filter = currentFilter();
             dataTable = repo.findTable(tableSlug);
             if (dataTable == null) {
                 headerLabel.setText("Table not found");
                 fields = List.of();
                 setColumns(fields);
+                updateRelationCombos(List.of());
                 return;
             }
             headerLabel.setText(dataTable.getName());
             fields = repo.listFields(dataTable);
             setColumns(fields);
-            for (DataRow r : repo.listRows(dataTable)) {
+            updateRelationCombos(repo.belongsToRelationsOn(dataTable));
+            for (DataRow r : repo.searchRows(dataTable, filter)) {
                 rows.add(r);
                 addRowToTable(r);
             }
         } catch (SQLException e) {
             showError(e);
         }
+    }
+
+    /** One filter-bar dropdown's option: a related row's URI, or {@link #ANY} for "no filter". */
+    private record RowOption(String uri, String label) {
+        @Override public String toString() { return label; }
+    }
+
+    /**
+     * Rebuild the filter bar's per-relation dropdowns only when the relation set actually
+     * changed (e.g. switching tables, or a relation was just added) — rebuilding on every
+     * {@link #reload()} would wipe the user's current filter selection each time selecting
+     * a dropdown value triggers this same reload.
+     */
+    private void updateRelationCombos(List<DataRelation> relations) {
+        List<String> freshIds = relations.stream().map(DataRelation::getId).toList();
+        List<String> currentIds = belongsToRelations.stream().map(DataRelation::getId).toList();
+        if (freshIds.equals(currentIds)) {
+            return;
+        }
+        belongsToRelations = relations;
+        rebuildRelationCombos(relations);
+    }
+
+    private void rebuildRelationCombos(List<DataRelation> relations) {
+        for (JComboBox<RowOption> combo : relationCombos) {
+            filterBar.remove(combo);
+        }
+        relationCombos.clear();
+        for (DataRelation r : relations) {
+            JComboBox<RowOption> combo = new JComboBox<>();
+            combo.addItem(ANY);
+            try {
+                DataTable target = repo.findTableById(r.getTargetTableId());
+                DataField field = repo.findField(r.getFieldId());
+                if (target != null && field != null) {
+                    String prefix = (r.getName() != null && !r.getName().isBlank() ? r.getName() : field.getName()) + ": ";
+                    for (DataRow tr : repo.listRows(target)) {
+                        String uri = repo.rowUri(target.getSlug(), tr.getId());
+                        combo.addItem(new RowOption(uri, prefix + (tr.getName() != null ? tr.getName() : tr.getId())));
+                    }
+                }
+            } catch (SQLException e) {
+                showError(e);
+            }
+            combo.addActionListener(e -> reload());
+            relationCombos.add(combo);
+            filterBar.add(combo);
+        }
+        filterBar.revalidate();
+        filterBar.repaint();
+    }
+
+    /** The filter bar's current state: the search box plus every active relation dropdown. */
+    private DataRepository.RowFilter currentFilter() {
+        String text = searchField.getText().isBlank() ? null : searchField.getText().trim();
+        List<DataRepository.RowFilter.FieldEquals> eq = new ArrayList<>();
+        for (int i = 0; i < relationCombos.size() && i < belongsToRelations.size(); i++) {
+            RowOption sel = (RowOption) relationCombos.get(i).getSelectedItem();
+            if (sel == null || sel.uri() == null) {
+                continue;
+            }
+            try {
+                DataField field = repo.findField(belongsToRelations.get(i).getFieldId());
+                if (field != null) {
+                    eq.add(new DataRepository.RowFilter.FieldEquals(field, sel.uri()));
+                }
+            } catch (SQLException e) {
+                showError(e);
+            }
+        }
+        return new DataRepository.RowFilter(text, eq);
     }
 
     /** Rebuild the model's columns from the table's current fields (they vary per table). */
@@ -416,10 +511,72 @@ public class DataTableRowsView extends View {
         if (dataTable == null) return;
         JTextField name = new JTextField();
         JComboBox<FieldType> type = new JComboBox<>(FieldType.values());
-        if (!FormDialog.show(getComponent(), "Add Field", new String[]{"Name", "Type"},
-                new JComponent[]{name, type})) return;
+        JComboBox<DataTable> target = new JComboBox<>();
+        target.addItem(null);
         try {
-            repo.addField(dataTable, name.getText(), ((FieldType) type.getSelectedItem()).name());
+            for (DataTable t : repo.listTables()) target.addItem(t);
+        } catch (SQLException e) {
+            showError(e);
+            return;
+        }
+        target.setRenderer(new DefaultListCellRenderer() {
+            private static final long serialVersionUID = 1L;
+            @Override
+            public Component getListCellRendererComponent(JList<?> list, Object value, int index,
+                    boolean isSelected, boolean hasFocus) {
+                super.getListCellRendererComponent(list, value, index, isSelected, hasFocus);
+                setText(value instanceof DataTable t ? t.getName() : "(none — plain field)");
+                return this;
+            }
+        });
+        // Only takes effect once a target table is picked below — defineBelongsTo is the only
+        // path that reads it; a plain (no target) LINK field's cardinality still follows the
+        // old naming convention (name the field so it slugifies to "..._uris") via addField.
+        JCheckBox multi = new JCheckBox("Multiple values (link only)");
+        multi.setEnabled(false);
+        target.addActionListener(e -> multi.setEnabled(target.getSelectedItem() != null));
+        if (!FormDialog.show(getComponent(), "Add Field",
+                new String[]{"Name", "Type", "Target table (link only)", ""},
+                new JComponent[]{name, type, target, multi})) return;
+        try {
+            DataTable targetTable = (DataTable) target.getSelectedItem();
+            if (type.getSelectedItem() == FieldType.LINK && targetTable != null) {
+                repo.defineBelongsTo(dataTable, name.getText(), targetTable, multi.isSelected(), null);
+            } else {
+                repo.addField(dataTable, name.getText(), ((FieldType) type.getSelectedItem()).name());
+            }
+        } catch (Exception e) {
+            showError(e);
+        }
+    }
+
+    private void onAddRelation() {
+        if (dataTable == null) return;
+        JComboBox<DataTable> target = new JComboBox<>();
+        try {
+            for (DataTable t : repo.listTables()) target.addItem(t);
+        } catch (SQLException e) {
+            showError(e);
+            return;
+        }
+        target.setRenderer(new DefaultListCellRenderer() {
+            private static final long serialVersionUID = 1L;
+            @Override
+            public Component getListCellRendererComponent(JList<?> list, Object value, int index,
+                    boolean isSelected, boolean hasFocus) {
+                super.getListCellRendererComponent(list, value, index, isSelected, hasFocus);
+                if (value instanceof DataTable t) setText(t.getName());
+                return this;
+            }
+        });
+        JTextField junctionName = new JTextField(dataTable.getName() + " ↔ ");
+        if (!FormDialog.show(getComponent(), "Add many-to-many relation",
+                new String[]{"Related table", "Junction table name"},
+                new JComponent[]{target, junctionName})) return;
+        DataTable other = (DataTable) target.getSelectedItem();
+        if (other == null || junctionName.getText().isBlank()) return;
+        try {
+            repo.defineManyToMany(dataTable, other, junctionName.getText().trim());
         } catch (Exception e) {
             showError(e);
         }

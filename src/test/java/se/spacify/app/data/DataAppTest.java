@@ -5,6 +5,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -16,6 +17,7 @@ import org.w3c.dom.NodeList;
 
 import se.spacify.app.data.controller.DataController;
 import se.spacify.app.data.model.DataField;
+import se.spacify.app.data.model.DataRelation;
 import se.spacify.app.data.model.DataRow;
 import se.spacify.app.data.model.DataTable;
 import se.spacify.app.spider.Request;
@@ -154,17 +156,15 @@ public class DataAppTest {
     }
 
     @Test
-    public void relatedRowsResolveByUriSuffixField() throws Exception {
+    public void belongsToRelationRendersAsRowDetailTab() throws Exception {
         DataTable artists = repo.createTable("Artists " + UUID.randomUUID());
         DataTable albums = repo.createTable("Albums " + UUID.randomUUID());
         try {
             repo.addField(artists, "Name", "text");
-
             repo.addField(albums, "Title", "text");
-            // A LINK field must be named "<pointed-to-table-slug>_uri" to be discovered
-            // as a pointer back at that table (see DataRepository.relatedTablesFor).
-            DataField artistLink = repo.addField(albums, artists.getSlug() + " uri", "link");
-            assertEquals(artists.getSlug() + "_uri", artistLink.getSlug());
+            DataRelation relation = repo.defineBelongsTo(albums, "Artist", artists, false, null);
+            DataField artistLink = repo.findField(relation.getFieldId());
+            assertNotNull(artistLink);
 
             Map<String, Object> artistPosted = new HashMap<>();
             artistPosted.put("f_name", "Test Artist");
@@ -176,13 +176,147 @@ public class DataAppTest {
             albumPosted.put("f_" + artistLink.getSlug(), artistUri);
             repo.createRow(albums, repo.listFields(albums), albumPosted);
 
+            // Same single-page render now shows the related album inline as a tab, no
+            // separate ":<related slug>" screen/fetch needed.
             Element detail = get(artistUri);
-            assertTrue("expected a link to the related albums table",
-                textOf(detail).contains(albums.getName()));
+            assertTrue("expected the related album's title on the artist's own detail page",
+                textOf(detail).contains("Test Album"));
 
-            String relatedUri = artistUri + ":" + albums.getSlug();
-            Element related = get(relatedUri);
-            assertTrue("expected the related album row's title", textOf(related).contains("Test Album"));
+            List<DataRepository.RelationTab> tabs = repo.relationTabsFor(artists);
+            assertEquals(1, tabs.size());
+            assertEquals(albums.getSlug(), tabs.get(0).listedTable().getSlug());
+        } finally {
+            repo.deleteTable(albums);
+            repo.deleteTable(artists);
+        }
+    }
+
+    @Test
+    public void manyToManyRelationListsJunctionRowsWithSpecialFields() throws Exception {
+        DataTable artists = repo.createTable("Artists " + UUID.randomUUID());
+        DataTable venues = repo.createTable("Venues " + UUID.randomUUID());
+        DataRelation relation = repo.defineManyToMany(artists, venues, "Bookings " + UUID.randomUUID());
+        DataTable junction = repo.findTableById(relation.getJunctionTableId());
+        try {
+            repo.addField(artists, "Name", "text");
+            repo.addField(venues, "Name", "text");
+            // A "special field" attached to the junction, beyond its two FK fields.
+            repo.addField(junction, "Fee", "number");
+
+            DataRow artistRow = repo.createRow(artists, repo.listFields(artists),
+                Map.of("f_name", "Test Artist"));
+            DataRow venueRow = repo.createRow(venues, repo.listFields(venues),
+                Map.of("f_name", "Test Venue"));
+
+            DataField junctionArtistField = repo.findField(relation.getJunctionSourceFieldId());
+            DataField junctionVenueField = repo.findField(relation.getJunctionTargetFieldId());
+            Map<String, Object> junctionPosted = new HashMap<>();
+            junctionPosted.put("f_" + junctionArtistField.getSlug(), repo.rowUri(artists.getSlug(), artistRow.getId()));
+            junctionPosted.put("f_" + junctionVenueField.getSlug(), repo.rowUri(venues.getSlug(), venueRow.getId()));
+            junctionPosted.put("f_fee", "500");
+            repo.createRow(junction, repo.listFields(junction), junctionPosted);
+
+            // Both sides of the many-to-many see a tab listing the junction row, including
+            // its special field.
+            Element artistDetail = get(repo.rowUri(artists.getSlug(), artistRow.getId()));
+            assertTrue("expected the junction row's special field on the artist's page",
+                textOf(artistDetail).contains("500"));
+
+            Element venueDetail = get(repo.rowUri(venues.getSlug(), venueRow.getId()));
+            assertTrue("expected the junction row's special field on the venue's page",
+                textOf(venueDetail).contains("500"));
+        } finally {
+            repo.deleteTable(junction);
+            repo.deleteTable(venues);
+            repo.deleteTable(artists);
+        }
+    }
+
+    @Test
+    public void migrateLegacyLinkRelationsBackfillsOldConventionFields() throws Exception {
+        DataTable artists = repo.createTable("Artists " + UUID.randomUUID());
+        DataTable albums = repo.createTable("Albums " + UUID.randomUUID());
+        try {
+            // The old convention: a LINK field slugged "<targetSlug>_uri", created via the
+            // plain addField (no relation metadata) — as any pre-existing field would be.
+            DataField legacyLink = repo.addField(albums, artists.getSlug() + " uri", "link");
+            assertEquals(artists.getSlug() + "_uri", legacyLink.getSlug());
+            assertTrue("no relation should exist yet", repo.relationTabsFor(artists).isEmpty());
+
+            repo.migrateLegacyLinkRelations();
+            List<DataRepository.RelationTab> tabs = repo.relationTabsFor(artists);
+            assertEquals(1, tabs.size());
+            assertEquals(albums.getSlug(), tabs.get(0).listedTable().getSlug());
+            assertEquals(legacyLink.getId(), tabs.get(0).pointerField().getId());
+
+            // Idempotent: running it again doesn't create a second relation for the same field.
+            repo.migrateLegacyLinkRelations();
+            assertEquals(1, repo.relationTabsFor(artists).size());
+        } finally {
+            repo.deleteTable(albums);
+            repo.deleteTable(artists);
+        }
+    }
+
+    @Test
+    public void migrateLegacyLinkRelationsDoesNotDuplicateManyToManyJunctionFields() throws Exception {
+        // A many-to-many junction's own FK fields are ordinary "<targetSlug>_uri"-looking LINK
+        // fields (createLinkField names them after the table they point at), so the migration
+        // backfill must recognize them as already-managed and not also treat them as legacy
+        // convention fields — otherwise every activation would grow a second, spurious
+        // BELONGS_TO relation (and a duplicate tab) alongside the real MANY_TO_MANY one.
+        DataTable artists = repo.createTable("Artists " + UUID.randomUUID());
+        DataTable venues = repo.createTable("Venues " + UUID.randomUUID());
+        DataRelation relation = repo.defineManyToMany(artists, venues, "Bookings " + UUID.randomUUID());
+        DataTable junction = repo.findTableById(relation.getJunctionTableId());
+        try {
+            assertEquals(1, repo.relationTabsFor(artists).size());
+            assertEquals(1, repo.relationTabsFor(venues).size());
+
+            repo.migrateLegacyLinkRelations();
+
+            assertEquals("expected no spurious extra relation/tab on the artist side",
+                1, repo.relationTabsFor(artists).size());
+            assertEquals("expected no spurious extra relation/tab on the venue side",
+                1, repo.relationTabsFor(venues).size());
+        } finally {
+            repo.deleteTable(junction);
+            repo.deleteTable(venues);
+            repo.deleteTable(artists);
+        }
+    }
+
+    @Test
+    public void searchRowsFiltersByNameAndBelongsTo() throws Exception {
+        DataTable artists = repo.createTable("Artists " + UUID.randomUUID());
+        DataTable albums = repo.createTable("Albums " + UUID.randomUUID());
+        try {
+            repo.addField(artists, "Name", "text");
+            repo.addField(albums, "Title", "text");
+            DataRelation relation = repo.defineBelongsTo(albums, "Artist", artists, false, null);
+            DataField linkField = repo.findField(relation.getFieldId());
+
+            DataRow artistOne = repo.createRow(artists, repo.listFields(artists), Map.of("f_name", "Artist One"));
+            DataRow artistTwo = repo.createRow(artists, repo.listFields(artists), Map.of("f_name", "Artist Two"));
+            String oneUri = repo.rowUri(artists.getSlug(), artistOne.getId());
+            String twoUri = repo.rowUri(artists.getSlug(), artistTwo.getId());
+
+            repo.createRow(albums, repo.listFields(albums),
+                Map.of("name", "Sunrise", "f_title", "Sunrise", "f_" + linkField.getSlug(), oneUri));
+            repo.createRow(albums, repo.listFields(albums),
+                Map.of("name", "Sunset", "f_title", "Sunset", "f_" + linkField.getSlug(), twoUri));
+
+            assertEquals(2, repo.searchRows(albums, DataRepository.RowFilter.NONE).size());
+
+            List<DataRow> byName = repo.searchRows(albums, new DataRepository.RowFilter("sun", List.of()));
+            assertEquals(2, byName.size());
+
+            List<DataRow> byTitle = repo.searchRows(albums, new DataRepository.RowFilter("rise", List.of()));
+            assertEquals(1, byTitle.size());
+
+            List<DataRow> byArtist = repo.searchRows(albums, new DataRepository.RowFilter(null,
+                List.of(new DataRepository.RowFilter.FieldEquals(linkField, oneUri))));
+            assertEquals(1, byArtist.size());
         } finally {
             repo.deleteTable(albums);
             repo.deleteTable(artists);
