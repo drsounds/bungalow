@@ -4,6 +4,9 @@ import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.Transferable;
+import java.awt.datatransfer.UnsupportedFlavorException;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.sql.SQLException;
@@ -21,11 +24,14 @@ import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JList;
+import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
+import javax.swing.TransferHandler;
 import javax.swing.table.DefaultTableModel;
 
 import se.spacify.app.data.DataRepository;
@@ -36,6 +42,11 @@ import se.spacify.app.data.model.DataTable;
 import se.spacify.app.data.model.DataValue;
 import se.spacify.app.data.model.FieldType;
 import se.spacify.app.library.views.FormDialog;
+import se.spacify.app.music.controls.MusicTable;
+import se.spacify.app.music.model.PlayableKind;
+import se.spacify.app.music.model.PlayableRef;
+import se.spacify.app.playlist.model.Playlist;
+import se.spacify.app.playlist.service.PlaylistService;
 import se.spacify.controls.ScrollPane;
 import se.spacify.controls.Table;
 import se.spacify.controls.ToolBar;
@@ -90,7 +101,9 @@ public class DataTableRowsView extends View {
         jtable.setFillsViewportHeight(true);
         jtable.setShowGrid(false);
         jtable.setIntercellSpacing(new Dimension(0, 0));
-        jtable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        jtable.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+        jtable.setDragEnabled(true);
+        jtable.setTransferHandler(new RowTransferHandler());
         jtable.addMouseListener(new MouseAdapter() {
             @Override public void mouseClicked(MouseEvent e) {
                 if (e.getClickCount() == 2) {
@@ -98,6 +111,8 @@ public class DataTableRowsView extends View {
                     if (row >= 0) openRow(row);
                 }
             }
+            @Override public void mousePressed(MouseEvent e)  { maybeShowRowMenu(e); }
+            @Override public void mouseReleased(MouseEvent e) { maybeShowRowMenu(e); }
         });
 
         ToolBar toolbar = new ToolBar();
@@ -113,12 +128,9 @@ public class DataTableRowsView extends View {
         addBtn.getComponent().addActionListener(e -> { onAdd(); reload(); });
         viewBtn.getComponent().addActionListener(e -> {
             int r = jtable.getSelectedRow();
-            if (r >= 0) openRow(r);
+            if (r >= 0 && jtable.getSelectedRowCount() == 1) openRow(r);
         });
-        deleteBtn.getComponent().addActionListener(e -> {
-            int r = jtable.getSelectedRow();
-            if (r >= 0) { onDeleteRow(r); reload(); }
-        });
+        deleteBtn.getComponent().addActionListener(e -> deleteSelected());
         addFieldBtn.getComponent().addActionListener(e -> { onAddField(); reload(); });
         deleteFieldBtn.getComponent().addActionListener(e -> { onDeleteField(); reload(); });
         refreshBtn.getComponent().addActionListener(e -> reload());
@@ -254,19 +266,148 @@ public class DataTableRowsView extends View {
         }
     }
 
-    private void onDeleteRow(int row) {
+    private void openRow(int row) {
         DataRow r = rows.get(row);
-        if (!confirm("this row")) return;
+        getViewStack().navigate(repo.rowUri(tableSlug, r.getId()));
+    }
+
+    /** The rows currently selected in the grid, in view order. */
+    private List<DataRow> selectedRows() {
+        List<DataRow> out = new ArrayList<>();
+        for (int r : jtable.getSelectedRows()) {
+            out.add(rows.get(r));
+        }
+        return out;
+    }
+
+    /** Delete every selected row after one confirmation covering the whole selection. */
+    private void deleteSelected() {
+        List<DataRow> toDelete = selectedRows();
+        if (toDelete.isEmpty()) return;
+        String what = toDelete.size() == 1 ? "this row" : toDelete.size() + " rows";
+        if (!confirm(what)) return;
         try {
-            repo.deleteRow(dataTable, r);
+            for (DataRow r : toDelete) {
+                repo.deleteRow(dataTable, r);
+            }
         } catch (SQLException e) {
+            showError(e);
+        }
+        reload();
+    }
+
+    /** Wrap a row as a {@link PlayableRef} — the drag payload and "Add to playlist" item shape. */
+    private PlayableRef playableFor(DataRow r) {
+        String name = r.getName() != null ? r.getName() : dataTable.getName() + " row";
+        return new PlayableRef(PlayableKind.TRACK, repo.rowUri(tableSlug, r.getId()), name, null, 0L, List.of());
+    }
+
+    private void addSelectedToPlaylist() {
+        List<DataRow> selected = selectedRows();
+        if (selected.isEmpty()) return;
+        PlaylistService svc = editablePlaylistService();
+        if (svc == null) {
+            JOptionPane.showMessageDialog(getComponent(), "No editable playlist is available.",
+                    "Add to playlist", JOptionPane.INFORMATION_MESSAGE);
+            return;
+        }
+        final String NEW = "＋ New playlist…";
+        List<Object> options = new ArrayList<>(svc.getPlaylists());
+        options.add(NEW);
+        Object choice = JOptionPane.showInputDialog(getComponent(), "Add to playlist:", "Add to playlist",
+                JOptionPane.PLAIN_MESSAGE, null, options.toArray(), options.get(0));
+        if (choice == null) return;
+        try {
+            Playlist target;
+            if (NEW.equals(choice)) {
+                String name = JOptionPane.showInputDialog(getComponent(), "Playlist name:", "New Playlist",
+                        JOptionPane.PLAIN_MESSAGE);
+                if (name == null || name.isBlank()) return;
+                target = svc.createPlaylist(name.trim());
+            } else {
+                target = (Playlist) choice;
+            }
+            for (DataRow r : selected) {
+                svc.addToPlaylist(target.getPublicId(), playableFor(r), PlayableKind.TRACK.id());
+            }
+        } catch (Exception e) {
             showError(e);
         }
     }
 
-    private void openRow(int row) {
-        DataRow r = rows.get(row);
-        getViewStack().navigate(repo.rowUri(tableSlug, r.getId()));
+    private PlaylistService editablePlaylistService() {
+        for (PlaylistService svc : getViewStack().getMainWindow().getServiceManager().getServices(PlaylistService.class)) {
+            if (svc.isEditable()) return svc;
+        }
+        return null;
+    }
+
+    /**
+     * Right-click row menu: View row (single selection only), Add to playlist, Delete —
+     * the CRUD-relevant subset that makes sense on an existing row (Create stays a
+     * toolbar-only "Add"; editing already happens by opening the row's detail page).
+     * Right-clicking a row already inside the current selection leaves that selection
+     * alone so the menu acts on it all; right-clicking outside it collapses to just
+     * that row, matching typical list/file-manager behavior.
+     */
+    private void maybeShowRowMenu(MouseEvent e) {
+        if (!e.isPopupTrigger()) return;
+        int row = jtable.rowAtPoint(e.getPoint());
+        if (row < 0) return;
+        if (!jtable.isRowSelected(row)) {
+            jtable.setRowSelectionInterval(row, row);
+        }
+        int count = jtable.getSelectedRowCount();
+
+        JPopupMenu menu = new JPopupMenu();
+        JMenuItem view = new JMenuItem("View row");
+        view.setEnabled(count == 1);
+        view.addActionListener(a -> openRow(row));
+        menu.add(view);
+
+        JMenuItem addToPlaylist = new JMenuItem("Add to playlist");
+        addToPlaylist.addActionListener(a -> addSelectedToPlaylist());
+        menu.add(addToPlaylist);
+
+        menu.addSeparator();
+        JMenuItem delete = new JMenuItem(count > 1 ? "Delete " + count + " rows" : "Delete");
+        delete.addActionListener(a -> deleteSelected());
+        menu.add(delete);
+
+        menu.show(e.getComponent(), e.getX(), e.getY());
+    }
+
+    /**
+     * Drag export for a row: carries both {@link MusicTable#PLAYABLE_REF_FLAVOR} (so an
+     * existing playlist view or the sidebar's playlist tree can accept the drop today,
+     * unchanged) and a plain {@link DataFlavor#stringFlavor} of the row's own
+     * {@code spacify:table:<slug>:<rowId>} URI, for any plain-text drop target. Exports
+     * only the drag anchor row, independent of a wider multi-selection — {@link MusicTable}
+     * itself only ever drags one row too.
+     */
+    private final class RowTransferHandler extends TransferHandler {
+        @Override public int getSourceActions(JComponent c) { return COPY; }
+
+        @Override protected Transferable createTransferable(JComponent c) {
+            int row = jtable.getSelectedRow();
+            if (row < 0) return null;
+            PlayableRef ref = playableFor(rows.get(row));
+            return new RowTransferable(new MusicTable.PlaylistDrag(ref, false), ref.getPlayUri());
+        }
+    }
+
+    private record RowTransferable(MusicTable.PlaylistDrag drag, String uri) implements Transferable {
+        @Override public DataFlavor[] getTransferDataFlavors() {
+            return new DataFlavor[] { MusicTable.PLAYABLE_REF_FLAVOR, DataFlavor.stringFlavor };
+        }
+        @Override public boolean isDataFlavorSupported(DataFlavor flavor) {
+            return MusicTable.PLAYABLE_REF_FLAVOR.equals(flavor) || DataFlavor.stringFlavor.equals(flavor);
+        }
+        @Override public Object getTransferData(DataFlavor flavor) throws UnsupportedFlavorException {
+            if (MusicTable.PLAYABLE_REF_FLAVOR.equals(flavor)) return drag;
+            if (DataFlavor.stringFlavor.equals(flavor)) return uri;
+            throw new UnsupportedFlavorException(flavor);
+        }
     }
 
     // ── Field management ─────────────────────────────────────────────────────────
