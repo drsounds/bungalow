@@ -540,9 +540,12 @@ public final class DataRepository {
     }
 
     /** The BELONGS_TO relations owned by {@code table} (i.e. where it holds the pointer field) —
-     *  used to render a picker for each such field and to build the Swing grid's filter dropdowns. */
+     *  used to render a picker for each such field and to build the Swing grid's filter dropdowns.
+     *  Ordered by creation so repeated calls return a stable order (no ORDER BY would let SQLite
+     *  return rows in whatever order it likes, and DataTableRowsView relies on that stability to
+     *  tell "the same relations" apart from "the set actually changed"). */
     public List<DataRelation> belongsToRelationsOn(DataTable table) throws SQLException {
-        return relations().queryBuilder().where()
+        return relations().queryBuilder().orderBy("created_at", true).where()
             .eq("source_table_id", table.getId()).and().eq("kind", RelationKind.BELONGS_TO)
             .and().isNull("deleted_at").query();
     }

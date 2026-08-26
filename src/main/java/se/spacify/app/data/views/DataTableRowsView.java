@@ -16,8 +16,10 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
@@ -35,6 +37,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
+import javax.swing.SwingUtilities;
 import javax.swing.TransferHandler;
 import javax.swing.table.DefaultTableModel;
 
@@ -228,16 +231,25 @@ public class DataTableRowsView extends View {
      * Rebuild the filter bar's per-relation dropdowns only when the relation set actually
      * changed (e.g. switching tables, or a relation was just added) — rebuilding on every
      * {@link #reload()} would wipe the user's current filter selection each time selecting
-     * a dropdown value triggers this same reload.
+     * a dropdown value triggers this same reload. Compared as a set, not an ordered list:
+     * {@link DataRepository#belongsToRelationsOn} is now ordered, but nothing here should rely
+     * on SQL row order alone to decide "unchanged" — an order-independent compare is correct
+     * regardless, and cheap.
      */
     private void updateRelationCombos(List<DataRelation> relations) {
-        List<String> freshIds = relations.stream().map(DataRelation::getId).toList();
-        List<String> currentIds = belongsToRelations.stream().map(DataRelation::getId).toList();
+        Set<String> freshIds = relations.stream().map(DataRelation::getId).collect(Collectors.toSet());
+        Set<String> currentIds = belongsToRelations.stream().map(DataRelation::getId).collect(Collectors.toSet());
         if (freshIds.equals(currentIds)) {
             return;
         }
         belongsToRelations = relations;
-        rebuildRelationCombos(relations);
+        // Deferred: this can be reached from inside a relation combo's own actionPerformed (its
+        // selection changed -> reload() -> here), and rebuilding removes/replaces combo boxes,
+        // including potentially the very one still mid-dispatch of that event. Removing a Swing
+        // component from its parent while it's still firing its own event is unsafe and was
+        // observed to corrupt the view (blank render); running the rebuild after the current
+        // event finishes avoids that entirely.
+        SwingUtilities.invokeLater(() -> rebuildRelationCombos(relations));
     }
 
     private void rebuildRelationCombos(List<DataRelation> relations) {
