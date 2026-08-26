@@ -28,6 +28,15 @@ public class SpacifyApp {
         }
     };
     public static void main(String[] args) {
+        // ── Crash logging ─────────────────────────────────────────────────────
+        // Installed first, before anything else can fail: the app has no console
+        // attached when launched other than from a terminal (double-click, a
+        // packaged app, etc.), so an uncaught exception on the EDT — which Swing
+        // otherwise only ever prints to System.err — would previously vanish
+        // with no trace at all. Every uncaught exception on any thread now also
+        // lands in ~/.spacify/crash.log, in addition to (not instead of) stderr.
+        installCrashLogging();
+
         // ── Look and feel ─────────────────────────────────────────────────────
         try {
             for (UIManager.LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
@@ -76,5 +85,28 @@ public class SpacifyApp {
             MainWindow window = new MainWindow();
             window.setVisible(true);
         });
+    }
+
+    /** Write every uncaught exception (on the EDT included) to ~/.spacify/crash.log,
+     *  alongside the existing System.err output, so it's recoverable even when no
+     *  console is attached to how the app was launched. */
+    private static void installCrashLogging() {
+        try {
+            java.nio.file.Path logFile = java.nio.file.Path.of(System.getProperty("user.home"), ".spacify", "crash.log");
+            java.nio.file.Files.createDirectories(logFile.getParent());
+            Thread.setDefaultUncaughtExceptionHandler((thread, ex) -> {
+                String header = java.time.LocalDateTime.now() + " [" + thread.getName() + "] uncaught exception:";
+                System.err.println(header);
+                ex.printStackTrace();
+                try (java.io.PrintWriter w = new java.io.PrintWriter(new java.io.FileWriter(logFile.toFile(), true))) {
+                    w.println(header);
+                    ex.printStackTrace(w);
+                } catch (java.io.IOException ignored) {
+                    // Best-effort: nothing more useful to do if the log file itself can't be written.
+                }
+            });
+        } catch (Exception ignored) {
+            // Best-effort: crash-logging setup failing shouldn't block startup.
+        }
     }
 }
