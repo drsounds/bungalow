@@ -30,6 +30,18 @@ public final class WindowResizer extends JComponent {
         WindowResizer r = new WindowResizer(frame);
         frame.setGlassPane(r);
         r.setVisible(true);
+        // A JComboBox/JPopupMenu's popup renders into the layered pane's popup layer, above
+        // the content pane but still below this always-on-top glass pane — so while one is
+        // open, every mouse event meant for it instead reaches this glass pane first and gets
+        // misrouted by componentAt() (which only ever searches the content pane, never the
+        // popup layer) to whatever's underneath in the main UI. The popup then never receives
+        // its click, never closes, and — since it's still open, just invisibly stuck — the
+        // whole window appears to go blank until restart. MenuSelectionManager tracks every
+        // open popup/menu in the app uniformly (a JComboBox's internal popup included), so
+        // toggling this glass pane off for exactly as long as one is open lets Swing's normal
+        // dispatch reach the popup layer directly, with no per-component wiring needed.
+        MenuSelectionManager.defaultManager().addChangeListener(e ->
+            r.setVisible(MenuSelectionManager.defaultManager().getSelectedPath().length == 0));
     }
 
     private WindowResizer(JFrame frame) {
