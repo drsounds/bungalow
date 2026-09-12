@@ -48,7 +48,7 @@ public class TabBarView extends View {
         var tabs = tabbedPane.getChildren();
         for (int i = 0; i < tabs.size(); i++) {
             if (id.equals(tabId(tabs.get(i)))) {
-                tabbedPane.getComponent().setSelectedIndex(i);
+                tabbedPane.setActiveTabById(id);
                 return;
             }
         }

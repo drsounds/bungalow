@@ -65,17 +65,23 @@ public class ToggleButton extends Control<JToggleButton> {
 		this.component = new Surface(text);
 		init();
 	}
+	public void setSelected(boolean value) {
+		component.getModel().setSelected(value);
+	}
 	private void init() {
-		component.getModel().addChangeListener(e -> repaint());
+		component.getModel().addChangeListener(e -> {
+			for (ChangeListener c : changeListeners) {
+				c.onToggleChanged(component.getModel().isSelected() ? PRESSED : DEFAULT);
+			}
+			repaint();
+		});
 		java.awt.event.MouseAdapter mouse = new java.awt.event.MouseAdapter() {
 			@Override public void mouseEntered(java.awt.event.MouseEvent e) { repaint(); }
 			@Override public void mouseExited(java.awt.event.MouseEvent e)  { repaint(); }
 			@Override public void mousePressed(java.awt.event.MouseEvent e) {
 				if (SwingUtilities.isLeftMouseButton(e)) { 
 					repaint();
-					for (ChangeListener c : changeListeners) {
-						c.onToggleChanged(component.getModel().isSelected() ? PRESSED : DEFAULT);
-					}
+					
 				}
 			}
 			@Override public void mouseReleased(java.awt.event.MouseEvent e) { repaint(); }

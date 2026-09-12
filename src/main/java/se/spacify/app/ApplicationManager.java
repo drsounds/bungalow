@@ -174,6 +174,7 @@ public final class ApplicationManager {
             return new ManagedApplication(d, p);
         } catch (Throwable e) {
             System.err.println("Failed to load plugin " + d.getId() + ": " + e);
+            e.printStackTrace();
             return null;
         }
     }
@@ -185,6 +186,7 @@ public final class ApplicationManager {
             m.recorder = rec;
         } catch (Throwable e) {
             System.err.println("Failed to activate plugin " + m.descriptor.getId() + ": " + e);
+            e.printStackTrace();
             rec.undo();
         }
     }

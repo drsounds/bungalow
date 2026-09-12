@@ -36,7 +36,9 @@ final class ApplicationLoader {
                     ApplicationDescriptor d = fromJar(p.toFile(), source);
                     if (d != null) out.add(d);
                 });
-        } catch (Exception ignored) {}
+        } catch (Exception ignored) {
+        	ignored.printStackTrace();
+        }
         return out;
     }
 
@@ -50,6 +52,7 @@ final class ApplicationLoader {
             return new ApplicationDescriptor(mf.getId(), mf.getName(), mf.getVersion(),
                 mf.getMainClass(), source, jar, cl);
         } catch (Exception e) {
+        	e.printStackTrace();
             return null;
         }
     }

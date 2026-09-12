@@ -39,10 +39,12 @@ public class Panel extends Control<JPanel> {
 	
 	public Panel(Control<?> parent) {
 		super(parent);
+		this.component = new Surface();
 	}
 
 	public Panel(Control<?> parent, ViewStack viewStack) {
 		super(parent, viewStack);
+		this.component = new Surface();
 	}
 
 	public Panel(LayoutManager layout) {

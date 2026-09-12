@@ -63,7 +63,9 @@ public class TestAppView extends TabBarView {
     /** Process {@code request} through the spider and render its pages as tabs. */
     private void render(Request request) {
         Element view = spider.process(request);
+        System.out.println(view);
         if (view == null) {
+        	System.err.println("View is NULL");
             return;
         }
         // setInnerXul renders the root's children: the <view>'s <page>s become tabs.

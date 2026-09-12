@@ -53,6 +53,7 @@ public class Spider {
             return null;
         }
         for (Controller controller : controllers) {
+        	System.out.println("accepts URI " + uri + " " + controller.acceptsUri(uri));
             if (controller.acceptsUri(uri)) {
                 return controller.process(request);
             }

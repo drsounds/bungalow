@@ -46,6 +46,7 @@ public final class TemplateEngine {
     public static Element render(String template, Request request, Map<String, Object> model) {
         String lua = LuaPreprocessor.compile(template);
         String markup = run(lua, request, model);
+        System.out.println("markup"+ " " + markup);
         return parse(markup);
     }
 
@@ -121,6 +122,7 @@ public final class TemplateEngine {
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
             factory.setNamespaceAware(false);
             Document doc = factory.newDocumentBuilder().parse(new InputSource(new StringReader(markup)));
+            System.out.println(doc.getDocumentElement());
             return doc.getDocumentElement();
         } catch (Exception e) {
             throw new IllegalStateException("Spider template produced invalid XML:\n" + markup, e);

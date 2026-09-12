@@ -67,7 +67,7 @@ public class Spot09Skin extends SpotSkin {
         g2.setBackground(tintColor);
         g2.setPaint(tintColor);
         g2.fillRect(0, 0, w, h); 
-        System.out.println("Test");
+        // System.out.println("Test");
 	}
 
 	@Override
@@ -103,7 +103,7 @@ public class Spot09Skin extends SpotSkin {
         Taste taste = control.getTaste();
         Color tintColor = taste.getTintColor();
         int w = control.getComponent().getWidth(), h = control.getComponent().getHeight();
-        System.out.println(control.getComponent().isOpaque());
+        // System.out.println(control.getComponent().isOpaque());
 
         if (control.getVariant() == "default") {
             if (control.getComponent().isContentAreaFilled()) {

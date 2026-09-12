@@ -397,6 +397,7 @@ public abstract class Control<T extends Component> {
 			if (title.isEmpty()) {
 				title = element.getAttribute("label");
 			}
+			System.out.println("Adding tab " + id + " " + title);
 			tabs.addTab(id, title, child);
 		} else {
 			add(child);
@@ -480,5 +481,12 @@ public abstract class Control<T extends Component> {
 
 	public Object getAttribute(String attrName, Object defaultValue) {
 		return attributes.getOrDefault(attrName, defaultValue);
+	}
+	public void hide() {
+		// TODO Auto-generated method stub
+		getComponent().setVisible(false);
+	}
+	public void show() {
+		getComponent().setVisible(true);
 	}
 }
