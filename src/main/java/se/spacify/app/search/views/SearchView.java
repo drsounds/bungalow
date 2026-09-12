@@ -7,9 +7,15 @@ import se.spacify.search.SearchProvider;
 import se.spacify.search.SearchResult;
 import se.spacify.service.media.PlaybackCoordinator;
 import se.spacify.ui.theme.ThemeManager;
+import se.spacify.controls.Control;
+import se.spacify.controls.Label;
+import se.spacify.controls.Panel;
 
-import javax.swing.*;
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Cursor;
+import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.net.URLDecoder;
@@ -17,6 +23,11 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+
+import javax.swing.BorderFactory;
+import javax.swing.BoxLayout;
+import se.spacify.controls.ScrollPane;
+import javax.swing.SwingWorker;
 
 /**
  * The unified search screen ({@code spacify:search?q=…}). It queries every
@@ -27,8 +38,8 @@ import java.util.List;
  */
 public class SearchView extends View {
 
-    private final JLabel queryLabel;
-    private final JPanel resultsPanel;
+    private final Label queryLabel;
+    private final Panel resultsPanel;
     private final List<SearchResult> all = new ArrayList<>();
 
     private SwingWorker<Void, List<SearchResult>> worker;
@@ -37,23 +48,18 @@ public class SearchView extends View {
     public SearchView(ViewStack viewStack) {
         super(viewStack);
         getComponent().setLayout(new BorderLayout(0, 12));
-        getComponent().setOpaque(false);
-        getComponent().setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 
-        queryLabel = new JLabel("Search");
-        queryLabel.setFont(queryLabel.getFont().deriveFont(Font.BOLD, 20f));
-        queryLabel.setForeground(Color.WHITE);
-        getComponent().add(queryLabel, BorderLayout.NORTH);
+        queryLabel = new Label("Search");
+        //queryLabel.setFont(queryLabel.getFont().deriveFont(Font.BOLD, 20f));
+        //queryLabel.setForeground(Color.WHITE);
+        add(queryLabel, BorderLayout.NORTH);
 
-        resultsPanel = new JPanel();
-        resultsPanel.setLayout(new BoxLayout(resultsPanel, BoxLayout.Y_AXIS));
-        resultsPanel.setOpaque(false);
-
-        JScrollPane scroll = new JScrollPane(resultsPanel);
-        scroll.setOpaque(false);
-        scroll.getViewport().setOpaque(false);
-        scroll.setBorder(BorderFactory.createEmptyBorder());
-        getComponent().add(scroll, BorderLayout.CENTER);
+        resultsPanel = new Panel();
+        resultsPanel.getComponent().setLayout(new BoxLayout(resultsPanel.getComponent(), BoxLayout.Y_AXIS));
+       
+        ScrollPane scroll = new ScrollPane(resultsPanel);
+      
+         add(scroll, BorderLayout.CENTER);
     }
 
     @Override
@@ -113,40 +119,40 @@ public class SearchView extends View {
                }
            });
         if (all.isEmpty()) {
-            JLabel none = new JLabel("No results");
-            none.setForeground(new Color(150, 150, 150));
-            none.setBorder(BorderFactory.createEmptyBorder(8, 0, 0, 0));
+            Label none = new Label("No results");
+            none.getComponent().setForeground(new Color(150, 150, 150));
+            //none.setBorder(BorderFactory.createEmptyBorder(8, 0, 0, 0));
             resultsPanel.add(none);
         }
         resultsPanel.revalidate();
         resultsPanel.repaint();
     }
 
-    private static JLabel sectionHeader(String text) {
-        JLabel l = new JLabel(text);
-        l.setFont(l.getFont().deriveFont(Font.BOLD, 14f));
-        l.setForeground(new Color(180, 180, 180));
-        l.setBorder(BorderFactory.createEmptyBorder(12, 0, 4, 0));
-        l.setAlignmentX(java.awt.Component.LEFT_ALIGNMENT);
+    private static Label sectionHeader(String text) {
+        Label l = new Label(text);
+        l.getComponent().setFont(l.getComponent().getFont().deriveFont(Font.BOLD, 14f));
+        l.getComponent().setForeground(new Color(180, 180, 180));
+        l.getComponent().setBorder(BorderFactory.createEmptyBorder(12, 0, 4, 0));
+        l.getComponent().setAlignmentX(java.awt.Component.LEFT_ALIGNMENT);
         return l;
     }
 
-    private JComponent resultRow(SearchResult r) {
+    private Control<?> resultRow(SearchResult r) {
         String text = "<html>" + escape(r.title())
             + (r.subtitle().isEmpty() ? "" : " <font color='#999999'>— " + escape(r.subtitle()) + "</font>")
             + (r.source().isEmpty() ? "" : "  <font color='#777777'>[" + escape(r.source()) + "]</font>")
             + "</html>";
-        JLabel row = new JLabel(text);
-        row.setForeground(new Color(220, 220, 220));
-        row.setBorder(BorderFactory.createEmptyBorder(5, 8, 5, 8));
-        row.setAlignmentX(java.awt.Component.LEFT_ALIGNMENT);
-        row.setMaximumSize(new Dimension(Integer.MAX_VALUE, row.getPreferredSize().height + 10));
+        Label row = new Label(text);
+        row.getComponent().setForeground(new Color(220, 220, 220));
+        row.getComponent().setBorder(BorderFactory.createEmptyBorder(5, 8, 5, 8));
+        row.getComponent().setAlignmentX(java.awt.Component.LEFT_ALIGNMENT);
+        row.getComponent().setMaximumSize(new Dimension(Integer.MAX_VALUE, row.getComponent().getPreferredSize().height + 10));
         if (r.uri() != null && !r.uri().isBlank()) {
-            row.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-            row.addMouseListener(new MouseAdapter() {
+            row.getComponent().setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+            row.getComponent().addMouseListener(new MouseAdapter() {
                 @Override public void mouseClicked(MouseEvent e) { activate(r); }
-                @Override public void mouseEntered(MouseEvent e) { row.setForeground(ThemeManager.getAccentBackgroundColor()); }
-                @Override public void mouseExited(MouseEvent e)  { row.setForeground(new Color(220, 220, 220)); }
+                @Override public void mouseEntered(MouseEvent e) { row.getComponent().setForeground(ThemeManager.getAccentBackgroundColor()); }
+                @Override public void mouseExited(MouseEvent e)  { row.getComponent().setForeground(new Color(220, 220, 220)); }
             });
         }
         return row;

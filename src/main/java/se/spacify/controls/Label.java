@@ -24,6 +24,14 @@ public class Label extends Control<JLabel> {
 			super.paintComponent(g);
 		}
 	}
+	
+	public String getText() {
+		return getComponent().getText();
+	}
+	
+	public void setText(String value) {
+		getComponent().setText(value);
+	}
 
 	public Label() {
 		this.component = new Surface();

@@ -1,6 +1,7 @@
 package se.spacify.skinning;
 
 import java.awt.Color;
+import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Paint;
 
@@ -13,7 +14,10 @@ import se.spacify.controls.Control;
 import se.spacify.controls.GlassPanel;
 import se.spacify.controls.GlossyButton;
 import se.spacify.controls.SplitPane.SplitPaneDivider;
+import se.spacify.controls.TabBar;
+import se.spacify.controls.TabBarButton;
 import se.spacify.controls.TabButton;
+import se.spacify.controls.TabbedPane;
 import se.spacify.controls.Table;
 import se.spacify.controls.TextField;
 import se.spacify.controls.ToolBar;
@@ -74,5 +78,16 @@ public abstract class Skin implements Aspect {
 
 	public void onRegister(AspectManager<? extends Aspect> aspectManager) {
 	
+	}
+	public void paintTabbedPane(TabbedPane tabPane, Graphics2D g2) {
+		
+	}
+	public void paintTabBar(TabBar tabBar, Graphics2D g2) {
+		// TODO Auto-generated method stub
+		
+	}
+	public void paintTabBarButton(TabBarButton tabBarButton, Graphics2D g2) {
+		// TODO Auto-generated method stub
+		
 	}
 }

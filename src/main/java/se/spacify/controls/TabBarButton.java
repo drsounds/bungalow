@@ -18,7 +18,7 @@ import java.awt.event.MouseEvent;
  * are tracked explicitly because the Synth-based Nimbus L&amp;F doesn't reliably
  * repaint a custom-painted, non-opaque button on those transitions.
  */
-public class TabButton extends ToggleButton {
+public class TabBarButton extends ToggleButton {
 
 	public static final String ORIENTATION_HORIZONTAL = "horizontal";
 	public static final String ORIENTATION_VERTICAL = "vertical";
@@ -28,7 +28,7 @@ public class TabButton extends ToggleButton {
 	private String id;
 	private String orientation = ORIENTATION_HORIZONTAL;
 
-	public TabButton(String text) {
+	public TabBarButton(Control<?> parent, String id, String text) {
 		super(text);
 		component.setContentAreaFilled(false);
 		component.setBorderPainted(false);
@@ -38,6 +38,7 @@ public class TabButton extends ToggleButton {
 		component.setBorder(BorderFactory.createEmptyBorder(10, 32, 8, 32));
 		component.setFont(component.getFont().deriveFont(14f));
 		component.setForeground(ThemeManager.getForeground());
+		this.id = id;
 
 		MouseAdapter mouse = new MouseAdapter() {
 			@Override public void mouseEntered(MouseEvent e) { hovered = true; repaint(); }
@@ -83,7 +84,7 @@ public class TabButton extends ToggleButton {
 	protected void paintSurface(Graphics g) {
 		Graphics2D g2 = (Graphics2D) g.create();
 		g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-		getSkin().paintTabButton(this, g2);
+		getSkin().paintTabBarButton(this, g2);
 		g2.dispose();
 		super.paintSurface(g);   // draws text/icon (content area is disabled)
 	}

@@ -64,7 +64,7 @@ public class LeftLibraryMenu extends Panel implements NavigationListener {
 	public void onAdd() {
 	}
 
-    private void setActivePlayer(MediaService Service) {
+    public void setActivePlayer(MediaService Service) {
         MediaServicePlayerComponent next = Service != null ? Service.getPlayerComponent() : null;
         if (next == currentPlayer) return;
 

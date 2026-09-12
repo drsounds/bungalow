@@ -6,20 +6,22 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.net.URI;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
-import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import se.spacify.net.cache.RequestStore;
 
 /**
  * Best-effort favicon retrieval for a host. Prefers {@code <link rel="icon">}
  * declarations in the page (usually PNG) and falls back to {@code /favicon.ico}.
  * Whatever decodes is normalised to 16x16 PNG bytes; ICO-only icons that Java's
  * ImageIO can't read yield null (a default icon is shown instead).
+ *
+ * <p>Fetches go through the global {@link RequestStore}, so a favicon already
+ * seen in a previous session is reused from its persistent cache instead of
+ * being re-downloaded on every app start.
  *
  * <p>Performs blocking network I/O — call off the EDT.
  */
@@ -31,11 +33,6 @@ public final class FaviconFetcher {
         Pattern.CASE_INSENSITIVE);
     private static final Pattern HREF = Pattern.compile(
         "href=[\"']([^\"']+)[\"']", Pattern.CASE_INSENSITIVE);
-
-    private static final HttpClient HTTP = HttpClient.newBuilder()
-        .followRedirects(HttpClient.Redirect.NORMAL)
-        .connectTimeout(Duration.ofSeconds(5))
-        .build();
 
     private FaviconFetcher() {}
 
@@ -94,12 +91,7 @@ public final class FaviconFetcher {
 
     private static byte[] getBytes(String url) {
         try {
-            HttpRequest req = HttpRequest.newBuilder(URI.create(url))
-                .timeout(Duration.ofSeconds(5))
-                .header("User-Agent", "Spacify")
-                .GET().build();
-            HttpResponse<byte[]> resp = HTTP.send(req, HttpResponse.BodyHandlers.ofByteArray());
-            return resp.statusCode() == 200 ? resp.body() : null;
+            return RequestStore.getInstance().get(url).body();
         } catch (Exception e) {
             return null;
         }

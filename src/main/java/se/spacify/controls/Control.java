@@ -4,7 +4,6 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Graphics;
-import java.awt.Graphics2D;
 import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -23,6 +22,7 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 
 import se.spacify.design.Design;
+import se.spacify.navigation.ViewStack;
 import se.spacify.skinning.Skin;
 import se.spacify.ui.MainWindow;
 import se.spacify.ui.theme.Taste;
@@ -51,6 +51,12 @@ public abstract class Control<T extends Component> {
 	protected Control<?> parent;
 	protected final List<Control<?>> children = new ArrayList<>();
 
+	protected ViewStack viewStack;
+	
+	public ViewStack getViewStack() {
+		return viewStack;
+	}
+	
 	private Theme theme;
 	private Design design;
 	private Skin skin;
@@ -78,6 +84,11 @@ public abstract class Control<T extends Component> {
 
 	protected Control(Control<?> parent) {
 		this.parent = parent;
+	}
+
+	protected Control(Control<?> parent, ViewStack viewStack) {
+		this.parent = parent;
+		this.viewStack = viewStack;
 	}
 
 	// ── The Swing bridge ─────────────────────────────────────────────────────────
@@ -381,11 +392,12 @@ public abstract class Control<T extends Component> {
 	/** Mount a freshly created XUL child; a {@link TabbedPane} hosts it as a titled tab. */
 	private void mountXulChild(Control<?> child, Element element) {
 		if (this instanceof TabbedPane tabs) {
+			String id = element.getAttribute("id");
 			String title = element.getAttribute("title");
 			if (title.isEmpty()) {
 				title = element.getAttribute("label");
 			}
-			tabs.addTab(title, child);
+			tabs.addTab(id, title, child);
 		} else {
 			add(child);
 		}

@@ -1,4 +1,5 @@
 <hbox>
+	<image src="${node.image_url}" width="128" />
     <vbox flex="1">
         <h3 uri="${node.uri}">${node.name}</h3>
         <text>${node.description}</text>

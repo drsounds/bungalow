@@ -3,6 +3,7 @@ package se.spacify.controls;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
+import java.util.ArrayList;
 
 import javax.swing.JToggleButton;
 import javax.swing.SwingUtilities;
@@ -45,14 +46,37 @@ public class ToggleButton extends Control<JToggleButton> {
 		this.component = new Surface(text);
 		init();
 	}
+	
+	public static final int DEFAULT = 0;
+	public static final int PRESSED = 1;
+	
+	public interface ChangeListener {
+		public void onToggleChanged(int state);
+	}
+	
+	public void addChangeListener(ChangeListener listener) {
+		changeListeners.add(listener);
+	}
+	
+	private ArrayList<ChangeListener> changeListeners = new ArrayList<ChangeListener>();
 
+	public ToggleButton(Control<?> parent, String text) {
+		super(parent);
+		this.component = new Surface(text);
+		init();
+	}
 	private void init() {
 		component.getModel().addChangeListener(e -> repaint());
 		java.awt.event.MouseAdapter mouse = new java.awt.event.MouseAdapter() {
 			@Override public void mouseEntered(java.awt.event.MouseEvent e) { repaint(); }
 			@Override public void mouseExited(java.awt.event.MouseEvent e)  { repaint(); }
 			@Override public void mousePressed(java.awt.event.MouseEvent e) {
-				if (SwingUtilities.isLeftMouseButton(e)) { repaint(); }
+				if (SwingUtilities.isLeftMouseButton(e)) { 
+					repaint();
+					for (ChangeListener c : changeListeners) {
+						c.onToggleChanged(component.getModel().isSelected() ? PRESSED : DEFAULT);
+					}
+				}
 			}
 			@Override public void mouseReleased(java.awt.event.MouseEvent e) { repaint(); }
 		};
@@ -73,6 +97,14 @@ public class ToggleButton extends Control<JToggleButton> {
 	/** Override to adjust the preferred size. */
 	protected Dimension preferredSize(Dimension dflt) {
 		return dflt;
+	}
+
+	public ArrayList<ChangeListener> getChangeListeners() {
+		return changeListeners;
+	}
+
+	public void setChangeListeners(ArrayList<ChangeListener> changeListeners) {
+		this.changeListeners = changeListeners;
 	}
 
 }

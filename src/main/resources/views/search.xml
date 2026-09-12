@@ -1,0 +1,9 @@
+<view>
+	<page id="overview" title="Overview">
+		<generic-header 
+			name="${q}"
+			type="search"
+		/>
+		<listview flex="1" src="spacify:search:${q}" />
+	</page>
+</view>

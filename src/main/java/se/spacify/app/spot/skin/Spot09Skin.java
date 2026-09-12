@@ -11,6 +11,7 @@ import javax.swing.JPanel;
 import se.spacify.controls.Button;
 import se.spacify.controls.Panel;
 import se.spacify.controls.SplitPane.SplitPaneDivider;
+import se.spacify.controls.TabbedPane;
 import se.spacify.controls.Table;
 import se.spacify.controls.TextField;
 import se.spacify.controls.ToolBar;
@@ -37,12 +38,12 @@ public class Spot09Skin extends SpotSkin {
         Taste taste = se.spacify.ui.MainWindow.getInstance().getTaste();
         Color tintColor = taste.getTintColor();
         int w = header.getWidth(), h = header.getHeight();
-        g2.setPaint(new LinearGradientPaint(new Point(0, 0), new Point(0, h), new float[] {0, 1}, new Color[] { ColorUtils.darken(tintColor, 0.8f), ColorUtils.darken(tintColor, 0.5f) }));
+        g2.setPaint(new LinearGradientPaint(new Point(0, 0), new Point(0, h), new float[] {0, 1}, new Color[] { ColorUtils.darken(tintColor, 1.5f), ColorUtils.darken(tintColor, 1f) }));
         
         g2.fillRect(0, 0, w, h);
         g2.setColor(ColorUtils.darken(header.getBackground(), 1.1f));
         g2.drawLine(0, h - 1, w, h - 1);
-        g2.setColor(ColorUtils.lighten(header.getBackground(), 3.1f));
+        g2.setColor(ColorUtils.lighten(header.getBackground(), 1.1f));
         g2.drawLine(0, h - 2, w, h - 2);
     }
 
@@ -130,16 +131,25 @@ public class Spot09Skin extends SpotSkin {
         g2.setColor(ColorUtils.lighten(footer.getBackground(), 3.1f));
         g2.drawLine(0, 1, w, 1);
     }
+    
+    @Override
+    public void paintTabbedPane(TabbedPane control, Graphics2D g2) {
+    	int w = control.getComponent().getWidth(), h = control.getComponent().getHeight();
+        g2.setPaint(new LinearGradientPaint(new Point(0, 0), new Point(0, h), new float[] {0, 1}, new Color[] { ColorUtils.darken(control.getTaste().getTintColor(), .9f), ColorUtils.darken(control.getTaste().getTintColor(), 0.9f) }));
+        g2.fillRect(0, 0, w, h);
+        g2.setColor(ColorUtils.darken(control.getComponent().getBackground(), 1.1f));
+        g2.drawLine(0, h - 1, w, h - 1);
+    }
 
     @Override
     public void paintToolBar(ToolBar control, Graphics2D g2) {
         int w = control.getComponent().getWidth(), h = control.getComponent().getHeight();
-        g2.setPaint(new LinearGradientPaint(new Point(0, 0), new Point(0, h), new float[] {0, 1}, new Color[] { ColorUtils.darken(control.getTaste().getTintColor(),1f), ColorUtils.darken(control.getTaste().getTintColor(), 0.9f) }));
+        g2.setPaint(new LinearGradientPaint(new Point(0, 0), new Point(0, h), new float[] {0, 1}, new Color[] { ColorUtils.darken(control.getTaste().getTintColor(), .9f), ColorUtils.darken(control.getTaste().getTintColor(), 0.9f) }));
         g2.fillRect(0, 0, w, h);
         g2.setColor(ColorUtils.darken(control.getComponent().getBackground(), 1.1f));
         g2.drawLine(0, h - 1, w, h - 1);
-        g2.setColor(ColorUtils.lighten(control.getComponent().getBackground(), 7.1f));
-        g2.drawLine(0, h - 2, w, h - 2);
+        //g2.setColor(ColorUtils.lighten(control.getComponent().getBackground(), 1.1f));
+        //g2.drawLine(0, 0, w, 0);
     }
 
 	@Override

@@ -5,6 +5,8 @@ import java.awt.LayoutManager;
 
 import javax.swing.JPanel;
 
+import se.spacify.navigation.ViewStack;
+
 /**
  * The base container control: a clean {@link Control} over a {@link JPanel}.
  * Children are added with {@link #add(Control)}; all other configuration (layout,
@@ -34,6 +36,14 @@ public class Panel extends Control<JPanel> {
 	public Panel() {
 		this.component = new Surface();
 	}
+	
+	public Panel(Control<?> parent) {
+		super(parent);
+	}
+
+	public Panel(Control<?> parent, ViewStack viewStack) {
+		super(parent, viewStack);
+	}
 
 	public Panel(LayoutManager layout) {
 		this.component = new Surface(layout);
@@ -45,5 +55,11 @@ public class Panel extends Control<JPanel> {
 	 */
 	protected void paintSurface(Graphics g) {
 		((Surface) component).superPaint(g);
+	}
+
+	public void removeAll() {
+		// TODO Auto-generated method stub
+		((Surface) component).removeAll();
+		
 	}
 }

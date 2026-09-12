@@ -7,12 +7,14 @@ import se.spacify.app.Application;
 import se.spacify.app.ApplicationContext;
 import se.spacify.app.SidebarHandle;
 import se.spacify.app.data.model.DataTable;
+import se.spacify.app.data.views.DataTableRowsPage;
 import se.spacify.app.data.views.DataTableRowsView;
 import se.spacify.app.data.views.DataTablesListView;
 import se.spacify.app.data.views.DataView;
 import se.spacify.aspect.Aspect;
 import se.spacify.aspect.AspectManager;
 import se.spacify.navigation.SidebarNode;
+import se.spacify.net.cache.RequestStore;
 
 /**
  * Built-in plugin letting users CRUD their own custom tables — arbitrary named
@@ -20,7 +22,7 @@ import se.spacify.navigation.SidebarNode;
  * float, timestamp) — without touching code. Registers three {@code spacify:table...}
  * views, mirroring how {@code se.spacify.app.library.concept.LibraryConcept} registers
  * one view per Library screen: {@link DataTablesListView} (the table-of-tables index)
- * and {@link DataTableRowsView} (one table's row list) render through the same
+ * and {@link DataTableRowsPage} (one table's row list) render through the same
  * {@link se.spacify.controls.Table} grid Library's own list views use, while
  * {@link DataView} (see it and {@link se.spacify.app.data.controller.DataController})
  * still renders the row-detail/related-rows screens. Also adds a "Custom Tables"
@@ -29,6 +31,7 @@ import se.spacify.navigation.SidebarNode;
 public class DataApplication extends Application {
 
     private final DataRepository repo = new DataRepository();
+    private final DataRowResourceProvider rowResourceProvider = new DataRowResourceProvider(repo);
     private SidebarHandle sidebar;
 
     @Override
@@ -58,6 +61,8 @@ public class DataApplication extends Application {
         ctx.registerView(new DataTableRowsView(ctx.viewStack(), repo));
         ctx.registerView(new DataView(ctx.viewStack(), repo));
 
+        RequestStore.getInstance().registerInternalResourceProvider(rowResourceProvider);
+
         sidebar = ctx.addSidebarNode(new SidebarNode("Custom Tables", "spacify:table"));
         repo.setOnTablesChanged(this::refreshSidebar);
         refreshSidebar();
@@ -66,6 +71,7 @@ public class DataApplication extends Application {
     @Override
     public void onDeactivate() {
         repo.setOnTablesChanged(null);
+        RequestStore.getInstance().unregisterInternalResourceProvider(rowResourceProvider);
     }
 
     private void refreshSidebar() {
