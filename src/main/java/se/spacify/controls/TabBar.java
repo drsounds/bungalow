@@ -1,13 +1,15 @@
 package se.spacify.controls;
 
+import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 
 public class TabBar extends Panel {
 
@@ -19,6 +21,9 @@ public class TabBar extends Panel {
 	public TabBar(Control<?> parent) {
 		super(parent);
 		getComponent().setLayout(new BoxLayout(getComponent(), BoxLayout.LINE_AXIS));
+		getComponent().setBorder(BorderFactory.createEmptyBorder());
+		setSize(Integer.MAX_VALUE, 28);
+		
 	}
 
 	public List<TabBarButton> getTabButtons() {
@@ -62,6 +67,15 @@ public class TabBar extends Panel {
 		});
 		add(button);
 	}
+
+	@Override
+	public void paintSurface(Graphics g) {
+		Graphics2D g2 = (Graphics2D)g.create();
+		getSkin().paintTabBar(this, g2);
+		g2.dispose();
+		super.paintSurface(g2);
+	}
+
 	public void removeTab(TabButton button) {
 		remove(button);
 	}

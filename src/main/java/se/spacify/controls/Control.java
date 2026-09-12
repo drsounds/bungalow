@@ -3,6 +3,7 @@ package se.spacify.controls;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
+import java.awt.Dimension;
 import java.awt.Graphics;
 import java.io.StringReader;
 import java.util.ArrayList;
@@ -46,7 +47,17 @@ import se.spacify.ui.theme.Theme;
  * @param <T> the Swing component this control wraps
  */
 public abstract class Control<T extends Component> {
-
+	public void setSize(int x, int y) {
+		getComponent().setMaximumSize(new Dimension(x, y));
+		getComponent().setMinimumSize(new Dimension(x, y));
+		getComponent().setPreferredSize(new Dimension(x, y));
+	}
+	public void setWidth(int x) {
+		setSize(x, this.getHeight());
+	}
+	public void setHeight(int y) {
+		setSize(this.getWidth(), this.getHeight());
+	}
 	protected T component;
 	protected Control<?> parent;
 	protected final List<Control<?>> children = new ArrayList<>();

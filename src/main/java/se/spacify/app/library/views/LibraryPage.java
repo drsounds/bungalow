@@ -1,0 +1,66 @@
+package se.spacify.app.library.views;
+
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dimension;
+
+import javax.swing.BorderFactory;
+import javax.swing.JScrollPane;
+
+import se.spacify.controls.Control;
+import se.spacify.controls.Panel;
+import se.spacify.controls.Table;
+import se.spacify.navigation.ViewStack;
+import se.spacify.ui.theme.ThemeManager;
+import se.spacify.ui.theme.ThemedTableCellRenderer;
+
+public class LibraryPage extends Panel {
+
+    private final Table     table;
+    private final JScrollPane scroll;
+
+    public LibraryPage(Control<?> parent, ViewStack viewStack) {
+        super(parent, viewStack);
+        getComponent().setLayout(new BorderLayout(0, 12));
+        getComponent().setOpaque(false);
+        getComponent().setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
+
+        String[] columns = {"Title", "Artist", "Album"};
+        Object[][] data = {
+        		
+        };
+
+        table = new Table(data, columns);
+        table.getComponent().setFillsViewportHeight(true);
+        table.getComponent().setOpaque(true);
+        table.getComponent().setShowGrid(false);
+        table.getComponent().setIntercellSpacing(new Dimension(0, 0));
+
+        ThemedTableCellRenderer renderer = new ThemedTableCellRenderer();
+        for (int i = 0; i < table.getComponent().getColumnCount(); i++)
+            table.getComponent().getColumnModel().getColumn(i).setCellRenderer(renderer);
+
+        scroll = new JScrollPane(table.getComponent());
+        scroll.setBorder(BorderFactory.createEmptyBorder());
+        scroll.setOpaque(true);
+        scroll.getViewport().setOpaque(true);
+
+        getComponent().add(scroll, BorderLayout.CENTER);
+
+        updateColors();
+        ThemeManager.addChangeListener(this::updateColors);
+    }
+
+    private void updateColors() {
+        Color bg   = ThemeManager.getBackground();
+        Color fg   = ThemeManager.getForeground();
+        Color grid = ThemeManager.getGridColor();
+
+        table.getComponent().setBackground(bg);
+        table.getComponent().setForeground(fg);
+        table.getComponent().setGridColor(grid);
+        scroll.setBackground(bg);
+        scroll.getViewport().setBackground(bg);
+        table.repaint();
+    }
+}

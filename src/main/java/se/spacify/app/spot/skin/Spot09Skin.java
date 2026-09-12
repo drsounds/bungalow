@@ -11,6 +11,8 @@ import javax.swing.JPanel;
 import se.spacify.controls.Button;
 import se.spacify.controls.Panel;
 import se.spacify.controls.SplitPane.SplitPaneDivider;
+import se.spacify.controls.TabBar;
+import se.spacify.controls.TabBarButton;
 import se.spacify.controls.TabbedPane;
 import se.spacify.controls.Table;
 import se.spacify.controls.TextField;
@@ -148,6 +150,35 @@ public class Spot09Skin extends SpotSkin {
         g2.fillRect(0, 0, w, h);
         g2.setColor(ColorUtils.darken(control.getComponent().getBackground(), 1.1f));
         g2.drawLine(0, h - 1, w, h - 1);
+        //g2.setColor(ColorUtils.lighten(control.getComponent().getBackground(), 1.1f));
+        //g2.drawLine(0, 0, w, 0);
+    }
+
+    @Override
+    public void paintTabBar(TabBar control, Graphics2D g2) {
+        int w = control.getComponent().getWidth(), h = control.getComponent().getHeight();
+        g2.setPaint(new LinearGradientPaint(new Point(0, 0), new Point(0, h), new float[] {0, 1}, new Color[] { ColorUtils.darken(control.getTaste().getTintColor(), .9f), ColorUtils.darken(control.getTaste().getTintColor(), 0.9f) }));
+        g2.fillRect(0, 0, w, h);
+        g2.setColor(ColorUtils.darken(control.getComponent().getBackground(), 1.1f));
+        g2.drawLine(0, h - 1, w, h - 1);
+        //g2.setColor(ColorUtils.lighten(control.getComponent().getBackground(), 1.1f));
+        //g2.drawLine(0, 0, w, 0);
+    }
+
+    @Override
+    public void paintTabBarButton(TabBarButton control, Graphics2D g2) {
+        int w = control.getComponent().getWidth(), h = control.getComponent().getHeight();
+        Color bgColor = ColorUtils.darken(control.getTaste().getTintColor(), 0.9f);
+        if (control.getComponent().getModel().isSelected()) {
+        	bgColor = ColorUtils.lighten(control.getComponent().getBackground(), 1.1f);
+        }
+        g2.setPaint(bgColor);
+        //g2.setPaint(new LinearGradientPaint(new Point(0, 0), new Point(0, h), new float[] {0, 1}, new Color[] { ColorUtils.darken(control.getTaste().getTintColor(), .9f), ColorUtils.darken(control.getTaste().getTintColor(), 0.9f) }));
+        g2.fillRect(0, 0, w, h);
+        g2.setColor(ColorUtils.darken(control.getComponent().getBackground(), 1.1f));
+        g2.drawLine(0, h - 1, w, h - 1);
+        g2.setColor(ColorUtils.darken(control.getComponent().getBackground(), 1.1f));
+        g2.drawLine(w - 1, 0, w - 1, h - 1);
         //g2.setColor(ColorUtils.lighten(control.getComponent().getBackground(), 1.1f));
         //g2.drawLine(0, 0, w, 0);
     }

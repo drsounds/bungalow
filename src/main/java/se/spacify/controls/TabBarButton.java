@@ -34,8 +34,7 @@ public class TabBarButton extends ToggleButton {
 		component.setBorderPainted(false);
 		component.setFocusPainted(false);
 		component.setOpaque(false);
-		component.setRolloverEnabled(true);
-		component.setBorder(BorderFactory.createEmptyBorder(10, 32, 8, 32));
+		component.setRolloverEnabled(true); 
 		component.setFont(component.getFont().deriveFont(14f));
 		component.setForeground(ThemeManager.getForeground());
 		this.id = id;
