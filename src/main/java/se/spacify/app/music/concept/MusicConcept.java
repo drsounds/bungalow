@@ -17,6 +17,7 @@ import se.spacify.app.music.model.MusicRelease;
 import se.spacify.app.music.model.Track;
 import se.spacify.app.music.model.RecordingCreatorCredit;
 import se.spacify.app.music.model.ReleaseCreatorCredit;
+import se.spacify.graphics.BungalowIcons;
 
 public class MusicConcept implements Concept {
     private Application plugin;
@@ -69,8 +70,7 @@ public class MusicConcept implements Concept {
 
     @Override
     public Icon getIcon() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getIcon'");
+        return BungalowIcons.icon("disc", 16);
     }
 
 }

@@ -20,6 +20,7 @@ import se.spacify.app.web.views.SPServiceWebView;
 import se.spacify.app.web.views.SPWebView;
 import se.spacify.web.BookmarkEvents;
 import se.spacify.web.BookmarkManager;
+import se.spacify.graphics.BungalowIcons;
 
 /**
  * The web-browsing concept: contributes the {@link SPWebView}/{@link SPServiceWebView}
@@ -50,7 +51,7 @@ public class WebConcept implements Concept {
         ctx.registerView(new SPWebView(getViewStack()));
         ctx.registerView(new SPServiceWebView(getViewStack()));
 
-        sites = ctx.addSidebarNode(new SidebarNode("Sites", null));
+        sites = ctx.addSidebarNode(new SidebarNode("Sites", null).setIcon(BungalowIcons.icon("browser", 16)));
         refresh();
 
         BookmarkEvents.addListener(refresh);
@@ -100,8 +101,7 @@ public class WebConcept implements Concept {
 
     @Override
     public Icon getIcon() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getIcon'");
+        return BungalowIcons.icon("browser", 16);
     }
 
 }

@@ -11,6 +11,7 @@ import se.spacify.navigation.ViewStack;
 import se.spacify.app.Application;
 import se.spacify.app.localmusic.model.LocalFile;
 import se.spacify.app.localmusic.service.LocalMusicService;
+import se.spacify.graphics.BungalowIcons;
 
 /**
  * The local-file playback concept: owns the {@link LocalFile} table and registers
@@ -58,8 +59,7 @@ public class LocalMusicConcept implements Concept {
 
     @Override
     public Icon getIcon() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getIcon'");
+        return BungalowIcons.icon("folder-open", 16);
     }
 
 }

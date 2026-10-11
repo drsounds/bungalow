@@ -29,6 +29,7 @@ import java.awt.event.MouseEvent;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
+import se.spacify.graphics.BungalowIcons;
 
 public class LeftLibraryMenu extends Panel implements NavigationListener {
 
@@ -91,9 +92,9 @@ public class LeftLibraryMenu extends Panel implements NavigationListener {
         // Core shell nodes only; content subtrees (Your Library, Sites) are
         // contributed by built-in apps via addSidebarNode() at activation.
         root = new DefaultMutableTreeNode("root");
-        root.add(nodeFor(new SidebarNode("Player",    "spacify:now-playing")));
+        root.add(nodeFor(new SidebarNode("Player",    "spacify:now-playing").setIcon(BungalowIcons.icon("play", 16))));
         root.add(nodeFor(new SidebarNode("Downloads", "spacify:downloads")));
-        root.add(nodeFor(new SidebarNode("Apps",   "spacify:apps")));
+        root.add(nodeFor(new SidebarNode("Apps",   "spacify:apps").setIcon(BungalowIcons.icon("grid", 16))));
 
         toolbar = new ToolBar();
         toolbar.getComponent().setFloatable(false);
