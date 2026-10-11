@@ -10,6 +10,7 @@ import se.spacify.concept.ConceptContext;
 import se.spacify.navigation.ViewStack;
 import se.spacify.app.Application;
 import se.spacify.app.media.views.NowPlayingView;
+import se.spacify.graphics.BungalowIcons;
 
 public class MediaConcept implements Concept {
     private Application plugin;
@@ -54,8 +55,7 @@ public class MediaConcept implements Concept {
 
     @Override
     public Icon getIcon() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getIcon'");
+        return BungalowIcons.icon("play", 16);
     }
 
 }

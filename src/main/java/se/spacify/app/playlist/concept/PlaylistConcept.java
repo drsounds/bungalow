@@ -17,6 +17,7 @@ import se.spacify.app.SidebarHandle;
 import se.spacify.app.playlist.PlaylistEvents;
 import se.spacify.app.playlist.service.PlaylistService;
 import se.spacify.app.playlist.views.PlaylistView;
+import se.spacify.graphics.BungalowIcons;
 
 public class PlaylistConcept implements Concept {
     private Application plugin;
@@ -42,7 +43,7 @@ public class PlaylistConcept implements Concept {
 
         ctx.registerView(new PlaylistView(getViewStack()));
 
-        SidebarNode root = new SidebarNode("Playlists", "spacify:playlists");
+        SidebarNode root = new SidebarNode("Playlists", "spacify:playlists").setIcon(BungalowIcons.icon("playlist", 16));
         playlists = ctx.addSidebarNode(root);
         refresh();
         playlists.expand();
@@ -89,8 +90,7 @@ public class PlaylistConcept implements Concept {
 
     @Override
     public Icon getIcon() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getIcon'");
+        return BungalowIcons.icon("playlist", 16);
     }
 
 }

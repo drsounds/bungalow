@@ -24,6 +24,7 @@ import se.spacify.app.library.views.RecordingsLibraryView;
 import se.spacify.app.library.views.ReleaseDetailView;
 import se.spacify.app.library.views.ReleasesLibraryView;
 import se.spacify.app.library.views.TracksLibraryView;
+import se.spacify.graphics.BungalowIcons;
 
 public class LibraryConcept implements Concept {
     private Application plugin;
@@ -55,12 +56,12 @@ public class LibraryConcept implements Concept {
         ctx.registerView(new ReleaseDetailView(getViewStack()));
         ctx.registerView(new ArtistDetailView(getViewStack()));
 
-        SidebarNode lib = new SidebarNode("Your Library", "spacify:library");
-        lib.addChild(new SidebarNode("Tracks",      "spacify:library:tracks"));
-        lib.addChild(new SidebarNode("Recordings",  "spacify:library:recordings"));
-        lib.addChild(new SidebarNode("Releases",    "spacify:library:releases"));
-        lib.addChild(new SidebarNode("Artists",     "spacify:library:artists"));
-        lib.addChild(new SidebarNode("Local Files", "spacify:library:local"));
+        SidebarNode lib = new SidebarNode("Your Library", "spacify:library").setIcon(BungalowIcons.icon("like-fill", 16));
+        lib.addChild(new SidebarNode("Tracks",      "spacify:library:tracks").setIcon(BungalowIcons.icon("playlist", 16)));
+        lib.addChild(new SidebarNode("Recordings",  "spacify:library:recordings").setIcon(BungalowIcons.icon("microphone", 16)));
+        lib.addChild(new SidebarNode("Releases",    "spacify:library:releases").setIcon(BungalowIcons.icon("disc", 16)));
+        lib.addChild(new SidebarNode("Artists",     "spacify:library:artists").setIcon(BungalowIcons.icon("users", 16)));
+        lib.addChild(new SidebarNode("Local Files", "spacify:library:local").setIcon(BungalowIcons.icon("folder-open", 16)));
 
         SidebarHandle libHandle = ctx.addSidebarNode(lib);
         releases = libHandle.child("spacify:library:releases");
@@ -120,8 +121,7 @@ public class LibraryConcept implements Concept {
 
     @Override
     public Icon getIcon() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getIcon'");
+        return BungalowIcons.icon("like-fill", 16);
     }
 
 }

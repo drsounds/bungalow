@@ -14,6 +14,7 @@ import se.spacify.app.downloads.DownloadsView;
 import se.spacify.app.downloads.model.Download;
 import se.spacify.app.media.MediaDownloadScope;
 import se.spacify.app.music.MusicDownloadScope;
+import se.spacify.graphics.BungalowIcons;
 
 /**
  * The download-manager concept: owns the {@link Download} table, registers the
@@ -66,8 +67,7 @@ public class DownloadsConcept implements Concept {
 
     @Override
     public Icon getIcon() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getIcon'");
+        return BungalowIcons.icon("box", 16);
     }
 
 }
