@@ -1,7 +1,5 @@
 ---
-layout: default
 title: "The musik: URI Scheme"
-nav_order: 9
 ---
 
 # The `musik:` URI scheme
@@ -64,7 +62,7 @@ music-app analogue of [`SiteUri`](https://github.com/drsounds/bungalow/blob/main
   playback flows through the normal
   [`PlaybackCoordinator`](https://github.com/drsounds/bungalow/blob/main/src/main/java/se/spacify/service/media/PlaybackCoordinator.java)
   path — by ISRC first, then by title/artist metadata (see
-  [Playback & resolution](playback-and-resolution.html)).
+  [Playback & resolution](playback-and-resolution.md)).
 - **`MusikUri.isrcOf(uri)`** → the ISRC of a recording URI, or `null`.
 
 Where it plugs in:

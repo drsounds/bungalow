@@ -1,7 +1,5 @@
 ---
-layout: default
 title: Aspects & Services
-nav_order: 4
 ---
 
 # Aspects & Services
@@ -84,7 +82,7 @@ contributions here:
   (`youtube`) are just two implementations; the active one drives the transport.
 - **Listening** — the vendor-neutral `PlayQueue` holds `PlayQueueItem`s whose
   play action runs through the coordinator. See
-  [Playback & resolution](playback-and-resolution.html).
+  [Playback & resolution](playback-and-resolution.md).
 - **Purchase / account** — `AuthAspect` plus store front-ends rendered as web
   views (`web` plugin). Buying is just another Service capability + a View.
 
@@ -109,4 +107,4 @@ Two coarser-grained contributions sit above raw Services:
 > toward (plugins → register one Concept → the Concept contributes everything).
 > Activation is wired: `registerConcept` calls `Concept.onActivate(ConceptContext)`
 > and records the contributions for clean teardown — see
-> [Status & roadmap](status-and-roadmap.html).
+> [Status & roadmap](status-and-roadmap.md).

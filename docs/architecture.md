@@ -1,7 +1,5 @@
 ---
-layout: default
 title: Architecture Overview
-nav_order: 2
 ---
 
 # Architecture overview
@@ -57,7 +55,7 @@ serviceManager.getServices(MediaService.class);           // every Service that 
 ```
 
 This is the core of the un-bundling: a caller asks for *a capability*, not *a
-vendor*. See [Aspects & Services](aspects-and-services.html).
+vendor*. See [Aspects & Services](aspects-and-services.md).
 
 ## Boot sequence
 
@@ -109,9 +107,9 @@ View (e.g. TracksLibraryView)
 No layer names a vendor. The view produces a vendor-neutral `PlayRequest`; the
 coordinator resolves it across whatever `MusicService`s happen to be installed;
 the chosen back-end becomes active and the transport UI follows it. Content itself
-is named vendor-neutrally too, by a [`musik:` URI](musik-uri-scheme.html) (e.g.
+is named vendor-neutrally too, by a [`musik:` URI](musik-uri-scheme.md) (e.g.
 `musik:isrc:<ISRC>`) — the portable identifier stored in playlists and carried in
-drag payloads. Full detail in [Playback & resolution](playback-and-resolution.html).
+drag payloads. Full detail in [Playback & resolution](playback-and-resolution.md).
 
 ## Where state lives
 
