@@ -1,7 +1,5 @@
 ---
-layout: default
 title: Look & Feel
-nav_order: 7
 ---
 
 # Look & feel: Design = Chrome + Skin

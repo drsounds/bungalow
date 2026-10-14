@@ -1,12 +1,15 @@
 name: Deploy docs to GitHub Pages
 
-# Builds the Jekyll site under docs/ and publishes it to GitHub Pages.
-# Requires the repository's Settings > Pages > Source to be set to
-# "GitHub Actions" (one-time manual step).
 on:
   push:
     branches: [ main ]
-    paths: [ 'docs/**' ]
+    paths:
+      - '.github/workflows/pages.yml'
+      - 'docs/**'
+      - 'docusaurus.config.js'
+      - 'package.json'
+      - 'package-lock.json'
+      - 'sidebars.js'
   workflow_dispatch:
 
 permissions:
@@ -23,21 +26,21 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: ruby/setup-ruby@v1
+      - uses: actions/setup-node@v4
         with:
-          ruby-version: '3.2'
-          bundler-cache: true
-          working-directory: docs
+          node-version: '22'
+          cache: npm
       - id: pages
         uses: actions/configure-pages@v5
-      - name: Build with Jekyll
-        working-directory: docs
-        run: bundle exec jekyll build --destination _site --baseurl "${{ steps.pages.outputs.base_path }}"
+      - name: Install dependencies
+        run: npm ci
+      - name: Build Docusaurus site
+        run: npm run build
         env:
-          JEKYLL_ENV: production
+          BASE_URL: ${{ steps.pages.outputs.base_path }}/
       - uses: actions/upload-pages-artifact@v3
         with:
-          path: docs/_site
+          path: build
 
   deploy:
     environment:

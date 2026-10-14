@@ -1,7 +1,5 @@
 ---
-layout: default
-title: The Plugin System
-nav_order: 3
+title: The plugin system
 ---
 
 # The plugin system
@@ -125,4 +123,4 @@ from the schema. The values are reachable at runtime via `ctx.settings()`.
 `registerConcept(c)` also calls `c.onActivate(ConceptContext)` (the recorder
 implements `ConceptContext`), so a Concept-based plugin's contributions are wired
 and recorded for clean teardown just like a Feature's. See
-[Status & roadmap](status-and-roadmap.html) for the migration state.
+[Status & roadmap](status-and-roadmap.md) for the migration state.
