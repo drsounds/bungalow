@@ -1,5 +1,6 @@
 name: Deploy docs to GitHub Pages
 
+# Requires Settings > Pages > Source to be set to "GitHub Actions".
 on:
   push:
     branches: [ main ]
