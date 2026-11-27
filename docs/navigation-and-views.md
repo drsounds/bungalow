@@ -1,7 +1,5 @@
 ---
-layout: default
 title: Navigation & Views
-nav_order: 5
 ---
 
 # Navigation & Views
@@ -99,14 +97,14 @@ parses them in `navigate`.
 ## Rendering view content with Spider
 
 A view's `navigate` has to produce the actual widgets. It can build them in Java,
-or it can delegate to **[Spider](spider-templates.html)** — an ASP/JSP-style template
+or it can delegate to **[Spider](spider-templates.md)** — an ASP/JSP-style template
 engine that turns Lua-preprocessed XUL markup into a control tree and re-renders on
 postback. A controller yields markup for the URI; the view mounts it via
 `Control.setInnerXul`, which reconciles against the previous render so widget state
 survives. [`TabBarView`](https://github.com/drsounds/bungalow/blob/main/src/main/java/se/spacify/navigation/TabBarView.java)
 pairs naturally with it: a `<view>`'s `<page>`s become its tabs, and a URI
 **`#fragment`** selects the tab whose id matches (e.g. `spacify:testapp#overview`).
-The [Test App](spider-templates.html#worked-example-the-test-app) is a full example.
+The [Test App](spider-templates.md#worked-example-the-test-app) is a full example.
 
 ## The sidebar
 
@@ -119,4 +117,4 @@ edits** — adding/removing children as state changes, and `expand()`.
 The sidebar itself (`LeftLibraryMenu`) is **owned by `MainWindow`**, created
 before plugins activate, and then embedded by the active Chrome. That ownership
 split is deliberate: the Chrome can change at runtime (switch Design) without
-losing the plugin-contributed nodes. See [Look & feel](look-and-feel.html).
+losing the plugin-contributed nodes. See [Look & feel](look-and-feel.md).

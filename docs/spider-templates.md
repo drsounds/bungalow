@@ -1,7 +1,5 @@
 ---
-layout: default
-title: Spider Templates
-nav_order: 6
+title: Spider templates
 ---
 
 # Spider templates
@@ -109,7 +107,7 @@ public abstract class Controller {
 [`Spider`](https://github.com/drsounds/bungalow/blob/main/src/main/java/se/spacify/app/spider/Spider.java) is the registry +
 router. `process(request)` parses the URI and dispatches to the **first registered
 controller** that accepts it — the same "first match wins" rule the
-[`ViewStack`](navigation-and-views.html) uses for views:
+[`ViewStack`](navigation-and-views.md) uses for views:
 
 ```java
 public Element process(Request request) {
@@ -185,7 +183,7 @@ back its latest action.
 
 ## Views: `SpiderView` and `TabBarView`
 
-Spider content is mounted by a [navigation `View`](navigation-and-views.html) so the
+Spider content is mounted by a [navigation `View`](navigation-and-views.md) so the
 `ViewStack` can route a `spacify:` URI to it. Two render shapes exist:
 
 - **[`SpiderView`](https://github.com/drsounds/bungalow/blob/main/src/main/java/se/spacify/app/spider/views/SpiderView.java)** —

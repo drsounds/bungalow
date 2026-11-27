@@ -13,7 +13,7 @@ swappable contribution that a plugin can provide, replace, or extend.
 > and are left as-is; only the brand wording is "Bungalow".
 
 Full architecture documentation lives in [`docs/`](docs/index.md) (published
-as a Jekyll site via GitHub Pages) — start with the
+as a Docusaurus site via GitHub Pages) — start with the
 [introduction & background](docs/introduction.md) and the
 [architecture overview](docs/architecture.md).
 

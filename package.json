@@ -1,0 +1,17 @@
+{
+  "name": "bungalow-docs",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "build": "docusaurus build",
+    "clear": "docusaurus clear",
+    "start": "docusaurus start",
+    "serve": "docusaurus serve"
+  },
+  "dependencies": {
+    "@docusaurus/core": "3.10.2",
+    "@docusaurus/preset-classic": "3.10.2",
+    "react": "19.3.0",
+    "react-dom": "19.3.0"
+  }
+}
